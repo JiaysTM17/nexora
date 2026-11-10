@@ -1,0 +1,21 @@
+{
+  "name": "mac-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "predev": "pnpm --filter './packages/*' build",
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "build": "pnpm --filter @mac/database generate && pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter @mac/api test",
+    "test:integration": "pnpm --filter @mac/api test:integration",
+    "db:generate": "pnpm --filter @mac/database generate",
+    "db:migrate": "pnpm --filter @mac/database migrate",
+    "db:seed": "pnpm --filter @mac/database seed",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down"
+  },
+  "devDependencies": { "typescript": "~5.9.3", "@types/node": "^24.0.0", "tsx": "^4.20.0" }
+}

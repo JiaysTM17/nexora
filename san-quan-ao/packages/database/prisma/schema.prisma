@@ -1,0 +1,440 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+enum ShopStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  HIDDEN
+}
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  DELIVERY_FAILED
+  RETURNED
+}
+enum ReservationStatus {
+  ACTIVE
+  CONSUMED
+  RELEASED
+}
+enum PostStatus {
+  PUBLISHED
+  HIDDEN
+}
+
+model User {
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String
+  name         String
+  role         Role @default(USER)
+  verifiedAt   DateTime?
+  createdAt    DateTime @default(now())
+  sessions     Session[]
+  memberships  ShopMember[]
+  addresses    Address[]
+  cart         CartLine[]
+  quotes       CheckoutQuote[]
+  orders       Order[]
+  posts        Post[]
+  reactions    Reaction[]
+  savedPosts   SavedPost[]
+  comments     Comment[]
+  reports      Report[]
+  reviews      Review[]
+}
+model Session {
+  id        String @id @default(cuid())
+  tokenHash String @unique
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([expiresAt])
+}
+model Shop {
+  id           String @id @default(cuid())
+  slug         String @unique
+  name         String
+  description  String @default("")
+  origin       String
+  status       ShopStatus @default(PENDING)
+  feeBps       Int @default(500)
+  returnPolicy String @default("Yêu cầu đổi size trong 7 ngày sau khi nhận. Hàng chưa mặc, còn tem. Phí đổi cần được shop xác nhận.")
+  createdAt    DateTime @default(now())
+  members      ShopMember[]
+  products     Product[]
+  variants     Variant[]
+  orders       ShopOrder[]
+  vouchers     Voucher[]
+  ledger       SellerLedgerEntry[]
+}
+model ShopMember {
+  shopId String
+  userId String
+  role   String @default("OWNER")
+  shop   Shop @relation(fields: [shopId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+  @@id([shopId, userId])
+}
+model Address {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipient String
+  phone     String
+  line      String
+  province  String
+  createdAt DateTime @default(now())
+}
+model Category {
+  id       String @id @default(cuid())
+  slug     String @unique
+  name     String
+  products Product[]
+}
+model Product {
+  id          String @id @default(cuid())
+  slug        String @unique
+  shopId      String
+  shop        Shop @relation(fields: [shopId], references: [id])
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  name        String
+  description String
+  material    String
+  fit         String
+  status      ProductStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  variants    Variant[]
+  images      ProductImage[]
+  sizeCharts  SizeChartVersion[]
+  tags        ProductTag[]
+  reviews     Review[]
+  @@index([shopId, status])
+}
+model ProductImage {
+  id        String @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  url       String
+  color     String?
+  position  Int @default(0)
+}
+model SizeChartVersion {
+  id        String @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  version   Int
+  kind      String
+  unit      String @default("cm")
+  rows      Json
+  guide     String
+  createdAt DateTime @default(now())
+  @@unique([productId, version])
+}
+model Variant {
+  id        String @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  shopId    String
+  shop      Shop @relation(fields: [shopId], references: [id])
+  sku       String
+  color     String
+  colorHex  String
+  size      String
+  price     Int
+  active    Boolean @default(true)
+  inventory InventoryBalance?
+  cartLines CartLine[]
+  movements StockMovement[]
+  reservations Reservation[]
+  @@unique([shopId, sku])
+  @@unique([productId, color, size])
+}
+model InventoryBalance {
+  variantId String @id
+  variant   Variant @relation(fields: [variantId], references: [id])
+  onHand    Int @default(0)
+  reserved  Int @default(0)
+  updatedAt DateTime @updatedAt
+}
+model StockMovement {
+  id        String @id @default(cuid())
+  variantId String
+  variant   Variant @relation(fields: [variantId], references: [id])
+  quantity  Int
+  kind      String
+  sourceKey String @unique
+  actorId   String?
+  createdAt DateTime @default(now())
+}
+model CartLine {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  variantId String
+  variant   Variant @relation(fields: [variantId], references: [id])
+  quantity  Int
+  @@unique([userId, variantId])
+}
+model Voucher {
+  id        String @id @default(cuid())
+  shopId    String
+  shop      Shop @relation(fields: [shopId], references: [id])
+  code      String
+  amount    Int
+  minimum   Int
+  maxUses   Int
+  uses      Int @default(0)
+  expiresAt DateTime
+  @@unique([shopId, code])
+}
+model CheckoutQuote {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  addressId String
+  data      Json
+  fingerprint String
+  voucherCodes Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  order     Order?
+}
+model Order {
+  id             String @id @default(cuid())
+  code           String @unique
+  userId         String
+  user           User @relation(fields: [userId], references: [id])
+  quoteId        String @unique
+  quote          CheckoutQuote @relation(fields: [quoteId], references: [id])
+  idempotencyKey String
+  total          Int
+  paymentMethod  String @default("COD")
+  address        Json
+  createdAt      DateTime @default(now())
+  shops          ShopOrder[]
+  @@unique([userId, idempotencyKey])
+}
+model ShopOrder {
+  id          String @id @default(cuid())
+  orderId     String
+  order       Order @relation(fields: [orderId], references: [id])
+  shopId      String
+  shop        Shop @relation(fields: [shopId], references: [id])
+  status      OrderStatus @default(PENDING)
+  subtotal    Int
+  discount    Int
+  shipping    Int
+  total       Int
+  feeBps      Int
+  voucherId   String?
+  holdUntil   DateTime
+  deliveredAt DateTime?
+  createdAt   DateTime @default(now())
+  items       OrderItem[]
+  shipment    Shipment?
+  ledger      SellerLedgerEntry[]
+  @@unique([orderId, shopId])
+  @@index([status, holdUntil])
+}
+model OrderItem {
+  id           String @id @default(cuid())
+  shopOrderId  String
+  shopOrder    ShopOrder @relation(fields: [shopOrderId], references: [id])
+  variantId    String
+  productId    String
+  quantity     Int
+  unitPrice    Int
+  discount     Int
+  snapshot     Json
+  reservation  Reservation?
+  reviews      Review[]
+  returns      ReturnItem[]
+}
+model Reservation {
+  id          String @id @default(cuid())
+  variantId   String
+  variant     Variant @relation(fields: [variantId], references: [id])
+  orderItemId String @unique
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id])
+  quantity    Int
+  status      ReservationStatus @default(ACTIVE)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  @@index([status, expiresAt])
+}
+model Shipment {
+  id          String @id @default(cuid())
+  shopOrderId String @unique
+  shopOrder   ShopOrder @relation(fields: [shopOrderId], references: [id])
+  provider    String
+  tracking    String @unique
+  status      String
+  codAmount   Int
+  createdAt   DateTime @default(now())
+}
+model ProviderEvent {
+  id         String @id @default(cuid())
+  provider   String
+  externalId String
+  payload    Json
+  createdAt  DateTime @default(now())
+  @@unique([provider, externalId])
+}
+model SellerLedgerEntry {
+  id          String @id @default(cuid())
+  shopId      String
+  shop        Shop @relation(fields: [shopId], references: [id])
+  shopOrderId String?
+  shopOrder   ShopOrder? @relation(fields: [shopOrderId], references: [id])
+  kind        String
+  amount      Int
+  sourceKey   String @unique
+  createdAt   DateTime @default(now())
+}
+model ReturnRequest {
+  id        String @id @default(cuid())
+  userId    String
+  shopId    String
+  reason    String
+  status    String @default("REQUESTED")
+  kind      String
+  createdAt DateTime @default(now())
+  items     ReturnItem[]
+  @@index([shopId, status])
+}
+model ReturnItem {
+  id                   String @id @default(cuid())
+  returnRequestId      String
+  request              ReturnRequest @relation(fields: [returnRequestId], references: [id])
+  orderItemId          String
+  orderItem            OrderItem @relation(fields: [orderItemId], references: [id])
+  quantity             Int
+  replacementVariantId String?
+  refundAmount         Int
+}
+model Post {
+  id        String @id @default(cuid())
+  authorId  String
+  author    User @relation(fields: [authorId], references: [id])
+  caption   String
+  status    PostStatus @default(PUBLISHED)
+  createdAt DateTime @default(now())
+  media     PostMedia[]
+  tags      ProductTag[]
+  reactions Reaction[]
+  saved     SavedPost[]
+  comments  Comment[]
+  reports   Report[]
+  @@index([status, createdAt])
+}
+model PostMedia {
+  id       String @id @default(cuid())
+  postId   String
+  post     Post @relation(fields: [postId], references: [id])
+  url      String
+  position Int
+}
+model ProductTag {
+  id        String @id @default(cuid())
+  postId    String
+  post      Post @relation(fields: [postId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  mediaPosition Int @default(0)
+  x         Float @default(0.5)
+  y         Float @default(0.5)
+  @@unique([postId, productId, mediaPosition])
+}
+model Follow {
+  followerId String
+  followedId String
+  createdAt  DateTime @default(now())
+  @@id([followerId, followedId])
+}
+model Reaction {
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+  postId String
+  post   Post @relation(fields: [postId], references: [id])
+  @@id([userId, postId])
+}
+model SavedPost {
+  userId String
+  user   User @relation(fields: [userId], references: [id])
+  postId String
+  post   Post @relation(fields: [postId], references: [id])
+  @@id([userId, postId])
+}
+model Comment {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post @relation(fields: [postId], references: [id])
+  body      String
+  hidden    Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+model Report {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post @relation(fields: [postId], references: [id])
+  reason    String
+  status    String @default("OPEN")
+  createdAt DateTime @default(now())
+}
+model Review {
+  id          String @id @default(cuid())
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  orderItemId String @unique
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id])
+  rating      Int
+  body        String
+  createdAt   DateTime @default(now())
+}
+model AuditLog {
+  id        String @id @default(cuid())
+  actorId   String
+  action    String
+  entityId  String
+  data      Json
+  createdAt DateTime @default(now())
+  @@index([entityId, createdAt])
+}
+model OutboxEvent {
+  id        String @id @default(cuid())
+  kind      String
+  payload   Json
+  createdAt DateTime @default(now())
+  processedAt DateTime?
+  attempts  Int @default(0)
+  @@index([processedAt, createdAt])
+}

@@ -1,0 +1,30 @@
+'use client';
+import { useCallback, useEffect, useState } from 'react';
+export const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+export async function api<T = unknown>(path: string, method = 'GET', body?: unknown): Promise<T> {
+  const response = await fetch(`${API}${path}`, { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'mac-web' }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.message ?? 'Không thể hoàn tất yêu cầu');
+  return result as T;
+}
+export function useResource<T>(path: string | null) {
+  const [data, setData] = useState<T | null>(null), [error, setError] = useState(''), [loading, setLoading] = useState(true);
+  const [revision, setRevision] = useState(0);
+  const reload = useCallback(() => setRevision(r => r + 1), []);
+  useEffect(() => {
+    let active = true;
+    if (!path) { setData(null); setLoading(false); return; }
+    setLoading(true); setError('');
+    api<T>(path).then(d => { if (active) setData(d); }).catch(e => { if (active) setError(e.message); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [path, revision]);
+  return { data, error, loading, reload };
+}
+export const vnd = (n: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
+export type Variant = { id: string; sku: string; color: string; colorHex: string; size: string; price: number; inventory: { onHand: number; reserved: number } | null };
+export type Product = { id: string; slug: string; name: string; description: string; material: string; fit: string; status: string; images: { url: string; color: string | null }[]; shop: { id: string; name: string; slug: string; returnPolicy: string }; category: { name: string }; variants: Variant[]; sizeCharts: { id: string; version: number; kind: string; unit: string; guide: string; rows: Record<string, string | number>[] }[] };
+export type Shop = { id: string; name: string; status: string; feeBps: number; origin: string };
+export type Item = { id: string; quantity: number; unitPrice: number; discount: number; snapshot: { name: string; color: string; size: string; image: string } };
+export type ShopOrder = { id: string; status: string; total: number; subtotal: number; discount: number; shipping: number; shop?: { name: string }; items: Item[]; order?: { code: string; address: { recipient: string; line: string; phone: string; province: string } }; shipment?: { tracking: string; provider: string; status: string } };
+export type Order = { id: string; code: string; total: number; createdAt: string; shops: ShopOrder[] };
+export type FeedPost = { id: string; caption: string; author: { id: string; name: string }; media: { url: string; position: number }[]; tags: { id: string; mediaPosition: number; x: number; y: number; available: boolean; product: { id: string; name: string; slug: string; shop: { name: string }; variants: { price: number }[] } }[]; liked: boolean; savedByMe: boolean; _count: { reactions: number; comments: number }; comments: { id: string; body: string; user: { name: string } }[] };

@@ -1,0 +1,36 @@
+name: Verify marketplace
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: mac
+          POSTGRES_PASSWORD: mac_local_only
+          POSTGRES_DB: mac_test
+        ports: ['54329:5432']
+        options: >-
+          --health-cmd "pg_isready -U mac -d mac_test"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+    env:
+      DATABASE_URL: postgresql://mac:mac_local_only@127.0.0.1:54329/mac_test?schema=public
+      TEST_DATABASE_URL: postgresql://mac:mac_local_only@127.0.0.1:54329/mac_test?schema=public
+      SHIPPING_PROVIDER: mock
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm db:migrate
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:integration

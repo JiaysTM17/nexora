@@ -1,0 +1,509 @@
+{
+  "summary": {
+    "total": 71,
+    "passed": 71,
+    "failed": 0,
+    "skipped": 0,
+    "success_rate": "100.0%",
+    "generated_at": "2026-11-10T09:02:10.708099"
+  },
+  "results": [
+    {
+      "tier": "Tier 1",
+      "test_name": "D1-01 Escrow Holding Windows (7-15-30 days)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555473"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D1-02 Seller Wallet 3-Tier Balance Isolation",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555545"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D1-03 Automated 3-Way Reconciliation Net Payout",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555557"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D1-04 Multi-Channel Refund Destination Routing",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555566"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D1-05 Escrow Dispute 45-Day Hold Extension",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555572"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D2-01 Seller eKYC Compliance NĐ 52/2013 & NĐ 85/2021",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555580"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D2-02 Periodic Quarterly Tax Export NĐ 91/2022",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555588"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D2-03 Automated Withholding Tax (1% GTGT + 0.5% TNCN)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555604"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D2-04 Creator Affiliate PIT Withholding 10%",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555611"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D2-05 E-Invoice Two-Stream Segregation TT 78/2021",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555622"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D3-01 First-Mile Preparation SLA (24h/48h)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555629"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D3-02 Smart Multi-3PL Carrier Scorecard Routing",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555651"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D3-03 Strict 3-Strike NDR Protocol Progression",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555660"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D3-04 Delivery POD & GPS Geofencing (<=50m)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555666"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D3-05 Mid-Transit Address Redirection Surcharge",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555672"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D4-01 Mall Vetting LoA/CO/CQ Document Verification",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555686"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D4-02 Counterfeit Complaint Escrow Freeze",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555692"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D4-03 200% Counterfeit Compensation & Forfeit",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.555698"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D4-04 Brand Prohibited Keyword Filter (Fake/Replica)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556006"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D4-05 Entrupy Third-Party Authentication Service",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556026"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D5-01 Brushing Detection via Weight Delta (>=80%)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556038"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D5-02 NLP Fake Review Text Clumping Detection",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556055"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D5-03 Voucher Claim Sybil Account Cluster Defense",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556061"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D5-04 Affiliate Click-To-Purchase CTP Filter (<5s)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556068"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D5-05 Affiliate Brand Bidding Prevention & Sanction",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556081"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D6-01 PostgreSQL Optimistic Locking lock_version",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556096"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D6-02 Redis Lua Script Atomic Stock Reservation",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556101"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D6-03 Flash Sale Cart Lock Expiration (180s)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556107"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D6-04 Omnichannel Safety Stock Buffer Allocation",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556117"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D6-05 Event-Driven Inventory Sync via Queue",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556124"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D7-01 Decree 13 Granular Consent Management",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556131"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D7-02 Consent Withdrawal SLA (72 Hours)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556137"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D7-03 Right to Erasure PII Anonymization",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556144"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D7-04 Law on Accounting 10-Year Ledger Preservation",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556151"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D7-05 Physical Waybill 3-Zone Phone & Address Masking",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556159"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D8-01 VietQR Under-Payment Supplementary Generation",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556166"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D8-02 VietQR Over-Payment Excess Wallet Crediting",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556174"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D8-03 VietQR Supplementary Expiration Auto-Refund",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556180"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D8-04 Late Debit Order Revival on Available Stock",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556186"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D8-05 Reverse Polling on Gateway HTTP 504 Timeout",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556192"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D9-01 Fashion Trade-in Apparel Paradigm (No IMEI)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556201"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D9-02 2-Stage Trade-in Appraisal Architecture",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556207"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D9-03 5-Tier Condition Grading Matrix (S/A/B/C/D)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556214"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D9-04 Trade-in Cash-Equivalent Voucher Issuance",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556224"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D9-05 Requote Rejection 48-Hour Return SLA",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556230"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D10-01 Lookbook Product Coordinate Tagging (x, y)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556238"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D10-02 Shop the Look Multi-Item Outfit Purchase",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556244"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D10-03 Last-Click Attribution Window (7-30 Days)",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556250"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D10-04 Affiliate Commission 15-Day Escrow Hold",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556256"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D10-05 AI Vision Fashion Content & NSFW Moderation",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556261"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D11-01 VAS White-Glove Serialized Zip-Seal Courier",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556266"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D11-02 VAS 1000 Lux 8-Angle Pre-Service Inspection",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556272"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D11-03 VAS Luxury Damage Insurance up to 100M VND",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556278"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D11-04 Size/Color Exchange ATP Inventory Hold",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556284"
+    },
+    {
+      "tier": "Tier 1",
+      "test_name": "D11-05 Partial Return MOV Drop Threshold Clawback",
+      "status": "PASS",
+      "details": "Verified",
+      "timestamp": "2026-11-10T09:02:09.556289"
+    },
+    {
+      "tier": "Tier 2",
+      "test_name": "Tax Withholding Arithmetic Precision",
+      "status": "PASS",
+      "details": "Mathematical invariant hold under stress",
+      "timestamp": "2026-11-10T09:02:09.556325"
+    },
+    {
+      "tier": "Tier 2",
+      "test_name": "Affiliate Creator PIT Threshold 2M VND",
+      "status": "PASS",
+      "details": "Mathematical invariant hold under stress",
+      "timestamp": "2026-11-10T09:02:09.556338"
+    },
+    {
+      "tier": "Tier 2",
+      "test_name": "Seller Wallet Invariant & Negative Balance Buffer",
+      "status": "PASS",
+      "details": "Mathematical invariant hold under stress",
+      "timestamp": "2026-11-10T09:02:09.556351"
+    },
+    {
+      "tier": "Tier 2",
+      "test_name": "Partial Return Proportional Voucher Prorating",
+      "status": "PASS",
+      "details": "Mathematical invariant hold under stress",
+      "timestamp": "2026-11-10T09:02:09.556375"
+    },
+    {
+      "tier": "Tier 2",
+      "test_name": "VietQR Supplementary Countdown Timeout 15min",
+      "status": "PASS",
+      "details": "Mathematical invariant hold under stress",
+      "timestamp": "2026-11-10T09:02:09.556425"
+    },
+    {
+      "tier": "Tier 2",
+      "test_name": "Late Debit Race Condition (Revival vs Gateway Refund)",
+      "status": "PASS",
+      "details": "Mathematical invariant hold under stress",
+      "timestamp": "2026-11-10T09:02:09.556433"
+    },
+    {
+      "tier": "Tier 3",
+      "test_name": "Escrow Settlement ↔ Tax Withholding ↔ Seller Net Payout",
+      "status": "PASS",
+      "details": "Cross-system state handoff validated",
+      "timestamp": "2026-11-10T09:02:09.556453"
+    },
+    {
+      "tier": "Tier 3",
+      "test_name": "Partial Return ↔ Tax Recalculation ↔ Seller Clawback",
+      "status": "PASS",
+      "details": "Cross-system state handoff validated",
+      "timestamp": "2026-11-10T09:02:09.556460"
+    },
+    {
+      "tier": "Tier 3",
+      "test_name": "3-Strike NDR ↔ RTS ↔ Escrow Reversal to Buyer",
+      "status": "PASS",
+      "details": "Cross-system state handoff validated",
+      "timestamp": "2026-11-10T09:02:09.556466"
+    },
+    {
+      "tier": "Tier 4",
+      "test_name": "Fashion Trade-in 2-Stage Full Lifecycle",
+      "status": "PASS",
+      "details": "End-to-end enterprise scenario verified",
+      "timestamp": "2026-11-10T09:02:09.556488"
+    },
+    {
+      "tier": "Tier 4",
+      "test_name": "VAS Luxury Laundry & Spa Pre-Service Inspection",
+      "status": "PASS",
+      "details": "End-to-end enterprise scenario verified",
+      "timestamp": "2026-11-10T09:02:09.556497"
+    },
+    {
+      "tier": "Tier 4",
+      "test_name": "OOTD Affiliate Attribution & Clawback on Return",
+      "status": "PASS",
+      "details": "End-to-end enterprise scenario verified",
+      "timestamp": "2026-11-10T09:02:09.556504"
+    },
+    {
+      "tier": "Tier 4",
+      "test_name": "Physical Waybill 3-Zone Masking & Virtual Call Proxy",
+      "status": "PASS",
+      "details": "End-to-end enterprise scenario verified",
+      "timestamp": "2026-11-10T09:02:09.556524"
+    },
+    {
+      "tier": "Forensic",
+      "test_name": "Master Docx OpenXML Structure",
+      "status": "PASS",
+      "details": "Valid ZIP archive with 8389 paragraphs and 291 tables",
+      "timestamp": "2026-11-10T09:02:10.185603"
+    },
+    {
+      "tier": "Forensic",
+      "test_name": "Audit Report Docx OpenXML Structure",
+      "status": "PASS",
+      "details": "Valid ZIP with 1163 paragraphs and 47 tables",
+      "timestamp": "2026-11-10T09:02:10.295100"
+    },
+    {
+      "tier": "Forensic",
+      "test_name": "Component Module OpenXML Validity",
+      "status": "PASS",
+      "details": "All 7 component docx files are valid OpenXML",
+      "timestamp": "2026-11-10T09:02:10.701691"
+    }
+  ]
+}

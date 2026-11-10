@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# Build outputs & caches
+.next/
+*/.next/
+**/.next/
+dist/
+*/dist/
+**/dist/
+build/
+.turbo/
+.runtime/
+*.tsbuildinfo
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# Testing & logs
+coverage/
+playwright-report/
+test-results/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Office lock files & OS files
+~$*
+.DS_Store
+Thumbs.db
