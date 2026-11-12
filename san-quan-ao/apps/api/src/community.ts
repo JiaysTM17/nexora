@@ -7,7 +7,7 @@ import type { Request } from 'express';
 
 const postInclude = {
   author: { select: { id: true, name: true } }, media: { orderBy: { position: 'asc' as const } },
-  tags: { include: { product: { select: { id: true, name: true, slug: true, status: true, shop: { select: { id: true, name: true, status: true } }, variants: { where: { active: true }, select: { price: true }, take: 1 } } } } },
+  tags: { include: { product: { select: { id: true, name: true, slug: true, status: true, shop: { select: { id: true, name: true, status: true } }, variants: { where: { active: true }, select: { id: true, price: true, inventory: { select: { onHand: true, reserved: true } } }, take: 10 } } } } },
   comments: { where: { hidden: false }, include: { user: { select: { name: true } } }, orderBy: { createdAt: 'desc' as const }, take: 20 },
   _count: { select: { reactions: true, saved: true, comments: { where: { hidden: false } } } },
 };
