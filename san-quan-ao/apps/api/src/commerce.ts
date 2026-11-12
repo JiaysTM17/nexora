@@ -6,7 +6,7 @@ import { Auth, Authed, SignedIn } from './auth';
 import { Db, serial, Tx } from './db';
 import { addressInput, allocateDiscount, hash, id, json } from './common';
 
-const orderInclude = { shops: { include: { shop: { select: { name: true } }, items: true, shipment: true }, orderBy: { shopId: 'asc' as const } } };
+const orderInclude = { shops: { include: { shop: { select: { name: true } }, items: { include: { reviews: { select: { id: true, rating: true } } } }, shipment: true }, orderBy: { shopId: 'asc' as const } } };
 @Injectable()
 export class Commerce {
   constructor(@Inject(Db) private db: Db) {}
@@ -176,5 +176,129 @@ export class CommerceController {
       await tx.auditLog.create({ data: { actorId: req.user.id, action: `ORDER_${status}`, entityId: orderId, data: { provider: 'mock' } } });
       return tx.shopOrder.update({ where: { id: orderId }, data: { status } });
     });
+  }
+
+  @Post('reviews') async createReview(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({ orderItemId: id, rating: z.number().int().min(1).max(5), body: z.string().trim().min(5).max(1000) }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const item = await tx.orderItem.findFirst({
+        where: { id: data.orderItemId, shopOrder: { order: { userId: req.user.id } } },
+        include: { shopOrder: true, reviews: true },
+      });
+      if (!item) throw new NotFoundException('Không tìm thấy sản phẩm trong đơn hàng của bạn');
+      if (item.shopOrder.status !== 'DELIVERED') throw new ConflictException('Chỉ có thể đánh giá sau khi đơn hàng đã giao');
+      if (item.reviews.length) throw new ConflictException('Sản phẩm này đã được đánh giá');
+      const review = await tx.review.create({
+        data: { userId: req.user.id, productId: item.productId, orderItemId: item.id, rating: data.rating, body: data.body },
+      });
+      await tx.auditLog.create({ data: { actorId: req.user.id, action: 'REVIEW_CREATE', entityId: review.id, data: { productId: item.productId, rating: data.rating } } });
+      return review;
+    });
+  }
+
+  @Get('returns') returns(@Req() req: Authed) {
+    return this.db.returnRequest.findMany({ where: { userId: req.user.id }, include: { items: { include: { orderItem: true } } }, orderBy: { createdAt: 'desc' }, take: 50 });
+  }
+
+  @Post('orders/shops/:id/returns') async createReturn(@Req() req: Authed, @Param('id') shopOrderId: string, @Body() body: unknown) {
+    const data = z.object({
+      kind: z.enum(['EXCHANGE', 'REFUND']),
+      reason: z.string().trim().min(5).max(500),
+      items: z.array(z.object({ orderItemId: id, quantity: z.number().int().min(1).max(20), replacementVariantId: id.optional() }).strict()).min(1).max(20),
+    }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const shopOrder = await tx.shopOrder.findFirst({ where: { id: shopOrderId, order: { userId: req.user.id } }, include: { items: true } });
+      if (!shopOrder) throw new NotFoundException('Không tìm thấy đơn hàng');
+      if (shopOrder.status !== 'DELIVERED') throw new ConflictException('Chỉ hỗ trợ đổi size hoặc hoàn trả sau khi đã nhận hàng');
+      if (shopOrder.deliveredAt && Date.now() - shopOrder.deliveredAt.getTime() > 7 * 86400000) throw new ConflictException('Đã quá hạn 7 ngày yêu cầu đổi/trả');
+      const itemMap = new Map(shopOrder.items.map(i => [i.id, i]));
+      const existingReturns = await tx.returnItem.findMany({
+        where: { orderItemId: { in: data.items.map(i => i.orderItemId) }, request: { status: { in: ['REQUESTED', 'APPROVED', 'COMPLETED'] } } },
+      });
+      const returnedQty = new Map<string, number>();
+      for (const r of existingReturns) returnedQty.set(r.orderItemId, (returnedQty.get(r.orderItemId) ?? 0) + r.quantity);
+      const returnItems: { orderItemId: string; quantity: number; replacementVariantId?: string; refundAmount: number }[] = [];
+      for (const reqItem of data.items) {
+        const orderItem = itemMap.get(reqItem.orderItemId);
+        if (!orderItem) throw new NotFoundException('Sản phẩm không thuộc đơn hàng này');
+        const used = returnedQty.get(orderItem.id) ?? 0;
+        if (used + reqItem.quantity > orderItem.quantity) throw new ConflictException('Số lượng đổi/trả vượt quá số lượng đã mua');
+        const unitNet = Math.max(0, Math.floor((orderItem.unitPrice * orderItem.quantity - orderItem.discount) / orderItem.quantity));
+        returnItems.push({
+          orderItemId: orderItem.id,
+          quantity: reqItem.quantity,
+          replacementVariantId: data.kind === 'EXCHANGE' ? reqItem.replacementVariantId : undefined,
+          refundAmount: data.kind === 'REFUND' ? unitNet * reqItem.quantity : 0,
+        });
+      }
+      const created = await tx.returnRequest.create({
+        data: { userId: req.user.id, shopId: shopOrder.shopId, reason: data.reason, kind: data.kind, items: { create: returnItems } },
+        include: { items: true },
+      });
+      await tx.auditLog.create({ data: { actorId: req.user.id, action: 'RETURN_REQUEST', entityId: created.id, data: { shopOrderId, kind: data.kind } } });
+      return created;
+    });
+  }
+
+  @Get('seller/shops/:shopId/returns') async sellerReturns(@Req() req: Authed, @Param('shopId') shopId: string) {
+    await this.auth.shop(req.user.id, shopId, false);
+    return this.db.returnRequest.findMany({ where: { shopId }, include: { items: { include: { orderItem: true } } }, orderBy: { createdAt: 'desc' }, take: 100 });
+  }
+
+  @Post('seller/shops/:shopId/returns/:returnId/decision') async decideReturn(
+    @Req() req: Authed,
+    @Param('shopId') shopId: string,
+    @Param('returnId') returnId: string,
+    @Body() body: unknown,
+  ) {
+    await this.auth.shop(req.user.id, shopId);
+    const { status } = z.object({ status: z.enum(['APPROVED', 'REJECTED', 'COMPLETED']) }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const rr = await tx.returnRequest.findFirst({ where: { id: returnId, shopId }, include: { items: { include: { orderItem: true } } } });
+      if (!rr) throw new NotFoundException('Không tìm thấy yêu cầu đổi/trả');
+      if (rr.status === status) return rr;
+      const allowed: Record<string, string[]> = { REQUESTED: ['APPROVED', 'REJECTED'], APPROVED: ['COMPLETED'] };
+      if (!(allowed[rr.status] ?? []).includes(status)) throw new ConflictException('Không thể chuyển trạng thái yêu cầu này');
+      if (status === 'COMPLETED' && rr.kind === 'REFUND') {
+        const totalRefund = rr.items.reduce((s, i) => s + i.refundAmount, 0);
+        if (totalRefund > 0) {
+          await tx.sellerLedgerEntry.create({
+            data: { shopId, shopOrderId: rr.items[0]?.orderItem.shopOrderId, kind: 'REFUND_DEBIT', amount: -totalRefund, sourceKey: `refund:${rr.id}` },
+          });
+        }
+        const shopOrderId = rr.items[0]?.orderItem.shopOrderId;
+        if (shopOrderId) await tx.shopOrder.update({ where: { id: shopOrderId }, data: { status: 'RETURNED' } });
+      }
+      await tx.auditLog.create({ data: { actorId: req.user.id, action: `RETURN_${status}`, entityId: rr.id, data: { shopId } } });
+      return tx.returnRequest.update({ where: { id: rr.id }, data: { status }, include: { items: true } });
+    });
+  }
+
+  @Get('seller/shops/:shopId/vouchers') async sellerVouchers(@Req() req: Authed, @Param('shopId') shopId: string) {
+    await this.auth.shop(req.user.id, shopId, false);
+    return this.db.voucher.findMany({ where: { shopId }, orderBy: { expiresAt: 'desc' }, take: 50 });
+  }
+
+  @Post('seller/shops/:shopId/vouchers') async createVoucher(@Req() req: Authed, @Param('shopId') shopId: string, @Body() body: unknown) {
+    await this.auth.shop(req.user.id, shopId);
+    const data = z.object({
+      code: z.string().trim().toUpperCase().regex(/^[A-Z0-9]{3,20}$/),
+      amount: z.number().int().min(1000).max(50_000_000),
+      minimum: z.number().int().min(0).max(100_000_000),
+      maxUses: z.number().int().min(1).max(100000),
+      daysValid: z.number().int().min(1).max(365).default(30),
+    }).strict().parse(body);
+    const voucher = await this.db.voucher.create({
+      data: { shopId, code: data.code, amount: data.amount, minimum: data.minimum, maxUses: data.maxUses, expiresAt: new Date(Date.now() + data.daysValid * 86400000) },
+    });
+    await this.db.auditLog.create({ data: { actorId: req.user.id, action: 'VOUCHER_CREATE', entityId: voucher.id, data: { shopId, code: voucher.code } } });
+    return voucher;
+  }
+
+  @Get('seller/shops/:shopId/ledger') async sellerLedger(@Req() req: Authed, @Param('shopId') shopId: string) {
+    await this.auth.shop(req.user.id, shopId, false);
+    const entries = await this.db.sellerLedgerEntry.findMany({ where: { shopId }, orderBy: { createdAt: 'desc' }, take: 100 });
+    const balance = entries.reduce((s, e) => s + e.amount, 0);
+    return { balance, entries };
   }
 }
