@@ -61,6 +61,8 @@ model User {
   comments     Comment[]
   reports      Report[]
   reviews      Review[]
+  tradeIns     TradeInRequest[]
+  careBookings CareBooking[]
 }
 model Session {
   id        String @id @default(cuid())
@@ -437,4 +439,37 @@ model OutboxEvent {
   processedAt DateTime?
   attempts  Int @default(0)
   @@index([processedAt, createdAt])
+}
+model TradeInRequest {
+  id             String @id @default(cuid())
+  userId         String
+  user           User @relation(fields: [userId], references: [id])
+  brand          String
+  itemName       String
+  category       String
+  conditionNote  String
+  imageUrl       String @default("")
+  grade          String
+  estimatedValue Int
+  finalValue     Int?
+  voucherCode    String?
+  status         String @default("AI_PRELIMINARY")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  @@index([userId, createdAt])
+}
+model CareBooking {
+  id           String @id @default(cuid())
+  userId       String
+  user         User @relation(fields: [userId], references: [id])
+  itemName     String
+  serviceType  String
+  zipSealCode  String @unique
+  insuredValue Int
+  fee          Int
+  status       String @default("BOOKED")
+  notes        String @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  @@index([userId, createdAt])
 }
