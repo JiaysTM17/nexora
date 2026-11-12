@@ -231,9 +231,10 @@ model Order {
   user           User @relation(fields: [userId], references: [id])
   quoteId        String @unique
   quote          CheckoutQuote @relation(fields: [quoteId], references: [id])
-  idempotencyKey String
-  total          Int
-  paymentMethod  String @default("COD")
+  idempotencyKey   String
+  total            Int
+  platformDiscount Int @default(0)
+  paymentMethod    String @default("COD")
   address        Json
   createdAt      DateTime @default(now())
   shops          ShopOrder[]
@@ -451,9 +452,10 @@ model TradeInRequest {
   imageUrl       String @default("")
   grade          String
   estimatedValue Int
-  finalValue     Int?
-  voucherCode    String?
-  status         String @default("AI_PRELIMINARY")
+  finalValue      Int?
+  voucherCode     String? @unique
+  redeemedOrderId String?
+  status          String @default("AI_PRELIMINARY")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   @@index([userId, createdAt])

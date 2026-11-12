@@ -8,7 +8,7 @@ export type QuoteShop = {
   shopId: string; shopName: string; items: QuoteItem[];
   subtotal: Money; discount: Money; shipping: Money; total: Money;
 };
-export type QuoteData = { shops: QuoteShop[]; total: Money; address: { recipient: string; phone: string; line: string; province: string }; provider: 'mock' };
+export type QuoteData = { shops: QuoteShop[]; platformDiscount?: Money; tradeInCode?: string; total: Money; address: { recipient: string; phone: string; line: string; province: string }; provider: 'mock' };
 export type PublicUser = { id: string; name: string; email: string; role: string };
 export const ORDER_LABELS: Record<string, string> = {
   PENDING: 'Chờ shop xác nhận', CONFIRMED: 'Đã xác nhận', PACKED: 'Đã đóng gói',

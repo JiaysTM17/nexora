@@ -41,9 +41,17 @@ export class Commerce {
       }
       group.total = group.subtotal - group.discount + group.shipping;
     }
-    for (const shopId of Object.keys(codes)) if (!groups.has(shopId)) throw new ConflictException('Voucher không thuộc shop trong giỏ');
+    for (const shopId of Object.keys(codes)) if (shopId !== '_tradeIn' && !groups.has(shopId)) throw new ConflictException('Voucher không thuộc shop trong giỏ');
     const shops = [...groups.values()].sort((a, b) => a.shopId.localeCompare(b.shopId));
-    return { shops, total: shops.reduce((s, g) => s + g.total, 0), address: { recipient: address.recipient, phone: address.phone, line: address.line, province: address.province }, provider: 'mock' };
+    const preTotal = shops.reduce((s, g) => s + g.total, 0);
+    let platformDiscount = 0;
+    const tradeInCode = codes._tradeIn?.trim().toUpperCase();
+    if (tradeInCode) {
+      const ti = await tx.tradeInRequest.findFirst({ where: { voucherCode: tradeInCode, userId, status: 'APPROVED', redeemedOrderId: null } });
+      if (!ti || !ti.finalValue) throw new ConflictException(`Mã Trade-In ${tradeInCode} không hợp lệ hoặc đã sử dụng`);
+      platformDiscount = Math.min(ti.finalValue, preTotal);
+    }
+    return { shops, platformDiscount, ...(tradeInCode ? { tradeInCode } : {}), total: preTotal - platformDiscount, address: { recipient: address.recipient, phone: address.phone, line: address.line, province: address.province }, provider: 'mock' };
   }
   async quote(userId: string, addressId: string, codes: Record<string, string>) {
     return serial(this.db, async tx => {
@@ -71,7 +79,11 @@ export class Commerce {
         const changed = await tx.$executeRaw`UPDATE "InventoryBalance" SET "reserved" = "reserved" + ${item.quantity} WHERE "variantId" = ${item.variantId} AND "onHand" - "reserved" >= ${item.quantity}`;
         if (!changed) throw new ConflictException({ code: 'OUT_OF_STOCK', message: `${item.name} vừa hết hàng`, variantId: item.variantId });
       }
-      const order = await tx.order.create({ data: { code: `MAC-${randomUUID().slice(0, 8).toUpperCase()}`, userId, quoteId, idempotencyKey: key, total: current.total, address: json(current.address) } });
+      const order = await tx.order.create({ data: { code: `NX-${randomUUID().slice(0, 8).toUpperCase()}`, userId, quoteId, idempotencyKey: key, total: current.total, platformDiscount: current.platformDiscount ?? 0, address: json(current.address) } });
+      if (current.tradeInCode) {
+        const redeemed = await tx.tradeInRequest.updateMany({ where: { voucherCode: current.tradeInCode, userId, status: 'APPROVED', redeemedOrderId: null }, data: { redeemedOrderId: order.id } });
+        if (redeemed.count !== 1) throw new ConflictException(`Mã Trade-In ${current.tradeInCode} vừa được sử dụng`);
+      }
       for (const group of current.shops) {
         const shop = await tx.shop.findUniqueOrThrow({ where: { id: group.shopId } });
         let voucherId: string | undefined;
@@ -136,8 +148,9 @@ export class CommerceController {
   }
   @Delete('cart/:id') async remove(@Req() req: Authed, @Param('id') lineId: string) { await this.db.cartLine.deleteMany({ where: { id: lineId, userId: req.user.id } }); return { ok: true }; }
   @Post('checkout/quote') quote(@Req() req: Authed, @Body() body: unknown) {
-    const data = z.object({ addressId: id, vouchers: z.record(id, z.string().max(30)).default({}) }).strict().parse(body);
-    return this.commerce.quote(req.user.id, data.addressId, data.vouchers);
+    const data = z.object({ addressId: id, vouchers: z.record(id, z.string().max(30)).default({}), tradeInCode: z.string().trim().max(30).optional() }).strict().parse(body);
+    const codes = data.tradeInCode ? { ...data.vouchers, _tradeIn: data.tradeInCode } : data.vouchers;
+    return this.commerce.quote(req.user.id, data.addressId, codes);
   }
   @Post('orders') createOrder(@Req() req: Authed, @Body() body: unknown) {
     const data = z.object({ quoteId: id, idempotencyKey: z.string().min(16).max(100) }).strict().parse(body);
@@ -152,7 +165,23 @@ export class CommerceController {
   @Post('orders/shops/:id/cancel') cancel(@Req() req: Authed, @Param('id') shopOrderId: string) { return this.commerce.cancel(req.user.id, shopOrderId); }
   @Get('seller/shops/:shopId/orders') async sellerOrders(@Req() req: Authed, @Param('shopId') shopId: string) {
     await this.auth.shop(req.user.id, shopId, false);
-    return this.db.shopOrder.findMany({ where: { shopId }, include: { items: true, shipment: true, order: { select: { code: true, address: true } } }, orderBy: { createdAt: 'desc' }, take: 100 });
+    const rows = await this.db.shopOrder.findMany({ where: { shopId }, include: { items: true, shipment: true, order: { select: { code: true, address: true } } }, orderBy: { createdAt: 'desc' }, take: 100 });
+    return rows.map(row => {
+      if (!['DELIVERED', 'CANCELLED', 'RETURNED'].includes(row.status)) return row;
+      const addr = row.order.address as { recipient: string; phone: string; line: string; province: string };
+      return {
+        ...row,
+        order: {
+          ...row.order,
+          address: {
+            recipient: addr.recipient,
+            phone: addr.phone.replace(/(\d{3})\d{4}(\d{3})/, '$1****$2'),
+            line: '*** (Đã ẩn theo PDPD NĐ 13/2023)',
+            province: addr.province,
+          },
+        },
+      };
+    });
   }
   @Post('seller/shops/:shopId/orders/:orderId/transition') async transition(@Req() req: Authed, @Param('shopId') shopId: string, @Param('orderId') orderId: string, @Body() body: unknown) {
     await this.auth.shop(req.user.id, shopId);
