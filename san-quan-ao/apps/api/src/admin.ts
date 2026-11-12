@@ -1,4 +1,5 @@
 import { Body, ConflictException, Controller, Get, Inject, NotFoundException, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { releaseHeldAffiliateEarnings } from '@mac/database';
 import { z } from 'zod';
 import { AdminOnly, Authed, SignedIn } from './auth';
 import { Db, serial } from './db';
@@ -77,5 +78,27 @@ export class AdminController {
       await tx.auditLog.create({ data: { actorId: req.user.id, action: `MOCK_${data.status}`, entityId: shipmentId, data: json(data) } });
       return { applied: true };
     });
+  }
+  @Get('affiliate') async affiliate() {
+    const earnings = await this.db.affiliateEarning.findMany({
+      include: { kocUser: { select: { id: true, name: true, email: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+    const summary = earnings.reduce(
+      (acc, e) => {
+        if (e.status === 'HELD') acc.held += e.amount;
+        else if (e.status === 'AVAILABLE') acc.available += e.amount;
+        else if (e.status === 'CANCELLED') acc.cancelled += e.amount;
+        return acc;
+      },
+      { held: 0, available: 0, cancelled: 0 },
+    );
+    return { summary, earnings };
+  }
+  @Post('affiliate/release') async releaseAffiliate(@Req() req: Authed) {
+    const released = await releaseHeldAffiliateEarnings(this.db);
+    await this.db.auditLog.create({ data: { actorId: req.user.id, action: 'ADMIN_AFFILIATE_RELEASE', entityId: 'affiliate', data: { released } } });
+    return { released };
   }
 }

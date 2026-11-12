@@ -27,3 +27,31 @@ export async function expirePendingOrders(db: PrismaClient, now = new Date()) {
   }
   return expired;
 }
+
+export async function releaseHeldAffiliateEarnings(db: PrismaClient, now = new Date()) {
+  const matured = await db.affiliateEarning.findMany({
+    where: { status: 'HELD', holdUntil: { lte: now } },
+    take: 100,
+    orderBy: { holdUntil: 'asc' },
+  });
+  let released = 0;
+  for (const earning of matured) {
+    released += await serial(db, async tx => {
+      const updated = await tx.affiliateEarning.updateMany({
+        where: { id: earning.id, status: 'HELD', holdUntil: { lte: now } },
+        data: { status: 'AVAILABLE' },
+      });
+      if (!updated.count) return 0;
+      await tx.auditLog.create({
+        data: {
+          actorId: 'system:worker',
+          action: 'AFFILIATE_EARNING_RELEASED',
+          entityId: earning.id,
+          data: { kocUserId: earning.kocUserId, shopOrderId: earning.shopOrderId, amount: earning.amount },
+        },
+      });
+      return 1;
+    });
+  }
+  return released;
+}

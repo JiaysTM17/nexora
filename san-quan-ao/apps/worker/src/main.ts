@@ -5,7 +5,7 @@ config({ path: resolve(__dirname, '../../../.env'), quiet: true });
 import { Injectable, Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Queue, Worker } from 'bullmq';
-import { expirePendingOrders, PrismaClient } from '@mac/database';
+import { expirePendingOrders, PrismaClient, releaseHeldAffiliateEarnings } from '@mac/database';
 
 @Injectable()
 class Jobs implements OnModuleInit, OnModuleDestroy {
@@ -19,7 +19,8 @@ class Jobs implements OnModuleInit, OnModuleDestroy {
     this.queue = new Queue('mac-maintenance', { connection });
     this.worker = new Worker('mac-maintenance', async () => {
       const expired = await expirePendingOrders(this.db);
-      return { expired };
+      const releasedAffiliate = await releaseHeldAffiliateEarnings(this.db);
+      return { expired, releasedAffiliate };
     }, { connection, concurrency: 1 });
     this.worker.on('failed', (job, error) => console.error('Maintenance failed', job?.id, error.message));
     this.worker.on('error', error => console.error('Worker connection', error.message));

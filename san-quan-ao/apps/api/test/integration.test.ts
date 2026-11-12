@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { PrismaClient, expirePendingOrders } from '@mac/database';
+import { PrismaClient, expirePendingOrders, releaseHeldAffiliateEarnings } from '@mac/database';
 import type { INestApplication } from '@nestjs/common';
 import { bootstrap } from '../src/main';
 import { hash } from '../src/common';
@@ -237,4 +237,33 @@ test('trade-in 2-round appraisal and vas-care zip-seal booking work end-to-end',
   const updated = await admin.call(`/admin/services/care/${care.body.id}/status`, 'POST', { status: 'OPTICAL_CHECK' });
   assert.equal(updated.status, 201);
   assert.equal(updated.body.status, 'OPTICAL_CHECK');
+});
+
+test('KOC affiliate attribution, 15-day hold and idempotent release', async () => {
+  const f = await fixture(), koc = await account('USER'), admin = await account('ADMIN');
+  const q = await quote(f.buyer, f.variant.id);
+  const placed = await f.buyer.call('/orders', 'POST', { quoteId: q.id, idempotencyKey: randomUUID(), paymentMethod: 'COD', affiliateUserId: koc.user.id });
+  assert.equal(placed.status, 201);
+  const so = placed.body.shops[0];
+  for (const status of ['CONFIRMED', 'PACKED', 'SHIPPED']) {
+    assert.equal((await f.seller.call(`/seller/shops/${f.shop.id}/orders/${so.id}/transition`, 'POST', { status })).status, 201);
+  }
+  const shipment = await db.shipment.findUniqueOrThrow({ where: { shopOrderId: so.id } });
+  assert.equal((await admin.call(`/admin/mock/shipments/${shipment.id}/event`, 'POST', { externalId: randomUUID(), status: 'DELIVERED' })).status, 201);
+
+  const summaryHeld = await koc.call('/affiliate/summary');
+  assert.equal(summaryHeld.status, 200);
+  assert.ok(summaryHeld.body.held > 0);
+  assert.equal(summaryHeld.body.available, 0);
+
+  // Not yet matured -> 0 released
+  assert.equal(await releaseHeldAffiliateEarnings(db, new Date()), 0);
+  // Matured after 15 days -> released once, idempotent on second run
+  const after16Days = new Date(Date.now() + 16 * 86400000);
+  assert.ok((await releaseHeldAffiliateEarnings(db, after16Days)) >= 1);
+  assert.equal(await releaseHeldAffiliateEarnings(db, after16Days), 0);
+
+  const summaryAvail = await koc.call('/affiliate/summary');
+  assert.equal(summaryAvail.body.held, 0);
+  assert.equal(summaryAvail.body.available, summaryHeld.body.held);
 });
