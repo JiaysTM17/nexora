@@ -22,7 +22,7 @@ async function passwordMatches(password: string, encoded: string) {
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
 export const publicUser = { id: true, email: true, name: true, role: true } as const;
-const credentials = z.object({ email: z.email().max(200).transform(s => s.toLowerCase()), password: z.string().min(10).max(128) });
+const credentials = z.object({ email: z.email().max(200).transform(s => s.toLowerCase()), password: z.string().min(6).max(128) });
 
 @Injectable()
 export class Auth {

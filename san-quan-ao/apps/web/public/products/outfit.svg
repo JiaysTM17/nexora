@@ -1,1 +1,161 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750" viewBox="0 0 600 600"><defs><linearGradient id="fabric" x1="0" x2="1" y2="1"><stop stop-color="#f3ecdb"/><stop offset=".5" stop-color="#d4c4a8"/><stop offset="1" stop-color="#e8deca"/></linearGradient><linearGradient id="brown" x2="1" y2=".5"><stop stop-color="#9d7b5d"/><stop offset=".5" stop-color="#745740"/><stop offset="1" stop-color="#927357"/></linearGradient><filter id="shadow"><feDropShadow dx="6" dy="14" stdDeviation="12" flood-color="#655a47" flood-opacity=".16"/></filter><pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 1H6M1 0V6" stroke="#ffffff" stroke-opacity=".08" stroke-width=".6"/></pattern></defs><rect x="0" y="-75" width="600" height="750" fill="#e6dfcf"/><ellipse cx="300" cy="514" rx="150" ry="22" fill="#504431" opacity=".04"/><path d="M390 -75H600V675H520Z" fill="#d9d0ba" opacity=".4"/><path d="M0 440L600 340V365L0 465Z" fill="#fff" opacity=".17"/><g transform="translate(17,-77) scale(.94)"><g filter="url(#shadow)"><path d="M213 130L263 112 300 132 337 112 388 130 451 197 403 242 372 211 380 431Q300 453 220 431L228 211 197 242 149 197Z" fill="url(#fabric)" stroke="#bcae96" stroke-width="1.5"/><path d="M263 112L300 132 276 176 247 139M337 112L300 132 324 176 353 139" fill="#ece2cc" stroke="#bcae96" stroke-width="1.4"/><path d="M300 158V437M228 211L244 396M372 211L356 396M241 426Q300 437 359 426" fill="none" stroke="#bcad93" stroke-width="1.2"/><path d="M319 198H350V240Q334 250 319 240Z" fill="none" stroke="#bcad93"/><circle cx="300" cy="188" r="2.2" fill="#9d8c72"/><circle cx="300" cy="226" r="2.2" fill="#9d8c72"/><circle cx="300" cy="264" r="2.2" fill="#9d8c72"/><circle cx="300" cy="302" r="2.2" fill="#9d8c72"/><circle cx="300" cy="340" r="2.2" fill="#9d8c72"/><circle cx="300" cy="378" r="2.2" fill="#9d8c72"/><circle cx="300" cy="416" r="2.2" fill="#9d8c72"/><path d="M205 163L177 193M395 163L423 193" stroke="#f5eedf" fill="none" stroke-width="2"/></g></g><g transform="translate(9,230) scale(.95,.66)"><g filter="url(#shadow)"><path d="M233 116Q300 125 367 116L381 203 365 480 307 480 299 253 286 480 226 480 218 203Z" fill="url(#brown)" stroke="#6c503c" stroke-width="2"/><path d="M234 138Q300 147 366 138M299 142V253M255 158L241 469M343 158L345 469M229 177L254 153M372 177L347 153" fill="none" stroke="#b99a7e" stroke-width="1.5"/><path d="M228 468H285M309 468H364" stroke="#5f4735" stroke-width="2"/><circle cx="302" cy="132" r="3" fill="#5a4434"/></g></g><path d="M80 490Q70 290 130 100" fill="none" stroke="#93997a" stroke-width="3"/><g fill="#a0a588"><ellipse cx="101" cy="230" rx="13" ry="43" transform="rotate(-25 101 230)"/><ellipse cx="116" cy="168" rx="12" ry="40" transform="rotate(25 116 168)"/><ellipse cx="87" cy="312" rx="12" ry="38" transform="rotate(-35 87 312)"/></g><rect x="0" y="-75" width="600" height="750" fill="url(#grain)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+  <defs>
+    <linearGradient id="linen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4eee1"/>
+      <stop offset="50%" stop-color="#d9cbb1"/>
+      <stop offset="100%" stop-color="#c9b99d"/>
+    </linearGradient>
+    <linearGradient id="trousers" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#8d7560"/>
+      <stop offset="45%" stop-color="#7a6552"/>
+      <stop offset="100%" stop-color="#5a4737"/>
+    </linearGradient>
+    <linearGradient id="leather" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4a3b32"/>
+      <stop offset="50%" stop-color="#3d3028"/>
+      <stop offset="100%" stop-color="#2d221c"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#3d3028" flood-opacity="0.12"/>
+    </filter>
+    <filter id="subtleShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#3d3028" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Editorial ground shadow -->
+  <ellipse cx="200" cy="468" rx="110" ry="12" fill="#3d3028" opacity="0.06"/>
+  <ellipse cx="200" cy="468" rx="70" ry="6" fill="#3d3028" opacity="0.05"/>
+
+  <!-- TROUSERS (Quần suông nâu) -->
+  <g filter="url(#softShadow)">
+    <!-- Main trouser legs and waist -->
+    <path d="M 152 225
+             C 165 224, 235 224, 248 225
+             C 254 260, 258 310, 266 448
+             C 255 450, 222 450, 212 448
+             C 207 380, 204 310, 200 292
+             C 196 310, 193 380, 188 448
+             C 178 450, 145 450, 134 448
+             C 142 310, 146 260, 152 225 Z"
+          fill="url(#trousers)" stroke="#524133" stroke-width="1.2" stroke-linejoin="round"/>
+
+    <!-- Waistband -->
+    <path d="M 152 225 C 168 222, 232 222, 248 225 L 247 240 C 232 238, 168 238, 153 240 Z"
+          fill="#6b5745" stroke="#524133" stroke-width="1"/>
+
+    <!-- Belt loops -->
+    <line x1="166" y1="224" x2="166" y2="239" stroke="#524133" stroke-width="2"/>
+    <line x1="192" y1="223" x2="192" y2="238" stroke="#524133" stroke-width="2"/>
+    <line x1="208" y1="223" x2="208" y2="238" stroke="#524133" stroke-width="2"/>
+    <line x1="234" y1="224" x2="234" y2="239" stroke="#524133" stroke-width="2"/>
+
+    <!-- Trouser double pleats & crease lines -->
+    <!-- Left leg pleat & crease -->
+    <path d="M 172 239 C 170 270, 166 340, 164 444" fill="none" stroke="#524133" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M 180 239 C 182 258, 183 275, 184 290" fill="none" stroke="#524133" stroke-width="0.8" stroke-dasharray="2 3"/>
+
+    <!-- Right leg pleat & crease -->
+    <path d="M 228 239 C 230 270, 234 340, 236 444" fill="none" stroke="#524133" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M 220 239 C 218 258, 217 275, 216 290" fill="none" stroke="#524133" stroke-width="0.8" stroke-dasharray="2 3"/>
+
+    <!-- Fly stitch detail -->
+    <path d="M 200 240 L 200 278 C 196 278, 193 274, 193 268" fill="none" stroke="#524133" stroke-width="1.2"/>
+
+    <!-- Hem turn-up / cuffs -->
+    <line x1="135" y1="440" x2="187" y2="440" stroke="#524133" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="213" y1="440" x2="265" y2="440" stroke="#524133" stroke-width="1" stroke-dasharray="3 2"/>
+  </g>
+
+  <!-- LEATHER BELT -->
+  <g filter="url(#subtleShadow)">
+    <path d="M 152 230 C 168 227, 232 227, 248 230 L 248 236 C 232 233, 168 233, 152 236 Z"
+          fill="url(#leather)"/>
+    <!-- Minimalist brass buckle -->
+    <rect x="194" y="228" width="12" height="10" rx="1.5" fill="none" stroke="#d4af37" stroke-width="1.4"/>
+    <line x1="200" y1="228" x2="200" y2="238" stroke="#d4af37" stroke-width="1.4"/>
+  </g>
+
+  <!-- CREAM LINEN SHIRT (Sơ mi linen màu kem) -->
+  <g filter="url(#softShadow)">
+    <!-- Shirt body & sleeves -->
+    <path d="M 172 78
+             L 142 92
+             C 126 100, 102 118, 88 152
+             L 115 168
+             C 122 152, 134 142, 142 138
+             L 148 228
+             C 165 233, 235 233, 252 228
+             L 258 138
+             C 266 142, 278 152, 285 168
+             L 312 152
+             C 298 118, 274 100, 258 92
+             L 228 78
+             Z"
+          fill="url(#linen)" stroke="#baa88c" stroke-width="1.4" stroke-linejoin="round"/>
+
+    <!-- Relaxed rolled sleeve cuffs -->
+    <path d="M 88 152 L 115 168 L 119 159 L 93 144 Z" fill="#e5dac7" stroke="#baa88c" stroke-width="1"/>
+    <path d="M 312 152 L 285 168 L 281 159 L 307 144 Z" fill="#e5dac7" stroke="#baa88c" stroke-width="1"/>
+
+    <!-- Shirt Drape & Linen Texture Folds -->
+    <path d="M 148 138 C 152 170, 155 198, 158 226" fill="none" stroke="#c2b093" stroke-width="1" stroke-linecap="round"/>
+    <path d="M 252 138 C 248 170, 245 198, 242 226" fill="none" stroke="#c2b093" stroke-width="1" stroke-linecap="round"/>
+    <path d="M 168 218 C 182 224, 218 224, 232 218" fill="none" stroke="#baa88c" stroke-width="1.2"/>
+
+    <!-- Central Placket -->
+    <path d="M 194 108 L 194 229 L 206 229 L 206 108 Z" fill="#ede2ce" stroke="#baa88c" stroke-width="1"/>
+
+    <!-- Patch Pocket with stitch line -->
+    <path d="M 215 142 L 243 142 L 243 176 C 243 182, 215 182, 215 176 Z"
+          fill="#e8dcbf" stroke="#baa88c" stroke-width="1"/>
+    <path d="M 217 146 L 241 146" stroke="#baa88c" stroke-width="0.8" stroke-dasharray="2 2"/>
+
+    <!-- Buttons in #3d3028 with subtle detail -->
+    <circle cx="200" cy="124" r="3.2" fill="#3d3028"/>
+    <circle cx="200" cy="124" r="1.8" fill="#5c493c"/>
+    <circle cx="200" cy="150" r="3.2" fill="#3d3028"/>
+    <circle cx="200" cy="150" r="1.8" fill="#5c493c"/>
+    <circle cx="200" cy="176" r="3.2" fill="#3d3028"/>
+    <circle cx="200" cy="176" r="1.8" fill="#5c493c"/>
+    <circle cx="200" cy="202" r="3.2" fill="#3d3028"/>
+    <circle cx="200" cy="202" r="1.8" fill="#5c493c"/>
+
+    <!-- Inner Collar stand -->
+    <path d="M 174 78 C 182 72, 218 72, 226 78 L 222 92 C 214 88, 186 88, 178 92 Z"
+          fill="#cbb99b" stroke="#baa88c" stroke-width="1"/>
+
+    <!-- NEXORA Studio label tag -->
+    <rect x="189" y="80" width="22" height="7" rx="1" fill="#f4eee1" stroke="#baa88c" stroke-width="0.5"/>
+    <text x="200" y="85.5" font-family="'Segoe UI', sans-serif" font-size="3.5" font-weight="600" fill="#7a6552" text-anchor="middle" letter-spacing="0.5">NEXORA</text>
+
+    <!-- Collar flaps (Spread camp collar) -->
+    <!-- Left Collar -->
+    <path d="M 174 78 L 160 114 L 194 108 L 180 82 Z"
+          fill="#fbf7ee" stroke="#baa88c" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- Right Collar -->
+    <path d="M 226 78 L 240 114 L 206 108 L 220 82 Z"
+          fill="#fbf7ee" stroke="#baa88c" stroke-width="1.2" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ACCESSORIES: Minimalist leather sandals at hem -->
+  <g filter="url(#subtleShadow)">
+    <!-- Left sandal -->
+    <path d="M 144 455 C 144 450, 176 450, 176 455 C 176 463, 144 463, 144 455 Z" fill="#3d3028"/>
+    <path d="M 148 454 C 154 449, 166 449, 172 454" stroke="#7a6552" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Right sandal -->
+    <path d="M 224 455 C 224 450, 256 450, 256 455 C 256 463, 224 463, 224 455 Z" fill="#3d3028"/>
+    <path d="M 228 454 C 234 449, 246 449, 252 454" stroke="#7a6552" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Wireframe acetate sunglasses tucked on chest -->
+  <g transform="translate(200, 134) scale(0.65)" opacity="0.9">
+    <rect x="-16" y="0" width="14" height="9" rx="3" fill="#2d221c" stroke="#3d3028" stroke-width="1.2"/>
+    <rect x="2" y="0" width="14" height="9" rx="3" fill="#2d221c" stroke="#3d3028" stroke-width="1.2"/>
+    <line x1="-2" y1="3" x2="2" y2="3" stroke="#d4af37" stroke-width="1.2"/>
+  </g>
+
+  <!-- Subtle editorial label text -->
+  <text x="330" y="475" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="500" fill="#7a6552" letter-spacing="1.5">LOOK 01</text>
+  <line x1="330" y1="480" x2="368" y2="480" stroke="#d9cbb1" stroke-width="1"/>
+</svg>

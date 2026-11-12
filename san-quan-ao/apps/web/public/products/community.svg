@@ -1,1 +1,224 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="700" height="500" viewBox="0 0 700 500"><defs><linearGradient id="fabric" x1="0" x2="1" y2="1"><stop stop-color="#f3ecdb"/><stop offset=".5" stop-color="#d4c4a8"/><stop offset="1" stop-color="#e8deca"/></linearGradient><linearGradient id="brown" x2="1" y2=".5"><stop stop-color="#9d7b5d"/><stop offset=".5" stop-color="#745740"/><stop offset="1" stop-color="#927357"/></linearGradient><filter id="shadow"><feDropShadow dx="6" dy="14" stdDeviation="12" flood-color="#655a47" flood-opacity=".16"/></filter><pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 1H6M1 0V6" stroke="#ffffff" stroke-opacity=".08" stroke-width=".6"/></pattern></defs><rect x="0" width="700" height="500" fill="#253c32"/><g transform="translate(-40,-30) rotate(-8 220 250) scale(.7)"><rect x="70" y="30" width="420" height="570" fill="#e4ddcb"/><g filter="url(#shadow)"><path d="M213 130L263 112 300 132 337 112 388 130 451 197 403 242 372 211 380 431Q300 453 220 431L228 211 197 242 149 197Z" fill="url(#fabric)" stroke="#bcae96" stroke-width="1.5"/><path d="M263 112L300 132 276 176 247 139M337 112L300 132 324 176 353 139" fill="#ece2cc" stroke="#bcae96" stroke-width="1.4"/><path d="M300 158V437M228 211L244 396M372 211L356 396M241 426Q300 437 359 426" fill="none" stroke="#bcad93" stroke-width="1.2"/><path d="M319 198H350V240Q334 250 319 240Z" fill="none" stroke="#bcad93"/><circle cx="300" cy="188" r="2.2" fill="#9d8c72"/><circle cx="300" cy="226" r="2.2" fill="#9d8c72"/><circle cx="300" cy="264" r="2.2" fill="#9d8c72"/><circle cx="300" cy="302" r="2.2" fill="#9d8c72"/><circle cx="300" cy="340" r="2.2" fill="#9d8c72"/><circle cx="300" cy="378" r="2.2" fill="#9d8c72"/><circle cx="300" cy="416" r="2.2" fill="#9d8c72"/><path d="M205 163L177 193M395 163L423 193" stroke="#f5eedf" fill="none" stroke-width="2"/></g><text x="300" y="550" text-anchor="middle" fill="#5e6654" font-family="Georgia" font-size="22">a slower kind of day.</text></g><g transform="translate(290,50) rotate(9 200 200) scale(.65)"><rect x="90" y="40" width="420" height="570" fill="#e2e5d5"/><g filter="url(#shadow)"><path d="M233 116Q300 125 367 116L381 203 365 480 307 480 299 253 286 480 226 480 218 203Z" fill="url(#brown)" stroke="#6c503c" stroke-width="2"/><path d="M234 138Q300 147 366 138M299 142V253M255 158L241 469M343 158L345 469M229 177L254 153M372 177L347 153" fill="none" stroke="#b99a7e" stroke-width="1.5"/><path d="M228 468H285M309 468H364" stroke="#5f4735" stroke-width="2"/><circle cx="302" cy="132" r="3" fill="#5a4434"/></g><text x="300" y="550" text-anchor="middle" fill="#5e6654" font-family="Georgia" font-size="22">wear your own story.</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+  <defs>
+    <linearGradient id="commLinen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5eee3"/>
+      <stop offset="60%" stop-color="#d9cbb1"/>
+      <stop offset="100%" stop-color="#c6b69b"/>
+    </linearGradient>
+    <linearGradient id="commBrown" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#8e7762"/>
+      <stop offset="50%" stop-color="#7a6552"/>
+      <stop offset="100%" stop-color="#5a4738"/>
+    </linearGradient>
+    <linearGradient id="commDark" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#4a3c33"/>
+      <stop offset="60%" stop-color="#3d3028"/>
+      <stop offset="100%" stop-color="#2c221c"/>
+    </linearGradient>
+    <linearGradient id="commClay" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b66b52"/>
+      <stop offset="100%" stop-color="#934d37"/>
+    </linearGradient>
+    <filter id="commDrop" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#3d3028" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- Ground shadows for 3 figures -->
+  <g opacity="0.08">
+    <ellipse cx="110" cy="460" rx="35" ry="6" fill="#3d3028"/>
+    <ellipse cx="205" cy="462" rx="42" ry="7" fill="#3d3028"/>
+    <ellipse cx="300" cy="460" rx="36" ry="6" fill="#3d3028"/>
+  </g>
+
+  <!-- ==================== FIGURE 1 (LEFT): TAILORED BLAZER & LINEN TROUSERS ==================== -->
+  <g filter="url(#commDrop)">
+    <!-- Head & Hair Silhouette -->
+    <ellipse cx="110" cy="74" rx="11" ry="14" fill="url(#commDark)"/>
+    <!-- Bob hairstyle detail -->
+    <path d="M 98 70 C 97 86, 103 94, 107 95 C 108 92, 114 92, 115 95 C 119 94, 125 86, 124 70 C 122 58, 100 58, 98 70 Z" fill="url(#commDark)"/>
+    <!-- Slender Neck -->
+    <rect x="107" y="86" width="6" height="14" fill="#d9cbb1" opacity="0.9"/>
+
+    <!-- Wide linen trousers -->
+    <path d="M 96 230
+             L 124 230
+             L 132 448
+             L 115 449
+             L 110 300
+             L 105 449
+             L 88 448
+             Z"
+          fill="url(#commLinen)" stroke="#baa88c" stroke-width="0.8"/>
+    <!-- Trouser creases -->
+    <line x1="97" y1="240" x2="96" y2="444" stroke="#c4b397" stroke-width="0.9"/>
+    <line x1="123" y1="240" x2="124" y2="444" stroke="#c4b397" stroke-width="0.9"/>
+
+    <!-- Oversized Structured Blazer (Warm Brown #7a6552) -->
+    <path d="M 108 100
+             L 90 108
+             L 80 132
+             L 78 220
+             L 94 218
+             L 93 150
+             L 94 246
+             L 126 246
+             L 127 150
+             L 126 218
+             L 142 220
+             L 140 132
+             L 130 108
+             Z"
+          fill="url(#commBrown)" stroke="#5c493a" stroke-width="1" stroke-linejoin="round"/>
+
+    <!-- Blazer Lapels & V-neck -->
+    <path d="M 100 104 L 110 148 L 100 178 L 86 120 Z" fill="#695544" stroke="#524133" stroke-width="0.8"/>
+    <path d="M 120 104 L 110 148 L 120 178 L 134 120 Z" fill="#695544" stroke="#524133" stroke-width="0.8"/>
+    <!-- Horn buttons -->
+    <circle cx="114" cy="184" r="2.2" fill="#3d3028"/>
+    <circle cx="114" cy="204" r="2.2" fill="#3d3028"/>
+    <!-- Flap pocket lines -->
+    <line x1="88" y1="206" x2="98" y2="206" stroke="#524133" stroke-width="1.2"/>
+    <line x1="122" y1="206" x2="132" y2="206" stroke="#524133" stroke-width="1.2"/>
+
+    <!-- Structured Leather Handbag -->
+    <rect x="70" y="222" width="16" height="22" rx="2" fill="url(#commDark)" stroke="#221914" stroke-width="0.8"/>
+    <!-- Bag handle -->
+    <path d="M 74 222 C 74 212, 82 212, 82 222" fill="none" stroke="url(#commDark)" stroke-width="1.6"/>
+    <rect x="76" y="230" width="4" height="4" fill="#d4af37"/>
+
+    <!-- Shoes: Loafers -->
+    <rect x="88" y="448" width="16" height="7" rx="2" fill="url(#commDark)"/>
+    <rect x="116" y="448" width="16" height="7" rx="2" fill="url(#commDark)"/>
+  </g>
+
+  <!-- ==================== FIGURE 2 (CENTER): FLUID TRENCH & STATEMENT LAYER ==================== -->
+  <g filter="url(#commDrop)">
+    <!-- Head & Editorial Sleek Bun Silhouette -->
+    <ellipse cx="205" cy="56" rx="10" ry="13" fill="url(#commDark)"/>
+    <!-- Sleek chignon on top -->
+    <circle cx="205" cy="42" r="5" fill="url(#commDark)"/>
+    <!-- Slender Neck -->
+    <rect x="202" y="68" width="6" height="16" fill="#d9cbb1" opacity="0.9"/>
+    <!-- Minimalist collarbone line -->
+    <line x1="198" y1="84" x2="212" y2="84" stroke="#c0af94" stroke-width="0.8"/>
+
+    <!-- High-waisted wide trousers (#7a6552) -->
+    <path d="M 193 186
+             L 217 186
+             L 226 448
+             L 211 449
+             L 205 270
+             L 199 449
+             L 184 448
+             Z"
+          fill="url(#commBrown)" stroke="#524133" stroke-width="0.9"/>
+    <!-- Trouser center crease -->
+    <line x1="192" y1="200" x2="191" y2="444" stroke="#685342" stroke-width="0.9"/>
+    <line x1="218" y1="200" x2="219" y2="444" stroke="#685342" stroke-width="0.9"/>
+
+    <!-- Inner Terracotta Clay Top (#a15b43) -->
+    <path d="M 198 84 L 212 84 L 214 186 L 196 186 Z" fill="url(#commClay)" stroke="#7e3c27" stroke-width="0.6"/>
+
+    <!-- Long Fluid Linen Duster / Trench Coat (Cream #d9cbb1) -->
+    <!-- Left panel -->
+    <path d="M 200 84
+             L 182 92
+             L 168 126
+             L 162 230
+             L 174 226
+             L 174 150
+             L 170 398
+             L 196 394
+             L 196 100
+             Z"
+          fill="url(#commLinen)" stroke="#baa88c" stroke-width="1" stroke-linejoin="round"/>
+
+    <!-- Right panel -->
+    <path d="M 210 84
+             L 228 92
+             L 242 126
+             L 248 230
+             L 236 226
+             L 236 150
+             L 240 398
+             L 214 394
+             L 214 100
+             Z"
+          fill="url(#commLinen)" stroke="#baa88c" stroke-width="1" stroke-linejoin="round"/>
+
+    <!-- Coat lapels -->
+    <path d="M 198 86 L 186 130 L 196 170 L 194 92 Z" fill="#f5eee3" stroke="#baa88c" stroke-width="0.8"/>
+    <path d="M 212 86 L 224 130 L 214 170 L 216 92 Z" fill="#f5eee3" stroke="#baa88c" stroke-width="0.8"/>
+
+    <!-- Tie belt hanging loose -->
+    <path d="M 188 184 C 184 210, 185 240, 183 260" fill="none" stroke="#baa88c" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 222 184 C 226 210, 225 240, 227 260" fill="none" stroke="#baa88c" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Shoes: Pointed mules / boots -->
+    <path d="M 183 450 L 199 450 L 196 456 L 181 454 Z" fill="url(#commDark)"/>
+    <path d="M 211 450 L 227 450 L 229 454 L 214 456 Z" fill="url(#commDark)"/>
+  </g>
+
+  <!-- ==================== FIGURE 3 (RIGHT): MOCK NECK KNIT & PLEATED SKIRT ==================== -->
+  <g filter="url(#commDrop)">
+    <!-- Head & Soft Waves Silhouette -->
+    <ellipse cx="300" cy="70" rx="10.5" ry="13.5" fill="url(#commDark)"/>
+    <!-- Elegant hair curve -->
+    <path d="M 290 66 C 288 84, 292 94, 296 95 C 298 90, 306 90, 308 95 C 313 90, 316 78, 314 65 C 310 54, 292 54, 290 66 Z" fill="url(#commDark)"/>
+    <!-- Slender Neck -->
+    <rect x="297" y="82" width="6" height="12" fill="#d9cbb1" opacity="0.9"/>
+
+    <!-- Mock Neck Knit Top (Deep Espresso #3d3028) -->
+    <path d="M 296 92
+             L 304 92
+             L 310 98
+             L 326 112
+             L 332 206
+             L 322 208
+             L 318 140
+             L 316 205
+             L 284 205
+             L 282 140
+             L 278 208
+             L 268 206
+             L 274 112
+             L 290 98
+             Z"
+          fill="url(#commDark)" stroke="#261d18" stroke-width="0.9" stroke-linejoin="round"/>
+    <!-- Mock neck collar -->
+    <rect x="295" y="88" width="10" height="6" rx="1" fill="#4d3d33" stroke="#261d18" stroke-width="0.7"/>
+
+    <!-- Pleated A-line Midi Skirt (Cream / Ecru #d9cbb1) -->
+    <path d="M 284 205
+             L 316 205
+             L 336 385
+             L 264 385
+             Z"
+          fill="url(#commLinen)" stroke="#baa88c" stroke-width="1" stroke-linejoin="round"/>
+    <!-- Accordion Pleat Lines -->
+    <line x1="288" y1="205" x2="273" y2="384" stroke="#c0af94" stroke-width="0.9"/>
+    <line x1="294" y1="205" x2="285" y2="384" stroke="#c0af94" stroke-width="0.9"/>
+    <line x1="300" y1="205" x2="300" y2="384" stroke="#c0af94" stroke-width="0.9"/>
+    <line x1="306" y1="205" x2="315" y2="384" stroke="#c0af94" stroke-width="0.9"/>
+    <line x1="312" y1="205" x2="327" y2="384" stroke="#c0af94" stroke-width="0.9"/>
+
+    <!-- Crossbody Bag strap & pouch in #7a6552 -->
+    <path d="M 288 108 L 322 222" stroke="url(#commBrown)" stroke-width="1.8"/>
+    <rect x="316" y="218" width="14" height="11" rx="2" fill="url(#commBrown)" stroke="#524133" stroke-width="0.8"/>
+
+    <!-- High Leather Boots (#7a6552) -->
+    <!-- Left boot -->
+    <path d="M 288 382 L 298 382 L 297 448 L 285 448 Z" fill="url(#commBrown)" stroke="#524133" stroke-width="0.8"/>
+    <rect x="284" y="448" width="14" height="6" rx="1.5" fill="url(#commDark)"/>
+    <!-- Right boot -->
+    <path d="M 302 382 L 312 382 L 315 448 L 303 448 Z" fill="url(#commBrown)" stroke="#524133" stroke-width="0.8"/>
+    <rect x="303" y="448" width="14" height="6" rx="1.5" fill="url(#commDark)"/>
+  </g>
+
+  <!-- Editorial Top Label & Starburst Accent -->
+  <g opacity="0.6">
+    <text x="200" y="24" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="600" fill="#7a6552" text-anchor="middle" letter-spacing="2.5">NEXORA OOTD COMMUNITY</text>
+    <line x1="80" y1="32" x2="320" y2="32" stroke="#d9cbb1" stroke-width="0.6" stroke-dasharray="3 3"/>
+  </g>
+</svg>

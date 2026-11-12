@@ -13,6 +13,7 @@
     "test:integration": "pnpm --filter @mac/api test:integration",
     "db:generate": "pnpm --filter @mac/database generate",
     "db:migrate": "pnpm --filter @mac/database migrate",
+    "db:push": "pnpm --filter @mac/database push",
     "db:seed": "pnpm --filter @mac/database seed",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down"
