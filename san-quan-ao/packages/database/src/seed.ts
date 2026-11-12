@@ -265,7 +265,43 @@ async function main() {
     });
   }
 
-  console.log('Demo seed ready: 2 active shops (NÉP Studio, Lụa & Co), 4 products, 24 SKUs, 1 tagged outfit.');
+  // 8. Trade-In & VAS Care samples
+  if (normalUser) {
+    await db.tradeInRequest.upsert({
+      where: { id: 'tradein-demo-1' },
+      create: {
+        id: 'tradein-demo-1',
+        userId: normalUser.id,
+        brand: 'NÉP Studio',
+        itemName: 'Áo khoác Blazer Linen',
+        category: 'Áo khoác',
+        conditionNote: 'Mới 95%, ít mặc, còn nguyên khuy dự phòng.',
+        grade: 'A',
+        estimatedValue: 1200000,
+        finalValue: 150000,
+        voucherCode: 'NXTI-DEMO50',
+        status: 'APPROVED',
+      },
+      update: {},
+    });
+    await db.careBooking.upsert({
+      where: { id: 'care-demo-1' },
+      create: {
+        id: 'care-demo-1',
+        userId: normalUser.id,
+        itemName: 'Túi xách da bê tối giản',
+        serviceType: 'LEATHER_RESTORE',
+        zipSealCode: 'NX-SEAL-DEMO01',
+        insuredValue: 15000000,
+        fee: 475000,
+        status: 'OPTICAL_CHECK',
+        notes: 'Dưỡng ẩm bề mặt da và vệ sinh khóa kim loại.',
+      },
+      update: {},
+    });
+  }
+
+  console.log('Demo seed ready: 2 active shops (NÉP Studio, Lụa & Co), 4 products, 24 SKUs, 1 tagged outfit, Trade-In & VAS Care samples.');
   console.log('Credentials: admin@nexora.vn / admin123 | user@nexora.vn / user123');
 }
 

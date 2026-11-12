@@ -214,6 +214,14 @@ test('trade-in 2-round appraisal and vas-care zip-seal booking work end-to-end',
   assert.equal(inspected.status, 201);
   assert.equal(inspected.body.status, 'APPROVED');
   assert.ok(String(inspected.body.voucherCode).startsWith('NXTI-'));
+  // Redeem Trade-In voucher at checkout, then verify second use fails
+  await f.buyer.call('/cart', 'POST', { variantId: f.variant.id, quantity: 1 });
+  const tiQuote = await f.buyer.call('/checkout/quote', 'POST', { addressId: f.buyer.address.id, vouchers: {}, tradeInCode: inspected.body.voucherCode });
+  assert.equal(tiQuote.status, 201);
+  assert.ok(tiQuote.body.data.platformDiscount > 0);
+  assert.equal((await place(f.buyer, tiQuote.body.id)).status, 201);
+  await f.buyer.call('/cart', 'POST', { variantId: f.variant.id, quantity: 1 });
+  assert.equal((await f.buyer.call('/checkout/quote', 'POST', { addressId: f.buyer.address.id, vouchers: {}, tradeInCode: inspected.body.voucherCode })).status, 409);
   // VAS Care booking -> Zip-seal code generated -> Admin updates White-glove status
   const care = await f.buyer.call('/vas-care', 'POST', { itemName: 'Túi da bê mini', serviceType: 'LEATHER_RESTORE', insuredValue: 20000000, notes: 'Dưỡng ẩm da' });
   assert.equal(care.status, 201);
