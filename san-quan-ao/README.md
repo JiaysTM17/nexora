@@ -1,6 +1,6 @@
-# Mặc — Sàn quần áo và cộng đồng phối đồ
+# NEXORA — Sàn thời trang và cộng đồng phối đồ OOTD
 
-Ứng dụng đang được triển khai theo [kế hoạch đã chốt](../KE-HOACH-XAY-DUNG-SAN-QUAN-AO-VA-CONG-DONG.md). Đây là bản phát triển local, chưa đủ điều kiện mở bán. Danh sách hoàn thành, giới hạn và các bước tiếp theo nằm trong [IMPLEMENTATION.md](IMPLEMENTATION.md).
+Ứng dụng được triển khai theo bộ hồ sơ thiết kế và phân tích nghiệp vụ **NEXORA**. Đây là bản phát triển local đầy đủ luồng lõi (Catalog, Biến thể & Kho giữ chỗ, Giỏ hàng đa shop, Báo giá & Đặt hàng COD, Theo dõi vận đơn, Đánh giá sản phẩm, Đổi size / Hoàn trả, Sổ cái & Voucher Seller, Cộng đồng OOTD gắn tag tọa độ, Quản trị sàn).
 
 ## Chạy trên máy mới
 
@@ -34,12 +34,14 @@ pnpm dev
 
 Mật khẩu chung `MacLocal2026!`. Đây là dữ liệu phát triển, không gửi email hay thanh toán thật.
 
-| Vai trò | Email |
-|---|---|
-| Người mua | buyer@mac.local |
-| Shop Nếp Studio | seller.a@mac.local |
-| Shop Mộc Everyday | seller.b@mac.local |
-| Quản trị sàn | admin@mac.local |
+| Vai trò | Email | Mật khẩu |
+|---|---|---|
+| Quản trị NEXORA | admin@nexora.vn | admin123 |
+| Người mua NEXORA | user@nexora.vn | user123 |
+| Người mua demo | buyer@mac.local | MacLocal2026! |
+| Shop NÉP Studio | seller.a@mac.local | MacLocal2026! |
+| Shop Lụa & Co / Mộc Everyday | seller.b@mac.local | MacLocal2026! |
+| Quản trị sàn | admin@mac.local | MacLocal2026! |
 
 Seed chạy lại không ghi đè dữ liệu đang thử. Có 2 shop, 4 mẫu, 24 SKU, 1 bài phối đồ gắn 2 sản phẩm và 1 địa chỉ mẫu. Áo sơ mi màu đen chỉ còn L với tồn 1. Voucher `CHAO50` của Nếp giảm 50.000đ cho đơn từ 400.000đ. Hình minh họa SVG được viết riêng cho bộ dữ liệu mẫu.
 
@@ -65,8 +67,9 @@ CI đã được khai báo trong `.github/workflows/ci.yml` để dùng khi thư
 5. Đăng xuất qua `/dang-nhap`, đăng nhập seller A. Vào cổng shop, xác nhận → đóng gói → xuất mô phỏng. Seller A không nhìn thấy đơn con B.
 6. Đăng nhập admin, mở Giao hàng mô phỏng, chọn Đã giao. Gửi lặp không tăng tiền COD lần hai.
 7. Buyer có thể thích, bình luận, lưu và báo cáo bài. Admin xử lý báo cáo, ẩn bài và xem nhật ký.
+8. Sau khi đơn `DELIVERED`, buyer có thể đánh giá sản phẩm và gửi yêu cầu đổi size / hoàn trả; seller duyệt yêu cầu, quản lý voucher và xem sổ cái ví shop.
 
-Chức năng đổi size/hoàn/tranh chấp, quyết toán đầy đủ và tích hợp live còn trong backlog. Không coi các bảng dữ liệu nền là tính năng đã triển khai.
+Các tích hợp đối tác thực tế (GHN/VNPAY/AI Vision Trade-In/VAS Care) sử dụng cấu hình mô phỏng cho môi trường local.
 
 ## Cấu trúc
 
