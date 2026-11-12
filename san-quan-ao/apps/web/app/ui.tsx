@@ -13,7 +13,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const refresh = () => { api<PublicUser>('/auth/me').then(setUser).catch(() => setUser(null)); };
   useEffect(refresh, []);
-  useEffect(() => setOpen(false), [path]);
+  useEffect(() => {
+    setOpen(false);
+    const ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref && ref.length <= 100) localStorage.setItem('nexora_ref', ref);
+  }, [path]);
   return <UserContext.Provider value={{ user, refresh }}>
     <div className="announcement">NEXORA — HỆ SINH THÁI THỜI TRANG & CỘNG ĐỒNG PHỐI ĐỒ THẾ HỆ MỚI <span>Khám phá ngay ↗</span></div>
     <header className="header"><Link href="/" className="logo" aria-label="NEXORA, trang chủ"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '30px', width: 'auto' }} /></Link>

@@ -30,7 +30,7 @@ export default function Cart() {
   }
   async function order() {
     if (!quote) return; setBusy(true); setError('');
-    try { await api('/orders', 'POST', { quoteId: quote.id, idempotencyKey: key.current }); router.push('/don-hang'); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+    try { const ref = localStorage.getItem('nexora_ref'); await api('/orders', 'POST', { quoteId: quote.id, idempotencyKey: key.current, ...(ref ? { refUserId: ref } : {}) }); localStorage.removeItem('nexora_ref'); router.push('/don-hang'); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
   if (cart.loading) return <Loading/>;
   if (cart.error) return <section className="section"><Notice error>{cart.error}</Notice><Link className="button" href="/dang-nhap">Đăng nhập</Link></section>;

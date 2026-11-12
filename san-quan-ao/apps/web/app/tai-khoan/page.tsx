@@ -3,7 +3,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LogOut, MapPin, Package, RefreshCw, ShieldCheck } from 'lucide-react';
-import { api, CareBooking, TradeInRequest, useResource, vnd } from '../api';
+import { api, AffiliateSummary, CareBooking, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
 type Address = { id: string; recipient: string; phone: string; line: string; province: string };
@@ -14,6 +14,7 @@ export default function AccountPage() {
   const addresses = useResource<Address[]>(user ? '/addresses' : null);
   const tradeIns = useResource<TradeInRequest[]>(user ? '/trade-in' : null);
   const careList = useResource<CareBooking[]>(user ? '/vas-care' : null);
+  const affiliate = useResource<AffiliateSummary>(user ? '/affiliate/summary' : null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -80,6 +81,26 @@ export default function AccountPage() {
           <strong>{addresses.data?.length ?? 0} địa chỉ</strong>
         </div>
       </div>
+
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12 }}>
+          <h2>Ví Hoa hồng KOC (Affiliate · Giữ 15 ngày)</h2>
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => void navigator.clipboard?.writeText(`${window.location.origin}/?ref=${user.id}`)}
+          >
+            Sao chép link giới thiệu
+          </button>
+        </div>
+        <p className="subtle" style={{ fontSize: 12 }}>Link giới thiệu: <code>/?ref={user.id}</code> (Nhận 5% hoa hồng đơn giao thành công)</p>
+        <div className="stats" style={{ margin: '12px 0' }}>
+          <div><small>TẠM GIỮ 15 NGÀY</small><strong>{vnd(affiliate.data?.held ?? 0)}</strong></div>
+          <div><small>KHẢ DỤNG</small><strong>{vnd(affiliate.data?.available ?? 0)}</strong></div>
+          <div><small>ĐÃ HỦY (HOÀN ĐƠN)</small><strong>{vnd(affiliate.data?.cancelled ?? 0)}</strong></div>
+          <div><small>ĐƠN GIỚI THIỆU</small><strong>{affiliate.data?.items.length ?? 0}</strong></div>
+        </div>
+      </article>
 
       <article className="panel">
         <div className="row between" style={{ marginBottom: 12 }}>

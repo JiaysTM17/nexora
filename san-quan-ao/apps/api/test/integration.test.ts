@@ -175,9 +175,9 @@ test('database-driven expiration is idempotent and preserves confirmed orders', 
   assert.equal((await db.inventoryBalance.findUniqueOrThrow({where:{variantId:g.variant.id}})).reserved,1);
 });
 test('reviews, return/refund flow and seller vouchers/ledger enforce rules end-to-end', async () => {
-  const f = await fixture(), admin = await account('ADMIN');
+  const f = await fixture(), admin = await account('ADMIN'), koc = await account();
   const q = await quote(f.buyer, f.variant.id);
-  const placed = await place(f.buyer, q.id);
+  const placed = await f.buyer.call('/orders', 'POST', { quoteId: q.id, idempotencyKey: randomUUID(), refUserId: koc.user.id });
   const so = placed.body.shops[0];
   const itemId = so.items[0].id;
   // Cannot review before DELIVERED
@@ -187,10 +187,16 @@ test('reviews, return/refund flow and seller vouchers/ledger enforce rules end-t
   await f.seller.call(`/seller/shops/${f.shop.id}/orders/${so.id}/transition`, 'POST', { status: 'SHIPPED' });
   const shipment = await db.shipment.findUniqueOrThrow({ where: { shopOrderId: so.id } });
   await admin.call(`/admin/mock/shipments/${shipment.id}/event`, 'POST', { externalId: randomUUID(), status: 'DELIVERED' });
+  // Verify KOC Affiliate earning is HELD and PDPD waybill is masked for seller
+  const affHeld = await koc.call('/affiliate/summary');
+  assert.equal(affHeld.status, 200);
+  assert.ok(affHeld.body.held > 0);
+  const sellerOrders = await f.seller.call(`/seller/shops/${f.shop.id}/orders`);
+  assert.match(sellerOrders.body[0].order.address.line, /PDPD/);
   // Review succeeds once delivered, duplicate blocked
   assert.equal((await f.buyer.call('/reviews', 'POST', { orderItemId: itemId, rating: 5, body: 'Vải linen rất mát và đứng phom' })).status, 201);
   assert.equal((await f.buyer.call('/reviews', 'POST', { orderItemId: itemId, rating: 4, body: 'Đánh giá lặp' })).status, 409);
-  // Buyer requests refund, seller approves & completes -> ledger debited & status RETURNED
+  // Buyer requests refund, seller approves & completes -> ledger debited, status RETURNED, affiliate CANCELLED
   const ret = await f.buyer.call(`/orders/shops/${so.id}/returns`, 'POST', { kind: 'REFUND', reason: 'Không vừa vai áo', items: [{ orderItemId: itemId, quantity: 1 }] });
   assert.equal(ret.status, 201);
   assert.equal((await f.seller.call(`/seller/shops/${f.shop.id}/returns/${ret.body.id}/decision`, 'POST', { status: 'APPROVED' })).status, 201);
@@ -199,6 +205,8 @@ test('reviews, return/refund flow and seller vouchers/ledger enforce rules end-t
   const ledger = await f.seller.call(`/seller/shops/${f.shop.id}/ledger`);
   assert.equal(ledger.status, 200);
   assert.ok(ledger.body.entries.some((e: { kind: string }) => e.kind === 'REFUND_DEBIT'));
+  assert.ok(ledger.body.entries.some((e: { kind: string }) => e.kind === 'TAX_WITHHOLDING_VAT_PIT'));
+  assert.equal((await koc.call('/affiliate/summary')).body.held, 0);
   // Seller creates voucher
   const vRes = await f.seller.call(`/seller/shops/${f.shop.id}/vouchers`, 'POST', { code: `NX${randomUUID().slice(0, 6).toUpperCase()}`, amount: 30000, minimum: 200000, maxUses: 10, daysValid: 15 });
   assert.equal(vRes.status, 201);
