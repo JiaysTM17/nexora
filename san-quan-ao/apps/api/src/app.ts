@@ -7,6 +7,7 @@ import { CatalogController } from './catalog';
 import { Commerce, CommerceController } from './commerce';
 import { CommunityController } from './community';
 import { AdminController } from './admin';
+import { AdminServicesController, CareController, TradeInController } from './services';
 
 @Global()
 @Module({ providers: [Db, Auth, SignedIn, AdminOnly], exports: [Db, Auth, SignedIn, AdminOnly] })
@@ -16,10 +17,11 @@ class CoreModule {}
 @Module({ controllers: [CommerceController], providers: [Commerce] }) class CommerceModule {}
 @Module({ controllers: [CommunityController] }) class CommunityModule {}
 @Module({ controllers: [AdminController] }) class AdminModule {}
+@Module({ controllers: [TradeInController, CareController, AdminServicesController] }) class ServicesModule {}
 @Controller('health')
 class HealthController {
   constructor(@Inject(Db) private db: Db) {}
   @Get() async health() { await this.db.$queryRaw`SELECT 1`; return { status: 'ok', database: 'postgresql', shipping: process.env.SHIPPING_PROVIDER, payment: 'COD' }; }
 }
-@Module({ imports: [CoreModule, AccountsModule, CatalogModule, CommerceModule, CommunityModule, AdminModule, ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }])], controllers: [HealthController], providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }] })
+@Module({ imports: [CoreModule, AccountsModule, CatalogModule, CommerceModule, CommunityModule, AdminModule, ServicesModule, ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }])], controllers: [HealthController], providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }] })
 export class AppModule {}
