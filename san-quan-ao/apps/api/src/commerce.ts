@@ -59,7 +59,7 @@ export class Commerce {
       return tx.checkoutQuote.create({ data: { userId, addressId, voucherCodes: codes, data: json(data), fingerprint: hash(JSON.stringify(data)), expiresAt: new Date(Date.now() + 10 * 60000) } });
     });
   }
-  async order(userId: string, quoteId: string, key: string) {
+  async order(userId: string, quoteId: string, key: string, refUserId?: string) {
     return serial(this.db, async tx => {
       const existing = await tx.order.findUnique({ where: { userId_idempotencyKey: { userId, idempotencyKey: key } }, include: orderInclude });
       if (existing) {
@@ -79,7 +79,8 @@ export class Commerce {
         const changed = await tx.$executeRaw`UPDATE "InventoryBalance" SET "reserved" = "reserved" + ${item.quantity} WHERE "variantId" = ${item.variantId} AND "onHand" - "reserved" >= ${item.quantity}`;
         if (!changed) throw new ConflictException({ code: 'OUT_OF_STOCK', message: `${item.name} vừa hết hàng`, variantId: item.variantId });
       }
-      const order = await tx.order.create({ data: { code: `NX-${randomUUID().slice(0, 8).toUpperCase()}`, userId, quoteId, idempotencyKey: key, total: current.total, platformDiscount: current.platformDiscount ?? 0, address: json(current.address) } });
+      const validRef = refUserId && refUserId !== userId ? (await tx.user.findUnique({ where: { id: refUserId }, select: { id: true } }))?.id : undefined;
+      const order = await tx.order.create({ data: { code: `NX-${randomUUID().slice(0, 8).toUpperCase()}`, userId, quoteId, idempotencyKey: key, total: current.total, platformDiscount: current.platformDiscount ?? 0, ...(validRef ? { affiliateUserId: validRef } : {}), address: json(current.address) } });
       if (current.tradeInCode) {
         const redeemed = await tx.tradeInRequest.updateMany({ where: { voucherCode: current.tradeInCode, userId, status: 'APPROVED', redeemedOrderId: null }, data: { redeemedOrderId: order.id } });
         if (redeemed.count !== 1) throw new ConflictException(`Mã Trade-In ${current.tradeInCode} vừa được sử dụng`);
@@ -153,8 +154,8 @@ export class CommerceController {
     return this.commerce.quote(req.user.id, data.addressId, codes);
   }
   @Post('orders') createOrder(@Req() req: Authed, @Body() body: unknown) {
-    const data = z.object({ quoteId: id, idempotencyKey: z.string().min(16).max(100) }).strict().parse(body);
-    return this.commerce.order(req.user.id, data.quoteId, data.idempotencyKey);
+    const data = z.object({ quoteId: id, idempotencyKey: z.string().min(16).max(100), refUserId: id.optional() }).strict().parse(body);
+    return this.commerce.order(req.user.id, data.quoteId, data.idempotencyKey, data.refUserId);
   }
   @Get('orders') orders(@Req() req: Authed) { return this.db.order.findMany({ where: { userId: req.user.id }, include: orderInclude, take: 50, orderBy: { createdAt: 'desc' } }); }
   @Get('orders/:id') async orderDetail(@Req() req: Authed, @Param('id') orderId: string) {
@@ -296,7 +297,10 @@ export class CommerceController {
           });
         }
         const shopOrderId = rr.items[0]?.orderItem.shopOrderId;
-        if (shopOrderId) await tx.shopOrder.update({ where: { id: shopOrderId }, data: { status: 'RETURNED' } });
+        if (shopOrderId) {
+          await tx.shopOrder.update({ where: { id: shopOrderId }, data: { status: 'RETURNED' } });
+          await tx.affiliateEarning.updateMany({ where: { shopOrderId, status: 'HELD' }, data: { status: 'CANCELLED' } });
+        }
       }
       await tx.auditLog.create({ data: { actorId: req.user.id, action: `RETURN_${status}`, entityId: rr.id, data: { shopId } } });
       return tx.returnRequest.update({ where: { id: rr.id }, data: { status }, include: { items: true } });
@@ -328,6 +332,12 @@ export class CommerceController {
     await this.auth.shop(req.user.id, shopId, false);
     const entries = await this.db.sellerLedgerEntry.findMany({ where: { shopId }, orderBy: { createdAt: 'desc' }, take: 100 });
     const balance = entries.reduce((s, e) => s + e.amount, 0);
-    return { balance, entries };
+    const escrowCutoff = new Date(Date.now() - 7 * 86400000);
+    const recentDelivered = await this.db.shopOrder.findMany({ where: { shopId, status: 'DELIVERED', deliveredAt: { gt: escrowCutoff } }, select: { total: true } });
+    const openReturns = await this.db.returnRequest.findMany({ where: { shopId, status: { in: ['REQUESTED', 'APPROVED'] } }, include: { items: true } });
+    const held = recentDelivered.reduce((s, o) => s + o.total, 0);
+    const disputed = openReturns.reduce((s, r) => s + r.items.reduce((x, i) => x + i.refundAmount, 0), 0);
+    const available = Math.max(0, balance - held - disputed);
+    return { balance, available, held, disputed, entries };
   }
 }

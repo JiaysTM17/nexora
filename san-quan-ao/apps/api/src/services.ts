@@ -196,3 +196,23 @@ export class AdminServicesController {
     });
   }
 }
+
+@Controller('affiliate')
+@UseGuards(SignedIn)
+export class AffiliateController {
+  constructor(@Inject(Db) private db: Db) {}
+
+  @Get('summary')
+  async summary(@Req() req: Authed) {
+    const items = await this.db.affiliateEarning.findMany({
+      where: { kocUserId: req.user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+    const now = new Date();
+    const held = items.filter(i => i.status === 'HELD' && i.holdUntil > now).reduce((s, i) => s + i.amount, 0);
+    const available = items.filter(i => i.status === 'AVAILABLE' || (i.status === 'HELD' && i.holdUntil <= now)).reduce((s, i) => s + i.amount, 0);
+    const cancelled = items.filter(i => i.status === 'CANCELLED').reduce((s, i) => s + i.amount, 0);
+    return { held, available, cancelled, items };
+  }
+}

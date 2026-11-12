@@ -7,7 +7,7 @@ import { CatalogController } from './catalog';
 import { Commerce, CommerceController } from './commerce';
 import { CommunityController } from './community';
 import { AdminController } from './admin';
-import { AdminServicesController, CareController, TradeInController } from './services';
+import { AdminServicesController, AffiliateController, CareController, TradeInController } from './services';
 
 @Global()
 @Module({ providers: [Db, Auth, SignedIn, AdminOnly], exports: [Db, Auth, SignedIn, AdminOnly] })
@@ -17,7 +17,7 @@ class CoreModule {}
 @Module({ controllers: [CommerceController], providers: [Commerce] }) class CommerceModule {}
 @Module({ controllers: [CommunityController] }) class CommunityModule {}
 @Module({ controllers: [AdminController] }) class AdminModule {}
-@Module({ controllers: [TradeInController, CareController, AdminServicesController] }) class ServicesModule {}
+@Module({ controllers: [TradeInController, CareController, AdminServicesController, AffiliateController] }) class ServicesModule {}
 @Controller('health')
 class HealthController {
   constructor(@Inject(Db) private db: Db) {}

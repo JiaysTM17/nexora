@@ -38,7 +38,7 @@ export class AdminController {
     if (process.env.SHIPPING_PROVIDER !== 'mock') throw new NotFoundException();
     const data = z.object({ externalId: z.string().min(10).max(100), status: z.enum(['DELIVERED', 'DELIVERY_FAILED', 'RETURNED']) }).strict().parse(body);
     return serial(this.db, async tx => {
-      const shipment = await tx.shipment.findUnique({ where: { id: shipmentId }, include: { shopOrder: true } });
+      const shipment = await tx.shipment.findUnique({ where: { id: shipmentId }, include: { shopOrder: { include: { order: { select: { affiliateUserId: true } } } } } });
       if (!shipment || shipment.provider !== 'mock') throw new NotFoundException();
       const duplicate = await tx.providerEvent.findUnique({ where: { provider_externalId: { provider: 'mock', externalId: data.externalId } } });
       if (duplicate) {
@@ -54,8 +54,24 @@ export class AdminController {
       await tx.shopOrder.update({ where: { id: shipment.shopOrderId }, data: { status: data.status, ...(data.status === 'DELIVERED' ? { deliveredAt: new Date() } : {}) } });
       if (data.status === 'DELIVERED') {
         const order = shipment.shopOrder;
+        const netSales = Math.max(0, order.subtotal - order.discount);
         await tx.sellerLedgerEntry.create({ data: { shopId: order.shopId, shopOrderId: order.id, kind: 'COD_COLLECTED_BY_CARRIER', amount: order.total, sourceKey: `cod:${order.id}` } });
-        await tx.sellerLedgerEntry.create({ data: { shopId: order.shopId, shopOrderId: order.id, kind: 'PLATFORM_FEE_RECEIVABLE', amount: Math.round((order.subtotal - order.discount) * order.feeBps / 10000), sourceKey: `fee:${order.id}` } });
+        await tx.sellerLedgerEntry.create({ data: { shopId: order.shopId, shopOrderId: order.id, kind: 'PLATFORM_FEE_RECEIVABLE', amount: Math.round(netSales * order.feeBps / 10000), sourceKey: `fee:${order.id}` } });
+        await tx.sellerLedgerEntry.create({ data: { shopId: order.shopId, shopOrderId: order.id, kind: 'TAX_WITHHOLDING_VAT_PIT', amount: -Math.round(netSales * 150 / 10000), sourceKey: `tax:${order.id}` } });
+        if (order.order.affiliateUserId && netSales > 0) {
+          await tx.affiliateEarning.create({
+            data: {
+              kocUserId: order.order.affiliateUserId,
+              shopOrderId: order.id,
+              amount: Math.round(netSales * 500 / 10000),
+              status: 'HELD',
+              holdUntil: new Date(Date.now() + 15 * 86400000),
+            },
+          });
+        }
+      }
+      if (data.status === 'RETURNED') {
+        await tx.affiliateEarning.updateMany({ where: { shopOrderId: shipment.shopOrderId, status: 'HELD' }, data: { status: 'CANCELLED' } });
       }
       // RETURNED goods await inspection; no automatic restock.
       await tx.auditLog.create({ data: { actorId: req.user.id, action: `MOCK_${data.status}`, entityId: shipmentId, data: json(data) } });
