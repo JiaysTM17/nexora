@@ -63,6 +63,7 @@ model User {
   reviews      Review[]
   tradeIns     TradeInRequest[]
   careBookings CareBooking[]
+  affiliateEarnings AffiliateEarning[]
 }
 model Session {
   id        String @id @default(cuid())
@@ -234,6 +235,7 @@ model Order {
   idempotencyKey   String
   total            Int
   platformDiscount Int @default(0)
+  affiliateUserId  String?
   paymentMethod    String @default("COD")
   address        Json
   createdAt      DateTime @default(now())
@@ -474,4 +476,15 @@ model CareBooking {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   @@index([userId, createdAt])
+}
+model AffiliateEarning {
+  id          String @id @default(cuid())
+  kocUserId   String
+  kocUser     User @relation(fields: [kocUserId], references: [id])
+  shopOrderId String @unique
+  amount      Int
+  status      String @default("HELD")
+  holdUntil   DateTime
+  createdAt   DateTime @default(now())
+  @@index([kocUserId, status])
 }
