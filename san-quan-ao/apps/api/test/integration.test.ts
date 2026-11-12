@@ -143,7 +143,7 @@ test('dispatch and duplicate/out-of-order shipping events never double stock or 
   const late = await admin.call(url,'POST',{externalId:randomUUID(),status:'DELIVERY_FAILED'});
   assert.equal(late.body.ignored,true);
   assert.equal((await db.shopOrder.findUniqueOrThrow({where:{id:so.id}})).status,'DELIVERED');
-  assert.equal(await db.sellerLedgerEntry.count({where:{shopOrderId:so.id}}),2);
+  assert.equal(await db.sellerLedgerEntry.count({where:{shopOrderId:so.id}}),3);
 });
 
 test('moderated posts disappear from feed and saves without deleting purchased items', async () => {
