@@ -144,6 +144,11 @@ export class CommerceController {
     return this.commerce.order(req.user.id, data.quoteId, data.idempotencyKey);
   }
   @Get('orders') orders(@Req() req: Authed) { return this.db.order.findMany({ where: { userId: req.user.id }, include: orderInclude, take: 50, orderBy: { createdAt: 'desc' } }); }
+  @Get('orders/:id') async orderDetail(@Req() req: Authed, @Param('id') orderId: string) {
+    const order = await this.db.order.findFirst({ where: { id: orderId, userId: req.user.id }, include: orderInclude });
+    if (!order) throw new NotFoundException('Không tìm thấy đơn hàng');
+    return order;
+  }
   @Post('orders/shops/:id/cancel') cancel(@Req() req: Authed, @Param('id') shopOrderId: string) { return this.commerce.cancel(req.user.id, shopOrderId); }
   @Get('seller/shops/:shopId/orders') async sellerOrders(@Req() req: Authed, @Param('shopId') shopId: string) {
     await this.auth.shop(req.user.id, shopId, false);
