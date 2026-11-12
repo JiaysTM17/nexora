@@ -242,7 +242,7 @@ test('trade-in 2-round appraisal and vas-care zip-seal booking work end-to-end',
 test('KOC affiliate attribution, 15-day hold and idempotent release', async () => {
   const f = await fixture(), koc = await account('USER'), admin = await account('ADMIN');
   const q = await quote(f.buyer, f.variant.id);
-  const placed = await f.buyer.call('/orders', 'POST', { quoteId: q.id, idempotencyKey: randomUUID(), paymentMethod: 'COD', affiliateUserId: koc.user.id });
+  const placed = await f.buyer.call('/orders', 'POST', { quoteId: q.id, idempotencyKey: randomUUID(), refUserId: koc.user.id });
   assert.equal(placed.status, 201);
   const so = placed.body.shops[0];
   for (const status of ['CONFIRMED', 'PACKED', 'SHIPPED']) {
