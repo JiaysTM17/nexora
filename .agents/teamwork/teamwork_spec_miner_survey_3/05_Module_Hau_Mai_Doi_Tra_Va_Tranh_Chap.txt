@@ -1,0 +1,840 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT MODULE HẬU MÃI: QUY TRÌNH ĐỒNG KIỂM, RETURNLESS REFUND & XỬ LÝ TRANH CHẤP
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-REV-05 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT MODULE HẬU MÃI: QUY TRÌNH ĐỒNG KIỂM, RETURNLESS REFUND & XỬ LÝ TRANH CHẤP
+Phạm vi: Shopee Đồng kiểm khi nhận, thuật toán hoàn tiền không cần trả hàng, No Box No Label PUDO & SLA 48h
+====================================================================
+PHÂN TÍCH NGHIỆP VỤ HẬU MÃI, ĐỔI TRẢ, HOÀN TIỀN & TRỌNG TÀI TRANH CHẤP
+(REVERSE LOGISTICS, CO-INSPECTION, RETURNLESS REFUND, DROP-OFF, FRAUD INVESTIGATION & HARDWARE REPAIR SPECIFICATIONS)
+• Mã phân hệ: MOD-REV-LOGISTICS
+• Mã tài liệu: 05_HAU_MAI_DOI_TRA_HOAN_TIEN_TRANH_CHAP.md
+• Bộ chuẩn đo lường quốc tế & nội địa (Benchmark References):
+• Apple Store: 14-day In-store Return Flow, Device Serial Validation, Activation Lock / Find My Security Binding, Genius Bar 6-8 Stage Hardware Repair Lifecycle, System Configuration Cloud Calibration, Loaner Device Program.
+• Amazon USA: No-Box No-Label Drop-off Network (Kohl's/Whole Foods), Algorithmic Returnless Refund Economic Model ($NetSalvage \le 0$), DOT/PHMSA & FAA Hazmat Regulations (Damaged Lithium-Ion Battery Return Prohibition).
+• Swiftronics USA: Strict Serial/IMEI Traceability, Anti-Device Swap Inspection Depot, Restocking Fee Policy (15-20% for unsealed remorse returns).
+• Shopee VN: Quy chế Shopee Đồng Kiểm tại chỗ (Ranh giới kiểm ngoại quan vs Cấm xé seal NSX), Đổi trả qua mạng lưới PUDO bưu cục đối tác, Xác thực giao hàng bằng mã PIN/OTP cho đơn công nghệ cao.
+• TikTok Shop VN: Auto-Approve SLA 48 giờ đối với Người bán, Chế tài cộng điểm phạt vi phạm cửa hàng (Shop Violation Points), Đối soát dữ liệu cân nặng bưu tá 3 bên ($\Delta W > 15\text{g}$).
+• Khung Pháp lý Việt Nam: Điều 174 Bộ luật Hình sự (Tội lừa đảo chiếm đoạt tài sản đối với gian lận $\ge 2.000.000$ VNĐ), Phối hợp nghiệp vụ điều tra cùng Cục An ninh mạng và phòng, chống tội phạm sử dụng công nghệ cao (A05 - Bộ Công an).
+• Tài liệu gốc đối chiếu: phan-tich-nghiep-vu-website-ban-hang.md (Chương 16, 17, 23, 29, 33, 41; DT-01 đến DT-10, HU-01 đến HU-07, VC-01 đến VC-09).
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN
+1. TỔNG QUAN KIẾN TRÚC LOGISTICS NGƯỢC, HẬU MÃI & QUẢN TRỊ RỦI RO THẾ HỆ MỚI
+2. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 1: RET-COINSPECT — QUY TRÌNH ĐỒNG KIỂM NGOẠI QUAN KHI GIAO NHẬN HÀNG HÓA
+3. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 2: RET-DROPOFF — ĐỔI TRẢ TỰ PHỤC VỤ NO-BOX NO-LABEL TẠI ĐIỂM TIẾP NHẬN ĐỐI TÁC
+4. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 3: RET-RETURNLESS — THUẬT TOÁN HOÀN TIỀN KHÔNG CẦN TRẢ HÀNG & QUY ĐỊNH HÀNG NGUY HIỂM HAZMAT
+5. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 4: RET-DISPUTE — XỬ LÝ KHIẾU NẠI, TRANH CHẤP ĐA PHƯƠNG & TRỌNG TÀI SÀN SLA 48 GIỜ
+6. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 5: RET-FRAUD-SERIAL — ĐIỀU TRA GIAN LẬN ĐỔI TRẢ THIẾT BỊ CÔNG NGHỆ CAO, TRÁO SERIAL/DUMMY & CHẾ TÀI PHÁP LÝ
+7. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 6: RET-REPAIR-TRACK — QUẢN LÝ VÒNG ĐỜI BẢO HÀNH PHẦN CỨNG & CỔNG TRA CỨU TIẾN ĐỘ SỬA CHỮA CHUẨN GENIUS BAR
+8. MA TRẬN CHUYỂN DỊCH TRẠNG THÁI & CHỈ SỐ NFR LIÊN PHÂN HỆ
+9. THIẾT KẾ CƠ SỞ DỮ LIỆU POSTGRESQL 16+ & HỢP ĐỒNG API CHO PHÂN HỆ HẬU MÃI
+————————————————————————————————————————————————————————————————————
+1. TỔNG QUAN KIẾN TRÚC LOGISTICS NGƯỢC, HẬU MÃI & QUẢN TRỊ RỦI RO THẾ HỆ MỚI
+Trong thương mại điện tử truyền thống (phản ánh tại Chương 17 của tài liệu gốc DT-01 - DT-10), quy trình hậu mãi diễn ra theo phương thức tuyến tính thủ công: Khách nhận hàng -> Khách báo lỗi qua tổng đài/ticket -> Đóng gói bưu kiện gửi bưu điện -> Hàng về kho người bán -> Nhân viên kho kiểm tra thủ công -> Kế toán duyệt lệnh chuyển khoản hoàn tiền. Quy trình này thường kéo dài từ 7 đến 21 ngày làm việc, gây bức xúc lớn cho khách hàng, gia tăng chi phí vận hành kho và tỷ lệ khiếu nại tiêu cực. Đặc biệt, đối với nhóm ngành hàng công nghệ cao (Điện thoại thông minh, Máy tính bảng, Laptop, Thiết bị đeo thông minh), sàn TMĐT phải đối mặt với hai nguy cơ sống còn:
+1. Thiệt hại từ các thủ đoạn gian lận đổi trả tinh vi: Tráo số Serial/IMEI, gửi bưu kiện hộp rỗng dán chì cân nặng, tráo máy mô hình trưng bày (dummy unit), bóc ruột linh kiện zin (part harvesting).
+2. Khủng hoảng vận hành dịch vụ bảo hành phần cứng: Khách hàng hoàn toàn mất dấu thiết bị khi gửi bảo hành, thời gian sửa chữa mập mờ, thiếu linh kiện chính hãng và xung đột cảnh báo phần cứng không chính hãng ("Unknown Part") của nhà sản xuất.
+Bộ đặc tả nâng cấp Milestone 5 thiết lập một kiến trúc Logistics Ngược Thông Minh & Quản Trị Rủi Ro Hậu Mãi Toàn Diện (Automated, Fraud-Resilient & Intelligent Reverse Logistics) với 6 trụ cột nghiệp vụ khép kín:
+--- TABLE START ---
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐│                   KIẾN TRÚC TỔNG THỂ PHÂN HỆ HẬU MÃI, ĐỔI TRẢ & BẢO HÀNH THẾ HỆ MỚI              │├────────────────────────────────┬────────────────────────────────┬────────────────────────────────┤│ 1. PHÒNG NGỪA TẠI CỬA NHÀ     │ 2. ĐỔI TRẢ TỰ PHỤC VỤ KHÔNG RÀO │ 3. TỐI ƯU KINH TẾ & QUY CHUẨN ││    [RET-COINSPECT]             │    CẢN [RET-DROPOFF]            │    HÀNG NGUY HIỂM HAZMAT       ││ • Kiểm ngoại quan hộp bưu kiện │ • Quét mã QR tiếp nhận trong   │    [RET-RETURNLESS]            ││ • CẤM xé seal NSX, CẤM bật máy │   60 giây tại điểm PUDO đối tác│ • Thuật toán NetSalvage <= 0 & ││ • Từ chối tại chỗ không tốn phí│ • Kiểm tra Activation Lock     │   Trust Score >= 75: Hoàn tiền ││ • Hoàn tiền tức thì đơn online │ • Hoàn tiền tạm ứng sớm trong  │   100% không thu hồi.          ││ • Triệt tiêu rủi ro hàng vỡ/sai│   2-4 giờ (Trust Score >= 70)  │ • PIN PHỒNG/CHÁY NỔ: CẤM GỬI   ││                                │ • Đóng gói niêm phong gaylord  │   BƯU ĐIỆN THEO LUẬT -> Thu hồi││                                │   chuẩn hóa về kho tổng        │   tại điểm rác thải điện tử.   │├────────────────────────────────┼────────────────────────────────┼────────────────────────────────┤│ 4. TRỌNG TÀI ĐA PHƯƠNG & BỘ ĐẾM│ 5. ĐIỀU TRA GIAN LẬN TRÁO MÁY  │ 6. QUẢN LÝ VÒNG ĐỜI SỬA CHỮA   ││    SLA 48H [RET-DISPUTE]       │    & CHUYỂN GIAO HÌNH SỰ       │    PHẦN CỨNG CHUẨN GENIUS BAR  ││ • TikTok Shop Auto-Approve 48h │    [RET-FRAUD-SERIAL]          │    [RET-REPAIR-TRACK]          ││   nếu Người bán không phản hồi │ • Bóc hộp dưới camera CCTV HD  │ • Máy trạng thái sửa chữa 8    ││ • Phạt 2 điểm vi phạm cửa hàng │ • Đối soát Serial/IMEI bo mạch │   giai đoạn chuẩn Apple Care   ││ • Đối soát 3 bên: Video đóng   │ • Cân nặng 3PL lệch >15g cảnh  │ • Hiệu chuẩn cấu hình hệ thống ││   hàng + Video mở hộp + Trọng  │   báo đỏ rạch tráo bưu kiện    │   (System Configuration Calib) ││   lượng trạm trung chuyển 3PL  │ • Đóng băng hoàn tiền gian lận │ • Chương trình cấp máy dùng tạm││ • Trọng tài ra phán quyết trong│ • Quỹ bồi thường người bán SPF │   (Loaner Phone Program)       ││   72 giờ làm việc              │ • Hồ sơ Điều 174 BLHS & A05 BCA│ • Cổng tra cứu tiến độ SMS/Zalo│└────────────────────────────────┴────────────────────────────────┴────────────────────────────────┘
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+2. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 1: RET-COINSPECT — QUY TRÌNH ĐỒNG KIỂM NGOẠI QUAN KHI GIAO NHẬN HÀNG HÓA
+2.1. Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: RET-COINSPECT (Định danh kỹ thuật: REV-COINSPECT-01)
+• Tên nghiệp vụ: Quy trình Đồng kiểm Ngoại quan khi Giao nhận Hàng hóa (Doorstep Co-Inspection Protocol)
+• Tương đương thực tế: Shopee Đồng Kiểm, Lazada Đồng Kiểm, SPX Delivery Handover Protocol.
+• Quan hệ hệ thống hiện hữu: Bổ sung và nâng cấp toàn diện cho Chương 15 (DH-04 - Xác nhận giao hàng) và Chương 29 (VC-05 - Giao nhận tận nơi).
+2.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Cho phép người mua kiểm tra ngoại quan gói hàng trước mặt bưu tá tại thời điểm giao hàng nhằm xác định đúng sản phẩm, đủ số lượng, không bị bể vỡ do vận chuyển.
+• Ngăn ngừa tình trạng tráo hàng, hàng giả, hàng rỗng ruột (brick-in-the-box).
+• Thiết lập ranh giới kiểm tra ngoại quan nghiêm ngặt: CẤM TUYỆT ĐỐI XÉ SEAL NHÀ SẢN XUẤT HOẶC BẬT NGUỒN DÙNG THỬ nhằm bảo vệ giá trị thương mại của thiết bị điện tử.
+• Cung cấp biên bản điện tử và bằng chứng hình ảnh tức thì để xác định trách nhiệm thuộc về Người bán, Hãng vận chuyển hay Người mua.
+• Tác nhân tham gia:
+• Người mua (Buyer): Trực tiếp mở bao bì bưu chính bên ngoài và kiểm tra sản phẩm trước mặt bưu tá.
+• Bưu tá giao hàng (Courier/Shipper): Nhân viên hãng vận chuyển đối tác (SPX Express, GHN, Viettel Post, J&T) giám sát việc mở hộp, chụp ảnh bằng chứng và xác nhận kết quả trên ứng dụng tài xế (Driver App).
+• Hệ thống Quản lý Vận chuyển & Giao vận (Fulfillment & Shipping Management System - FSMS): Tiếp nhận webhook kết quả đồng kiểm, kích hoạt phân luồng giao dịch.
+• Cổng Thanh toán / Kế toán (Payment Gateway / Escrow Ledger Engine): Xử lý lệnh hoàn tiền tự động 100% nếu đồng kiểm thất bại.
+2.3. Điều kiện tiên quyết (Preconditions)
+1. Đơn hàng thuộc danh mục phương thức vận chuyển tiêu chuẩn có hỗ trợ đồng kiểm (SPX Standard, GHN, Viettel Post). Đơn hàng hỏa tốc nội đô ghép xe ôm công nghệ giao ngay trong 1-2h hoặc hàng thực phẩm tươi sống không áp dụng đồng kiểm tại chỗ.
+2. Đơn hàng không thuộc danh mục hàng hóa loại trừ:
+• Thẻ cào điện thoại, voucher giấy, thẻ nạp game, vé sự kiện.
+• Hàng cá nhân hóa theo yêu cầu (ốp lưng in ảnh cá nhân, máy tính khắc tên laser).
+• Sản phẩm người lớn, đồ lót, đồ bơi (vì lý do vệ sinh và bảo mật riêng tư).
+3. Giá trị đơn hàng: Áp dụng cho các đơn hàng có tổng giá trị thanh toán $\le 10.000.000$ VNĐ. Đối với các đơn hàng điện tử cao cấp $> 10.000.000$ VNĐ, áp dụng quy trình Đồng kiểm VIP có ghi hình camera bưu tá và xác thực mã OTP 2 chiều.
+4. Kiện hàng đang ở trạng thái OUT_FOR_DELIVERY (Đang giao hàng) và bao bì bưu chính bên ngoài chưa bị rách nát trước khi bưu tá trao cho người mua.
+2.4. Luồng xử lý chính từng bước (Main Flow)
+--- TABLE START ---
+[Bưu tá giao kiện hàng đến địa chỉ người nhận]                     │                     ▼[Người mua yêu cầu thực hiện "Đồng Kiểm"]                     │                     ▼[Bưu tá mở Driver App -> Bấm "Bắt đầu Đồng Kiểm" (Ghi nhận Timestamp & Tọa độ GPS)]                     │                     ▼[Bưu tá hoặc Người mua rạch lớp bao bì/thùng carton bưu chính bên ngoài]                     │                     ▼[Kiểm tra ranh giới ngoại quan: Đủ số lượng? Đúng màu? Đúng model? Hộp không móp vỡ?]  (QUY TẮC BẤT DI BẤT DỊCH: TUYỆT ĐỐI CẤM BÓC SEAL HÃNG, CẤM BẬT NGUỒN, CẤM DÙNG THỬ)                     │       ┌─────────────┴─────────────┐       ▼                           ▼[TRƯỜNG HỢP A: HỢP LỆ & NGUYÊN VẸN] [TRƯỜNG HỢP B: BỂ VỠ / SAI HÀNG / NGHI TRÁO]       │                           │       ▼                           ▼[Khách đọc mã PIN giao hàng 4-6 số [Bưu tá mở Driver App chọn: "REJECT_CO_INSPECTION"] hoặc ký nhận trên màn hình App]   │       │                           ▼       ▼                           [Bắt buộc chụp 3 góc ảnh hiện trường phân giải cao:[Bưu tá thu COD (nếu có) -> Bấm    (1) Tem AWB bưu kiện, (2) Toàn cảnh kiện hàng mở, "Giao hàng thành công"]           (3) Cận cảnh vết móp vỡ hoặc sai lệch model]       │                           │       ▼                           ▼[Hệ thống cập nhật trạng thái đơn: [Bưu tá dùng "Băng keo Đồng kiểm chuyên dụng" dán niêm DELIVERED_COINSPECTED]            phong lại toàn bộ kiện hàng trước mặt khách hàng]       │                           │       ▼                           ▼[Giải phóng tiền vào Escrow; Bắt   [Hủy ngay nghĩa vụ thu tiền COD của tài xế] đầu đếm thời gian đổi trả 7-15d]  │                                   ▼                                   [Kiện hàng lập tức chuyển trạng thái:                                    RETURNING_COINSPECT_REJECTED (Chuyển hoàn ngay)]                                   │                                   ▼                                   [Hệ thống kích hoạt hoàn tiền tự động 100% về                                    phương thức thanh toán ban đầu trong vòng 02 giờ]
+--- TABLE END ---
+• Bước 1 (Tiếp cận & Yêu cầu đồng kiểm): Bưu tá đến địa chỉ nhận hàng, xuất trình kiện hàng có dán tem phụ ghi rõ biểu tượng "ĐƠN HÀNG ĐƯỢC ĐỒNG KIỂM". Người mua thông báo yêu cầu thực hiện mở kiểm tra ngoại quan.
+• Bước 2 (Kích hoạt phiên đồng kiểm điện tử): Bưu tá mở Driver App, chọn đơn hàng tương ứng và bấm nút "Bắt đầu đồng kiểm". Ứng dụng tự động lưu vết con dấu thời gian (Timestamp) và tọa độ địa lý GPS thực tế. Đồng hồ đếm ngược phiên làm việc 5 phút bắt đầu hiển thị trên màn hình.
+• Bước 3 (Thực hiện mở bao bì bưu chính): Bưu tá hoặc người mua dùng kéo/dao rọc giấy rạch đường băng keo dán thùng carton bên ngoài hoặc xé túi ni-lông niêm phong chuyển phát của hãng vận chuyển. Rút sản phẩm và hộp bán lẻ bên trong ra để đối chiếu với thông tin đơn hàng trên ứng dụng di động:
+• So sánh số lượng sản phẩm vật lý với phiếu đóng gói (Packing Slip) hoặc danh sách sản phẩm trên App.
+• So khớp thương hiệu, tên model, phiên bản bộ nhớ và màu sắc in trên vỏ hộp bán lẻ của nhà sản xuất (Ví dụ: iPhone 16 Pro Max 256GB Desert Titanium).
+• Kiểm tra tình trạng cơ lý của vỏ hộp: Hộp có bị đè bẹp góc nghiêm trọng, rách thủng, dập nát hoặc có dấu hiệu thấm nước/chảy hóa chất hay không.
+• Bước 4 (Đánh giá kết quả & Phân nhánh):
+• Nhánh A (Đồng kiểm Thành công): Sản phẩm đúng model, đủ số lượng, vỏ hộp nguyên vẹn tem seal của nhà sản xuất. Khách hàng đồng ý nhận hàng. Bưu tá thu tiền COD (nếu có). Người mua cung cấp mã PIN giao hàng 4-6 số hoặc ký nhận điện tử trên màn hình Driver App. Bưu tá bấm "Giao hàng thành công có đồng kiểm". Đơn hàng chuyển sang trạng thái DELIVERED_COINSPECTED.
+• Nhánh B (Đồng kiểm Thất bại - Bể vỡ, sai hàng, móp nát): Người mua tuyên bố từ chối nhận hàng. Chuyển sang Bước 5 xử lý từ chối tại hiện trường.
+• Bước 5 (Quy trình từ chối nhận tại hiện trường - At-The-Door Rejection Protocol):
+• Bưu tá chọn lý do từ chối trên Driver App: REJECT_COINSPECT_DAMAGED (Hàng móp vỡ/biến dạng), REJECT_COINSPECT_WRONG_ITEM (Giao sai mẫu mã/màu sắc), hoặc REJECT_COINSPECT_MISSING_QUANTITY (Thiếu số lượng món).
+• Bưu tá bắt buộc sử dụng camera của Driver App để chụp 03 bức ảnh hiện trường chuẩn mực:
+1. Ảnh 1: Chụp cận cảnh rõ nét tem nhãn mã vận đơn (AWB) trên vỏ bưu kiện bên ngoài.
+2. Ảnh 2: Chụp toàn cảnh bưu kiện đã mở kèm toàn bộ sản phẩm bên trong đặt cạnh bao bì gốc.
+3. Ảnh 3: Chụp cận cảnh điểm nứt vỡ, móp méo nghiêm trọng hoặc tem nhãn model bị sai lệch so với đơn hàng.
+• Bưu tá thu hồi toàn bộ sản phẩm và phụ kiện, đặt lại vào bưu kiện. Bưu tá sử dụng cuộn Băng dính Niêm phong Đồng kiểm Chuyên dụng có in logo của hãng vận chuyển (SPX / GHN / Viettel Post) để dán kín lại kiện hàng trước sự chứng kiến của người mua.
+• Bưu tá bấm "Xác nhận từ chối đồng kiểm". Toàn bộ nghĩa vụ thu tiền COD của tài xế bị hủy bỏ tức thì trên hệ thống điều vận.
+• Kiện hàng tự động chuyển trạng thái sang RETURNING_COINSPECT_REJECTED (Chuyển hoàn bưu cục).
+• Hệ thống Quản trị Thanh toán nhận webhook và tự động kích hoạt lệnh hoàn tiền 100% (gồm tiền hàng + cước vận chuyển ban đầu) về phương thức thanh toán của người mua trong vòng 02 giờ làm việc, không bắt người mua phải chờ kiện hàng chuyển hoàn về tới kho người bán.
+2.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+AF-01: Người mua vi phạm ranh giới đồng kiểm (Cố tình xé seal nhà sản xuất hoặc bật nguồn máy)
+• Tình huống: Trong lúc bưu tá đang thao tác hoặc sơ ý, người mua tự ý dùng dao rạch đứt tem niêm phong giấy kéo rút (Pull-tab seal của Apple) hoặc bóc lớp màng co nilon bảo vệ hộp máy, hoặc cắm sạc/bật nguồn điện thoại để kiểm tra hệ điều hành.
+• Xử lý hệ thống & nghiệp vụ:
+• Bưu tá lập tức dừng phiên đồng kiểm và thông báo khách hàng đã vi phạm điều khoản quy chế đồng kiểm sàn TMĐT.
+• Bưu tá bấm nút "Khách vi phạm xé seal nhà sản xuất / Dùng thử thiết bị" (VIOLATION_UNSEALED_BY_BUYER) trên Driver App và chụp cận cảnh tem seal đã bị rách.
+• Quy tắc cưỡng chế nhận hàng: Hệ thống tự động khóa tính năng từ chối nhận hàng tại chỗ. Đơn hàng chuyển sang trạng thái bắt buộc: MANDATORY_DELIVERED.
+• Khách hàng bắt buộc phải ký nhận và thanh toán tiền đơn hàng (bao gồm tiền COD nếu có). Bưu tá không được phép nhận lại chiếc máy đã mất seal tại hiện trường.
+• Nếu khách hàng phát hiện thiết bị bên trong bị lỗi chức năng sau khi mở hộp, khách hàng phải tiếp nhận sản phẩm và chuyển sang quy trình Yêu cầu Đổi trả / Bảo hành sau nhận hàng (RMA) thông thường trên ứng dụng, đồng thời bắt buộc phải cung cấp video mở hộp (Unboxing video) đầy đủ.
+EF-01: Phát hiện dấu hiệu rỗng ruột hoặc tráo hàng bưu chính tại thời điểm đồng kiểm
+• Tình huống: Khi người mua rạch thùng carton bên ngoài, hai bên phát hiện bên trong chỉ có gạch đá, giấy vụn vụn, chai nước hoặc hộp điện thoại rỗng không có máy bên trong (mặc dù nhãn bưu kiện bên ngoài vẫn dán đúng tên người nhận).
+• Xử lý:
+• Bưu tá không được phép rời khỏi hiện trường. Bưu tá bấm nút "Sự cố an ninh bưu chính / Nghi vấn tráo hàng" (SECURITY_TAMPER_INCIDENT).
+• Hệ thống lập tức khởi tạo Phiếu điều tra an ninh khẩn cấp cấp độ 1 (Critical Security Incident Ticket).
+• Bưu tá gọi điện thoại xác nhận với Giám sát điều vận bưu cục. Kiện hàng được dán băng dính niêm phong an ninh màu đỏ (SECURITY_VOID_SEAL), bưu tá mang về bưu cục trung chuyển để cân lại trọng lượng thực tế đối soát với trọng lượng quét lúc nhập trạm gốc.
+• Hệ thống đóng băng 100% dòng tiền của đơn hàng để mở cuộc điều tra chuỗi cung ứng logistics. Người mua được hoàn tiền 100% ngay trong vòng 24 giờ sau khi bưu cục xác nhận biên bản sự cố.
+EF-02: Bưu tá gây khó dễ hoặc ép buộc khách hàng không cho đồng kiểm
+• Tình huống: Bưu tá đến giao đơn hàng có nhãn "ĐƯỢC ĐỒNG KIỂM" nhưng từ chối cho khách mở hộp (đe dọa bỏ đi hoặc bắt khách phải ký nhận và trả tiền trước mới cho mở).
+• Xử lý:
+• Người mua có quyền kiên quyết từ chối nhận hàng và gọi ngay đến Hotline Tổng đài CSKH bấm phím 1 (Hỗ trợ khẩn cấp giao hàng).
+• Tổng đài viên kiểm tra trạng thái đơn hàng trên hệ thống OMS. Nếu xác nhận đơn hàng đủ điều kiện đồng kiểm nhưng bưu tá vi phạm:
+• Tổng đài viên kích hoạt lệnh điều chuyển đơn hàng sang bưu tá khác giao lại trong vòng 24 giờ.
+• Hệ thống tự động ghi nhận biên bản vi phạm quy chế dịch vụ vận chuyển (SLA Carrier Penalty) đối với đối tác giao vận, xử phạt bưu tá vi phạm theo khung chế tài thỏa thuận.
+2.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. BR-COINSPECT-01 (Giới hạn Phân định Thao tác Đồng kiểm Hợp lệ vs Bị cấm):
+$$\text{Thao tác Hợp lệ} = \{\text{Rạch thùng carton ngoài}, \text{Tháo màng xốp bong bóng}, \text{Đếm số lượng món}, \text{So khớp model/màu sắc vỏ hộp}, \text{Soi nứt vỡ ngoại quan}\}$$
+$$\text{Thao tác Tuyệt đối Cấm} = \{\text{Xé màng co nilon hộp}, \text{Xé tem niêm phong seal NSX}, \text{Mở nắp hộp máy}, \text{Bật nguồn/Cắm sạc}, \text{Lắp SIM/Thẻ nhớ}, \text{Đăng nhập iCloud/Google}\}$$
+Căn cứ kinh tế - kỹ thuật: Thiết bị công nghệ một khi đã bị rách seal niêm phong hoặc bật nguồn kích hoạt hệ thống sẽ lập tức mất từ 15% đến 30% giá trị thương mại (chuyển từ hàng New 100% sang Open-Box / Refurbished). Nếu cho phép khách bóc seal xem máy rồi từ chối nhận vì "không thích màu thực tế", người bán sẽ phải gánh chịu thiệt hại kinh tế bất công nghiêm trọng.
+2. BR-COINSPECT-02 (Thời gian Đồng kiểm Tối đa & Đếm ngược):
+$$T_{\text{coinspect\_duration}} \le 300 \text{ giây (05 phút)}$$
+• Driver App kích hoạt đồng hồ đếm ngược 5 phút. Khi đồng hồ còn 60 giây, ứng dụng phát âm thanh thông báo nhắc nhở bưu tá và khách hàng. Hết 300 giây, bưu tá có quyền yêu cầu khách đưa ra quyết định dứt khoát: Nhận hàng hoặc Từ chối nhận. Bưu tá không có nghĩa vụ chờ đợi quá 5 phút làm gián đoạn hành trình các đơn hàng khác.
+3. BR-COINSPECT-03 (Chính sách Miễn phí & Tốc độ Hoàn tiền):
+• Người mua từ chối nhận hàng do đồng kiểm phát hiện sản phẩm vỡ nát, sai mẫu hoặc lỗi bao bì: Miễn phí 100% cước phí giao hàng và cước phí chuyển hoàn.
+• Nếu đơn hàng đã được thanh toán online trước (Thẻ tín dụng, Thẻ ghi nợ, Ví điện tử): Hệ thống Cổng thanh toán cam kết bắn lệnh hoàn tiền tự động 100% về tài khoản gốc của người mua trong thời gian:
+$$T_{\text{refund\_execution}} \le 120 \text{ phút (02 giờ làm việc)}$$
+4. BR-COINSPECT-04 (Quy chuẩn Bằng chứng Hình ảnh Điện tử Bắt buộc):
+• Bắt buộc đủ 03 ảnh chụp hiện trường với độ phân giải tối thiểu $1280 \times 720$ pixels.
+• Ảnh phải có gắn kèm siêu dữ liệu (Metadata Watermark): Mã vận đơn AWB, Tọa độ GPS kinh độ/vĩ độ, và Con dấu thời gian chính xác đến từng giây (UTC+7). Thiếu 1 trong 3 ảnh, nút "Xác nhận từ chối đồng kiểm" trên Driver App bị vô hiệu hóa (Disabled).
+2.7. Dữ liệu vào/ra & Trạng thái đơn hàng
+Cấu trúc Payload Webhook: `BienBanDongKiem` (CoInspectionReport)
+--- TABLE START ---
+{  "inspection_ticket_id": "INS-20261105-881902",  "order_id": "ORD-20261102-99014",  "waybill_code": "SPXVN084920194821",  "carrier_code": "SPX_EXPRESS",  "courier_id": "DRV-99418",  "buyer_id": "CUST-481920",  "device_sku": "SKU-IPHONE16PM-256GB-NATURAL",  "start_timestamp": "2026-11-05T09:12:30Z",  "end_timestamp": "2026-11-05T09:15:45Z",  "inspection_duration_seconds": 195,  "inspection_geo_coordinates": {    "latitude": 10.776889,    "longitude": 106.700806,    "accuracy_meters": 4.5  },  "inspection_verdict": "REJECTED_COINSPECT",  "rejection_reason_code": "DAMAGED_CRUSHED_BOX",  "rejection_notes": "Vỏ hộp carton bên ngoài bị đè bẹp méo mó nặng, góc hộp máy bên trong bị rách nứt bao bì",  "evidence_images": [    {      "photo_type": "AWB_LABEL_SCAN",      "image_url": "https://cdn.platform.vn/evidence/20261105/awb_881902.jpg",      "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"    },    {      "photo_type": "OPEN_PACKAGE_OVERVIEW",      "image_url": "https://cdn.platform.vn/evidence/20261105/overview_881902.jpg",      "sha256_hash": "a1b2c3d4e5f60718293a4b5c6d7e8f901a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d"    },    {      "photo_type": "CRUSHED_DEFECT_DETAIL",      "image_url": "https://cdn.platform.vn/evidence/20261105/defect_881902.jpg",      "sha256_hash": "f0e1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"    }  ],  "security_tape_serial": "SEAL-SPX-994102",  "cod_amount_voided": 0,  "auto_refund_triggered": true,  "refund_target_channel": "CREDIT_CARD_VISA",  "refund_amount": 34990000}
+--- TABLE END ---
+Ma trận chuyển dịch trạng thái nghiệp vụ (State Transition Matrix):
+--- TABLE START ---
+Trạng thái ban đầu | Sự kiện kích hoạt | Trạng thái kế tiếp | Tác động Tài chính & Vận hành
+OUT_FOR_DELIVERY | Khách mở hộp, đồng kiểm đạt, ký nhận/đọc PIN | DELIVERED_COINSPECTED | Giải phóng tiền chờ vào Escrow; Bắt đầu đồng hồ bảo vệ đổi trả 15 ngày.
+OUT_FOR_DELIVERY | Khách mở hộp, phát hiện móp vỡ/sai hàng, từ chối nhận | RETURNING_COINSPECT_REJECTED | Chuyển kiện hàng quay đầu về bưu cục; Kích hoạt hoàn tiền tự động 100% trong 2h.
+OUT_FOR_DELIVERY | Khách cố tình xé rách seal NSX của hộp máy | MANDATORY_DELIVERED | Khóa quyền từ chối tại chỗ; Bắt buộc thanh toán COD; Yêu cầu xử lý RMA sau nhận hàng.
+OUT_FOR_DELIVERY | Mở hộp phát hiện rỗng ruột / gạch đá tráo bưu chính | SECURITY_TAMPER_INCIDENT | Đóng băng tiền đơn hàng; Niêm phong kiện hàng chuyển cơ quan giám sát điều tra 3PL.
+RETURNING_COINSPECT_REJECTED | Bưu tá mang hàng hoàn trả về tận kho Người bán | RETURNED_TO_SELLER | Người bán nhận lại bưu kiện nguyên tem niêm phong đồng kiểm; Kích hoạt hồ sơ bồi hoàn vận chuyển.
+--- TABLE END ---
+2.8. Tiêu chí nghiệm thu chức năng (Acceptance Scenarios)
+--- TABLE START ---
+Kịch bản: RET-COINSPECT-AC01 - Đồng kiểm ngoại quan đạt chuẩn và hoàn tất ký nhận đơn hàng công nghệ  Given Đơn hàng "ORD-99014" có giá trị 34.990.000 VNĐ đang ở trạng thái "OUT_FOR_DELIVERY"  And Bưu kiện có dán nhãn "ĐƯỢC ĐỒNG KIỂM"  When Bưu tá đến nơi và bấm "Bắt đầu Đồng Kiểm" trên Driver App  And Người mua mở lớp hộp carton bưu điện bên ngoài trước mặt bưu tá  And Người mua kiểm tra hộp iPhone 16 Pro Max đúng màu Sa Mạc, nguyên tem seal giấy kéo rút của Apple, không móp vỡ  And Người mua đọc đúng mã PIN giao hàng 6 số hiển thị trên ứng dụng Shopee cho bưu tá  Then Driver App xác nhận "Mã PIN hợp lệ - Giao hàng thành công có Đồng Kiểm"  And Trạng thái đơn hàng chuyển thành "DELIVERED_COINSPECTED"  And Hệ thống gửi thông báo xác nhận giao hàng và bắt đầu kích hoạt thời hạn đổi trả 15 ngày.Kịch bản: RET-COINSPECT-AC02 - Từ chối nhận hàng do hộp sản phẩm bên trong bị bẹp dúm biến dạng  Given Đơn hàng "ORD-88102" đã thanh toán trước 2.450.000 VNĐ qua thẻ Visa  And Đơn hàng đang được đồng kiểm tại cửa nhà khách hàng  When Người mua rạch thùng carton bên ngoài phát hiện hộp tai nghe bên trong bị vật nặng đè bẹp dúm nứt vỏ  And Người mua tuyên bố từ chối nhận kiện hàng  Then Bưu tá mở Driver App chọn lý do "REJECT_COINSPECT_DAMAGED"  And Bưu tá chụp đủ 3 bức ảnh hiện trường (AWB, Toàn cảnh, Vết bẹp) có watermark GPS và thời gian  And Bưu tá dùng băng dính niêm phong đồng kiểm dán kín lại kiện hàng trước mặt khách  And Kiện hàng chuyển trạng thái sang "RETURNING_COINSPECT_REJECTED"  And Hệ thống kích hoạt lệnh hoàn tiền tự động 2.450.000 VNĐ về thẻ Visa của người mua trong vòng 2 giờ  And Người mua không phải trả bất kỳ khoản phí nào.Kịch bản: RET-COINSPECT-AC03 - Xử lý vi phạm khi người mua cố tình xé rách seal niêm phong của hãng  Given Khách hàng đang thực hiện đồng kiểm chiếc iPad Air nguyên seal bọc màng nilon  When Khách hàng dùng dao rạch rách màng seal nilon của nhà sản xuất mặc dù bưu tá đã cảnh báo  Then Bưu tá bấm nút "VIOLATION_UNSEALED_BY_BUYER" trên Driver App và chụp ảnh màng seal bị rách  And Hệ thống khóa cứng tính năng từ chối nhận hàng tại chỗ  And Đơn hàng tự động chuyển sang trạng thái cưỡng chế "MANDATORY_DELIVERED"  And Bưu tá yêu cầu khách thanh toán tiền và nhận máy  And Màn hình khách hàng hiển thị thông báo: "Bạn đã bóc seal sản phẩm. Mọi khiếu nại về lỗi chức năng vui lòng thực hiện qua quy trình Trả hàng/Bảo hành sau nhận hàng".Kịch bản: RET-COINSPECT-AC04 - Bưu tá từ chối không cho đồng kiểm bị khách hàng khiếu nại  Given Đơn hàng "ORD-77192" đủ điều kiện đồng kiểm  When Bưu tá giao hàng ép buộc khách phải ký nhận mới cho mở hộp  And Khách hàng kiên quyết từ chối nhận và gọi lên Tổng đài CSKH bấm phím 1  Then Tổng đài viên xác nhận bưu tá vi phạm quy chế dịch vụ vận chuyển  And Tổng đài viên hủy lượt giao của bưu tá hiện tại, điều phối bưu tá khác giao lại trong 24 giờ  And Hệ thống tự động ghi nhận 01 biên bản phạt vi phạm SLA đối với đơn vị vận chuyển đối tác.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+3. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 2: RET-DROPOFF — ĐỔI TRẢ TỰ PHỤC VỤ NO-BOX NO-LABEL TẠI ĐIỂM TIẾP NHẬN ĐỐI TÁC
+3.1. Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: RET-DROPOFF (Định danh kỹ thuật: REV-DROPOFF-02)
+• Tên nghiệp vụ: Đổi trả Tự phục vụ Không cần Hộp, Không cần In nhãn qua Mã QR tại Điểm tiếp nhận Đối tác (No-Box, No-Label Partner Drop-off & Early Refund)
+• Tương đương thực tế: Amazon Return at Kohl's / Whole Foods Market / The UPS Store; Apple Store 14-day In-store Return; Shopee PUDO Drop-off Point Network.
+• Quan hệ hệ thống hiện hữu: Thay thế hoàn toàn quy trình đổi trả gửi bưu điện truyền thống tại Chương 17 (DT-03, DT-04 - gửi hàng hoàn).
+3.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Loại bỏ hoàn toàn phiền hà cho khách hàng: Không cần tìm thùng carton đóng gói, không cần băng dính dán hộp, không cần máy in nhãn vận chuyển bưu điện.
+• Tối ưu hóa thời gian trả hàng: Thao tác tiếp nhận tại quầy hoàn tất trong vòng dưới 60 giây.
+• Kích hoạt Hoàn tiền Tức thì / Hoàn tiền Tạm ứng Sớm (Early Provisional Refund Trigger): Lệnh hoàn tiền được đẩy sang cổng thanh toán trong vòng 02 đến 04 giờ ngay khi điểm PUDO quét mã tiếp nhận, trước khi hàng được xe tải vận chuyển về kho tổng.
+• Kiểm định an ninh phần cứng tại chỗ (Hardware Security Validation): Ngăn chặn việc trả lại các thiết bị điện tử đang bị khóa bảo mật iCloud/Activation Lock/Samsung Knox/Google FRP (chuẩn mực Apple Store).
+• Tác nhân tham gia:
+• Khách hàng (Customer/Buyer): Tạo yêu cầu trả hàng trên ứng dụng, mang máy trần đến điểm tiếp nhận PUDO.
+• Nhân viên Điểm tiếp nhận đối tác (Drop-off Desk Agent): Nhân viên tại chuỗi cửa hàng tiện lợi (Circle K, GS25), bưu cục đối tác (Viettel Post Hub) hoặc Showroom chính hãng.
+• Hệ thống Điểm tiếp nhận Dịch vụ (PUDO Partner Portal / POS App): Ứng dụng quét mã QR, kiểm tra trạng thái khóa máy và in tem nhiệt.
+• Hệ thống Quản lý Đổi trả Trung tâm (Central RMA Engine): Điều phối quy trình hoàn tiền, đối soát Serial và logistics ngược.
+3.3. Điều kiện tiên quyết (Preconditions)
+1. Đơn hàng còn nằm trong thời hạn đổi trả quy định:
+• 14 ngày theo lịch đối với thiết bị công nghệ điện tử cao cấp (Chuẩn Apple Store).
+• 15 ngày đối với sản phẩm mua tại Sàn Chính Hãng (Shopee Mall / Flagship Store).
+• 07 ngày đối với Shop tiêu chuẩn.
+2. Sản phẩm không nằm trong danh mục cấm đổi trả (Final Sale, vật phẩm tiêu hao đã qua sử dụng, phụ kiện vệ sinh cá nhân).
+3. Đối với sản phẩm điện tử thông minh có hệ điều hành (iPhone, iPad, MacBook, Android Phone, Smartwatch): Tính năng Khóa Kích Hoạt (Activation Lock / Find My / iCloud / Samsung Knox / Google FRP) BẮT BUỘC ĐÃ ĐƯỢC TẮT VÀ ĐĂNG XUẤT HOÀN TOÀN KHỎI THIẾT BỊ.
+3.4. Luồng xử lý chính từng bước (Main Flow)
+--- TABLE START ---
+[Khách hàng vào "Chi tiết đơn hàng" -> Bấm "Yêu cầu Đổi/Trả hàng"]                      │                      ▼[Chọn lý do trả hàng (Dropdown) + Đính kèm ảnh/video mô tả ngoại quan]                      │                      ▼[Chọn kênh hoàn hàng: "Gửi tại Điểm tiếp nhận đối tác (Không cần đóng hộp, không in nhãn)"]                      │                      ▼[Hệ thống kiểm tra loại hàng: Thiết bị điện tử thông minh có hệ điều hành?]   ├── CÓ: Hiển thị màn hình Checklist bắt buộc: "BẠN ĐÃ TẮT FIND MY / THOÁT CLOUD CHƯA?"   │        │   │        ▼ (Khách xác nhận đã đăng xuất và xóa dữ liệu máy)   │   └── KHÔNG: Bỏ qua bước kiểm tra khóa kích hoạt                      │                      ▼[Hệ thống cấp MÃ QR ĐỔI TRẢ ĐIỆN TỬ (Return Drop-off QR Code) - Hiệu lực 7 ngày (168h)] (Tích hợp tùy chọn 1 chạm: "Lưu vào Apple Wallet / Google Wallet")                      │                      ▼[Khách mang máy trần + phụ kiện đến Điểm tiếp nhận PUDO gần nhất trên bản đồ]                      │                      ▼[Nhân viên quầy dùng máy quét đọc mã QR trên điện thoại khách hàng (Thời gian <= 5s)]                      │                      ▼[QUY TRÌNH KIỂM TRA NHANH 30 GIÂY CỦA NHÂN VIÊN (RAPID IN-STORE INSPECTION):] 1. Sản phẩm vật lý đúng chủng loại/màu sắc hiển thị trên màn hình POS. 2. Quét mã vạch Serial/IMEI in trên khay SIM/thân máy trùng khớp đơn hàng. 3. Bật màn hình máy: Máy phải ở màn hình kích hoạt trắng (Hello Screen) hoặc tắt iCloud.                      │       ┌──────────────┴──────────────┐       ▼                             ▼[NẾU DÍNH ICLOUD / SAI SERIAL]  [NẾU HỢP LỆ VÀ ĐẠT TIÊU CHUẨN]- Nhân viên từ chối tiếp nhận   - Máy in nhiệt POS tự động nhả Tem Barcode Trả Hàng- Hướng dẫn khách thoát iCloud  - Nhân viên thả máy vào Túi bọc chống sốc Polybag chuyên dụng- Không in tem nhãn             - Dán tem mã vạch nhiệt lên thân túi và quét xác nhận- Không kích hoạt hoàn tiền     - Thả gói hàng vào Thùng gom Gaylord Tote Bin chuyên dụng                                     │                                     ▼                                [Khách nhận Biên nhận giấy/điện tử + Coupon ưu đãi tại điểm]                                     │                                     ▼                                [WEBHOOK POS: Kích hoạt Lệnh Hoàn Tiền Tức Thì (Instant Refund)                                 trong vòng 02 đến 04 giờ đối với khách có Trust Score >= 70]
+--- TABLE END ---
+• Bước 1 (Khởi tạo yêu cầu trả hàng trên ứng dụng): Khách hàng truy cập lịch sử mua hàng, chọn đơn hàng và bấm "Yêu cầu Trả hàng / Hoàn tiền". Chọn lý do đổi trả từ danh mục chuẩn hóa (Ví dụ: Đổi ý không còn nhu cầu, Sản phẩm lỗi kỹ thuật, Sai màu sắc).
+• Bước 2 (Lựa chọn kênh tiếp nhận PUDO): Khách chọn phương thức "Gửi hàng tại Điểm tiếp nhận đối tác (No-Box, No-Label)". Bản đồ định vị GPS hiển thị danh sách các điểm PUDO đối tác gần nhất trong bán kính 5km (Circle K, GS25, Viettel Post Hub, Showroom phân phối chính hãng) kèm thời gian hoạt động 24/7.
+• Bước 3 (Kiểm tra ràng buộc Khóa kích hoạt Activation Lock):
+• Nếu sản phẩm thuộc danh mục Apple/Android: Ứng dụng bật màn hình cảnh báo đỏ bắt buộc: "Thiết bị phải được tắt tính năng 'Find My iPhone' / 'Khóa kích hoạt' và đăng xuất toàn bộ tài khoản bảo mật cá nhân. Điểm tiếp nhận sẽ từ chối nhận nếu máy vẫn bị khóa mật khẩu hoặc dính tài khoản."
+• Khách hàng bấm tick xác nhận: "Tôi cam kết đã gỡ bỏ tài khoản và sao lưu toàn bộ dữ liệu cá nhân".
+• Bước 4 (Cấp mã QR đổi trả điện tử thông minh): Hệ thống tạo ra một mã QR động mã hóa token bảo mật JWT có chữ ký số HMAC-SHA256 (Return_QR_Token). Mã có thời hạn sử dụng chính xác là 07 ngày (168 giờ). Hệ thống cung cấp nút bấm "Add to Apple Wallet" hoặc "Add to Google Wallet" để khách hàng mở nhanh tại quầy mà không cần mở lại ứng dụng.
+• Bước 5 (Tiếp nhận siêu tốc tại quầy PUDO): Khách hàng mang máy trần (không cần đóng thùng các-tông, không cần bọc bọt xốp) và các phụ kiện đi kèm đến quầy đối tác. Nhân viên quầy dùng súng quét mã vạch 2D quét mã QR trên màn hình điện thoại khách hàng. Màn hình POS lập tức tải thông tin đơn hàng trong vòng 03 giây.
+• Bước 6 (Quy trình thẩm định ngoại quan 30 giây): Nhân viên đối soát 3 tiêu chí:
+1. Đúng sản phẩm: Kiểu dáng, màu sắc khớp với hình ảnh hiển thị trên POS.
+2. Đúng số Serial: Quét số Serial/IMEI in trên vỏ máy hoặc khay SIM đối chiếu với trường original_serial_number trên hệ thống.
+3. Trạng thái khóa bảo mật: Bật màn hình máy lên: Thiết bị phải hiển thị màn hình chào mừng kích hoạt gốc ("Hello / Xin chào"). Nếu máy vẫn hiện màn hình khóa yêu cầu nhập mật mã (Passcode) hoặc hiển thị "iPhone Locked to Owner", nhân viên yêu cầu khách hàng nhập mật khẩu để xóa thiết bị ngay tại chỗ. Nếu khách hàng không thể mở khóa -> TỪ CHỐI TIẾP NHẬN.
+• Bước 7 (Đóng gói tiêu chuẩn hóa tại quầy):
+• Nhân viên bấm "Xác nhận đạt tiêu chuẩn tiếp nhận". Máy in nhiệt tại quầy tự động nhả ra một tem mã vạch hoàn hàng (Return Barcode Tracking Label).
+• Nhân viên đặt máy trần và phụ kiện vào một túi nhựa đệm khí chống sốc chuyên dụng (Padded Bubble Polybag), bóc lớp keo niêm phong một chiều dán kín miệng túi. Dán tem mã vạch nhiệt lên thân túi và quét mã vạch túi để gán liên kết (Bag_Binding).
+• Nhân viên thả gói hàng vào Thùng gom hàng kích thước lớn (Gaylord Tote Bin) đặt tại khu vực kho sau của cửa hàng, chờ xe tải logistics của sàn đến thu gom định kỳ mỗi ngày 1-2 lần.
+• Bước 8 (Kích hoạt Hoàn tiền Tức thì trong 2-4 giờ):
+• Ngay khi nhân viên bấm hoàn tất trên POS, hệ thống ghi nhận sự kiện EVENT_DROPOFF_ACCEPTED.
+• Đối với khách hàng có điểm uy tín tài khoản Customer Trust Score $\ge 70/100$: Hệ thống Quản trị Thanh toán kích hoạt lệnh Hoàn tiền Tạm ứng Sớm (Early Provisional Refund). Tiền được chuyển trả về phương thức thanh toán ban đầu của khách trong vòng 02 đến 04 giờ làm việc mà không cần đợi gói hàng vận chuyển về tới kho tổng của sàn.
+3.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+AF-01: Quá hạn 7 ngày không mang hàng đến điểm Drop-off
+• Tình huống: Khách hàng đã được cấp mã QR đổi trả nhưng sau 7 ngày (168 giờ) khách bận việc và không mang hàng ra điểm PUDO gửi.
+• Xử lý:
+• Vào thời điểm 144 giờ (còn 24h hết hạn), hệ thống tự động đẩy thông báo Push và gửi tin nhắn SMS: "Mã QR đổi trả cho đơn hàng [Mã_Đơn] sắp hết hạn sau 24 giờ. Vui lòng mang hàng đến điểm gửi."
+• Hết 168:00:00: Mã QR tự động bị vô hiệu hóa trên hệ thống (EXPIRED). Trạng thái đổi trả chuyển thành RETURN_REQUEST_CANCELLED_TIMEOUT.
+• Khoản tiền thanh toán của đơn hàng đang bị tạm giữ trong ví Escrow lập tức được giải phóng và giải ngân dứt điểm cho Người bán. Khách hàng không được tạo lại yêu cầu đổi trả cho đơn hàng này nếu thời hạn bảo vệ đổi trả tiêu chuẩn (14/15 ngày) đã kết thúc.
+EF-01: Phát hiện thiết bị dính Activation Lock / Find My sau khi đã vận chuyển về Kho tổng
+• Tình huống: Nhân viên quầy PUDO sơ suất tiếp nhận một chiếc iPad mà khách hàng chưa thoát hoàn toàn tài khoản iCloud ẩn (máy đã reset nhưng vẫn dính Activation Lock trên máy chủ Apple). Khi hàng về đến Trung tâm Logistics Ngược chính (Central Return Hub), kỹ thuật viên chạy phần mềm chẩn đoán mới phát hiện trạng thái Find My: ON.
+• Xử lý:
+• Hệ thống lập tức đóng băng lệnh giải ngân của đơn hàng, chuyển trạng thái yêu cầu sang RETURN_ON_HOLD_ACTIVATION_LOCKED.
+• Hệ thống gửi email cảnh báo đỏ khẩn cấp cho khách hàng kèm tài liệu hướng dẫn gỡ bỏ iCloud từ xa: "Thiết bị của bạn đang bị khóa bởi Apple ID [k@gmail.com]. Vui lòng truy cập icloud.com/find để bấm 'Gỡ bỏ khỏi tài khoản' (Remove from Account) trong thời hạn tối đa 14 ngày lịch."*
+• Cơ chế Truy thu Tự động (Automated Clawback Enforcement):
+• Nếu sau 14 ngày khách hàng không thực hiện gỡ khóa từ xa: Hệ thống tự động kích hoạt lệnh trừ tiền cưỡng chế từ thẻ tín dụng đã lưu của khách hàng hoặc ghi nhận số dư âm trên ví tài khoản mua hàng để thu hồi lại 100% số tiền đã hoàn tạm ứng ban đầu.
+• Chiếc máy bị khóa sẽ được đóng gói và gửi chuyển trả lại tận nhà khách hàng; khách hàng phải chịu 100% cước phí vận chuyển chiều trả lại này.
+EF-02: Áp dụng Phí lưu kho hoàn hàng (Restocking Fee 15-20%) khi đổi ý trả hàng không lỗi
+• Tình huống: Khách hàng mua một chiếc máy tính xách tay cao cấp từ Shop đại lý tiêu chuẩn (không phải Flagship Mall). Sau khi đã bóc seal sử dụng 3 ngày, khách cảm thấy không thích màu sắc nên yêu cầu trả hàng theo diện "Đổi ý / Không còn nhu cầu". Máy hoàn toàn bình thường, không lỗi kỹ thuật.
+• Xử lý:
+• Theo chuẩn mực sàn Swiftronics và chính sách đại lý công nghệ: Thiết bị đã bóc seal bị suy giảm giá trị thương mại nghiêm trọng.
+• Hệ thống hiển thị rõ ràng thông báo khấu trừ tại bước tạo yêu cầu: "Sản phẩm đã bóc seal đổi trả do đổi ý sẽ áp dụng Phí lưu kho & tân trang (Restocking Fee) 15% trên giá trị sản phẩm. Số tiền hoàn lại dự kiến: [Giá_Gốc - 15%].".
+• Khách hàng bấm tick chấp thuận điều khoản. Sau khi điểm tiếp nhận hoặc kho tổng nghiệm thu máy không lỗi, hệ thống tự động khấu trừ 15% (hoặc 20% đối với thiết bị đã kích hoạt bảo hành điện tử) để bù đắp chi phí cho người bán, phần tiền còn lại được hoàn về cho khách hàng.
+3.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. BR-DROPOFF-01 (Hiệu lực & Tính toàn vẹn của Mã QR Drop-off):
+$$T_{\text{expire}} = T_{\text{created}} + 7 \times 24 \times 3600 \text{ (giây)}$$
+• Mã QR Drop-off được sinh ra dưới định dạng mã hóa bảo mật JSON Web Token (JWT) có chữ ký số HMAC-SHA256 chứa các trường bất biến: return_id, order_id, hardware_serial, customer_id và expiry_epoch. Thiết bị máy quét POS tại điểm đối tác có khả năng giải mã offline để xác thực chữ ký số, chống tuyệt đối hành vi làm giả mã QR đổi trả.
+2. BR-DROPOFF-02 (Điều kiện Hưởng Hoàn tiền Sớm trong 2-4 giờ - Instant Provisional Refund):
+$$\text{InstantRefundEligible} = (\text{Customer\_Trust\_Score} \ge 70) \land (\text{Lifetime\_Return\_Abuse\_Count} == 0) \land (\text{Device\_Activation\_Lock\_Status} == \text{OFF})$$
+• Nếu khách hàng có điểm tín nhiệm $< 70$ (khách hàng mới hoặc tài khoản có tiền sử khiếu nại tranh chấp phức tạp): Hệ thống tự động chuyển phân luồng hoàn tiền sang chế độ "Hoàn tiền sau khi Kho tổng giám định" (REFUND_UPON_CENTRAL_DEPOT_INSPECTION). Tiền sẽ được giữ lại an toàn cho đến khi kiện hàng về tới Trung tâm phân loại chính và vượt qua quy trình kiểm tra bo mạch (thời gian xử lý 2-3 ngày làm việc).
+3. BR-DROPOFF-03 (Quy chuẩn Đóng gói Niêm phong Túi chuyên dụng Polybag):
+• 100% thiết bị tại điểm Drop-off phải được đóng gói vào túi bọc chống sốc đệm khí chuẩn (Padded Bubble Polybag) có dán dải keo phá hủy (Tamper-evident adhesive strip - khi bóc ra túi sẽ bị rách và hiện chữ VOID).
+• Tem mã vạch nhiệt dán ngoài túi phải được quét khớp lệnh với mã vận đơn gom hàng (Gaylord_Manifest_ID) trước khi chuyển giao cho tài xế xe tải lấy hàng trung chuyển.
+4. BR-DROPOFF-04 (Ràng buộc Bất biến về Activation Lock & Dữ liệu Người dùng):
+• Điểm PUDO tuyệt đối không tiếp nhận bất kỳ thiết bị nào chưa được khôi phục cài đặt gốc (Factory Reset) hoặc chưa đăng xuất tài khoản quản trị (Apple ID, Samsung Account, Google Account, MDM Doanh nghiệp).
+• Nếu màn hình máy vẫn hiện yêu cầu nhập mật khẩu mà khách hàng không nhớ mật khẩu: Quyết định từ chối tiếp nhận của nhân viên quầy là quyết định bắt buộc và tối hậu.
+3.7. Dữ liệu vào/ra & Trạng thái đơn hàng
+Cấu trúc Payload: `PhieuTiepNhanDropoff` (DropoffIntakeRecord)
+--- TABLE START ---
+{  "intake_record_id": "PUDO-REC-20261105-0941",  "return_request_id": "RET-REQ-20261103-8819",  "order_id": "ORD-20261029-44102",  "buyer_id": "CUST-99210",  "pudo_partner_id": "PUDO-CIRCLEK-Q1-042",  "pudo_staff_id": "STAFF-CK-1104",  "qr_scanned_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",  "hardware_verification": {    "scanned_serial_number": "F2LLX904MD6R",    "expected_serial_number": "F2LLX904MD6R",    "is_serial_matched": true,    "screen_hello_verified": true,    "activation_lock_status": "OFF",    "cosmetic_condition_rating": "PRISTINE_NO_SCRATCH"  },  "packaging_details": {    "polybag_barcode_serial": "BAG-SPX-RET-904812",    "gaylord_tote_bin_id": "BIN-HUB-D1-08",    "intake_completed_at": "2026-11-05T08:45:22Z"  },  "financial_trigger": {    "customer_trust_score": 85,    "refund_execution_mode": "EARLY_PROVISIONAL_INSTANT",    "original_item_price": 34990000,    "restocking_fee_rate": 0.0,    "net_refund_amount": 34990000,    "refund_target": "ZALOPAY_WALLET",    "estimated_settlement_seconds": 7200  }}
+--- TABLE END ---
+Ma trận chuyển dịch trạng thái nghiệp vụ Drop-off:
+--- TABLE START ---
+Trạng thái ban đầu | Sự kiện kích hoạt | Trạng thái kế tiếp | Tác động Hệ thống & Tài chính
+DELIVERED | Khách tạo yêu cầu trả hàng kênh PUDO | RETURN_AWAITING_PUDO_DROPOFF | Cấp mã QR 7 ngày; Khóa số dư doanh thu của Người bán.
+RETURN_AWAITING_PUDO_DROPOFF | Điểm PUDO quét mã, test đạt, đóng túi | ACCEPTED_AT_PUDO_STATION | In tem nhiệt; Thả thùng gom; Bắn webhook kích hoạt hoàn tiền sớm 2h.
+RETURN_AWAITING_PUDO_DROPOFF | Quá 168 giờ không mang hàng đến PUDO | RETURN_REQUEST_EXPIRED | Vô hiệu hóa mã QR; Mở phong tỏa giải ngân tiền cho Người bán.
+ACCEPTED_AT_PUDO_STATION | Timer hoàn tiền sớm kích hoạt thành công | REFUND_PROVISIONALLY_COMPLETED | Chuyển khoản hoàn tiền 100% về ví/thẻ của người mua.
+ACCEPTED_AT_PUDO_STATION | Xe tải logistics gom kiện hàng về kho tổng | IN_TRANSIT_TO_CENTRAL_DEPOT | Cập nhật tracking logistics ngược cho người bán và người mua.
+IN_TRANSIT_TO_CENTRAL_DEPOT | Kho tổng kiểm định đạt 100% chuẩn mực | RETURN_COMPLETED_SUCCESS | Đóng hồ sơ đổi trả dứt điểm; Nhập kho máy phân loại Refurbished/Open-Box.
+IN_TRANSIT_TO_CENTRAL_DEPOT | Kho tổng phát hiện máy dính Activation Lock | RETURN_ON_HOLD_ACTIVATION_LOCKED | Khóa đơn; Gửi email yêu cầu gỡ iCloud 14 ngày; Chuẩn bị quy trình Clawback.
+--- TABLE END ---
+3.8. Tiêu chí nghiệm thu chức năng (Acceptance Scenarios)
+--- TABLE START ---
+Kịch bản: RET-DROPOFF-AC01 - Tạo mã QR Drop-off thành công và nhận hoàn tiền sớm trong 2 giờ  Given Khách hàng có điểm tín nhiệm Customer Trust Score là 85/100  And Đơn hàng mua iPhone 16 Pro Max trị giá 34.990.000 VNĐ đã giao được 6 ngày  When Khách hàng tạo yêu cầu trả hàng kênh "Điểm tiếp nhận đối tác không cần đóng hộp"  And Khách hàng bấm cam kết đã đăng xuất hoàn toàn tài khoản Apple ID  Then Hệ thống tạo mã QR động có hiệu lực chính xác 168 giờ kèm nút lưu vào Apple Wallet  When Khách mang máy trần đến cửa hàng Circle K đối tác gần nhà  And Nhân viên quầy quét mã QR trên điện thoại khách hàng trong 3 giây  And Nhân viên kiểm tra số Serial khớp 100% và máy đang ở màn hình Hello kích hoạt  And Nhân viên đóng máy vào túi Polybag chuyên dụng, dán tem mã vạch và bấm xác nhận tiếp nhận  Then Màn hình khách hàng nhận được thông báo "Đã tiếp nhận hàng thành công tại Circle K"  And Hệ thống thanh toán kích hoạt lệnh hoàn tiền tạm ứng 34.990.000 VNĐ về ví điện tử của khách hàng trong vòng 2 giờ.Kịch bản: RET-DROPOFF-AC02 - Từ chối tiếp nhận tại quầy do thiết bị chưa thoát màn hình khóa Passcode  Given Khách hàng mang điện thoại iPhone đến điểm bưu cục đối tác Viettel Post để trả hàng  When Nhân viên quầy bật nguồn máy và phát hiện màn hình yêu cầu nhập mật mã khóa máy 6 số  And Nhân viên yêu cầu khách hàng thao tác nhập mật khẩu để xóa trắng thiết bị  And Khách hàng thông báo không nhớ mật khẩu và không thể kết nối mạng để thoát iCloud  Then Nhân viên bấm nút "Từ chối tiếp nhận - Thiết bị dính khóa bảo mật" trên màn hình POS  And Hệ thống POS không in tem mã vạch trả hàng  And Màn hình ứng dụng của khách hàng hiển thị thông báo hướng dẫn khôi phục mật khẩu Apple ID  And Không có lệnh hoàn tiền nào được kích hoạt.Kịch bản: RET-DROPOFF-AC03 - Tự động hết hạn và hủy yêu cầu trả hàng khi quá hạn 7 ngày  Given Khách hàng đã được cấp mã QR đổi trả "QR-RET-9901" vào ngày 01/11/2026 lúc 08:00:00  When Đến thời điểm 08/11/2026 lúc 08:00:01 (vượt quá 168 giờ quy định)  And Khách hàng chưa mang máy đến bất kỳ điểm gửi hàng nào  Then Hệ thống tự động chuyển trạng thái yêu cầu sang "RETURN_REQUEST_EXPIRED"  And Mã QR "QR-RET-9901" bị vô hiệu hóa hoàn toàn  And Số tiền tạm giữ của đơn hàng được giải phóng dứt điểm và thanh toán cho Người bán.Kịch bản: RET-DROPOFF-AC04 - Khấu trừ phí Restocking Fee 15% khi khách đổi ý trả máy đã bóc seal  Given Khách hàng mua laptop trị giá 20.000.000 VNĐ từ Shop đại lý công nghệ  And Khách hàng yêu cầu trả hàng với lý do "Đổi ý không thích màu sắc" sau khi đã bóc seal sử dụng  When Khách hàng mang máy đến điểm Drop-off đối tác  Then Hệ thống thông báo rõ ràng: "Áp dụng phí lưu kho hoàn hàng 15% (3.000.000 VNĐ). Số tiền hoàn trả thực tế là 17.000.000 VNĐ"  And Sau khi kiểm tra máy hoạt động bình thường, nhân viên tiếp nhận kiện hàng  And Lệnh hoàn tiền 17.000.000 VNĐ được kích hoạt cho khách hàng, 3.000.000 VNĐ được chuyển vào ví người bán để bù đắp khấu hao mở hộp.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 3: RET-RETURNLESS — THUẬT TOÁN HOÀN TIỀN KHÔNG CẦN TRẢ HÀNG & QUY ĐỊNH HÀNG NGUY HIỂM HAZMAT
+4.1. Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: RET-RETURNLESS (Định danh kỹ thuật: REV-RETURNLESS-03)
+• Tên nghiệp vụ: Thuật toán Ra Quyết định Hoàn tiền Tự động Không cần Thu hồi Hàng hóa & Quy định An toàn Hàng nguy hiểm Hazmat (Algorithmic Returnless Refund & Hazmat Battery Protocol)
+• Tương đương thực tế: Amazon Returnless Refund Policy, Shopee Refund Without Return for Damaged/Perishable Goods, FAA & DOT/PHMSA Lithium Battery Transport Regulations.
+• Quan hệ hệ thống hiện hữu: Bổ sung cơ chế hoàn tiền rẽ nhánh tối ưu cho Chương 17 (DT-06 - Tính toán hoàn tiền, DT-07 - Duyệt hoàn tiền).
+4.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Tối ưu hóa bài toán kinh tế logistics ngược: Triệt tiêu hoàn toàn chi phí vận chuyển ngược, phí bốc dỡ, lưu kho, giám định và xử lý tiêu hủy khi tổng các chi phí này vượt quá giá trị thu hồi thanh lý ròng của món hàng ($NetSalvage \le 0$).
+• Nâng cao trải nghiệm khách hàng vượt mong đợi (Customer Delight): Khách nhận lại 100% tiền hoàn ngay lập tức trong vòng 5 phút mà không phải tốn thời gian đóng gói và mang hàng đi gửi.
+• Tuân thủ Tuyệt đối Quy định An toàn Vận tải Hàng nguy hiểm (Hazmat Compliance): Chặn cứng việc phát hành nhãn bưu điện cho các thiết bị chứa pin Lithium-ion bị phồng, rò rỉ hoặc cháy nổ theo luật an toàn vận tải hàng không/đường bộ quốc tế và nội địa nhằm triệt tiêu nguy cơ phát hỏa thảm họa (Thermal Runaway).
+• Phòng thủ chống gian lận & trục lợi chính sách (Anti-Smurfing & Policy Abuse Prevention): Bộ lọc đối kháng 4 tầng ngăn chặn triệt để hành vi cố tình đòi hoàn tiền giữ lại hàng.
+• Tác nhân tham gia:
+• Khách hàng (Customer): Gửi yêu cầu hoàn tiền cho món hàng bị lỗi hoặc sự cố pin.
+• Động cơ Phân tích Chi phí Logistics Ngược (Reverse Cost Analytical Engine - RCAE): Tính toán ma trận chi phí và giá trị thanh lý thời gian thực.
+• Động cơ Chống Gian lận & Chấm điểm Tín nhiệm (Fraud Scoring & Trust Engine - FSTE): Thẩm định lịch sử tài khoản, dấu vân tay thiết bị và mẫu ảnh khiếu nại.
+• Phân hệ Kiểm soát Hàng nguy hiểm (Hazmat Safety Gateway): Nhận diện từ khóa và hình ảnh pin phồng để khóa cổng phát hành nhãn vận chuyển bưu điện.
+• Nhà bán hàng (Seller/Merchant): Được bảo hiểm vận chuyển sàn bồi hoàn thỏa đáng.
+4.3. Điều kiện tiên quyết (Preconditions)
+1. Đơn hàng đã ở trạng thái DELIVERED (Đã giao hàng thành công) và nằm trong thời hạn bảo vệ khiếu nại của sàn (từ 07 đến 15 ngày).
+2. Lý do khiếu nại của khách hàng thuộc một trong các nhóm nghiệp vụ hợp lệ:
+• DAMAGED_CRUSHED: Hàng hóa dễ vỡ (thủy tinh, gốm sứ) bị vỡ vụn nát hoàn toàn thành mảnh chai nguy hiểm không thể thu hồi.
+• BATTERY_SWELLING_HAZMAT: Thiết bị điện tử có pin Lithium-ion bị phồng rộp, biến dạng vỏ máy, quá nhiệt hoặc rò rỉ hóa chất.
+• PERISHABLE_SPOILED: Thực phẩm khô, bánh kẹo, đồ ăn đóng hộp bị mốc, rách bao bì hoặc cận hạn sử dụng.
+• HYGIENE_RESTRICTED: Mỹ phẩm dưỡng da, son môi, kem bôi đã bóc seal sử dụng (luật y tế cấm tái bán).
+• LOW_VALUE_DEFECT: Linh kiện phụ kiện phổ thông (cáp sạc, ốp lưng) có giá trị cực nhỏ bị lỗi đứt ngầm.
+3. Tài khoản của khách hàng vượt qua bài kiểm tra an ninh tín nhiệm thời gian thực.
+4.4. Luồng xử lý chính từng bước (Main Flow)
+--- TABLE START ---
+[Khách hàng tạo Yêu cầu Trả hàng / Hoàn tiền trên Ứng dụng]                          │                          ▼[Khách chọn Lý do khiếu nại + Đính kèm Ảnh/Video bằng chứng rõ nét]                          │                          ▼[HỆ THỐNG AN NINH & THUẬT TOÁN KÍCH HOẠT ĐÁNH GIÁ ĐỒNG THỜI TRONG 03 GIÂY]                          │         ┌────────────────┴────────────────┐         ▼                                 ▼[PHÂN LUỒNG 1: KIỂM SOÁT HAZMAT]     [PHÂN LUỒNG 2: BÀI TOÁN KINH TẾ HỌC LOGISTICS]Lý do: Pin Lithium-ion bị phồng,     - Tính Giá trị thanh lý ròng (Net Salvage Value)rò rỉ hóa chất, có nguy cơ cháy nổ?  - Tính Tổng chi phí logistics ngược (Reverse Cost)         │                                 │         ├──► CÓ: [KÍCH HOẠT QUY CHUẨN      └──► KHÔNG PHỒNG PIN:         │         HAZMAT KHẨN CẤP]                - Kiểm tra: NetSalvage <= 0 ?         │         - KHÓA CỨNG PHÁT HÀNH           - Kiểm tra: Trust Score >= 75 ?         │           NHÃN BƯU ĐIỆN THEO LUẬT       - Kiểm tra: Item Value <= 300.000 VNĐ ?         │         - DUYỆT HOÀN TIỀN 100% NGAY             │         │         - BẬT HƯỚNG DẪN TÁI CHẾ                 ├──► THỎA MÃN: [DUYỆT RETURNLESS]         │                                                 │     - Hoàn tiền 100% trong 5 phút         │                                                 │     - Khách không cần gửi hàng         │                                                 │         │                                                 └──► KHÔNG THỎA MÃN: [TỪ CHỐI]         │                                                       - Yêu cầu đóng gói gửi trả vật lý         ▼                                                       - Cấp mã QR / Nhãn bưu điện[HỆ THỐNG GỬI LỆNH HOÀN TIỀN 100% SANG CỔNG THANH TOÁN / VÍ ĐIỆN TỬ]                          │                          ▼[ĐỐI SOÁT TÀI CHÍNH: TRÍCH QUỸ BẢO HIỂM SÀN BÙ TIỀN CHO NGƯỜI BÁN]
+--- TABLE END ---
+Phân luồng A: Quy định An toàn Vận tải Hàng Nguy hiểm (Hazmat Safety Protocol) đối với Pin Phồng
+1. Căn cứ Pháp lý & Rủi ro Kỹ thuật:
+• Căn cứ quy định an toàn vận tải hàng không của Cục Hàng không Liên bang Hoa Kỳ (FAA), Quy chuẩn Vận chuyển Vật liệu Nguy hiểm của Bộ Giao thông Vận tải Hoa Kỳ (DOT/PHMSA Title 49 CFR § 173.185) và Danh mục hàng nguy hiểm của Hiệp hội Vận tải Hàng không Quốc tế (IATA Dangerous Goods Regulations - DGR Class 9 Lithium Batteries).
+• Căn cứ Thông tư số 16/2017/TT-BTTTT của Bộ Thông tin và Truyền thông Việt Nam và Quy chế an toàn giao nhận bưu chính của các đơn vị vận chuyển (Viettel Post, GHTK, GHN, SPX Express): LUẬT PHÁP VÀ QUY CHẾ BƯU CHÍNH NGHIÊM CẤM TUYỆT ĐỐI VIỆC ĐÓNG GÓI, GỬI QUA ĐƯỜNG BƯU ĐIỆN HOẶC VẬN CHUYỂN BẰNG ĐƯỜNG HÀNG KHÔNG/XE TẢI CÁC THIẾT BỊ ĐIỆN TỬ CHỨA PIN LITHIUM-ION BỊ PHỒNG, HỎNG NẶNG, RÒ RỈ HOÁ CHẤT HOẶC QUÁ NHIỆT. Khi bị chèn ép, rung lắc trong thùng hàng bưu điện, cell pin bị phồng có nguy cơ thoát nhiệt (Thermal Runaway), tự bốc cháy dữ dội ở nhiệt độ trên $600^\circ\text{C}$ và giải phóng khí độc, đe dọa trực tiếp tính mạng tài xế và an toàn của phương tiện vận chuyển.
+2. Hành động Hệ thống Cưỡng chế:
+• Khi khách hàng chọn lý do hoàn trả liên quan đến: "Pin phồng biến dạng hở màn hình", "Máy nóng ran bốc khói/cháy xém" hoặc "Pin rò rỉ chất lỏng":
+• Hệ thống CHẶN ĐỨNG NGAY LẬP TỨC VIỆC PHÁT HÀNH NHÃN VẬN CHUYỂN BƯU ĐIỆN HOẶC MÃ QR GỬI HÀNG (RETURN_LABEL_BLOCKED_HAZMAT).
+• Tự động kích hoạt lệnh Hoàn tiền 100% tức thì (Instant Full Refund) hoặc tạo Đơn hàng xuất kho máy mới thay thế miễn phí cho khách hàng.
+• Màn hình ứng dụng hiển thị Cảnh báo An toàn Màu đỏ có độ ưu tiên cao nhất:
+▌ ⚠️ CẢNH BÁO AN TOÀN CHÁY NỔ (HAZMAT SAFETY DIRECTIVE):
+▌ *"Theo quy chuẩn an toàn hàng không và luật bưu chính, sản phẩm có pin Lithium-ion bị phồng/hỏng TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP ĐÓNG GÓI HOẶC GỬI QUA ĐƯỜNG BƯU ĐIỆN. Chúng tôi đã hoàn tiền 100% vào tài khoản của bạn.
+▌ HÀNH ĐỘNG CẦN THỰC HIỆN NGAY:
+▌ 1. Ngắt kết nối thiết bị khỏi củ sạc ngay lập tức.
+▌ 2. Đặt thiết bị ở nơi thoáng mát, cách xa các vật liệu dễ cháy (rèm cửa, đệm mút, giấy báo).
+▌ 3. TUYỆT ĐỐI KHÔNG vứt thiết bị vào thùng rác sinh hoạt thông thường. Vui lòng mang thiết bị đến Điểm thu gom rác thải điện tử & pin nguy hại được cấp phép tại địa phương của bạn để tiêu hủy an toàn."*
+Phân luồng B: Mô hình Chi phí - Lợi ích Kinh tế (Amazon Economic Returnless Refund)
+Đối với các sản phẩm thông thường không chứa pin phồng nguy hiểm:
+1. Tính toán Ma trận Chi phí Logistics Ngược Thời gian Thực:
+• Chi phí thu hồi tổng hợp ($C_{\text{reverse}}$) được tính theo công thức:
+$$C_{\text{reverse}} = \text{Fee}_{\text{return\_shipping}} + \text{Fee}_{\text{inbound\_handling}} + \text{Fee}_{\text{inspection\_labor}} + \text{Fee}_{\text{restocking\_disposal}}$$
+Trong đó: Phí vận chuyển ngược bình quân: 35.000 VNĐ; Phí bốc dỡ và lưu kho trung tâm: 15.000 VNĐ; Phí công thợ kỹ thuật kiểm định: 25.000 VNĐ; Phí tiêu hủy rác thải bảo vệ môi trường: 10.000 VNĐ. $\rightarrow$ Tổng chi phí thu hồi tối thiểu $C_{\text{reverse}} \approx 85.000\text{ VNĐ}$.
+2. Tính toán Giá trị Thu hồi Thanh lý Ròng (Net Salvage Value):
+$$NetSalvage = \text{EstimatedResaleValue} \times (1 - \text{DepreciationRate}) - \text{RefurbishCost}$$
+• Đối với bát đĩa thủy tinh vỡ vụn, thực phẩm đóng gói bị rách mốc, hoặc mỹ phẩm đã bóc seal:
+$$NetSalvage = 0 \text{ VNĐ}$$
+3. Quy tắc Quyết định Kinh tế:
+• Nếu $NetSalvage \le 0$ (hoặc $C_{\text{reverse}} \ge NetSalvage$): Việc thu hồi món hàng là một quyết định kinh tế gây lỗ ròng cho sàn và người bán.
+• Kết hợp với 3 điều kiện thẩm định:
+1. Khách hàng có điểm tín nhiệm Customer Trust Score $\ge 75/100$.
+2. Giá trị sản phẩm $\le 300.000$ VNĐ (tương đương $\$20$ trên chuẩn quốc tế).
+3. Khách hàng chưa vượt quá trần giới hạn hoàn tiền lạm dụng.
+• $\rightarrow$ Hệ thống tự động phê duyệt Hoàn tiền Không cần Trả hàng (Approved Returnless Refund). Số tiền hoàn được chuyển vào ví/thẻ của khách trong vòng 5 phút. Khách hàng được toàn quyền giữ lại sử dụng, quyên góp hoặc tự tiêu hủy món hàng.
+4. Đối soát Bù đắp Tài chính cho Người bán:
+• Do sản phẩm bị hỏng vì vận chuyển hoặc rủi ro khách quan: Sàn trích tiền từ Quỹ Bảo Hiểm Vận Chuyển Sàn (Platform Logistics Insurance Fund) để thanh toán đầy đủ 100% doanh thu đơn hàng cho Người bán.
+• Người bán không bị trừ tiền doanh thu và không bị tính điểm phạt tỷ lệ hoàn hàng.
+4.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+AF-01: Sản phẩm điện tử có giá trị cao không lỗi pin (High-Value Non-Hazmat Return)
+• Tình huống: Khách hàng mua tai nghe AirPods hoặc điện thoại iPhone trị giá 5.000.000 VNĐ, báo hàng bị rè loa (không phải phồng pin) và yêu cầu được hoàn tiền không cần trả hàng.
+• Xử lý:
+• Hệ thống kiểm tra giá trị sản phẩm vượt xa ngưỡng 300.000 VNĐ và thuộc danh mục điện tử nguyên khối có giá trị tái chế cao ($NetSalvage > 0$).
+• Thuật toán lập tức từ chối nhánh Returnless. Chuyển hướng người dùng sang luồng Đổi trả vật lý bắt buộc qua điểm PUDO Drop-off hoặc bưu cục gửi hàng, có kỹ thuật viên kho kiểm định linh kiện bo mạch trước khi hoàn tiền.
+EF-01: Ngăn chặn Hành vi Gian lận Cày Hoàn tiền (Anti-Smurfing & Abuse Detection)
+• Tình huống: Kẻ gian liên tục tạo nhiều tài khoản ảo trên cùng thiết bị để mua các món hàng gia dụng 150k-250k, sau khi nhận hàng lập tức nộp ảnh vỡ nát tải từ trên mạng để đòi hoàn tiền giữ lại hàng.
+• Xử lý qua Hệ thống Phòng thủ 4 Tầng:
+1. Bộ lọc Trùng lặp Ảnh (Perceptual Hashing - pHash): Hệ thống băm mã ảnh khiếu nại đối chiếu với cơ sở dữ liệu ảnh khiếu nại toàn sàn. Nếu phát hiện ảnh trùng mã băm với đơn hàng của người khác hoặc ảnh tải từ Google Images $\rightarrow$ Cảnh báo gian lận đỏ.
+2. Đồ thị Danh tính (Identity Graph): Phát hiện chung Canvas Device Fingerprint hoặc chung số thẻ ngân hàng.
+3. Trần giới hạn lũy kế (Lifetime Cap): Mỗi khách hàng chỉ được tối đa 02 lần Returnless trong 30 ngày và không quá 05 lần hoặc tổng số tiền 1.000.000 VNĐ trọn đời.
+4. Kiểm toán ngẫu nhiên 15% (Random Physical Audit): Xác suất ngẫu nhiên 15% luôn ép buộc khách phải mang hàng ra bưu cục kiểm tra ngoại quan.
+• Chế tài trừng phạt: Hệ thống lập tức thu hồi quyền Returnless của tài khoản trong 180 ngày, trừ 30 điểm Trust Score, khóa đóng băng hoàn tiền và đưa thông tin thiết bị vào Danh sách Đen gian lận thương mại toàn sàn.
+EF-02: Nghi vấn Khai báo Giả mạo Pin Phồng để Trục lợi Thiết bị Đắt tiền
+• Tình huống: Khách mua điện thoại cao cấp 20.000.000 VNĐ, khai báo pin bị phồng hở vỏ nhằm kích hoạt luồng Hazmat để chiếm đoạt chiếc máy miễn phí mà không phải trả hàng.
+• Xử lý:
+• Đối với các thiết bị công nghệ cao có giá trị lớn ($> 1.000.000$ VNĐ): Quy trình Hazmat không tự động bấm hoàn tiền ngay tại ứng dụng.
+• Hệ thống kích hoạt quy trình "Thu hồi An toàn Hàng nguy hiểm Đặc thù" (Special Hazmat Secure Intake Flow):
+• Hệ thống yêu cầu khách hàng cung cấp video quay cận cảnh tem Serial/IMEI trên thân máy và khe hở pin, hoặc:
+• Cử chuyên viên kỹ thuật mang hộp bảo vệ chống cháy chuyên dụng (Li-Ion Fireproof Safety Box) đến tận nhà khách hàng để thẩm định thực tế trong vòng 24 giờ.
+• Nếu xác nhận pin phồng thật: Kỹ thuật viên thu hồi máy về khu vực cách ly an toàn và hoàn tiền 100% tại chỗ cho khách.
+• Nếu phát hiện khách khai gian (máy hoàn toàn bình thường, cố tình bóp méo vỏ để trục lợi): Lập tức chuyển hồ sơ sang Phân hệ Điều tra Gian lận RET-FRAUD-SERIAL để xử lý chế tài.
+4.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. BR-RETURNLESS-01 (Công thức Cây Quyết định Kinh tế & Bộ lọc Đối kháng 4 Tầng):
+$$\text{ReturnlessVerdict} = \begin{cases}
+\text{APPROVED\_HAZMAT} & \text{nếu } (\text{IsHazmatBatterySwelling} == \text{TRUE}) \land (\text{IsVerifiedPhysicalDefect} == \text{TRUE}) \\
+\text{APPROVED\_ECONOMIC} & \text{nếu } (Score_{\text{trust}} \ge 75) \land (NetSalvage \le 0) \land (V_{\text{item}} \le 300.000\text{ VNĐ}) \\
+& \quad \land (Count_{\text{30d}} < 2) \land (\text{LifetimeCount} < 5) \land (\text{LifetimeAmount} \le 1.000.000\text{ VNĐ}) \\
+& \quad \land (\text{RandomAudit}_{15\%} == \text{FALSE}) \land (\text{pHashDuplicateFlag} == \text{FALSE}) \\
+\text{REQUIRE\_PHYSICAL\_RETURN} & \text{trong tất cả các trường hợp còn lại}
+\end{cases}$$
+2. BR-RETURNLESS-02 (Quy định Pháp lý Cấm Vận chuyển Bưu chính đối với Pin Hỏng):
+• Nghiêm cấm tuyệt đối phát hành mã vận đơn (AWB) hoặc tem gửi hàng cho bất kỳ kiện hàng nào có xác nhận pin phồng/hỏng nặng theo tiêu chuẩn IATA Special Provision A154 / DOT 49 CFR § 173.185(f).
+• Hệ thống khóa cứng API tạo đơn hoàn bưu chính: Mọi nỗ lực ép tạo nhãn vận chuyển cho mã lý do BATTERY_SWELLING_HAZMAT đều bị chặn đứng với mã lỗi 403 Forbidden - HAZMAT_CARRIER_RESTRICTION.
+3. BR-RETURNLESS-03 (Bảng Phân Bổ Hạn Mức Giá Trị & Danh Mục Hàng Hóa):
+--- TABLE START ---
+Nhóm Ngành Hàng | Ngưỡng Giá Trị Tối Đa | Lý Do Chấp Thuận | Tỷ Lệ Thanh Lý Thu Hồi ($V_{\text{salvage}}$)
+Thiết bị điện tử chứa pin phồng | Không giới hạn trần (Theo dõi kỹ thuật) | Pin phồng / Rò rỉ hóa chất | 0% (Nguy hiểm cháy nổ thảm họa)
+Gốm sứ, Thủy tinh, Đồ dễ vỡ | 300.000 VNĐ | Bể vỡ vụn nát trong vận chuyển | 0% (Mảnh vụn sắc nhọn cấm lưu thông)
+Mỹ phẩm, Hóa phẩm cá nhân | 300.000 VNĐ | Rách seal / Chảy đổ dung dịch | 0% (Luật y tế cấm tái bán thứ cấp)
+Thực phẩm chế biến / Đồ khô | 250.000 VNĐ | Rách bao bì / Biến chất / Cận hạn | 0% (Tiêu hủy an toàn sinh học)
+Phụ kiện ốp lưng, Cáp sạc rẻ | 150.000 VNĐ | Đứt ngầm / Giao sai model rẻ tiền | $\le 10\%$ giá gốc
+--- TABLE END ---
+4. BR-RETURNLESS-04 (Kiểm soát Bằng chứng Hình ảnh AI Vision & Perceptual Hashing):
+• 100% ảnh khiếu nại được quét qua thuật toán pHash (Perceptual Hash) 64-bit. Khoảng cách Hamming giữa ảnh mới và kho ảnh vi phạm cũ nếu $\le 5$ bits $\rightarrow$ Đánh dấu ảnh sao chép gian lận.
+• Quét siêu dữ liệu EXIF: Phải có con dấu thời gian chụp trong vòng 24 giờ kể từ khi bưu tá báo giao hàng thành công.
+4.7. Dữ liệu vào/ra & Trạng thái đơn hàng
+Cấu trúc Payload: `QuyetDinhReturnlessLog` (ReturnlessDecisionEntity)
+--- TABLE START ---
+{  "decision_id": "RTL-DEC-20261105-00412",  "order_id": "ORD-20261101-77189",  "order_line_item_id": "LINE-01",  "sku_id": "SKU-BAMBOO-MUG-CERAMIC",  "buyer_id": "CUST-881920",  "claim_reason_code": "DAMAGED_CRUSHED",  "is_hazmat_battery": false,  "financial_evaluation": {    "item_net_price": 220000,    "estimated_reverse_shipping": 35000,    "estimated_handling_inspection": 40000,    "estimated_disposal_cost": 10000,    "total_reverse_logistics_cost": 85000,    "estimated_gross_resale_value": 0,    "net_salvage_value": 0,    "economic_deficit": -85000  },  "anti_fraud_audit": {    "customer_trust_score": 82,    "returns_count_last_30d": 0,    "lifetime_returnless_count": 1,    "lifetime_returnless_amount": 180000,    "random_audit_selected": false,    "phash_duplicate_detected": false  },  "decision_result": "APPROVED_RETURNLESS_REFUND",  "refund_payout_amount": 220000,  "seller_indemnity_source": "PLATFORM_LOGISTICS_INSURANCE_FUND",  "executed_timestamp": "2026-11-05T09:30:15Z"}
+--- TABLE END ---
+Ma trận chuyển dịch trạng thái nghiệp vụ Returnless:
+--- TABLE START ---
+Trạng thái ban đầu | Sự kiện kích hoạt | Trạng thái kế tiếp | Tác động Hệ thống & Vận hành
+DELIVERED | Khách gửi khiếu nại bể vỡ/pin phồng kèm ảnh | RETURNLESS_EVALUATING | Tạm giữ tiền trong 3 giây để thuật toán tính toán ma trận.
+RETURNLESS_EVALUATING | Thuật toán xác nhận Hazmat Pin phồng đạt chuẩn | REFUNDED_RETURNLESS_HAZMAT | Khóa nhãn bưu điện; Hoàn tiền 100%; Hiện hướng dẫn tiêu hủy pin.
+RETURNLESS_EVALUATING | Thuật toán xác nhận NetSalvage <= 0 & Trust Score cao | REFUNDED_RETURNLESS_ECONOMIC | Bắn lệnh hoàn tiền 100% trong 5 phút; Không tạo mã vận đơn gửi hàng.
+RETURNLESS_EVALUATING | Không thỏa mãn điều kiện (Vượt giá/Điểm thấp/Audit) | REQUIRE_PHYSICAL_RETURN | Chuyển sang luồng trả hàng thông thường; Cấp mã QR điểm PUDO.
+--- TABLE END ---
+4.8. Tiêu chí nghiệm thu chức năng (Acceptance Scenarios)
+--- TABLE START ---
+Kịch bản: RET-RETURNLESS-AC01 - Tự động duyệt hoàn tiền ngay cho bộ chén dĩa thủy tinh bị vỡ vụn  Given Khách hàng có điểm tín nhiệm Customer Trust Score là 82/100  And Khách hàng chưa từng sử dụng quyền Returnless trong 30 ngày qua  And Đơn hàng mua 01 Bộ chén dĩa thủy tinh cao cấp trị giá 220.000 VNĐ đã giao thành công  When Khách hàng tạo yêu cầu hoàn tiền với lý do "Hàng vỡ nát do vận chuyển" kèm 2 ảnh chụp mảnh vỡ  Then Động cơ thuật toán tính toán Net Salvage Value = 0 VNĐ và Chi phí thu hồi = 85.000 VNĐ  And Thuật toán phê duyệt kết quả "APPROVED_RETURNLESS_ECONOMIC" trong vòng 03 giây  And Màn hình khách hàng hiển thị: "Chúng tôi đã hoàn tiền 220.000 VNĐ vào ví của bạn. Bạn không cần gửi trả sản phẩm này"  And Lệnh hoàn tiền 220.000 VNĐ được ghi có vào tài khoản khách hàng trong 5 phút  And Người bán được bù 100% tiền hàng từ Quỹ bảo hiểm vận chuyển của sàn.Kịch bản: RET-RETURNLESS-AC02 - Chặn phát hành nhãn bưu điện và hoàn tiền tức thì do pin Lithium-ion bị phồng  Given Khách hàng mua sạc dự phòng dung lượng 20.000mAh trị giá 450.000 VNĐ  And Sau 3 ngày sử dụng, pin bị phồng to đội bung vỏ nhựa và bốc mùi khét  When Khách hàng tạo yêu cầu khiếu nại chọn lý do "BATTERY_SWELLING_HAZMAT" kèm ảnh vỏ pin phồng  Then Phân hệ Hazmat Safety Gateway kích hoạt lệnh cấm vận tải bưu chính "RETURN_LABEL_BLOCKED_HAZMAT"  And Hệ thống TUYỆT ĐỐI KHÔNG sinh mã vận đơn bưu cục hay mã QR gửi hàng  And Hệ thống phê duyệt hoàn tiền 100% tức thì (450.000 VNĐ) cho khách hàng  And Màn hình ứng dụng hiển thị Cảnh báo An toàn Màu đỏ: "TUYỆT ĐỐI KHÔNG gửi sản phẩm qua bưu điện. Ngắt sạc ngay và mang đến điểm tái chế pin nguy hại địa phương".Kịch bản: RET-RETURNLESS-AC03 - Từ chối Returnless và yêu cầu trả hàng do sản phẩm vượt ngưỡng giá trị  Given Khách hàng có điểm tín nhiệm tốt 88/100  And Đơn hàng mua chiếc máy sấy tóc cao cấp trị giá 950.000 VNĐ  When Khách hàng báo máy bị trầy xước vỏ nhựa và xin hoàn tiền không cần trả hàng  Then Hệ thống so sánh giá trị sản phẩm (950.000 VNĐ) vượt quá ngưỡng cho phép (300.000 VNĐ)  And Thuật toán từ chối luồng Returnless và chuyển sang "REQUIRE_PHYSICAL_RETURN"  And Ứng dụng hiển thị thông báo: "Vui lòng đóng gói và mang máy đến điểm tiếp nhận PUDO đối tác để được kiểm định hoàn tiền"  And Không có lệnh hoàn tiền tức thì nào được thực thi.Kịch bản: RET-RETURNLESS-AC04 - Chặn đứng tài khoản gian lận vượt quá trần Returnless trong 30 ngày  Given Khách hàng đã nhận thành công 02 lần hoàn tiền Returnless trong vòng 20 ngày qua  When Khách hàng tiếp tục nộp yêu cầu hoàn tiền Returnless lần thứ 3 cho một món hàng 120.000 VNĐ  Then Hệ thống phát hiện vi phạm quy tắc an ninh "Vượt quá 2 lần trong 30 ngày"  And Hệ thống khóa cổng Returnless, trừ 15 điểm Trust Score của tài khoản  And Bắt buộc khách hàng phải mang hàng ra bưu điện gửi trả nếu muốn nhận lại tiền hoàn.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+5. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 4: RET-DISPUTE — XỬ LÝ KHIẾU NẠI, TRANH CHẤP ĐA PHƯƠNG & TRỌNG TÀI SÀN SLA 48 GIỜ
+5.1. Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: RET-DISPUTE (Định danh kỹ thuật: REV-DISPUTE-04)
+• Tên nghiệp vụ: Quy trình Xử lý Khiếu nại, Tranh chấp Đa phương & Trọng tài Sàn với Bộ đếm SLA 48 Giờ Tự động Phê duyệt (Tri-Party Dispute Arbitration & 48h Auto-Approve SLA Mechanism)
+• Tương đương thực tế: TikTok Shop 48-hour Merchant Auto-Approve SLA, Shopee Dispute Mediation Panel, Amazon A-to-z Guarantee Claims.
+• Quan hệ hệ thống hiện hữu: Bổ sung và chuyên nghiệp hóa Chương 23 (KD-07 - Xử lý tranh chấp giao dịch, KD-08 - Phân xử khiếu nại).
+5.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Bảo vệ quyền lợi người mua trước sự chậm trễ hoặc trốn tránh trách nhiệm của người bán thông qua cơ chế đếm ngược Auto-Approve SLA 48 giờ cưỡng chế tự động.
+• Thiết lập cơ chế tranh tụng chứng cứ minh bạch, khách quan giữa 3 bên: Người mua (Buyer) - Người bán (Seller) - Đơn vị vận chuyển (3PL Carrier).
+• Thu thập tự động dữ liệu cảm biến cân nặng qua các trạm trung chuyển logistics 3PL nhằm phát hiện bưu kiện bị rạch tráo trên đường vận chuyển.
+• Ban hành phán quyết trọng tài chuẩn xác trong thời hạn cam kết tối đa 72 giờ làm việc.
+• Tự động hóa chế tài xử phạt người bán vi phạm cam kết vận hành (Shop Violation Points).
+• Tác nhân tham gia:
+• Người mua (Buyer): Bên khởi kiện, cung cấp video mở hộp (Unboxing video) liền mạch và ảnh chụp lỗi.
+• Người bán (Seller/Merchant): Bên bị khiếu nại, có nghĩa vụ phản hồi trong 48 giờ, cung cấp video đóng gói hàng tại bàn (Packaging video) có soi rõ mã vận đơn và số Serial.
+• Đơn vị Vận chuyển (3PL Carrier): SPX, GHN, Viettel Post; cung cấp chuỗi dữ liệu biến thiên cân nặng tại các trạm phân loại (Scale Audit Trail) và ảnh POD.
+• Chuyên viên Trọng tài Sàn (Dispute Arbitration Specialist): Thẩm định hồ sơ chứng cứ độc lập và ra phán quyết chung thẩm.
+• Bộ đếm thời gian tự động (SLA Countdown Cron Worker): Quét ngầm mỗi 60 giây và kích hoạt lệnh thi hành án tự động khi hết hạn 48 giờ.
+5.3. Điều kiện tiên quyết (Preconditions)
+1. Đơn hàng đã ở trạng thái DELIVERED hoặc RETURNING và người mua khởi tạo khiếu nại hợp lệ trong thời hạn bảo vệ của sàn (từ 07 đến 15 ngày).
+2. Người mua và Người bán không tự thương lượng thành công giải pháp (hoặc người mua bác bỏ đề xuất bồi thường một phần của người bán).
+3. Đơn khiếu nại chính thức chuyển sang trạng thái tranh chấp chờ sàn xử lý (DISPUTE_ESCALATED_TO_PLATFORM).
+4. Toàn bộ tiền hàng của đơn đang được đóng băng an toàn trong Tài khoản Ký quỹ Sàn (Platform Escrow Account), cấm mọi lệnh rút tiền.
+5.4. Luồng xử lý chính từng bước (Main Flow)
+--- TABLE START ---
+[Người mua nộp đơn Khiếu nại / Đổi trả kèm Bằng chứng trên Ứng dụng]                             │                             ▼[HỆ THỐNG KÍCH HOẠT BỘ ĐẾM THỜI GIAN SLA 48:00:00 ĐỐI VỚI NGƯỜI BÁN](Đồng hồ đếm ngược theo giờ thực tế Calendar Hours - Không dừng Thứ 7, CN)                             │    ┌────────────────────────┴────────────────────────┐    ▼                                                 ▼[NHÁNH 1: HẾT 48H SELLER KHÔNG PHẢN HỒI]          [NHÁNH 2: SELLER PHẢN HỒI TRONG 48H]    │                                                 │    ▼                                                 ├──► [SELLER CHỌN: ĐỒNG Ý HOÀN TIỀN][HỆ THỐNG TỰ ĐỘNG PHÊ DUYỆT (AUTO-APPROVE SLA)]       │         │    │                                                 │         ▼    ├── 1. Trích 100% tiền từ Ví Seller hoàn Buyer    │    [Hoàn tiền ngay -> Đóng khiếu nại]    ├── 2. Cộng 02 Điểm Vi Phạm Cửa Hàng (Shop Penalty)│    └── 3. Gửi email thông báo chế tài SLA            └──► [SELLER CHỌN: TỪ CHỐI & KHIẾU NẠI NGƯỢC]                                                                │                                                                ▼                                                   [KÍCH HOẠT QUY TRÌNH ĐỐI CHẤT 3 BÊN]                                                   - Seller nộp Video đóng hàng bàn CCTV                                                   - Hệ thống gọi API 3PL kéo Log cân nặng trạm                                                   - Buyer bổ sung bằng chứng (nếu có)                                                                │                                                                ▼                                                   [CHUYÊN VIÊN TRỌNG TÀI THẨM ĐỊNH TRONG 72H]                                                                │                                          ┌─────────────────────┼─────────────────────┐                                          ▼                     ▼                     ▼                                   [PHÁN QUYẾT A]        [PHÁN QUYẾT B]        [PHÁN QUYẾT C]                                   LỖI DO SELLER         LỖI DO 3PL VẬN CHUYỂN BÁC BỎ / GIAN LẬN BUYER                                   - Hoàn 100% Buyer     - 3PL bồi thường 100% - Giải phóng tiền Seller                                   - Trừ tiền Seller     - Sàn hoàn tiền Buyer - Bác khiếu nại Buyer                                   - Phạt 2 điểm Seller  - Mở tiền cho Seller  - Cảnh cáo/Khóa Buyer
+--- TABLE END ---
+• Bước 1 (Khởi tạo khiếu nại & Kích hoạt đồng hồ SLA 48 giờ):
+• Người mua bấm "Yêu cầu Trả hàng / Hoàn tiền", chọn lý do: Giao sai hàng, Hàng bể vỡ nặng, Hộp rỗng ruột / Thiếu phụ kiện.
+• Người mua bắt buộc tải lên: 01 video mở hộp (Unboxing video) quay liền mạch và tối thiểu 02 ảnh chụp cận cảnh mã vận đơn + lỗi sản phẩm.
+• Hệ thống ghi nhận trạng thái DISPUTE_PENDING_SELLER_RESPONSE.
+• Bộ đếm thời gian 48 giờ (172.800 giây) bắt đầu chạy lùi trên Seller Center. Màn hình người bán hiển thị banner cảnh báo đỏ nổi bật kèm đồng hồ đếm ngược: "Bạn có 48 giờ để phản hồi khiếu nại này. Nếu không xử lý trước [Thời_gian], hệ thống sẽ tự động hoàn tiền cho người mua và tính điểm phạt vi phạm cửa hàng."
+• Bước 2 (Phân nhánh xử lý của Người bán):
+• Trường hợp 1 (Người bán bỏ qua quá 48 giờ): Cron Worker phát hiện hết hạn SLA, lập tức kích hoạt luồng tự động cưỡng chế hoàn tiền (Auto-Approve). Chuyển sang Mục 5.5 (AF-01).
+• Trường hợp 2 (Người bán đồng thuận): Người bán bấm "Chấp nhận yêu cầu hoàn tiền". Hệ thống chuyển tiền ngay cho người mua, vụ việc đóng lại êm đẹp.
+• Trường hợp 3 (Người bán từ chối & Khiếu nại ngược lên sàn): Người bán bấm nút "Từ chối khiếu nại và chuyển Sàn xử lý" (REJECT_AND_ESCALATE_DISPUTE). Người bán bắt buộc tải lên bộ chứng cứ đối kháng:
+1. Video đóng gói hàng hóa tại bàn đóng gói (Packing Video) quay cận cảnh mã vận đơn, số Serial máy và thao tác dán tem niêm phong niêm phong hộp.
+2. Phiếu xuất kho có ghi nhận trọng lượng và chữ ký bàn giao của tài xế lấy hàng.
+• Bước 3 (Truy xuất tự động Dữ liệu Cân nặng Cảm biến 3PL - Carrier Weight Telemetry):
+• Hệ thống Quản trị Tranh chấp tự động gửi truy vấn API chuyên sâu sang hệ thống theo dõi của Đơn vị vận chuyển (SPX / GHN / Viettel Post) để trích xuất:
+1. Nhật ký biến thiên cân nặng 3 trạm (3-Station Weight Audit Trail):
+• $W_{\text{first\_scan}}$: Cân nặng lúc bưu cục gốc nhận kiện từ tay người bán (Ví dụ: 485 gam).
+• $W_{\text{sorting\_hub}}$: Cân nặng quét tự động trên băng chuyền trung tâm chia chọn tự động (Ví dụ: 484 gam).
+• $W_{\text{delivery\_hub}}$: Cân nặng lúc bưu tá bưu cục phát chặng cuối chuẩn bị đi giao (Ví dụ: 120 gam).
+2. Bằng chứng giao hàng điện tử (POD): Ảnh chụp gói hàng tại cửa nhà khách và tọa độ GPS của bưu tá.
+• Bước 4 (Quy trình Thẩm định của Trọng tài Sàn trong 72 giờ):
+• Hồ sơ vụ việc được phân phối ngẫu nhiên cho một Chuyên viên Trọng tài Sàn (Dispute Arbitration Specialist). Chuyên viên có SLA tối đa 72 giờ làm việc để thẩm định chứng cứ:
+• Đối soát cân nặng: Nếu $W_{\text{first\_scan}} = 485\text{g}$ nhưng $W_{\text{delivery\_hub}} = 120\text{g}$ ($\Delta W = 365\text{g} > 15\text{g}$) $\rightarrow$ Kết luận vững chắc: Bưu kiện đã bị rạch trộm ruột trên đường trung chuyển của đơn vị vận chuyển.
+• Đối soát video đóng gói vs unboxing: Video người bán quay rõ bỏ điện thoại màu Xanh vào hộp, nhưng video mở hộp của khách thấy điện thoại màu Đen và hộp hàng còn nguyên vẹn băng dính gốc $\rightarrow$ Kết luận: Người bán đóng nhầm hàng.
+• Kiểm định tính toàn vẹn của video unboxing: Video mở hộp của khách bị cắt ghép khung hình (Jump cuts), không quay đủ 6 mặt kiện hàng, hoặc đáy hộp đã có vết rạch băng dính từ trước khi bấm máy $\rightarrow$ Bằng chứng của Người mua không hợp lệ.
+• Bước 5 (Ban hành Phán quyết Trọng tài & Thi hành án Tài chính Tức thì):
+• Chuyên viên trọng tài ban hành 1 trong 3 phán quyết chính thức:
+• Phán quyết A (Phần thắng thuộc về Người mua - Lỗi do Người bán): Chấp thuận hoàn tiền 100% cho Người mua; Trừ tiền từ số dư ví của Người bán; Người bán chịu cước vận chuyển hai chiều; Cộng 02 Điểm Vi Phạm Vận Hành Cửa Hàng đối với Người bán.
+• Phán quyết B (Trách nhiệm thuộc về Đơn vị vận chuyển 3PL): Xác định hàng hóa bị thất thoát/bể vỡ trong khâu vận chuyển. Đơn vị vận chuyển bị xuất phiếu đòi bồi thường 100% giá trị khai giá đơn hàng; Sàn sử dụng ngân sách này hoàn tiền cho Người mua; Đồng thời giải phóng đầy đủ 100% doanh thu đơn hàng cho Người bán; Không bên nào bị trừ điểm phạt.
+• Phán quyết C (Bác bỏ khiếu nại - Phần thắng thuộc về Người bán): Xác định người mua khiếu nại sai sự thật hoặc có dấu hiệu gian lận. Hệ thống giải phóng tiền hàng từ tài khoản Escrow sang ví thanh toán của Người bán; Gửi thông báo bác bỏ khiếu nại kèm giải trình chi tiết cho Người mua; Ghi nhận 01 điểm cảnh báo rủi ro vào tài khoản Người mua.
+5.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+AF-01: Tự động phê duyệt cưỡng chế do quá hạn SLA 48 giờ (TikTok Shop Auto-Approve SLA Execution)
+• Kịch bản: Vào thời điểm 48:00:01 kể từ khi người mua nộp khiếu nại, Cron Job hệ thống quét thấy cờ seller_responded == false.
+• Hành động cưỡng chế tự động:
+1. Cron Worker lập tức cập nhật trạng thái khiếu nại sang AUTO_APPROVED_SELLER_TIMEOUT.
+2. Hệ thống gọi API Cổng thanh toán trích tiền từ Số dư Ví người bán (Seller Wallet Balance) để hoàn trả 100% cho người mua. Nếu số dư ví không đủ, ví người bán bị ghi nhận số âm và tự động cấn trừ vào doanh thu của các đơn hàng giao thành công tiếp theo.
+3. Hệ thống tự động ghi nhận 02 Điểm Vi Phạm Vận Hành Cửa Hàng (Shop Violation Points) do không tuân thủ cam kết phục vụ khách hàng.
+4. Thang chế tài tích lũy điểm phạt vi phạm cửa hàng:
+• Tích lũy đủ 12 điểm vi phạm: Khóa tính năng đăng tải sản phẩm mới trong 07 ngày.
+• Tích lũy đủ 24 điểm vi phạm: Khóa tính năng Livestream bán hàng và tắt toàn bộ chiến dịch Marketing của shop trong 14 ngày.
+• Tích lũy đủ 48 điểm vi phạm: Đóng băng vĩnh viễn cửa hàng, tịch thu tiền bảo lãnh và chấm dứt hợp đồng dịch vụ bán lẻ toàn sàn.
+EF-01: Khiếu nại Hàng giá trị cao (> 5.000.000 VNĐ) nhưng Người mua thiếu Video Unboxing
+• Tình huống: Khách mua điện thoại cao cấp khi nhận hàng mở ra báo bên trong là chai nước suối, nhưng khách hàng sơ ý không quay video lúc mở hộp (chỉ cung cấp ảnh chụp tĩnh sau khi đã mở bung nắp).
+• Xử lý qua Cơ chế Điều tra Ngoại lệ Cấp cao (High-Value 4-Eyes Investigation):
+• Theo quy chế thông thường, thiếu video unboxing sẽ bị bác bỏ khiếu nại. Tuy nhiên, để ngăn chặn tình trạng shipper thông đồng tráo máy làm hại khách hàng vô tội, Sàn không bác bỏ ngay mà chuyển hồ sơ sang chế độ: HIGH_VALUE_EXCEPTION_INVESTIGATION.
+• Ban Trọng tài kích hoạt quy trình điều tra tăng cường:
+• Yêu cầu Hãng vận chuyển 3PL trích xuất băng ghi hình camera bàn chia chọn và kiểm tra lịch sử biến thiên cân nặng tại máy quét tự động ở trạm trung chuyển.
+• Cử thanh tra an ninh bưu chính làm việc trực tiếp với bưu tá giao chặng cuối.
+• Thời gian phân xử được gia hạn thêm 48 giờ (tổng cộng 120 giờ) và bắt buộc phải có chữ ký số phê duyệt kép (Dual-Approval / 4-Eyes Principle) của cả Chuyên viên thụ lý và Trưởng Ban Trọng tài Sàn.
+EF-02: Bất đồng Phán quyết & Quyền Khiếu nại lên Hội đồng Tái thẩm (Arbitration Appeal)
+• Tình huống: Người bán hoặc Người mua không đồng ý với phán quyết của Chuyên viên trọng tài sàn.
+• Xử lý:
+• Mỗi bên có quyền nộp đơn kháng cáo lên "Hội đồng Tái thẩm Trọng tài Sàn" trong thời hạn tối đa 72 giờ kể từ khi ban hành phán quyết.
+• Điều kiện kháng cáo hợp lệ: Bắt buộc phải cung cấp bằng chứng mới có giá trị pháp lý chưa từng được xuất trình trong phiên trọng tài trước đó (Ví dụ: Giấy xác nhận sự cố bưu cục có đóng dấu đỏ của Giám đốc Chi nhánh Bưu điện, hoặc Bản tường trình có chữ ký của bưu tá giao hàng).
+• Nếu không có chứng cứ mới hoặc nộp sau 72 giờ: Đơn kháng cáo bị hệ thống bác bỏ tự động (APPEAL_REJECTED_NO_NEW_EVIDENCE). Quyết định ban đầu giữ nguyên giá trị thi hành tối hậu.
+5.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. BR-DISPUTE-01 (Tiêu chuẩn Video Bằng chứng Hợp lệ - Unboxing & Packing Video Standards):
+• Video phải là một tệp ghi hình liên tục từ đầu đến cuối, không bị ngắt quãng, không bị cắt ghép (No jump cuts, no edits).
+• Video của Người bán: Phải quay cận cảnh rõ nét toàn bộ 6 mặt của gói hàng, soi rõ tem mã vận đơn (AWB), soi rõ số Serial/IMEI của sản phẩm trước khi đóng hộp và dán băng keo niêm phong.
+• Video của Người mua: Phải quay rõ kiện hàng còn nguyên tem niêm phong chưa rạch trước khi mở, quay cận cảnh mã vận đơn và quá trình lấy sản phẩm ra khỏi hộp.
+• Video có độ phân giải tối thiểu 720p HD, dung lượng tối đa 200MB, định dạng .mp4 hoặc .mov.
+2. BR-DISPUTE-02 (Quy tắc Đồng hồ SLA 48h - Calendar Hours Không Gián đoạn):
+• Đồng hồ SLA 48 giờ tính theo giờ theo lịch thực tế (Calendar Hours), chạy liên tục cả ngày Thứ Bảy, Chủ Nhật và ngày Lễ Tết (chuẩn hóa theo TikTok Shop để bảo đảm quyền lợi tối đa cho người mua).
+• Đồng hồ không bị tạm dừng (No pause allowed) trừ phi có thông báo tình trạng bất khả kháng toàn hệ thống (Thiên tai bão lũ cấp độ 3 trở lên hoặc sự cố sập máy chủ đám mây toàn quốc).
+3. BR-DISPUTE-03 (Công thức Đối soát Biến thiên Cân nặng Bưu tá 3 Chiều):
+$$\Delta W = | W_{\text{outbound\_origin}} - W_{\text{delivery\_hub}} |$$
+• Nếu $\Delta W \le 15 \text{ gam}$: Sai lệch nằm trong ngưỡng dung sai cơ học của cân điện tử.
+• Nếu $\Delta W > 15 \text{ gam}$: Hệ thống tự động kích hoạt cảnh báo nguy cơ tráo bưu kiện FRAUD_WEIGHT_MISMATCH.
+• Nếu $\Delta W > 50 \text{ gam}$ (đối với kiện hàng $\le 1\text{kg}$) hoặc $\Delta W > 5\%$ (đối với kiện hàng $> 1\text{kg}$): Xác định có biến động vật chất bất thường trong chuỗi vận chuyển. Trách nhiệm bồi thường và giải trình thuộc về Đơn vị vận chuyển 3PL.
+4. BR-DISPUTE-04 (Tính Tối hậu của Phán quyết & Ký quỹ Escrow):
+• Toàn bộ số tiền đơn hàng bị khóa cứng trong tài khoản Escrow trong suốt quá trình tranh chấp.
+• Phán quyết của Trọng tài Sàn có giá trị thi hành tài chính tự động ngay tại thời điểm ban hành (decided_at). Tiền sẽ được hệ thống tự động giải ngân cho bên thắng kiện mà không cần thêm bất kỳ thao tác thủ công nào của kế toán.
+5.7. Dữ liệu vào/ra & Trạng thái đơn hàng
+Cấu trúc Payload: `HoSoTranhChapTrọngTai` (DisputeArbitrationDossier)
+--- TABLE START ---
+{  "dispute_ticket_id": "DISP-20261105-00914",  "order_id": "ORD-20261031-88412",  "buyer_id": "CUST-99104",  "seller_id": "SELLER-VN-3391",  "carrier_code": "SPX_EXPRESS",  "waybill_code": "SPXVN094810294812",  "dispute_reason_category": "WRONG_ITEM_OR_EMPTY_BOX",  "dispute_created_at": "2026-11-05T07:00:00Z",  "seller_response_deadline": "2026-11-07T07:00:00Z",  "seller_action_status": "REJECTED_AND_ESCALATED",  "seller_responded_at": "2026-11-05T14:20:00Z",  "evidence_dossier": {    "buyer_unboxing_video_url": "https://cdn.platform.vn/evidence/buyer_unbox_00914.mp4",    "buyer_sha256": "8f4a1c2d3e4b5a6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c",    "seller_packing_video_url": "https://cdn.platform.vn/evidence/seller_pack_00914.mp4",    "seller_sha256": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f901a2b3c4d5e6f7a8b9c0d1e2f3a",    "carrier_telemetry": {      "outbound_origin_weight_grams": 482,      "sorting_hub_weight_grams": 480,      "delivery_hub_weight_grams": 160,      "weight_delta_grams": 322,      "carrier_pod_photo_url": "https://cdn.platform.vn/evidence/pod_00914.jpg"    }  },  "arbitration_review": {    "assigned_arbitrator_id": "ARB-OFFICER-29",    "arbitration_status": "CLOSED_DECIDED",    "arbitration_verdict": "VERDICT_B_CARRIER_LIABILITY",    "verdict_reasoning_summary": "Khối lượng bưu kiện lúc gửi là 482g nhưng khi đến bưu cục giao chỉ còn 160g (chênh lệch 322g > 15g). Bưu kiện bị rạch tráo ruột trong quá trình trung chuyển của SPX Express.",    "financial_execution": {      "buyer_refund_amount": 28990000,      "seller_payout_amount": 28990000,      "carrier_indemnity_charge": 28990000    },    "seller_penalty_points": 0,    "decided_at": "2026-11-06T10:15:30Z"  }}
+--- TABLE END ---
+Ma trận chuyển dịch trạng thái nghiệp vụ Tranh chấp:
+--- TABLE START ---
+Trạng thái hiện tại | Sự kiện kích hoạt | Trạng thái tiếp theo | Thao tác Hệ thống & Chế tài
+DELIVERED | Khách gửi khiếu nại tranh chấp | DISPUTE_OPEN_WAITING_SELLER | Khởi động đồng hồ đếm ngược 48h của Seller; Đóng băng tiền đơn hàng trong Escrow.
+DISPUTE_OPEN_WAITING_SELLER | Hết 48h Seller không phản hồi | DISPUTE_CLOSED_AUTO_APPROVED | Tự động hoàn tiền 100% cho Buyer; Trừ 2 điểm vi phạm Seller; Đóng hồ sơ.
+DISPUTE_OPEN_WAITING_SELLER | Seller bấm chấp thuận hoàn tiền | DISPUTE_RESOLVED_BY_SELLER | Hoàn tiền Buyer theo thỏa thuận; Không phạt điểm Seller; Đóng hồ sơ.
+DISPUTE_OPEN_WAITING_SELLER | Seller từ chối & nộp video đối chất | DISPUTE_UNDER_PLATFORM_REVIEW | Kích hoạt SLA trọng tài 72h; Kéo tự động Log cân nặng 3 chiều từ API 3PL.
+DISPUTE_UNDER_PLATFORM_REVIEW | Trọng tài ban hành phán quyết chính thức | DISPUTE_VERDICT_ENFORCED | Tự động giải phóng tiền từ Escrow cho bên thắng kiện; Bắn thông báo kết quả.
+--- TABLE END ---
+5.8. Tiêu chí nghiệm thu chức năng (Acceptance Scenarios)
+--- TABLE START ---
+Kịch bản: RET-DISPUTE-AC01 - Tự động duyệt hoàn tiền và phạt điểm khi người bán không phản hồi quá 48 giờ  Given Đơn khiếu nại "DISP-88190" được người mua gửi vào lúc 09:00:00 ngày 01/11/2026  And Trạng thái khiếu nại là "DISPUTE_OPEN_WAITING_SELLER" với thời hạn chót là 09:00:00 ngày 03/11/2026  When Đến thời điểm 09:00:01 ngày 03/11/2026 mà người bán không có bất kỳ phản hồi nào trên Seller Center  Then Hệ thống Cron Worker tự động chuyển trạng thái khiếu nại sang "DISPUTE_CLOSED_AUTO_APPROVED"  And Toàn bộ số tiền 1.850.000 VNĐ được hoàn trả ngay lập tức cho Người mua  And Số dư ví của Người bán bị trừ 1.850.000 VNĐ và bị cộng 02 Điểm Vi Phạm Vận Hành Cửa Hàng  And Hệ thống gửi email thông báo áp dụng chế tài SLA 48h cho người bán.Kịch bản: RET-DISPUTE-AC02 - Phán quyết trọng tài xác định lỗi thuộc về Đơn vị vận chuyển do sụt giảm cân nặng 322g  Given Đơn hàng mua điện thoại trị giá 28.990.000 VNĐ phát sinh khiếu nại rỗng ruột  And Người bán xuất trình video đóng gói hợp lệ có cân nặng lúc gửi bưu cục gốc là 482g  And Dữ liệu API 3PL ghi nhận cân nặng bưu kiện tại bưu cục giao chặng cuối sụt giảm còn 160g  When Chuyên viên trọng tài sàn đối soát phát hiện sai lệch 322g vượt xa ngưỡng cảnh báo 15g  Then Chuyên viên ban hành phán quyết "VERDICT_B_CARRIER_LIABILITY"  And Hệ thống hoàn trả 100% tiền (28.990.000 VNĐ) cho Người mua  And Hệ thống mở phong tỏa thanh toán đầy đủ 28.990.000 VNĐ cho Người bán  And Hệ thống phát hành hóa đơn đòi bồi hoàn 28.990.000 VNĐ gửi sang bộ phận kế toán của đối tác vận chuyển SPX.Kịch bản: RET-DISPUTE-AC03 - Bác bỏ khiếu nại của người mua do phát hiện video unboxing cắt ghép gian lận  Given Người mua nộp đơn khiếu nại báo nhận thiếu 02 chiếc đồng hồ thông minh trong bưu kiện  When Chuyên viên trọng tài kiểm tra tệp video unboxing của người mua  And Phát hiện tại giây thứ 12 của video có hiện tượng giật khung hình (Jump cut) và đáy hộp đã bị rạch băng dính từ trước  Then Chuyên viên trọng tài ban hành phán quyết "VERDICT_C_REJECT_BUYER_FRAUD"  And Yêu cầu khiếu nại bị đóng lại với trạng thái "DISPUTE_REJECTED"  And Tiền thanh toán của đơn hàng được giải phóng dứt điểm từ ví Escrow cho Người bán  And Tài khoản người mua bị ghi nhận 01 điểm cảnh báo gian lận và gửi thông báo giải trình bác bỏ.Kịch bản: RET-DISPUTE-AC04 - Thi hành chế tài khóa tính năng đăng bài khi shop tích lũy đủ 12 điểm vi phạm  Given Shop "TechZone Official" đã tích lũy sẵn 10 Điểm Vi Phạm Vận Hành Cửa Hàng  When Shop này tiếp tục để quá hạn phản hồi khiếu nại 48 giờ ở đơn hàng mới  Then Hệ thống tự động phạt thêm 02 điểm, nâng tổng điểm vi phạm của shop lên 12 điểm  And Hệ thống tự động kích hoạt chế tài khóa tính năng đăng tải sản phẩm mới của shop trong vòng 07 ngày  And Màn hình Seller Center hiển thị thông báo chế tài kỷ luật của sàn.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+6. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 5: RET-FRAUD-SERIAL — ĐIỀU TRA GIAN LẬN ĐỔI TRẢ THIẾT BỊ CÔNG NGHỆ CAO, TRÁO SERIAL/DUMMY & CHẾ TÀI PHÁP LÝ
+6.1. Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: RET-FRAUD-SERIAL (Định danh kỹ thuật: REV-FRAUD-SERIAL-05)
+• Tên nghiệp vụ: Quy trình Điều tra Gian lận Đổi trả Thiết bị Công nghệ cao, Tráo đổi Serial/IMEI, Hộp rỗng, Máy mô hình & Chuyển giao Hồ sơ Hình sự (High-Tech Return Fraud Investigation, Anti-Serial Swap & Legal Escalation Protocol)
+• Tương đương thực tế: Apple GSX Return Serialization Audit, Swiftronics Anti-Device Swap Depot, Amazon Return Fraud Investigation Unit, Bộ luật Hình sự Việt Nam (Điều 174).
+• Quan hệ hệ thống hiện hữu: Bổ sung quy chuẩn an ninh và phòng vệ tài sản cho Phân hệ Đổi trả (Chương 17) và Tranh chấp (Chương 23).
+6.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Ngăn chặn và triệt tiêu 5 thủ đoạn gian lận đổi trả công nghệ tinh vi nhất:
+1. Tráo số Serial/IMEI: Gửi trả máy cũ hỏng, máy khóa iCloud/Knox cùng model vào hộp máy mới mua.
+2. Bưu kiện hộp rỗng (Empty Box Scam): Rạch đáy hộp khéo léo lấy máy ra rồi dán lại gửi trả vỏ hộp rỗng.
+3. Tráo vật nặng (The Brick / Dummy Swap): Bỏ đất sét, chai nước, thanh sắt hoặc máy mô hình trưng bày (Dummy phone không có bo mạch) vào hộp để đánh lừa cảm giác và cân nặng.
+4. Luộc linh kiện (Part Harvesting): Bóc tách màn hình OLED zin, cụm camera Face ID, thay bằng linh kiện lô kém chất lượng rồi gửi trả với lý do "máy lỗi không lên nguồn".
+5. Tráo hàng bưu chính (In-transit Carrier Theft): Bưu kiện bị rạch tráo trên đường trung chuyển của đơn vị vận chuyển.
+• Xây dựng Chuỗi Chứng Cứ 4 Lớp Khép Kín (4-Tier Chain of Custody) có giá trị pháp lý tuyệt đối để bảo vệ Người bán và Sàn.
+• Thiết lập thuật toán phân tích biến thiên cân nặng bưu tá với ngưỡng cảnh báo đỏ $\Delta W > 15\text{g}$.
+• Đóng băng hoàn tiền gian lận (REFUND_BLOCKED_FRAUD_HOLD) và chi trả bồi hoàn 100% cho Người bán thông qua Quỹ Bảo Vệ Nhà Bán Hàng (Seller Protection Fund - SPF) trong vòng 24-48 giờ.
+• Đưa tài khoản gian lận vào Danh sách Đen (Blacklist) vĩnh viễn và chuyển giao hồ sơ cho Cơ quan Cảnh sát Điều tra / Cục An ninh mạng (A05 - Bộ Công an) khởi tố hình sự theo Điều 174 Bộ luật Hình sự đối với các vụ việc chiếm đoạt tài sản có giá trị từ 2.000.000 VNĐ trở lên.
+• Tác nhân tham gia:
+• Người bán (Seller/Merchant): Cung cấp video đóng gói tại bàn CCTV và thực hiện đồng kiểm khi nhận hàng hoàn.
+• Người mua (Buyer): Đối tượng bị điều tra khi có dấu hiệu gian lận tráo hàng.
+• Đơn vị Vận chuyển (3PL Partner): Cung cấp dữ liệu cân điện tử tự động tại các trạm trung chuyển (Origin, Hub, Destination).
+• Bộ phận Điều tra An ninh Gian lận Sàn (Fraud Investigation Unit - FIU): Tiếp nhận hồ sơ, đối soát dữ liệu và lập báo cáo giám định kỹ thuật.
+• Ban Pháp Chế Sàn (Legal Compliance Office): Soạn thảo công văn tố giác tội phạm, đại diện sàn làm việc với Cơ quan CSĐT.
+• Cơ quan Cảnh sát Điều tra / Cục A05 (Law Enforcement): Tiếp nhận hồ sơ chứng cứ điện tử, thụ lý điều tra khởi tố theo thẩm quyền.
+6.3. Điều kiện tiên quyết (Preconditions)
+1. Kiện hàng hoàn trả được giao về tới Trung tâm Phân loại Đổi trả của Sàn (Return Intake Depot) hoặc bưu tá mang trả về tận kho Người bán.
+2. Thiết bị hoàn trả thuộc danh mục Thiết bị điện tử có số định danh cá thể hóa (Serial Number, IMEI, MAC Address, EID).
+3. Đơn hàng gốc có lưu vết số Serial/IMEI xuất kho hợp lệ trong bảng CSDL order_package_items.
+6.4. Luồng xử lý chính từng bước (Main Flow)
+--- TABLE START ---
+[Bưu kiện hoàn trả được chuyển về Trạm Kiểm Định Đổi Trả (Return Depot) hoặc Kho Người Bán]                                       │                                       ▼[BƯỚC 1: BÓC HỘP TRẢ HÀNG DƯỚI CAMERA GIÁM SÁT CCTV HD GÓC RỘNG LIÊN TỤC]- Cân lại bưu kiện trên Cân điện tử có kết nối API (Ghi nhận Inbound Weight đến từng gram)- Camera ghi hình cận cảnh nhãn AWB bưu kiện, tình trạng băng keo niêm phong                                       │                                       ▼[BƯỚC 2: KIỂM ĐỊNH ĐỐI SOÁT BỘ 4 ĐỊNH DANH PHẦN CỨNG (HARDWARE AUDIT)]- Kỹ thuật viên đọc số Serial Number và Dual IMEI trên khay SIM / vỏ máy / màn hình Hello- Cắm cáp chẩn đoán vào cổng USB-C đọc thông tin chip PMIC / Bo mạch Logic Board- So khớp với Serial/IMEI gốc đã lưu trong đơn hàng:  VerificationResult = (Returned_Serial == Shipped_Serial) && (Returned_IMEI == Shipped_IMEI)                                       │       ┌───────────────────────────────┴───────────────────────────────┐       ▼                                                               ▼[TRƯỜNG HỢP A: SERIAL TRÙNG KHỚP 100%]              [TRƯỜNG HỢP B: PHÁT HIỆN GIAN LẬN / SAI LỆCH]- Linh kiện nguyên zin, không luộc đồ               1. Serial/IMEI không trùng khớp (Tráo máy cũ)- Không dính Activation Lock / iCloud               2. Hộp rỗng ruột / Tráo vật nặng (Cát, gạch đá)       │                                            3. Tráo máy mô hình trưng bày (Dummy Unit)       ▼                                            4. Luộc linh kiện (Màn hình lô, camera bên thứ 3)[PHÊ DUYỆT HOÀN TIỀN CHÍNH THỨC]                                       │- Giải phóng tiền hoàn cho Người mua                                   ▼- Nhập kho phân loại máy Refurbished / Cũ           [KÍCH HOẠT CHUỖI CHỨNG CỨ 4 LỚP (4-TIER CHAIN)]                                                    - Lớp 1: Video CCTV đóng hàng của Seller                                                    - Lớp 2: Log cân nặng 3PL các trạm (Lệch > 15g)                                                    - Lớp 3: Video unboxing của Buyer                                                    - Lớp 4: Video đồng kiểm mở kiện hoàn trả                                                                       │                                                                       ▼                                                    [ĐÓNG BĂNG HOÀN TIỀN KHẨN CẤP (FRAUD FREEZE)]                                                    - Khóa lệnh hoàn tiền: REFUND_BLOCKED_FRAUD_HOLD                                                    - Gắn cờ tài khoản Buyer: FRAUD_ALERT_CRITICAL                                                                       │                                                                       ▼                                                    [CHI TRẢ QUỸ BẢO VỆ NHÀ BÁN HÀNG (SPF PAYOUT)]                                                    - Sàn trích Quỹ SPF đền bù 100% tiền cho Seller                                                    - Người bán bảo toàn doanh thu trong 24-48 giờ                                                                       │                                                                       ▼                                                    [ĐÁNH GIÁ CHẾ TÀI HÌNH SỰ (ĐIỀU 174 BỘ LUẬT HÌNH SỰ)]                                                    - Giá trị thiết bị gian lận >= 2.000.000 VNĐ?                                                       ├── CÓ: Ban Pháp Chế Sàn lập Hồ sơ chứng cứ                                                       │   điện tử -> Chuyển giao Cơ quan CSĐT / Cục A05                                                       └── KHÔNG: Khóa vĩnh viễn tài khoản toàn sàn
+--- TABLE END ---
+• Bước 1 (Tiếp nhận & Mở hộp dưới Camera CCTV chuẩn mực):
+• Bưu kiện hoàn trả được đưa lên bàn giám định có trang bị camera CCTV độ phân giải cao (tối thiểu 1080p, 60fps) ghi hình liên tục không góc chết.
+• Kỹ thuật viên đặt bưu kiện lên Cân điện tử chuẩn đo lường có kết nối API ghi nhận trực tiếp khối lượng vào hệ thống: inbound_weight_grams.
+• Camera quay cận cảnh nhãn vận đơn (AWB) và 6 mặt bưu kiện. Kỹ thuật viên rạch đường dán bưu chính để lấy hộp sản phẩm ra ngoài.
+• Bước 2 (Kiểm định đối soát định danh phần cứng & Linh kiện bo mạch):
+• Kỹ thuật viên kiểm tra ngoại quan hộp: Nếu hộp rỗng không có máy, hoặc bên trong là cục gạch, chai nước, cát đóng gói $\rightarrow$ Lập biên bản gian lận hộp rỗng (EMPTY_BOX).
+• Nếu bên trong là thiết bị:
+1. Kiểm tra máy mô hình (Dummy Display Phone): Thử bấm nút nguồn. Máy mô hình trưng bày không thể bật nguồn, không có cổng kết nối dữ liệu thật hoặc màn hình chỉ là một tấm nhựa in decal dán chết vào khung sườn $\rightarrow$ Ghi nhận gian lận tráo mô hình (DUMMY_UNIT_DISPLAY).
+2. Đối soát số Serial & IMEI vật lý: Dùng máy quét quang học đọc mã vạch Serial/IMEI in trên khay SIM, trên vỏ lưng hoặc cắm cáp kết nối máy tính chạy công cụ chẩn đoán phần cứng chuyên dụng.
+3. Thuật toán so khớp chuỗi định danh:
+$$\text{SerialMatchFlag} = (\text{Returned\_Serial} == \text{Expected\_Serial}) \land (\text{Returned\_IMEI} == \text{Expected\_IMEI})$$
+Nếu chuỗi không khớp: Kỹ thuật viên lập tức chụp ảnh cận cảnh số Serial máy gửi về đặt cạnh số Serial in trên vỏ hộp.
+4. Kiểm tra luộc đồ (Part Harvesting Audit): Kết nối máy tính chạy công cụ kiểm tra chữ ký số phần cứng (Apple Diagnostic Service / 3uTools Enterprise Audit). Nếu phát hiện:
+• Mã định danh màn hình (Display Serial) không khớp với xuất xưởng $\rightarrow$ Đã bị luộc màn hình zin thay bằng màn lô.
+• Cụm cảm biến TrueDepth Face ID bị gỡ bỏ hoặc báo lỗi "Unknown Part".
+• Pin đã bị tráo bằng cell pin bên thứ ba không có mạch bảo vệ PMIC chính hãng $\rightarrow$ Ghi nhận gian lận tráo linh kiện (PART_HARVESTING_TAMPER).
+• Bước 3 (Thu thập và Tổng hợp Chuỗi Chứng Cứ 4 Lớp - 4-Tier Chain of Custody):
+• Hệ thống an ninh FIU kích hoạt tiến trình gom chứng cứ điện tử đa nguồn:
+• Lớp 1 (Người bán đóng hàng): Video CCTV góc rộng tại bàn đóng gói của Người bán, quay liền mạch không ngắt quãng quá trình bỏ chiếc máy có số Serial gốc vào hộp và dán băng dính niêm phong có in mã vạch bảo mật (Void_Tape_Barcode).
+• Lớp 2 (Nhật ký Cân nặng Bưu tá 3PL - Carrier Weight Telemetry): Trích xuất API từ máy cân tự động tại 3 trạm: Hub xuất phát gốc, Hub chia chọn tự động trung chuyển và Hub bưu cục giao phát chặng cuối. Tính toán độ sai lệch cân nặng:
+$$\Delta W = | W_{\text{outbound\_origin}} - W_{\text{inbound\_return}} |$$
+Nếu $\Delta W > 15 \text{ gam}$ $\rightarrow$ Bật cờ cảnh báo đỏ FRAUD_WEIGHT_MISMATCH.
+• Lớp 3 (Người mua mở hộp): Kiểm tra video mở hộp do người mua đã nộp khi khiếu nại. Soi xét dấu hiệu đáy hộp bị rạch trước khi quay video hoặc số IMEI trên màn hình máy trong video của khách đã là số Serial của chiếc máy cũ.
+• Lớp 4 (Người bán đồng kiểm hàng hoàn): Video người bán mở kiện hàng hoàn trả trước sự chứng kiến của bưu tá giao hàng chặng hoàn, có chữ ký của bưu tá vào biên bản bất thường.
+• Bước 4 (Đóng băng Hoàn tiền Khẩn cấp & Khóa Tài khoản):
+• Hệ thống ngay lập tức khóa cứng lệnh hoàn tiền của đơn hàng (REFUND_BLOCKED_FRAUD_HOLD). Người mua không thể nhận bất kỳ khoản tiền nào.
+• Gắn cờ tài khoản người mua ở cấp độ rủi ro cao nhất: FRAUD_ALERT_LEVEL_CRITICAL.
+• Khóa vĩnh viễn quyền mua hàng trả sau (BNPL / SPayLater), thu hồi toàn bộ số dư voucher và điểm thưởng có trong ví người mua.
+• Bước 5 (Giải ngân Bồi hoàn từ Quỹ Bảo Vệ Nhà Bán Hàng - Seller Protection Fund):
+• Để bảo vệ tuyệt đối dòng tiền kinh doanh của Người bán và ngăn ngừa tình trạng Người bán bị đọng vốn oan uổng:
+• Trong vòng 24 đến 48 giờ kể từ khi biên bản gian lận được lập, Hội đồng Thẩm định Sàn kích hoạt lệnh chi trả từ Quỹ Bảo Vệ Nhà Bán Hàng (Seller Protection Fund - SPF).
+• Người bán được giải phóng 100% doanh thu đơn hàng (100% Order Gross Value) vào tài khoản rút tiền.
+• Toàn bộ phí vận chuyển hai chiều phát sinh được sàn đài thọ 100%. Người bán không bị tính bất kỳ điểm phạt vận hành nào.
+• Bước 6 (Quy trình Chuyển giao Hồ sơ Hình sự theo Điều 174 Bộ luật Hình sự):
+• Căn cứ Pháp lý Hình sự: Căn cứ Điều 174 Bộ luật Hình sự Việt Nam (sửa đổi, bổ sung 2017) quy định về Tội lừa đảo chiếm đoạt tài sản: Người nào bằng thủ đoạn gian dối chiếm đoạt tài sản của người khác trị giá từ 2.000.000 VNĐ trở lên (hoặc dưới 2.000.000 VNĐ nhưng thuộc trường hợp có tính chất chuyên nghiệp, dùng thủ đoạn xảo quyệt) thì bị truy cứu trách nhiệm hình sự với khung hình phạt cải tạo không giam giữ đến 03 năm hoặc phạt tù từ 06 tháng đến chung thân.
+• Đối với các vụ việc tráo điện thoại, máy tính bảng, đồ công nghệ có giá trị $\ge 2.000.000$ VNĐ:
+1. Phòng Pháp Chế và An Ninh Thông Tin của Sàn xuất dữ liệu đóng gói thành một Bộ Hồ Sơ Chứng Cứ Điện Tử (Electronic Evidence Dossier) hoàn chỉnh gồm:
+• File video CCTV đóng hàng và video mở hộp gốc (kèm mã băm SHA-256 xác thực tính bất biến).
+• Báo cáo đối soát nhật ký biến thiên cân nặng của Đơn vị vận chuyển 3PL.
+• Nhật ký kỹ thuật đối soát Serial/IMEI bo mạch.
+• Toàn bộ dữ liệu định danh người mua: Họ tên, số điện thoại, địa chỉ nhận hàng, số CCCD/CMND (nếu đăng ký ví eKYC), địa chỉ IP, dải Subnet mạng, mã băm định danh thiết bị (Device Fingerprint) và lịch sử giao dịch ngân hàng.
+2. Ban Pháp Chế Sàn ký công văn tố giác tội phạm chính thức gửi sang:
+• Cục An ninh mạng và phòng, chống tội phạm sử dụng công nghệ cao (A05 - Bộ Công an) đối với các đường dây có tổ chức, sử dụng nhiều tài khoản clone tinh vi.
+• Cơ quan Cảnh sát Điều tra Công an Quận/Huyện nơi người mua cư trú đối với các vụ việc cá nhân cố ý lừa đảo.
+3. Thiết bị tráo đổi được niêm phong trong túi vật chứng an ninh (EVIDENCE_TAMPER_BAG) lưu kho bảo vệ để bàn giao cho Cơ quan Điều tra khi có quyết định trưng cầu giám định.
+6.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+AF-01: Thủ đoạn Gian lận Luộc Linh kiện Ngầm (Part Harvesting Tamper)
+• Tình huống: Kẻ gian mua iPhone mới, sau đó dùng thiết bị gia nhiệt chuyên dụng tách màn hình máy mới ra, tráo màn hình lô kém chất lượng hoặc tráo cụm camera Face ID hỏng vào máy mới, giữ lại đúng vỏ và bo mạch gốc có số Serial trùng khớp rồi gửi trả hàng với lý do "máy bị lỗi màn hình không hiển thị".
+• Xử lý:
+• Nhìn bên ngoài, số Serial in trên khay SIM và vỏ máy trùng khớp 100% với đơn hàng xuất kho.
+• Tuy nhiên, kỹ thuật viên phòng sạch kết nối thiết bị với phần mềm kiểm tra chữ ký số phần cứng (Apple GSX Hardware Diagnostic / 3uTools Enterprise Server):
+• Hệ thống đọc dữ liệu vi điều khiển EEPROM trên cụm màn hình và nhận diện mã Display Serial Number không khớp với bảng thông số xuất xưởng lưu trữ trên máy chủ Apple Cloud.
+• Cảm biến ánh sáng True Tone bị vô hiệu hóa.
+• Hệ thống ghi nhận kết luận: PART_HARVESTING_TAMPER.
+• Lập tức chuyển hồ sơ sang diện lừa đảo chiếm đoạt tài sản, từ chối hoàn tiền và kích hoạt quy trình xử lý hình sự theo Điều 174 BLHS.
+EF-01: Tráo hàng xảy ra trong Khâu Vận chuyển Nội bộ của Hãng Vận chuyển 3PL
+• Tình huống: Bưu tá hoặc nhân viên kho phân loại của đơn vị vận chuyển (SPX / GHN / Viettel Post) dùng dao rạch bưu kiện, lấy trộm chiếc điện thoại xịn ra và nhét cục gạch vào rồi dán băng dính lại trước khi phát cho người mua hoặc trước khi chuyển hoàn cho người bán.
+• Xử lý:
+• Dữ liệu cân nặng cảm biến tại các trạm phân loại là bằng chứng mang tính quyết định:
+• Cân nặng lúc bưu cục gốc nhận hàng: $W_{\text{origin}} = 485\text{g}$.
+• Cân nặng lúc qua máy quét tự động Sorting Hub: $W_{\text{sorting}} = 484\text{g}$.
+• Cân nặng lúc đến bưu cục phát chặng cuối: $W_{\text{delivery}} = 120\text{g}$ (Sụt giảm đột ngột $364\text{g}$).
+• Hoặc băng dính dán ngoài bưu kiện bị dán đè 2 lớp với chất liệu băng keo khác biệt so với băng keo gốc của người bán.
+• Kết luận Trọng tài: Xác định hành vi tráo hàng xảy ra trong phạm vi trách nhiệm quản lý của Đơn vị vận chuyển 3PL.
+• Người mua và Người bán được miễn trừ hoàn toàn trách nhiệm: Sàn giải phóng tiền cho Người bán, hoàn tiền 100% cho Người mua, và xuất lệnh truy đòi bồi thường 100% giá trị bưu kiện gửi sang Giám đốc Vận hành của Hãng vận chuyển 3PL để xử lý nội bộ nhân viên bưu chính.
+EF-02: Báo động Giả (False Alarm) do Người bán Đóng nhầm Serial ban đầu
+• Tình huống: Kho Người bán phát hiện số Serial máy gửi về không khớp đơn hàng và khiếu nại khách hàng gian lận tráo máy. Tuy nhiên, khi hệ thống truy soát cơ sở dữ liệu xuất kho của Người bán: Phát hiện nhân viên đóng hàng của shop đã quét nhầm mã vạch Serial của đơn hàng khác cùng xuất kho trong ca làm việc đó.
+• Xử lý:
+• FIU đối soát chéo số Serial máy hoàn về với toàn bộ các đơn hàng đã xuất kho của Shop trong 30 ngày qua.
+• Xác nhận chiếc máy gửi về chính là sản phẩm của shop nhưng giao nhầm cho khách hàng khác.
+• Kết luận: SELLER_MISPACK_FALSE_ALARM.
+• Hệ thống giải tỏa lệnh đóng băng hoàn tiền, hoàn trả 100% tiền cho Người mua vô tội, đồng thời gửi thông báo chấn chỉnh quy trình quản lý kho vận cho Người bán.
+6.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. BR-FRAUD-01 (Tính Bất biến của Bộ 4 Định danh Phần cứng):
+$$\text{HardwareBinding} = \langle \text{Serial\_Number}, \text{IMEI\_1}, \text{IMEI\_2}, \text{EID\_32\_Digits} \rangle$$
+• Khi xuất kho chiếc điện thoại mới, nhân viên kho bắt buộc phải quét mã vạch 2D bóc tách trọn vẹn bộ 4 định danh này vào cơ sở dữ liệu đơn hàng.
+• Khi nhận hàng hoàn về: Thiết bị bắt buộc phải trùng khớp cả 4 trường định danh. Sai lệch bất kỳ trường nào đều bị hệ thống phân loại vào diện nghi vấn gian lận cấp độ cao và khóa cổng thanh toán tự động.
+2. BR-FRAUD-02 (Chuẩn mực Dữ liệu Biến thiên Cân nặng Bưu tá 3 Chiều):
+$$\Delta W = | W_{\text{origin\_hub}} - W_{\text{return\_intake}} |$$
+• Ngưỡng dung sai cơ học cho phép của bao bì và băng keo: $\Delta W \le 15 \text{ gam}$.
+• Nếu $\Delta W > 15 \text{ gam}$: Hệ thống tự động kích hoạt cờ cảnh báo FRAUD_WEIGHT_MISMATCH, đóng băng tự động quy trình hoàn tiền và chuyển hồ sơ sang trạm giám định camera an ninh.
+3. BR-FRAUD-03 (Chính sách Bảo lãnh Chi trả từ Quỹ Bảo Vệ Nhà Bán Hàng - SPF Policy):
+• Điều kiện Người bán được nhận bồi hoàn 100% từ Quỹ SPF:
+1. Người bán có cung cấp video đóng hàng tại bàn CCTV đạt chuẩn (rõ mã AWB, rõ số Serial in trên hộp, tem niêm phong nguyên vẹn).
+2. Người bán thực hiện mở kiện hàng hoàn trả dưới sự chứng kiến của bưu tá hoặc có video unboxing hàng hoàn liền mạch.
+3. Khiếu nại được tạo trên Seller Center trong vòng 48 giờ kể từ khi bưu tá giao hàng hoàn thành công.
+• Thời gian giải ngân bồi hoàn cam kết: Không quá 48 giờ làm việc kể từ khi hồ sơ SPF được duyệt.
+4. BR-FRAUD-04 (Căn cứ Chuyển giao Hồ sơ Hình sự theo Điều 174 Bộ luật Hình sự):
+• Ngưỡng giá trị thiệt hại cấu thành chuyển giao cơ quan điều tra:
+$$\text{LossValue} \ge 2.000.000 \text{ VNĐ}$$
+• (Hoặc giá trị $< 2.000.000$ VNĐ nhưng đối tượng sử dụng thủ đoạn tinh vi, tổ chức lập nhiều tài khoản ảo có dấu hiệu lừa đảo chuyên nghiệp).
+• Bộ hồ sơ bàn giao Công an bắt buộc phải bao gồm: Báo cáo kỹ thuật đối soát IMEI, Video CCTV có gắn hàm băm mã hóa SHA-256, và Bảng trích xuất định danh số (IP, MAC, Device Fingerprint, Vị trí địa lý GPS, Dữ liệu eKYC tài khoản).
+6.7. Dữ liệu vào/ra & Trạng thái đơn hàng
+Cấu trúc Payload: `HoSoDieuTraGianLanReturnFraud` (ReturnFraudInvestigationDossier)
+--- TABLE START ---
+{  "investigation_id": "FRD-20261105-00129",  "return_request_id": "RET-20261103-99410",  "order_id": "ORD-20261028-11048",  "buyer_id": "CUST-FRAUD-9921",  "seller_id": "SELLER-APPLE-OFFICIAL",  "fraud_pattern_type": "SERIAL_MISMATCH_SWAP",  "hardware_traceability": {    "expected_serial_number": "F2LLX904MD6R",    "returned_serial_number": "DNQXC901M17K",    "expected_imei": "354920194820194",    "returned_imei": "352019482019481",    "is_serial_matched": false,    "diagnostic_tamper_flags": {      "non_genuine_display": true,      "battery_pmic_mismatch": false,      "logic_board_swapped": true    }  },  "scale_weight_audit": {    "outbound_weight_grams": 485,    "inbound_return_weight_grams": 440,    "weight_variance_grams": 45,    "is_weight_anomaly": true  },  "chain_of_custody_urls": {    "seller_packing_cctv_url": "https://cdn.platform.vn/evidence/cctv_pack_11048.mp4",    "seller_packing_sha256": "4b5c6d7e8f901a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f901a2b3c4d5e6f7a",    "carrier_scale_telemetry_csv": "https://cdn.platform.vn/telemetry/spx_weight_11048.csv",    "seller_return_unboxing_video_url": "https://cdn.platform.vn/evidence/unbox_return_11048.mp4",    "seller_return_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"  },  "investigation_verdict": "CONFIRMED_FRAUD_REJECTED",  "financial_enforcement": {    "buyer_refund_blocked": true,    "blocked_refund_amount": 34990000,    "seller_protection_fund_payout_amount": 34990000,    "spf_payout_transaction_id": "SPF-TXN-20261105-8841",    "payout_status": "PAID_TO_SELLER"  },  "legal_escalation": {    "is_police_referral_mandated": true,    "penal_code_article": "ARTICLE_174_FRAUD_APPROPRIATION",    "claim_value_vnd": 34990000,    "target_law_enforcement_agency": "A05_CYBER_CRIME_MINISTRY_PUBLIC_SECURITY",    "dossier_exported_at": "2026-11-05T14:30:00Z"  }}
+--- TABLE END ---
+Ma trận chuyển dịch trạng thái Điều tra Gian lận:
+--- TABLE START ---
+Trạng thái hiện tại | Sự kiện kích hoạt | Trạng thái kế tiếp | Tác động Hệ thống & Pháp lý
+RETURN_ARRIVED_DEPOT | Quét mã phát hiện sai lệch Serial / Khối lượng lệch >15g | RETURN_UNDER_FRAUD_INVESTIGATION | Khóa cứng lệnh hoàn tiền; Chuyển camera bàn giám định an ninh.
+RETURN_UNDER_FRAUD_INVESTIGATION | Giám định xác nhận gian lận tráo máy / Hộp rỗng | CONFIRMED_FRAUD_REJECTED | Tước quyền hoàn tiền Buyer; Khóa vĩnh viễn tài khoản Buyer; Đưa CCCD vào Blacklist.
+CONFIRMED_FRAUD_REJECTED | Hội đồng duyệt chi Quỹ Bảo Vệ Nhà Bán Hàng | SPF_COMPENSATED_TO_SELLER | Trích quỹ SPF thanh toán 100% doanh thu đơn cho Người bán trong 48h.
+CONFIRMED_FRAUD_REJECTED | Giá trị đơn >= 2.000.000 VNĐ, xuất hồ sơ công an | LEGAL_REFERRAL_ESCALATED_A05 | Ký công văn chuyển giao hồ sơ sang Cơ quan CSĐT / Cục A05 thụ lý hình sự.
+RETURN_UNDER_FRAUD_INVESTIGATION | Xác nhận lỗi do 3PL vận chuyển làm thất thoát | CARRIER_TRANSIT_THEFT_CONFIRMED | 3PL bồi thường 100%; Không phạt người mua; Giải phóng tiền người bán.
+--- TABLE END ---
+6.8. Tiêu chí nghiệm thu chức năng (Acceptance Scenarios)
+--- TABLE START ---
+Kịch bản: RET-FRAUD-AC01 - Phát hiện sai lệch số Serial khi nhận hàng hoàn và đóng băng hoàn tiền tức thì  Given Đơn hàng mua iPhone 16 Pro Max xuất kho số Serial "F2LLX904MD6R" trị giá 34.990.000 VNĐ  And Khách hàng tạo yêu cầu đổi trả và gửi kiện hàng về Trung tâm kiểm định  When Kỹ thuật viên bóc hộp dưới camera CCTV, kết nối cáp chẩn đoán đọc số Serial trong máy  And Hệ thống phát hiện chiếc máy gửi về có số Serial là "DNQXC901M17K" (máy cũ hỏng khác)  Then Hệ thống lập tức khóa lệnh hoàn tiền với trạng thái "REFUND_BLOCKED_FRAUD_HOLD"  And Trạng thái đổi trả chuyển thành "CONFIRMED_FRAUD_REJECTED"  And Hệ thống gửi email thông báo từ chối hoàn tiền kèm hình ảnh đối soát Serial bất khớp cho người mua  And Tài khoản người mua bị gắn cờ "FRAUD_ALERT_LEVEL_CRITICAL".Kịch bản: RET-FRAUD-AC02 - Phát hiện bưu kiện hộp rỗng dán chì qua đối soát cân nặng bưu tá chênh lệch 45g  Given Kiện hàng hoàn trả được bưu tá chuyển về kho Người bán  And Cân điện tử bàn đóng gói ban đầu của Người bán ghi nhận trọng lượng 485g  When Người bán đặt kiện hàng hoàn lên cân có camera giám sát ghi nhận chỉ còn 440g (lệch 45g)  And Người bán rạch hộp phát hiện bên trong chỉ có vỏ hộp rỗng được dán miếng chì tăng trọng  Then Hệ thống kích hoạt cảnh báo đỏ "FRAUD_WEIGHT_MISMATCH" (45g vượt ngưỡng dung sai 15g)  And Người bán lập biên bản bất thường có chữ ký của bưu tá giao hàng hoàn  And Lệnh hoàn tiền cho người mua bị phong tỏa vĩnh viễn trên hệ thống.Kịch bản: RET-FRAUD-AC03 - Giải ngân bồi hoàn 100% từ Quỹ Bảo Vệ Nhà Bán Hàng (SPF) trong 48 giờ  Given Người bán "CellphoneS Official" bị khách hàng tráo máy mô hình Dummy giá trị 25.000.000 VNĐ  And Người bán đã cung cấp đầy đủ Video đóng hàng CCTV bàn làm việc rõ nét và Video mở kiện hoàn trả  When Bộ phận An ninh Sàn FIU thẩm định xác nhận Người bán tuân thủ 100% quy chuẩn đóng hàng  Then Hội đồng sàn kích hoạt lệnh chi trả bồi hoàn từ "Seller Protection Fund"  And Toàn bộ số tiền 25.000.000 VNĐ được chuyển thẳng vào tài khoản rút tiền của Người bán trong vòng 36 giờ  And Người bán không bị tính điểm phạt tỷ lệ đơn hàng không hoàn tất.Kịch bản: RET-FRAUD-AC04 - Chuyển giao hồ sơ sang Cơ quan CSĐT / Cục A05 khởi tố Điều 174 Bộ luật Hình sự  Given Vụ việc gian lận tráo đổi iPhone 16 Pro Max trị giá 34.990.000 VNĐ bị xác nhận  And Giá trị tài sản bị chiếm đoạt vượt xa ngưỡng cấu thành tội phạm hình sự 2.000.000 VNĐ  When Phòng Pháp Chế Sàn bấm nút "Xuất Hồ sơ Chứng cứ Điện tử" trên hệ thống quản trị  Then Hệ thống tự động đóng gói toàn bộ Video CCTV, Log cân nặng, Địa chỉ IP, Device Fingerprint và Thông tin eKYC của kẻ gian  And Phòng Pháp Chế phát hành văn bản tố giác tội phạm chính thức gửi sang Cục An ninh mạng (A05 - Bộ Công an)  And Hệ thống khóa vĩnh viễn tài khoản người mua và đưa thông tin cá nhân vào Blacklist cấm giao dịch toàn sàn.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+7. ĐẶC TẢ CHI TIẾT NGHIỆP VỤ 6: RET-REPAIR-TRACK — QUẢN LÝ VÒNG ĐỜI BẢO HÀNH PHẦN CỨNG & CỔNG TRA CỨU TIẾN ĐỘ SỬA CHỮA CHUẨN GENIUS BAR
+7.1. Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: RET-REPAIR-TRACK (Định danh kỹ thuật: REV-REPAIR-TRACK-06)
+• Tên nghiệp vụ: Quản lý Vòng đời Tiếp nhận Bảo hành Phần cứng, Hiệu chuẩn Hệ thống & Cổng Tra cứu Tiến độ Sửa chữa Chuẩn Apple Genius Bar (Hardware Warranty Repair Lifecycle Management & Customer Tracking Portal)
+• Tương đương thực tế: Apple Support Track Repair Status, Apple Genius Bar Repair State Machine, Samsung Smart Care Tracking, AppleCare+ Service Depot Calibration.
+• Quan hệ hệ thống hiện hữu: Nâng cấp toàn diện cho dịch vụ giá trị gia tăng bảo hành phần cứng (Chương 16 BH-01 đến BH-04) và kết nối hậu mãi sau bán hàng.
+7.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Chuẩn hóa quy trình sửa chữa bảo hành phần cứng thành Máy trạng thái 8 giai đoạn khép kín tương đương tiêu chuẩn trung tâm bảo hành Apple Service Depot.
+• Cung cấp cổng tra cứu trực tuyến thời gian thực (Real-time Customer Repair Tracking Portal) qua mã Ticket ID hoặc số Serial/IMEI, hiển thị thanh tiến trình trực quan, báo cáo chẩn đoán hình ảnh và thời gian dự kiến hoàn tất (ETA).
+• Tự động hóa thông báo đa kênh (SMS Brandname và Zalo ZNS) tại mỗi mốc chuyển dịch trạng thái sửa chữa quan trọng.
+• Thực thi quy trình Hiệu chuẩn Cấu hình Hệ thống (System Configuration Cloud Calibration): Ghép đôi chứng thư số của màn hình/pin mới với chip bảo mật Secure Enclave thông qua máy chủ đám mây của nhà sản xuất, triệt tiêu 100% cảnh báo linh kiện không chính hãng ("Unknown Part") của iOS/Android.
+• Triển khai Chương trình Cấp Thiết bị Mượn Dùng Tạm (Loaner Phone Program) cho khách hàng có máy sửa chữa kéo dài trên 3 ngày.
+• Tác nhân tham gia:
+• Khách hàng (Customer): Gửi máy bảo hành, theo dõi tiến độ trên Portal, duyệt báo giá phát sinh và nhận lại thiết bị.
+• Nhân viên Tiếp nhận Dịch vụ (Service Intake Agent): Tiếp nhận máy tại quầy Showroom/Genius Bar hoặc kho bưu chính, in biên nhận và lập Ticket sửa chữa.
+• Kỹ thuật viên Được Ủy Quyền (Authorized Hardware Repair Technician): Thực hiện chẩn đoán lỗi, thay thế linh kiện phòng sạch và hiệu chuẩn hệ thống.
+• Hệ thống Quản lý Phiếu Sửa Chữa (Repair Ticketing & Lifecycle Engine): Điều phối quy trình, kiểm tra hạn mức bảo hành/AppleCare+ và gửi thông báo.
+• Máy chủ Hiệu chuẩn Hãng (OEM Cloud Calibration Gateway - Apple GSX API): Kích hoạt quy trình ghép đôi phần cứng đám mây.
+7.3. Điều kiện tiên quyết (Preconditions)
+1. Thiết bị gửi sửa chữa là hàng chính hãng mua trên sàn hoặc có gói bảo hành mở rộng / bảo hiểm rơi vỡ (AppleCare+ / Asurion / Care+).
+2. Thiết bị đã được tiếp nhận vật lý tại Trung tâm Dịch vụ Bảo hành (qua gửi bưu điện Mail-in hoặc gửi trực tiếp tại quầy Genius Bar).
+3. Điều kiện an toàn bắt buộc: Tính năng "Find My iPhone" / "Khóa Kích Hoạt (Activation Lock)" đã được tắt hoàn toàn (chuẩn Apple Care) để cho phép máy chủ kỹ thuật chạy phần mềm chẩn đoán và hiệu chuẩn bo mạch.
+7.4. Luồng xử lý chính từng bước qua Máy trạng thái 8 Giai đoạn (8-Stage State Machine Flow)
+--- TABLE START ---
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐│             MÁY TRẠNG THÁI 8 GIAI ĐOẠN SỬA CHỮA PHẦN CỨNG CHUẨN APPLE GENIUS BAR                 │└──────────────────────────────────────────────────────────────────────────────────────────────────┘                                                 │                                                 ▼               [GIAI ĐOẠN 1: TIẾP NHẬN THIẾT BỊ (TICKET_CREATED / RECEIVED)]               - Tiếp nhận máy qua Quầy Genius Bar, Mail-in Depot, hoặc Doorstep               - In Biên nhận dịch vụ; Cấp mã Ticket ID: RPR-20261105-0921               - Gửi tin nhắn SMS/Zalo kèm link Portal tra cứu trực tuyến               - [Nếu ETA > 3 ngày]: Cấp 01 máy mượn dùng tạm (Loaner Phone)                                                 │                                                 ▼               [GIAI ĐOẠN 2: CHẨN ĐOÁN KỸ THUẬT CHUYÊN SÂU (DIAGNOSTICS)]               - Cắm cáp chạy bộ công cụ chẩn đoán Apple Service Toolkit 2 (AST2)               - Kiểm tra cảm biến quỳ tím ngập nước (LDI - Liquid Contact Indicator)               - Phát hiện chính xác linh kiện hư hỏng (Màn hình / Pin / Mainboard)                                                 │                                                 ▼               [GIAI ĐOẠN 3: BÁO GIÁ & PHÊ DUYỆT CHI PHÍ (QUOTE_PENDING_APPROVAL)]               - Nếu bảo hành miễn phí 100% -> Tự động nhảy sang Giai đoạn 4               - Nếu ngoài bảo hành hoặc thu phí khấu trừ AppleCare+ ($29/$99):                 + Bắn báo giá chi tiết lên ứng dụng của khách hàng                 + Đồng hồ SLA 48 giờ chờ khách duyệt                 + Khách DUYỆT -> Chuyển Giai đoạn 4 | Khách TỪ CHỐI -> Gửi trả máy nguyên trạng                                                 │                                                 ▼               [GIAI ĐOẠN 4: ĐẶT & CHỜ LINH KIỆN CHÍNH HÃNG (PARTS_ORDERED / AWAITING)]               - Kích hoạt lệnh điều chuyển linh kiện chính hãng từ Kho Tổng trung tâm               - Cổng Portal cập nhật: "Linh kiện đang trên đường vận chuyển (ETA: 24-48h)"                                                 │                                                 ▼               [GIAI ĐOẠN 5: THAO TÁC SỬA CHỮA PHÒNG SẠCH (REPAIRING)]               - Kỹ thuật viên thao tác trong phòng sạch chuẩn chống tĩnh điện ESD               - Dùng bàn gia nhiệt tách nắp lưng, tua vít lực (Torque screwdriver) tiêu chuẩn               - Lắp ráp cụm linh kiện thay thế chính hãng mới 100%                                                 │                                                 ▼               [GIAI ĐOẠN 6: HIỆU CHUẨN CẤU HÌNH HỆ THỐNG (SYSTEM_CONFIG_CALIBRATION)]               - Kết nối thiết bị với Máy chủ Đám mây Apple Cloud / OEM Calibration Server               - Đồng bộ hóa chữ ký số của Màn hình/Pin mới với Secure Enclave của máy               - TRIỆT TIÊU 100% CẢNH BÁO "UNKNOWN PART" TRONG CÀI ĐẶT MÁY               - Kích hoạt lại hoàn hảo tính năng True Tone, Face ID, Chu kỳ pin                                                 │                                                 ▼               [GIAI ĐOẠN 7: KIỂM ĐỊNH CHẤT LƯỢNG & ĐỘ KÍN NƯỚC (CALIBRATION_TESTING)]               - Dán lại gioăng áp suất chống nước tiêu chuẩn kháng nước bụi IP68               - Đưa vào máy đo áp suất chân không chuyên dụng kiểm tra độ kín nước               - Chạy lại 100% bài test chức năng tự động; Khử trùng bằng buồng tia cực tím UV                                                 │                                                 ▼               [GIAI ĐOẠN 8: SẴN SÀNG NHẬN MÁY / GỬI TRẢ (READY_FOR_PICKUP / SHIPPED_BACK)]               - Nhận tại quầy: Gửi thẻ Apple Wallet Pass QR nhận máy trong 60 giây               - Gửi bưu điện: Đóng gói hộp đệm khí cao cấp, dán nhãn chuyển phát nhanh bảo hiểm               - Thu hồi lại máy mượn Loaner Phone (nếu có)               - Tự động kích hoạt Gia hạn Bảo hành thêm 90 ngày riêng cho linh kiện thay thế
+--- TABLE END ---
+• Giai đoạn 1 (Tiếp nhận Thiết bị & Khởi tạo Phiếu Dịch vụ - `TICKET_CREATED` / `RECEIVED`):
+• Khách hàng bàn giao thiết bị thông qua 1 trong 3 kênh: (1) Trực tiếp tại Quầy Genius Bar thuộc chuỗi cửa hàng ủy quyền; (2) Gửi qua đường bưu điện (Prepaid Mail-in Box); hoặc (3) Chuyên viên đến lấy tận nhà (Doorstep Pickup).
+• Nhân viên tiếp nhận kiểm tra ngoại quan sơ bộ, in Biên nhận dịch vụ bàn giao có chữ ký hai bên.
+• Hệ thống Quản trị Phiếu Sửa Chữa (Repair Ticketing Engine) khởi tạo một mã phiếu sửa chữa duy nhất theo chuẩn định dạng: RPR-YYYYMMDD-XXXX (Ví dụ: RPR-20261105-0921).
+• Hệ thống tự động gửi tin nhắn SMS Brandname và Zalo ZNS cho khách hàng: "Phiếu sửa chữa [Mã_Ticket] đã được tiếp nhận. Bạn có thể tra cứu tiến độ thời gian thực tại: platform.vn/repair-track?ticket=RPR-20261105-0921".
+• Kích hoạt Chương trình Cấp Máy Dùng Tạm (Loaner Phone Program): Nếu dự kiến thời gian sửa chữa $> 3$ ngày (do lỗi mainboard hoặc thiếu linh kiện), khách hàng được đề xuất nhận ngay 01 chiếc điện thoại dùng tạm tương đương (Ví dụ: iPhone 15 cho khách đang sửa iPhone 16 Pro). Khách ký quỹ tạm giữ thẻ tín dụng hoặc cấn trừ điểm tín nhiệm.
+• Giai đoạn 2 (Chẩn đoán Kỹ thuật Chuyên sâu - `DIAGNOSTICS`):
+• Kỹ thuật viên đưa máy vào bàn kỹ thuật, kết nối cáp chuyên dụng chạy bộ công cụ chẩn đoán Apple Service Toolkit 2 (AST2) hoặc phần mềm chẩn đoán chính hãng của Samsung.
+• Soi kính hiển vi kiểm tra cảm biến quỳ tím báo ngập nước (LDI - Liquid Contact Indicator) đặt tại khay SIM và cổng sạc. Nếu cảm biến quỳ tím chuyển màu đỏ thẫm $\rightarrow$ Ghi nhận máy bị ẩm nước/vào chất lỏng.
+• Chạy quét toàn diện bo mạch: Đo kiểm tra ngắn mạch đường nguồn VDD_MAIN, kiểm tra độ suy giảm dung lượng cell pin, đo độ lệch cảm ứng màn hình OLED và kiểm tra các mắt camera góc rộng/telephoto.
+• Kết quả chẩn đoán được tự động xuất thành tệp báo cáo PDF (Diagnostic Report) tải lên hồ sơ phiếu sửa chữa.
+• Giai đoạn 3 (Báo giá & Phê duyệt Chi phí - `QUOTE_PENDING_APPROVAL`):
+• Trường hợp 1 (Sửa chữa Bảo hành Miễn phí 100%): Lỗi thuộc diện bảo hành linh kiện chính hãng của nhà sản xuất. Hệ thống bỏ qua bước báo giá và tự động nhảy thẳng sang Giai đoạn 4.
+• Trường hợp 2 (Sửa chữa có Khấu trừ Bảo hiểm hoặc Ngoài Bảo hành):
+• Khách có gói AppleCare+: Áp dụng mức phí dịch vụ khấu trừ tiêu chuẩn (Ví dụ: $29.00 / 790.000 VNĐ cho vỡ màn hình; $99.00 / 2.640.000 VNĐ cho lỗi phần cứng khác).
+• Sửa chữa dịch vụ ngoài bảo hành: Báo giá linh kiện gốc + tiền công kỹ thuật.
+• Hệ thống đẩy thông báo duyệt báo giá chi tiết lên ứng dụng di động của khách hàng kèm hạn định phản hồi SLA 48 giờ.
+• Nếu khách hàng bấm "Chấp thuận & Thanh toán": Lệnh sửa chữa được kích hoạt chuyển sang Giai đoạn 4.
+• Nếu khách hàng bấm "Từ chối sửa chữa": Kỹ thuật viên lắp ráp lại máy nguyên trạng, vệ sinh sạch sẽ, đóng gói gửi trả lại tận nhà cho khách hoàn toàn miễn phí (0 VNĐ cước phí).
+• Giai đoạn 4 (Đặt & Chờ Linh kiện Thay thế - `PARTS_ORDERED` / `AWAITING_SUPPLY`):
+• Kỹ thuật viên xác định mã số linh kiện chính hãng cần thay (Ví dụ: Cụm Màn hình Super Retina XDR OLED Assembly - Part No: 661-39481).
+• Nếu linh kiện không có sẵn tại trạm dịch vụ địa phương: Hệ thống tự động phát lệnh điều chuyển khẩn cấp từ Kho Linh Kiện Trung Tâm (Central Parts Depot).
+• Trên Cổng tra cứu Portal của khách hàng hiển thị thông báo tiến độ màu vàng: "Đang điều chuyển linh kiện chính hãng từ kho tổng (Dự kiến có mặt tại trạm trong 24 - 48 giờ)".
+• Giai đoạn 5 (Thao tác Tháo lắp & Sửa chữa Phòng Sạch - `REPAIRING`):
+• Kỹ thuật viên làm việc trong phòng sạch áp suất dương có trang bị thiết bị triệt tiêu tĩnh điện ESD (dây đeo cổ tay tĩnh điện, thảm dẫn điện tiếp địa).
+• Đặt máy lên Bàn gia nhiệt chuyên dụng (Display Removal Fixture) ở nhiệt độ chính xác $75^\circ\text{C}$ để làm mềm keo dán khung viền chống nước mà không gây hại cho tấm nền OLED.
+• Dùng dụng cụ giác hút chân không cơ học và dao nạy chuyên dụng tách cụm màn hình hoặc tháo khay pin.
+• Sử dụng Tua vít đo lực siết (Torque-limiting screwdriver) siết các ốc vít bo mạch đúng lực quy định của nhà sản xuất (ví dụ: $0.15 \text{ Nm}$ cho ốc nẹp pin) nhằm chống đứt chân ốc mainboard.
+• Giai đoạn 6 (Hiệu chuẩn Cấu hình Hệ thống Đám mây - `SYSTEM_CONFIGURATION_CALIBRATION`):
+• Đây là bước kỹ thuật tối quan trọng phân định giữa sửa chữa chính hãng tiêu chuẩn cao và sửa chữa trôi nổi bên ngoài:
+• Thiết bị được kết nối cáp USB-C tốc độ cao với máy tính trạm có chứng chỉ bảo mật của hãng. Kỹ thuật viên khởi chạy tiến trình System Configuration (SysCfg) kết nối trực tiếp với Máy chủ Đám mây Apple Cloud Services (qua GSX Server).
+• Máy chủ hãng ghi đè chữ ký số điện tử của chip IC trên màn hình mới/pin mới/cụm Face ID mới và mã hóa ghép đôi (Cryptographic Handshake) với chip bảo mật Secure Enclave trên bo mạch Logic Board của chiếc điện thoại đó.
+• Kết quả đạt được: Triệt tiêu hoàn toàn các thông báo lỗi phiền toái trong hệ điều hành iOS (Important Display Message, Important Battery Message, Unknown Part Warning). Kích hoạt lại hoàn hảo tính năng cân bằng màu sắc True Tone, nhận diện khuôn mặt Face ID và hiển thị 100% dung lượng sức khỏe pin (Battery Health Percentage).
+• Giai đoạn 7 (Kiểm tra Độ kín nước & Đo kiểm Chất lượng Hậu sửa chữa - `CALIBRATION_TESTING` / `QA_TESTING`):
+• Kỹ thuật viên dán lại gioăng cao su áp suất chống nước mới 100% (Water-resistant Adhesive Gasket) xung quanh mép viền thân máy. Đặt máy vào Máy ép áp lực chuyên dụng (Display Press Fixture) ép đều lực trong 30 giây.
+• Đưa thiết bị vào Buồng đo áp suất chân không chuyên dụng (Water Resistance Pressure Chamber): Bơm áp suất âm và đo cảm biến áp kế; nếu áp suất bên trong buồng giữ nguyên $\rightarrow$ Xác nhận máy đã phục hồi hoàn hảo độ kín nước theo chuẩn kháng nước kháng bụi IP68.
+• Chạy lại 100% các bài kiểm tra chẩn đoán tự động (AST2 Post-Repair Suite): Loa ngoài, micrô đàm thoại, cảm biến tiệm cận, camera góc siêu rộng, sóng di động 5G, Wi-Fi 7 và Bluetooth.
+• Đưa máy vào buồng khử trùng bằng tia cực tím UV diệt khuẩn toàn diện và dán màng bọc bảo vệ màn hình.
+• Giai đoạn 8 (Sẵn sàng Bàn giao / Gửi trả Khách hàng - `READY_FOR_PICKUP` / `SHIPPED_BACK` / `CLOSED_COMPLETED`):
+• Nếu khách chọn nhận máy tại quầy: Hệ thống đẩy thông báo hoàn tất kèm một thẻ nhận máy điện tử (Apple Wallet Pass / QR Code) vào điện thoại khách hàng. Khách đến quầy chỉ cần quét mã QR để lấy máy trong vòng 60 giây mà không cần chờ đợi thủ tục giấy tờ.
+• Nếu khách chọn nhận máy qua bưu điện: Thiết bị được đóng vào hộp bảo vệ bọt xốp chuyên dụng, dán nhãn chuyển phát bưu chính hỏa tốc có dịch vụ bảo hiểm giá trị cao và ký nhận tận tay có mã PIN/OTP. Cập nhật mã vận đơn theo dõi (Waybill Tracking Number) lên cổng thông tin.
+• Thu hồi Thiết bị Mượn Dùng Tạm (Loaner Return): Khách hàng bàn giao lại chiếc máy mượn trong vòng 05 ngày. Nhân viên kiểm tra máy mượn nguyên vẹn $\rightarrow$ Giải tỏa ngay lệnh tạm giữ hạn mức thẻ tín dụng của khách.
+• Kích hoạt Gia hạn Bảo hành Tự động (Warranty Extension): Hệ thống tự động ghi nhận gia hạn bảo hành thêm 90 ngày (hoặc phần còn lại của bảo hành gốc, tùy thời hạn nào dài hơn) riêng cho cụm linh kiện vừa được thay thế.
+7.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+AF-01: Khách hàng Từ chối Báo giá Sửa chữa Ngoài Bảo hành
+• Tình huống: Sau khi kỹ thuật viên chẩn đoán phát hiện máy bị chập nguồn bo mạch do vào nước biển (thuộc diện từ chối bảo hành miễn phí), hệ thống gửi báo giá thay bo mạch là 6.500.000 VNĐ. Khách hàng cảm thấy chi phí quá cao nên bấm nút "Từ chối sửa chữa".
+• Xử lý:
+• Hệ thống ghi nhận trạng thái: REPAIR_DECLINED_BY_CUSTOMER.
+• Kỹ thuật viên đóng gói máy nguyên trạng, đính kèm phiếu báo cáo chẩn đoán tình trạng hỏng hóc thực tế.
+• Thiết bị được đóng gói gửi trả lại tận nhà khách hàng hoặc sẵn sàng tại quầy để khách nhận lại.
+• Khách hàng không phải chi trả bất kỳ khoản phí kiểm tra hay phí chẩn đoán nào (Chính sách Chẩn đoán Miễn phí 0 VNĐ toàn sàn).
+EF-01: Phát hiện Khung sườn Thiết bị Bị Cong Vênh Biến dạng Quá mức
+• Tình huống: Kỹ thuật viên chuẩn bị thay màn hình mới nhưng khi đặt vào máy phát hiện khung sườn nhôm/titan của máy bị cong xoắn (bent enclosure) vượt quá dung sai kỹ thuật ($> 0.3\text{mm}$). Nếu cố ép màn hình mới vào, tấm nền kính sẽ bị nứt vỡ hoặc hở keo mất chống nước.
+• Xử lý:
+• Kỹ thuật viên chụp ảnh đo thước kẹp cơ khí, cập nhật sự cố CHASSIS_BENT_CANNOT_FIT_DISPLAY.
+• Hệ thống gửi đề xuất nâng cấp dịch vụ: Thay vì chỉ thay màn hình, đề xuất giải pháp "Đổi máy Tân Trang Tương Đương Nguyên Khối" (Whole Unit Replacement - WUR) theo chính sách AppleCare+ với mức phí bù trừ ưu đãi cố định.
+• Khách hàng có 48 giờ để xác nhận đồng ý đổi máy mới nguyên khối hay nhận lại chiếc máy cũ.
+EF-02: Khách hàng Làm Hỏng hoặc Không Trả Máy Mượn Dùng Tạm (Loaner Phone Default)
+• Tình huống: Khách hàng mượn chiếc iPhone 15 trong thời gian chờ sửa máy chính, nhưng sau khi đã nhận lại chiếc iPhone 16 Pro sửa xong, quá 05 ngày khách hàng không mang trả lại máy mượn hoặc mang trả máy mượn trong tình trạng vỡ nát màn hình.
+• Xử lý:
+• Đúng 00:00:01 ngày thứ 6 sau khi bàn giao máy chính: Hệ thống OMS phát lệnh cưỡng chế thanh toán CAPTURE_PREAUTH_HOLD sang Cổng thanh toán, trừ đứt điểm 100% giá trị chiếc máy mượn (18.000.000 VNĐ) từ thẻ tín dụng của khách.
+• Nếu thẻ tín dụng không đủ tiền: Hệ thống tự động đẩy số IMEI của chiếc máy mượn lên danh sách đen GSMA Blacklist toàn cầu gắn cờ UNRETURNED_LOANER_STOLEN. Chiếc máy mượn sẽ bị khóa máy từ xa qua cấu hình MDM (Device Lock Screen) và bị chặn toàn bộ sóng di động viễn thông.
+7.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. BR-REPAIR-01 (Mô hình Tuân thủ 8 Giai đoạn Máy trạng thái Sửa chữa):
+• Mọi phiếu sửa chữa phần cứng bắt buộc phải trải qua tuần tự hoặc phân nhánh hợp lệ theo đúng 8 giai đoạn của máy trạng thái. Nghiêm cấm mọi hành vi nhảy cóc trạng thái từ Tiếp nhận sang Hoàn tất mà không có dữ liệu chẩn đoán kỹ thuật (Diagnostic Log) và nhật ký hiệu chuẩn cấu hình.
+2. BR-REPAIR-02 (Quy chuẩn Bắt buộc về Hiệu chuẩn Cấu hình Hệ thống Đám mây):
+• 100% linh kiện thay thế thuộc danh mục kiểm soát an ninh (Màn hình OLED, Cell Pin thông minh, Cụm Camera trước TrueDepth, Cụm Camera sau LiDAR, Cảm biến vân tay Touch ID) bắt buộc phải vượt qua bước chạy hiệu chuẩn System Configuration với máy chủ nhà sản xuất.
+• Kết quả hiệu chuẩn phải trả về mã CALIBRATION_SUCCESS_SIGNED. Nghiêm cấm bàn giao cho khách hàng thiết bị còn tồn tại cảnh báo "Unknown Part" trừ phi có sự thỏa thuận trước bằng văn bản của khách hàng đối với linh kiện thay thế bên thứ ba đạt chuẩn.
+3. BR-REPAIR-03 (Chính sách Cam kết Gia hạn Bảo hành Linh kiện 90 Ngày):
+$$\text{WarrantyExpiryDate} = \max(\text{OriginalWarrantyEndDate}, \text{RepairCompletionDate} + 90 \text{ days})$$
+• Mọi linh kiện được thay thế đều được bảo hành độc lập tối thiểu 90 ngày lịch tính từ thời điểm khách hàng ký nhận lại máy. Nếu linh kiện đó phát sinh lỗi kỹ thuật tái diễn trong vòng 90 ngày: Khách hàng được thay mới linh kiện hoàn toàn miễn phí trong vòng 24 giờ.
+4. BR-REPAIR-04 (Điều khoản Ràng buộc Chương trình Cấp máy mượn Loaner Phone):
+• Thời gian sử dụng máy mượn tối đa: Bằng thời gian sửa chữa máy chính cộng thêm 05 ngày lịch ân hạn sau khi máy chính đã sẵn sàng bàn giao.
+• Khoản tiền tạm giữ hạn mức bảo lãnh (Pre-auth Hold Amount) được tính bằng đúng $100\%$ giá trị thị trường của thiết bị mượn tại thời điểm cấp.
+7.7. Dữ liệu vào/ra & Trạng thái đơn hàng
+Cấu trúc Payload: `PhieuSuaChuaBaoHanh` (HardwareRepairTicketEntity)
+--- TABLE START ---
+{  "ticket_id": "RPR-20261105-0921",  "ticket_code": "RPR-20261105-0921",  "hardware_serial": "F2LLX904MD6R",  "customer_id": "CUST-990142",  "intake_channel": "GENIUS_BAR_IN_STORE",  "intake_store_id": "APPLE-STORE-DONGKHOI-01",  "warranty_policy_type": "APPLECARE_PLUS_WITH_THEFT_LOSS",  "symptom_category": "CRACKED_SCREEN",  "customer_defect_description": "Làm rơi máy xuống sàn đá hoa cương, vỡ nứt mặt kính trước, màn hình hiển thị bị sọc xanh dọc",  "ldi_liquid_damage_status": "CLEAN_NO_WATER",  "diagnostic_report_id": "AST2-DIAG-20261105-8841",  "repair_lifecycle_state": "SYSTEM_CONFIGURATION_CALIBRATION",  "parts_replacement_matrix": [    {      "part_name": "iPhone 16 Pro Max Display Assembly OEM",      "part_number": "661-39481",      "old_part_serial": "DS-88401948",      "new_part_serial": "DS-99120481",      "calibration_status": "CALIBRATED_SUCCESS"    }  ],  "cost_breakdown": {    "gross_repair_cost": 9500000,    "insurance_covered_amount": 8710000,    "customer_deductible_payable": 790000,    "payment_status": "PAID_ONLINE_APPLEPAY"  },  "loaner_program": {    "is_loaner_issued": true,    "loaner_serial_number": "DNQZ9018M17K",    "loaner_model": "iPhone 15 128GB Black",    "preauth_hold_id": "HOLD-AUTH-VISA-99410",    "preauth_hold_amount": 18000000,    "loaner_return_deadline": "2026-11-12T17:00:00Z"  },  "notifications_log": [    {      "channel": "SMS_BRANDNAME",      "message": "Phieu sua chua RPR-20261105-0921 dang o buoc Hieu chuan he thong. Tra cuu tai: platform.vn/repair-track",      "sent_at": "2026-11-05T13:45:00Z"    },    {      "channel": "ZALO_ZNS",      "template_id": "ZNS_REPAIR_STATUS_UPDATE",      "status": "DELIVERED",      "sent_at": "2026-11-05T13:45:02Z"    }  ],  "estimated_completion_at": "2026-11-06T15:00:00Z",  "created_at": "2026-11-05T08:30:00Z",  "updated_at": "2026-11-05T13:45:00Z"}
+--- TABLE END ---
+Ma trận chuyển dịch trạng thái Phiếu Sửa Chữa Phần Cứng:
+--- TABLE START ---
+Trạng thái hiện tại | Sự kiện kích hoạt | Trạng thái tiếp theo | Thao tác Kỹ thuật & Hệ thống
+TICKET_CREATED | Tiếp nhận máy vật lý, quét mã serial | DEVICE_CHECKED_IN | In biên nhận dịch vụ; Cấp máy mượn Loaner Phone (nếu cần).
+DEVICE_CHECKED_IN | Kỹ thuật viên cắm cáp chạy AST2 chẩn đoán | DIAGNOSING | Đo kiểm ngắn mạch; Kiểm tra quỳ tím LDI; Xuất file chẩn đoán PDF.
+DIAGNOSING | Phát hiện lỗi ngoài bảo hành / Cần thu phí | QUOTE_PENDING_APPROVAL | Bắn báo giá lên App; Bật đồng hồ SLA 48h chờ khách duyệt.
+QUOTE_PENDING_APPROVAL | Khách hàng bấm chấp thuận báo giá | PARTS_ORDERED | Đặt lệnh điều chuyển linh kiện chính hãng từ Kho tổng trung tâm.
+QUOTE_PENDING_APPROVAL | Khách bấm từ chối hoặc quá hạn 48h | REPAIR_REJECTED_RETURNING | Lắp lại máy nguyên trạng; Đóng gói chuyển hoàn miễn phí cho khách.
+PARTS_ORDERED | Linh kiện về trạm kỹ thuật phòng sạch | REPAIRING | Kỹ thuật viên tháo máy bàn nhiệt, siết ốc lực, thay thế linh kiện.
+REPAIRING | Thay xong linh kiện, kết nối máy chủ Cloud | SYSTEM_CONFIG_CALIBRATION | Kích hoạt SysCfg Handshake; Ghép đôi mã hóa chip Secure Enclave.
+SYSTEM_CONFIG_CALIBRATION | Hiệu chuẩn thành công, dán gioăng ép áp suất | QA_TESTING | Kiểm tra độ kín nước buồng chân không IP68; Test 100% chức năng.
+QA_TESTING | Kiểm định chất lượng đạt 100% | READY_FOR_PICKUP_DISPATCH | Gửi mã Wallet Pass nhận máy 60s hoặc xuất nhãn bưu điện giao tận nhà.
+READY_FOR_PICKUP_DISPATCH | Khách nhận máy chính, trả máy mượn | CLOSED_COMPLETED | Giải tỏa lệnh hold thẻ tín dụng máy mượn; Kích hoạt bảo hành 90 ngày.
+--- TABLE END ---
+7.8. Tiêu chí nghiệm thu chức năng (Acceptance Scenarios)
+--- TABLE START ---
+Kịch bản: RET-REPAIR-AC01 - Tiếp nhận và cập nhật tiến độ qua 8 bước sửa chữa phần cứng chuẩn Genius Bar  Given Khách hàng mang iPhone 16 Pro Max bị vỡ nát mặt kính đến quầy dịch vụ Apple Store  When Nhân viên quầy tiếp nhận máy và khởi tạo phiếu sửa chữa "RPR-20261105-0921"  Then Hệ thống gửi tin nhắn SMS Brandname và Zalo ZNS kèm link Portal tra cứu trực tiếp cho khách hàng  And Khi kỹ thuật viên chuyển trạng thái từ "DIAGNOSING" sang "REPAIRING" và "QA_TESTING"  Then Màn hình Web Portal của khách hàng cập nhật thời gian thực thanh tiến trình tương ứng  And Khi máy đạt chuẩn kiểm định chất lượng, khách hàng nhận được thông báo "Thiết bị của bạn đã sẵn sàng được nhận lại".Kịch bản: RET-REPAIR-AC02 - Hiệu chuẩn System Configuration thành công và triệt tiêu cảnh báo Unknown Part  Given Thiết bị iPhone được thay thế cụm màn hình OLED chính hãng mới có số Serial "DS-99120481"  When Kỹ thuật viên kết nối cáp USB-C và kích hoạt tiến trình System Configuration với máy chủ đám mây Apple GSX  Then Máy chủ đám mây thực hiện bắt tay mã hóa với chip Secure Enclave trên bo mạch máy  And Hệ thống trả về trạng thái "CALIBRATION_SUCCESS_SIGNED"  And Khi khởi động lại máy, menu Settings -> General -> About hiển thị linh kiện chính hãng "Apple Genuine Part"  And Máy kích hoạt lại hoàn hảo tính năng True Tone mà không xuất hiện bất kỳ cảnh báo lỗi màn hình nào.Kịch bản: RET-REPAIR-AC03 - Xử lý trường hợp khách hàng từ chối báo giá sửa chữa ngoài bảo hành  Given Thiết bị gửi sửa chữa bị ngập nước mặn cháy bo mạch với chi phí báo giá là 6.500.000 VNĐ  When Khách hàng nhận được báo giá trên ứng dụng và bấm nút "Từ chối sửa chữa"  Then Hệ thống tự động chuyển trạng thái phiếu sang "REPAIR_REJECTED_RETURNING"  And Kỹ thuật viên đóng gói lại máy nguyên trạng kèm biên bản chẩn đoán kỹ thuật  And Hệ thống kích hoạt đơn bưu cục gửi trả lại chiếc máy tận nhà khách hàng  And Khách hàng không phải thanh toán bất kỳ khoản chi phí kiểm tra hay vận chuyển nào.Kịch bản: RET-REPAIR-AC04 - Cấp máy mượn Loaner Phone và thu hồi an toàn đúng hạn  Given Thiết bị của khách hàng cần chờ linh kiện từ nhà máy với thời gian sửa chữa dự kiến là 5 ngày  When Nhân viên quầy cấp cho khách 01 chiếc iPhone 15 dùng tạm kèm thỏa thuận mượn máy  And Hệ thống thực hiện lệnh tạm giữ hạn mức 18.000.000 VNĐ trên thẻ tín dụng của khách  And Sau 5 ngày máy chính sửa xong, khách mang trả lại chiếc máy mượn nguyên vẹn không trầy xước  Then Nhân viên quét mã thu hồi máy mượn trên POS  And Lệnh tạm giữ hạn mức 18.000.000 VNĐ trên thẻ tín dụng của khách được giải tỏa ngay lập tức trong vòng 60 giây.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+8. MA TRẬN CHUYỂN DỊCH TRẠNG THÁI & CHỈ SỐ NFR LIÊN PHÂN HỆ
+8.1. Ma trận Tương thích Trạng thái Liên Phân hệ (Cross-Module State Alignment Matrix)
+Khi các phân hệ Hậu mãi, Đổi trả, Chống gian lận và Bảo hành phần cứng vận hành, chúng tương tác đồng bộ và trực tiếp với Máy trạng thái Đơn hàng (Order State Machine), Máy trạng thái Thanh toán Ký quỹ (Escrow Payment State Machine), và Máy trạng thái Vận chuyển (Fulfillment & Shipping State Machine):
+--- TABLE START ---
++---------------------------+---------------------------------+-----------------------------------+-----------------------------------+| Trạng thái Đơn hàng (OMS) | Trạng thái Thanh toán (Escrow)  | Trạng thái Logistics Ngược (RMA)  | Trạng thái Bảo hành/Gian lận (VAS)|+---------------------------+---------------------------------+-----------------------------------+-----------------------------------+| DELIVERING                | CAPTURED_HELD_IN_ESCROW         | OUT_FOR_DELIVERY                  | N/A                               ||                           |                                 |                                   |                                   || (Đồng kiểm Hỏng/Vỡ)       | -> REFUNDING_AUTOMATIC_100PCT   | -> RETURNING_COINSPECT_REJECTED   | N/A                               || -> CANCELLED_REJECTED     | -> REFUNDED_FULLY_TO_BUYER      | -> RETURNED_TO_SELLER             |                                   ||                           |                                 |                                   |                                   || (Đồng kiểm Đạt)           | CAPTURED_HELD_IN_ESCROW         | -> DELIVERED_COINSPECTED          | N/A                               || -> COMPLETED_DELIVERED    | (Bảo lưu 15 ngày khiếu nại)     |                                   |                                   ||                           |                                 |                                   |                                   || (Drop-off Quét Nhận)      | -> PROVISIONAL_EARLY_REFUNDED   | -> ACCEPTED_AT_PUDO_STATION       | N/A                               || -> RETURN_PROCESSING      | (Hoàn tạm ứng trong 2-4 giờ)    | -> IN_TRANSIT_TO_CENTRAL_DEPOT    |                                   ||                           |                                 |                                   |                                   || (Returnless Phê duyệt)    | -> REFUNDED_FULLY_TO_BUYER      | -> RETURNLESS_EXEMPTION_APPLIED   | N/A                               || -> CLOSED_RETURNLESS      | (Trích Quỹ Bảo hiểm bù Seller)  | (Cấm phát hành nhãn bưu điện)     |                                   ||                           |                                 |                                   |                                   || (Dispute Hết hạn 48h)     | -> AUTO_CLAWBACK_SELLER_WALLET  | -> DISPUTE_AUTO_APPROVED_TIMEOUT  | SHOP_PENALTY_POINTS (+2 điểm)     || -> REFUNDED_DISPUTE_CLOSE | -> REFUNDED_FULLY_TO_BUYER      |                                   |                                   ||                           |                                 |                                   |                                   || (Phát hiện Tráo Serial)   | -> REFUND_BLOCKED_FRAUD_HOLD    | -> RETURN_FRAUD_REJECTED          | INVESTIGATION_DOSSIER_ESCALATED   || -> FRAUD_LOCKED_PENDING   | (SPF_PAYOUT_TO_SELLER_100PCT)   | (Vật chứng niêm phong kho an ninh)| -> LEGAL_REFERRAL_ARTICLE_174_A05 ||                           |                                 |                                   |                                   || (Gửi Bảo hành Sửa chữa)   | N/A (Đơn hàng đã hoàn tất cũ)   | -> INTAKE_SERVICE_DEPOT           | RPR_TICKET_CREATED                || -> UNDER_HARDWARE_REPAIR  | (Pre-auth Hold cọc máy mượn)    |                                   | -> DIAGNOSTICS -> REPAIRING       ||                           |                                 |                                   | -> SYSTEM_CONFIG_CALIBRATION      ||                           |                                 |                                   | -> QA_TESTING -> READY_FOR_PICKUP |+---------------------------+---------------------------------+-----------------------------------+-----------------------------------+
+--- TABLE END ---
+8.2. Các Chỉ số Hiệu năng & SLA Kỹ thuật (Non-Functional Requirements & Performance SLAs)
+1. Độ trễ API Đồng kiểm tại hiện trường: Thời gian phản hồi từ lúc bưu tá bấm "Xác nhận từ chối đồng kiểm" trên Driver App đến khi hệ thống Core OMS nhận webhook và cập nhật trạng thái đơn hàng phải đạt:
+$$T_{\text{latency}} \le 1.500 \text{ ms}$$
+Hỗ trợ cơ chế Offline-First: Nếu mất sóng 4G tại địa chỉ giao hàng, Driver App lưu biên bản cục bộ (SQLite) và tự động đồng bộ lại ngay khi phát hiện kết nối Internet trong vòng 30 giây.
+2. Thời gian Sinh Mã QR Drop-off Thông minh: $\le 800\text{ ms}$ kể từ khi khách bấm xác nhận yêu cầu trên ứng dụng. Dung lượng tệp ảnh QR nén $\le 15\text{ KB}$ bảo đảm hiển thị tức thì trên mạng di động yếu.
+3. Thời gian Thực thi Thuật toán Returnless & Hazmat Engine: Thuật toán thẩm định chi phí logistics ngược $NetSalvage$ và kiểm tra từ khóa nguy hiểm Hazmat phải hoàn tất trong:
+$$T_{\text{returnless\_exec}} \le 500 \text{ ms}$$
+Khách hàng không cảm nhận độ trễ chuyển trang trên ứng dụng.
+4. Độ Tin cậy của Cron Worker Kiểm tra SLA 48 Giờ:
+• Tiến trình Cron quét ngầm các khiếu nại quá hạn 48 giờ chạy theo chu kỳ mỗi 60 giây một lần (1 minute interval).
+• Sai số thực thi tối đa không vượt quá 60 giây so với mốc thời hạn 48:00:00 cam kết.
+• Độ sẵn sàng (High Availability): Chạy trên cụm Kubernetes với cấu hình Active-Standby Leader Election chống chết tiến trình đơn lẻ.
+5. Tính Bất biến & An ninh Bằng chứng Tranh chấp (Evidence Immutability):
+• 100% hình ảnh và tệp video do Người mua, Người bán và Bưu tá tải lên được lưu trữ trên cụm Lưu trữ Đối tượng đám mây (Cloud Object Storage AWS S3 / Google Cloud Storage) kích hoạt chính sách WORM (Write Once, Read Many) và khóa xóa (Object Lock).
+• Tự động sinh mã băm mật mã SHA-256 cho từng tệp bằng chứng tại thời điểm tải lên và ghi vào bảng CSDL an ninh. Bất kỳ sự can thiệp chỉnh sửa tệp đều làm sai lệch mã băm và bị phát hiện ngay lập tức.
+6. Hiệu năng Cổng Tra cứu Tiến độ Sửa chữa (Repair Portal Scalability):
+• Hỗ trợ lưu lượng truy cập cao trong các đợt phát hành sản phẩm mới: Phản hồi trang tra cứu trạng thái sửa chữa $\le 250\text{ ms}$ cho tải 10.000 yêu cầu/giây thông qua cơ chế đệm dữ liệu Redis Cache kết hợp PostgreSQL Read Replica.
+7. Độ Tin cậy của Bắt tay Hiệu chuẩn Đám mây (System Configuration Cloud Handshake):
+• Kết nối máy chủ hiệu chuẩn của hãng (Apple GSX / Cloud OEM Server) đạt tỷ lệ khả dụng $\ge 99.9\%$.
+• Nếu máy chủ hãng bảo trì đột xuất, hệ thống lưu hàng đợi hiệu chuẩn vào Kafka Queue và tự động thử lại (Retry with Exponential Backoff) tối đa 5 lần trước khi báo lỗi kỹ thuật viên.
+————————————————————————————————————————————————————————————————————
+9. THIẾT KẾ CƠ SỞ DỮ LIỆU POSTGRESQL 16+ & HỢP ĐỒNG API CHO PHÂN HỆ HẬU MÃI
+9.1. Lược đồ Cơ sở Dữ liệu DDL Chuyên Biệt (PostgreSQL 16+)
+Dưới đây là DDL chi tiết cho 4 bảng CSDL cốt lõi phục vụ toàn bộ phân hệ Hậu mãi, Đổi trả, Chống gian lận và Quản lý sửa chữa phần cứng:
+--- TABLE START ---
+-- ============================================================================-- PHÂN HỆ 05: HẬU MÃI, ĐỔI TRẢ, GIAN LẬN THIẾT BỊ & TIẾN ĐỘ SỬA CHỮA PHẦN CỨNG-- PostgreSQL 16+ DDL Specification-- ============================================================================-- BẢNG 1: BẢNG QUẢN LÝ YÊU CẦU ĐỔI TRẢ VÀ HOÀN TIỀN (RETURN REQUESTS)CREATE TABLE return_requests (    return_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    return_code VARCHAR(32) UNIQUE NOT NULL, -- Ví dụ: RET-20261105-0012    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE RESTRICT,    order_item_id UUID NOT NULL,    buyer_id UUID NOT NULL,    seller_id UUID NOT NULL,    return_channel VARCHAR(30) NOT NULL CHECK (return_channel IN (        'PARTNER_DROPOFF_NO_BOX', 'DOORSTEP_PICKUP', 'MAIL_IN_POST_OFFICE', 'RETURNLESS_REFUND'    )),    claim_reason_code VARCHAR(50) NOT NULL CHECK (claim_reason_code IN (        'DAMAGED_CRUSHED', 'WRONG_ITEM_COLOR_SIZE', 'DEFECTIVE_FUNCTIONAL',         'BATTERY_SWELLING_HAZMAT', 'BUYERS_REMORSE_UNSEALED', 'EMPTY_BOX_SUSPECTED'    )),    customer_notes TEXT,    evidence_image_urls JSONB NOT NULL DEFAULT '[]',    evidence_video_url VARCHAR(500),    is_hazmat_battery_swelling BOOLEAN NOT NULL DEFAULT FALSE,    hazmat_return_label_blocked BOOLEAN NOT NULL DEFAULT FALSE,    return_shipping_waybill VARCHAR(100),    pudo_dropoff_point_id VARCHAR(50),    pudo_qr_token VARCHAR(500),    pudo_qr_expires_at TIMESTAMPTZ,    return_status VARCHAR(40) NOT NULL DEFAULT 'RETURN_INITIATED' CHECK (return_status IN (        'RETURN_INITIATED', 'AWAITING_PUDO_DROPOFF', 'ACCEPTED_AT_PUDO',         'IN_TRANSIT_TO_DEPOT', 'ARRIVED_AT_DEPOT', 'INSPECTING_HARDWARE',         'REFUND_PROVISIONALLY_EARLY', 'REFUND_COMPLETED_SUCCESS',         'RETURNLESS_APPROVED_ECONOMIC', 'RETURNLESS_APPROVED_HAZMAT',         'RETURN_ON_HOLD_ACTIVATION_LOCKED', 'RETURN_REJECTED_SERIAL_MISMATCH',         'CANCELLED_TIMEOUT_EXPIRED'    )),    item_original_amount NUMERIC(15, 2) NOT NULL,    restocking_fee_rate NUMERIC(5, 4) NOT NULL DEFAULT 0.0000, -- Ví dụ: 0.1500 (15%)    restocking_fee_amount NUMERIC(15, 2) NOT NULL DEFAULT 0.00,    net_refund_amount NUMERIC(15, 2) NOT NULL,    refund_transaction_id VARCHAR(100),    refunded_at TIMESTAMPTZ,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_ret_order ON return_requests(order_id);CREATE INDEX idx_ret_status ON return_requests(return_status);CREATE INDEX idx_ret_buyer ON return_requests(buyer_id);-- BẢNG 2: ĐIỀU TRA GIAN LẬN ĐỔI TRẢ THIẾT BỊ PHẦN CỨNG (RETURN FRAUD INVESTIGATIONS)CREATE TABLE return_fraud_investigations (    investigation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    investigation_code VARCHAR(32) UNIQUE NOT NULL, -- Ví dụ: FRD-20261105-0914    return_id UUID UNIQUE NOT NULL REFERENCES return_requests(return_id) ON DELETE RESTRICT,    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE RESTRICT,    buyer_id UUID NOT NULL,    seller_id UUID NOT NULL,    fraud_pattern_type VARCHAR(40) NOT NULL CHECK (fraud_pattern_type IN (        'EMPTY_BOX', 'SERIAL_MISMATCH_SWAP', 'DUMMY_UNIT_DISPLAY',         'PART_HARVESTING_TAMPER', 'DAMAGED_SUBSTITUTION', 'WEIGHT_ANOMALY_THEFT'    )),    expected_serial_number VARCHAR(100) NOT NULL,    returned_serial_number VARCHAR(100),    expected_imei VARCHAR(15),    returned_imei VARCHAR(15),    is_serial_matched BOOLEAN NOT NULL DEFAULT FALSE,    outbound_scale_weight_grams INTEGER NOT NULL CHECK (outbound_scale_weight_grams > 0),    inbound_scale_weight_grams INTEGER NOT NULL CHECK (inbound_scale_weight_grams >= 0),    weight_variance_grams INTEGER NOT NULL, -- Sai lệch gram (delta W)    is_weight_variance_alert BOOLEAN NOT NULL DEFAULT FALSE, -- Bật cờ nếu |delta W| > 15g    diagnostic_tamper_flags JSONB NOT NULL DEFAULT '{}', -- {"non_genuine_display": true, "battery_swapped": true}    seller_packing_cctv_url VARCHAR(500),    seller_packing_sha256 VARCHAR(64),    carrier_scale_audit_log JSONB NOT NULL DEFAULT '[]', -- Dữ liệu cân 3 trạm của 3PL    seller_return_unboxing_video_url VARCHAR(500),    seller_return_sha256 VARCHAR(64),    investigation_verdict VARCHAR(40) NOT NULL DEFAULT 'UNDER_INVESTIGATION' CHECK (investigation_verdict IN (        'UNDER_INVESTIGATION', 'CONFIRMED_BUYER_FRAUD', 'CARRIER_TRANSIT_THEFT',         'SELLER_MISPACK_FALSE_ALARM', 'DISMISSED_INSUFFICIENT_EVIDENCE'    )),    is_refund_frozen BOOLEAN NOT NULL DEFAULT TRUE,    blocked_refund_amount NUMERIC(15, 2) NOT NULL DEFAULT 0,    is_spf_claimed BOOLEAN NOT NULL DEFAULT FALSE, -- Seller Protection Fund    spf_payout_amount NUMERIC(15, 2) NOT NULL DEFAULT 0,    spf_payout_timestamp TIMESTAMPTZ,    buyer_account_action VARCHAR(40) NOT NULL DEFAULT 'PENDING' CHECK (buyer_account_action IN (        'PENDING', 'WARNING_FLAGGED', 'SUSPENDED_PERMANENT', 'BLACKLISTED_NATIONAL_REGISTRY'    )),    is_police_referral_mandated BOOLEAN NOT NULL DEFAULT FALSE,    penal_code_article VARCHAR(50) DEFAULT 'ARTICLE_174_PENAL_CODE_FRAUD',    police_report_dossier_url VARCHAR(500),    police_referral_agency VARCHAR(100), -- 'CUC_A05_BO_CONG_AN' hoặc 'CONG_AN_QUAN_HUYEN'    police_referral_timestamp TIMESTAMPTZ,    concluded_by_specialist_id UUID,    concluded_at TIMESTAMPTZ,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_fraud_return_id ON return_fraud_investigations(return_id);CREATE INDEX idx_fraud_verdict ON return_fraud_investigations(investigation_verdict);CREATE INDEX idx_fraud_pattern ON return_fraud_investigations(fraud_pattern_type);-- BẢNG 3: QUẢN LÝ TIẾP NHẬN BẢO HÀNH & THEO DÕI TIẾN ĐỘ SỬA CHỮA PHẦN CỨNG (HARDWARE REPAIR TICKETS)CREATE TABLE hardware_repair_tickets (    ticket_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    ticket_code VARCHAR(32) UNIQUE NOT NULL, -- Ví dụ: RPR-20261105-0921    order_id UUID REFERENCES orders(order_id),    customer_id UUID NOT NULL,    hardware_serial VARCHAR(100) NOT NULL,    hardware_imei VARCHAR(15),    hardware_model_name VARCHAR(100) NOT NULL, -- Ví dụ: iPhone 16 Pro Max 256GB    intake_channel VARCHAR(30) NOT NULL CHECK (intake_channel IN (        'GENIUS_BAR_IN_STORE', 'MAIL_IN_DEPOT', 'DOORSTEP_PICKUP'    )),    intake_store_id VARCHAR(50),    warranty_policy_type VARCHAR(40) NOT NULL CHECK (warranty_policy_type IN (        'STANDARD_FACTORY_12M', 'APPLECARE_PLUS', 'EXTENDED_ACCIDENTAL_DAMAGE', 'OUT_OF_WARRANTY_PAID'    )),    symptom_category VARCHAR(40) NOT NULL CHECK (symptom_category IN (        'CRACKED_SCREEN', 'BATTERY_DEGRADED', 'MAINBOARD_POWER_FAILURE',         'CAMERA_FACEID_DEFECT', 'LIQUID_DAMAGE_LDI', 'SPEAKER_MIC_FAILURE'    )),    customer_description TEXT NOT NULL,    technician_diagnostic_findings TEXT,    ldi_liquid_damage_status VARCHAR(20) NOT NULL DEFAULT 'CLEAN' CHECK (ldi_liquid_damage_status IN ('CLEAN', 'WATER_TRIPPED_RED')),    diagnostic_report_pdf_url VARCHAR(500),    repair_lifecycle_state VARCHAR(40) NOT NULL DEFAULT 'TICKET_CREATED' CHECK (repair_lifecycle_state IN (        'TICKET_CREATED', 'DEVICE_CHECKED_IN', 'DIAGNOSING', 'QUOTE_PENDING_APPROVAL',         'PARTS_ORDERED', 'REPAIRING', 'SYSTEM_CONFIG_CALIBRATION', 'QA_TESTING',         'READY_FOR_PICKUP_DISPATCH', 'CLOSED_COMPLETED', 'REPAIR_DECLINED_RETURNED'    )),    parts_replaced_details JSONB NOT NULL DEFAULT '[]', -- [{"part_name": "OLED Display", "serial": "DS-9912", "syscfg": "PASSED"}]    repair_cost_gross NUMERIC(15, 2) NOT NULL DEFAULT 0.00,    insurance_covered_amount NUMERIC(15, 2) NOT NULL DEFAULT 0.00,    customer_deductible_payable NUMERIC(15, 2) NOT NULL DEFAULT 0.00,    is_quote_approved_by_customer BOOLEAN,    quote_decision_deadline TIMESTAMPTZ,    loaner_device_serial VARCHAR(100), -- Số Serial máy mượn dùng tạm    loaner_model_name VARCHAR(100),    loaner_preauth_hold_id VARCHAR(100),    loaner_preauth_amount NUMERIC(15, 2) DEFAULT 0.00,    loaner_return_deadline TIMESTAMPTZ,    is_loaner_returned_safely BOOLEAN,    warranty_extension_days INTEGER NOT NULL DEFAULT 90, -- Gia hạn 90 ngày cho linh kiện thay    estimated_completion_at TIMESTAMPTZ,    actual_completed_at TIMESTAMPTZ,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_repair_code ON hardware_repair_tickets(ticket_code);CREATE INDEX idx_repair_serial ON hardware_repair_tickets(hardware_serial);CREATE INDEX idx_repair_state ON hardware_repair_tickets(repair_lifecycle_state);-- BẢNG 4: NHẬT KÝ SỰ KIỆN & THÔNG BÁO TIẾN ĐỘ SỬA CHỮA (REPAIR LIFECYCLE EVENT AUDIT)CREATE TABLE hardware_repair_events (    event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    ticket_id UUID NOT NULL REFERENCES hardware_repair_tickets(ticket_id) ON DELETE CASCADE,    previous_state VARCHAR(40),    new_state VARCHAR(40) NOT NULL,    actor_id UUID NOT NULL, -- ID Kỹ thuật viên hoặc Hệ thống Cron    actor_role VARCHAR(30) NOT NULL, -- 'TECHNICIAN', 'SYSTEM', 'CUSTOMER'    event_notes TEXT,    system_configuration_signature VARCHAR(128), -- Chữ ký số SysCfg từ máy chủ hãng    sms_brandname_sent BOOLEAN DEFAULT FALSE,    zalo_zns_sent BOOLEAN DEFAULT FALSE,    event_timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_repair_event_ticket ON hardware_repair_events(ticket_id);
+--- TABLE END ---
+9.2. Hợp đồng API RESTful OpenAPI 3.0 Cho Phân Hệ Hậu Mãi
+Dưới đây là 4 hợp đồng API giao dịch mấu chốt được thiết kế theo chuẩn JSON RESTful:
+API 1: Xác nhận Biên bản Đồng kiểm từ Driver App
+• Endpoint: POST /api/v1/reverse-logistics/co-inspection/submit
+• Mô tả: Driver App gửi kết quả đồng kiểm ngoại quan tại cửa nhà khách hàng kèm bằng chứng ảnh và tọa độ GPS.
+• Request Payload:
+--- TABLE START ---
+{  "order_id": "ORD-20261102-99014",  "waybill_code": "SPXVN084920194821",  "courier_id": "DRV-99418",  "inspection_status": "REJECTED_COINSPECT",  "rejection_reason": "DAMAGED_CRUSHED_BOX",  "notes": "Hộp bên ngoài bị bẹp dúm rách nát, hộp máy bên trong nứt mép",  "duration_seconds": 195,  "geo_location": {    "lat": 10.776889,    "lng": 106.700806  },  "evidence_images": [    {      "photo_type": "AWB_LABEL_SCAN",      "image_url": "https://cdn.platform.vn/evidence/20261105/awb_881902.jpg",      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"    },    {      "photo_type": "OPEN_PACKAGE_OVERVIEW",      "image_url": "https://cdn.platform.vn/evidence/20261105/overview_881902.jpg",      "sha256": "a1b2c3d4e5f60718293a4b5c6d7e8f901a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d"    },    {      "photo_type": "CRUSHED_DEFECT_DETAIL",      "image_url": "https://cdn.platform.vn/evidence/20261105/defect_881902.jpg",      "sha256": "f0e1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"    }  ],  "security_tape_code": "SEAL-SPX-994102"}
+--- TABLE END ---
+• Response Payload (200 OK):
+--- TABLE START ---
+{  "code": 200,  "message": "Co-inspection record submitted successfully",  "data": {    "inspection_ticket_id": "INS-20261105-881902",    "order_status": "RETURNING_COINSPECT_REJECTED",    "cod_collection_voided": true,    "auto_refund_queued": true,    "estimated_refund_settlement_minutes": 120  }}
+--- TABLE END ---
+API 2: Đánh giá Tự động Returnless & Hazmat Pin Phồng
+• Endpoint: POST /api/v1/reverse-logistics/returnless/evaluate
+• Mô tả: Động cơ thuật toán tính toán ma trận chi phí kinh tế $NetSalvage$ và kiểm soát hàng nguy hiểm Hazmat khi khách tạo yêu cầu đổi trả.
+• Request Payload:
+--- TABLE START ---
+{  "order_id": "ORD-20261101-77189",  "order_item_id": "LINE-01",  "sku_id": "SKU-BAMBOO-MUG-CERAMIC",  "claim_reason_code": "DAMAGED_CRUSHED",  "is_customer_reported_battery_swelling": false,  "evidence_images": [    "https://cdn.platform.vn/claims/mug_broken_1.jpg",    "https://cdn.platform.vn/claims/mug_broken_2.jpg"  ]}
+--- TABLE END ---
+• Response Payload (200 OK):
+--- TABLE START ---
+{  "code": 200,  "decision": "APPROVED_RETURNLESS_ECONOMIC",  "decision_details": {    "item_value": 220000,    "reverse_logistics_cost": 85000,    "net_salvage_value": 0,    "customer_trust_score": 82,    "hazmat_prohibition": false,    "return_label_issued": false,    "refund_amount": 220000,    "user_message": "Yêu cầu của bạn đã được duyệt hoàn tiền ngay. Bạn không cần phải gửi trả lại sản phẩm này."  }}
+--- TABLE END ---
+API 3: Thẩm định Gian lận Serial / Cân nặng & Bồi thường SPF
+• Endpoint: POST /api/v1/reverse-logistics/fraud/investigations/audit
+• Mô tả: Trạm kiểm định bóc hộp hoàn trả gửi kết quả quét Serial/IMEI, cân nặng và kích hoạt bồi hoàn Quỹ Bảo Vệ Nhà Bán Hàng (SPF).
+• Request Payload:
+--- TABLE START ---
+{  "return_id": "RET-20261103-99410",  "scanned_serial_number": "DNQXC901M17K",  "scanned_imei": "352019482019481",  "inbound_scale_weight_grams": 440,  "tamper_evident_seal_intact": false,  "diagnostic_tamper_flags": {    "non_genuine_display": true,    "logic_board_swapped": true  },  "cctv_unboxing_video_url": "https://cdn.platform.vn/evidence/unbox_return_11048.mp4",  "unboxing_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+--- TABLE END ---
+• Response Payload (200 OK):
+--- TABLE START ---
+{  "code": 200,  "verdict": "CONFIRMED_BUYER_FRAUD",  "investigation_id": "FRD-20261105-00129",  "enforcement_summary": {    "serial_match": false,    "weight_discrepancy_grams": 45,    "buyer_refund_blocked": true,    "buyer_account_action": "SUSPENDED_PERMANENT",    "seller_protection_fund_payout": {      "is_approved": true,      "payout_amount": 34990000,      "payout_eta_hours": 36    },    "legal_escalation": {      "article": "ARTICLE_174_PENAL_CODE",      "loss_value_vnd": 34990000,      "agency": "CUC_A05_BO_CONG_AN",      "dossier_status": "READY_FOR_SUBMISSION"    }  }}
+--- TABLE END ---
+API 4: Cổng Tra cứu Thời gian Thực & Chuyển dịch Trạng thái Sửa chữa
+• Endpoint Tra cứu Khách hàng: GET /api/v1/repairs/track?ticket_code=RPR-20261105-0921
+• Response Payload (200 OK):
+--- TABLE START ---
+{  "code": 200,  "ticket_info": {    "ticket_code": "RPR-20261105-0921",    "device_model": "iPhone 16 Pro Max 256GB Desert Titanium",    "hardware_serial": "F2LLX904MD6R",    "current_stage": "SYSTEM_CONFIG_CALIBRATION",    "stage_index": 6,    "total_stages": 8,    "progress_percentage": 75,    "stepper_timeline": [      {"stage": "TICKET_CREATED", "status": "COMPLETED", "timestamp": "2026-11-05T08:30:00Z"},      {"stage": "DEVICE_CHECKED_IN", "status": "COMPLETED", "timestamp": "2026-11-05T08:45:00Z"},      {"stage": "DIAGNOSING", "status": "COMPLETED", "timestamp": "2026-11-05T09:15:00Z"},      {"stage": "QUOTE_PENDING_APPROVAL", "status": "COMPLETED", "timestamp": "2026-11-05T09:30:00Z"},      {"stage": "PARTS_ORDERED", "status": "COMPLETED", "timestamp": "2026-11-05T10:00:00Z"},      {"stage": "REPAIRING", "status": "COMPLETED", "timestamp": "2026-11-05T13:30:00Z"},      {"stage": "SYSTEM_CONFIG_CALIBRATION", "status": "IN_PROGRESS", "timestamp": "2026-11-05T13:45:00Z"},      {"stage": "QA_TESTING", "status": "PENDING", "timestamp": null},      {"stage": "READY_FOR_PICKUP_DISPATCH", "status": "PENDING", "timestamp": null}    ],    "diagnostic_summary": {      "defect_identified": "Màn hình OLED bị nứt vỡ mặt kính góc trên, chập cáp cảm ứng",      "liquid_damage": "NO_WATER_DAMAGE",      "part_replaced": "iPhone 16 Pro Max Display Assembly OEM (Part No: 661-39481)"    },    "loaner_device_active": true,    "loaner_model": "iPhone 15 128GB Black",    "warranty_extension_granted_days": 90,    "estimated_ready_date": "2026-11-06T15:00:00Z"  }}
+--- TABLE END ---

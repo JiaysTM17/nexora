@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Squircle Gradient for iOS/macOS App Store -->
+    <linearGradient id="iconBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </linearGradient>
+
+    <!-- Master Gradients for X-Nexus -->
+    <linearGradient id="xGradIndigo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+
+    <linearGradient id="xGradViolet" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#7C3AED" />
+    </linearGradient>
+
+    <filter id="iconShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#4F46E5" flood-opacity="0.18" />
+    </filter>
+
+    <filter id="subtleBorder" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#CBD5E1" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Pure White Base -->
+  <rect width="512" height="512" fill="#FFFFFF" />
+
+  <!-- App Squircle Container with subtle border -->
+  <rect x="24" y="24" width="464" height="464" rx="108" ry="108" fill="url(#iconBg)" stroke="#E2E8F0" stroke-width="2" filter="url(#subtleBorder)" />
+
+  <!-- HERO 'X' INTERLOCKING GLYPH -->
+  <g transform="translate(96, 96)" filter="url(#iconShadow)">
+    <!-- Primary Loop 1: Top-Left to Bottom-Right -->
+    <path d="M 60,40 
+             C 100,40 160,100 200,160 
+             C 230,205 260,260 260,260 
+             C 275,280 255,300 235,285 
+             C 200,260 140,195 100,140 
+             C 70,100 40,65 40,40 
+             C 40,30 50,40 60,40 Z" 
+          fill="url(#xGradIndigo)" />
+
+    <!-- Complementary Loop 2: Top-Right to Bottom-Left -->
+    <path d="M 260,40 
+             C 220,40 160,100 120,160 
+             C 90,205 60,260 60,260 
+             C 45,280 65,300 85,285 
+             C 120,260 180,195 220,140 
+             C 250,100 280,65 280,40 
+             C 280,30 270,40 260,40 Z" 
+          fill="url(#xGradViolet)" />
+
+    <!-- Central Nexus Convergence Aperture (The Loop of Trust) -->
+    <circle cx="160" cy="160" r="32" fill="#FFFFFF" />
+    <circle cx="160" cy="160" r="22" fill="url(#xGradIndigo)" />
+    <circle cx="160" cy="160" r="10" fill="#FFFFFF" />
+  </g>
+</svg>

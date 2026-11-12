@@ -1,0 +1,485 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT MODULE SOCIAL COMMERCE: CỘNG ĐỒNG PHỐI ĐỒ, GHIM SẢN PHẨM LIVESTREAM & AFFILIATE
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-SOC-06 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT MODULE SOCIAL COMMERCE: CỘNG ĐỒNG PHỐI ĐỒ, GHIM SẢN PHẨM LIVESTREAM & AFFILIATE
+Phạm vi: Ghim deal 1 chạm không ngắt live stream, giữ giỏ ảo khi cháy hàng, duyệt mẫu thử KOC & hoa hồng 14 ngày
+====================================================================
+PHÂN TÍCH NGHIỆP VỤ THƯƠNG MẠI XÃ HỘI, LIVE SHOPPING & TIẾP THỊ LIÊN KẾT NHÀ SÁNG TẠO
+(SOCIAL COMMERCE, LIVE STREAM SHOPPING, VIRTUAL CART LOCK, PRICE GLITCH CIRCUIT BREAKER, SAMPLE GOVERNANCE & AFFILIATE ANTI-FRAUD SPECIFICATIONS)
+• Mã phân hệ: MOD-SOC-COMMERCE
+• Mã tài liệu: 06_SOCIAL_COMMERCE_LIVE_SHOPPING_AFFILIATE.md
+• Phiên bản: 3.0 (Enterprise Benchmark Specification — Production Grade)
+• Thư mục lưu trữ: d:\A - Học Tập\Thương Mại Điện Tử\p.tich.1\
+• Thuộc Milestone: M3 & M4 (Social Commerce, Flash Sale Cart Locking, Emergency Circuit Breaker & Affiliate Integrity)
+• Bộ chuẩn đo lường tham chiếu (Benchmark Targets):
+• TikTok Shop (tiktok.com/shop): In-Stream Product Pinning, Live Dynamic Stock Ticker, Floating Bottom-Sheet 1-Tap Checkout; Khóa giỏ hàng ảo khi mở bán flash sale (Virtual Inventory Soft Lock) với Redis Lua Script và thời hạn đếm ngược 180s; Hàng chờ ảo (Waitlist Queue) và cơ chế tự động giải phóng tồn kho vào Live Pool; Quy trình xử lý sự cố lỗi giá flash sale (Price Glitch Protocol) kèm Cầu dao ngắt khẩn cấp (Emergency Circuit Breaker); Hệ thống quản trị mẫu thử miễn phí (Free Sample Request SLA 14 ngày) kèm bảo lãnh hạn mức thẻ (Pre-auth Hold); Động cơ phòng chống gian lận tiếp thị liên kết (Affiliate Click Fraud, Cookie Stuffing qua hidden iframe, Bot Click Farm, Self-Referral Detection) và Cơ chế đóng băng hoa hồng 14-30 ngày kèm truy thu tự động (Commission Clawback).
+• Shopee Live (shopee.vn): Giỏ hàng màu cam nổi, Voucher độc quyền phiên live (Is_From_Livestream = true), Đồng hồ tồn kho thời gian thực qua WebSocket/SSE, Tiếp thị liên kết đa tầng (Shop Commission + Shopee Commission), Quy trình hủy hàng loạt và cấp voucher thiện chí 50.000 - 200.000 VNĐ cho sự cố nhập nhầm giá kèm miễn trừ điểm phạt Sao Quả Tạ cho người bán.
+• Amazon USA (amazon.com): Amazon Live Interactive Stream, Thuật toán ngắt mạch tự động khi vận tốc đơn tăng vọt bất thường (> 500 đơn/phút), Giao thức hủy đơn hợp chuẩn pháp lý dân sự về nhầm lẫn cơ bản (Clerical Error Cancellation).
+• Tài liệu gốc đối chiếu: phan-tich-nghiep-vu-website-ban-hang.md (Chương 19, 20, 21, 22, 30, 43; CD-01 đến CD-08, BV-01 đến BV-10, BL-01 đến BL-09, CN-01 đến CN-09, KM-01 đến KM-09, MR-08).
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN
+1. TỔNG QUAN KIẾN TRÚC SOCIAL COMMERCE & THƯƠNG MẠI DẪN DẮT BỞI NỘI DUNG
+2. ĐẶC TẢ CHI TIẾT SOC-LIVE-01: NỀN TẢNG LIVE SHOPPING, GHIM SẢN PHẨM & THANH TOÁN 1-CHẠM LIỀN MẠCH
+3. ĐẶC TẢ CHI TIẾT SOC-LIVE-CARTLOCK: KHÓA GIỮ GIỎ HÀNG ẢO KHI LIVESTREAM CHÁY HÀNG, REDIS LUA 180S TTL & HÀNG CHỜ WAITLIST
+4. ĐẶC TẢ CHI TIẾT SOC-PRICE-ERROR: CẦU DAO TỰ ĐỘNG NGẮT KHẨN CẤP & QUY TRÌNH HỦY HÀNG LOẠT DO SỰ CỐ LỖI GIÁ FLASH SALE
+5. ĐẶC TẢ CHI TIẾT SOC-AFFIL-SAMPLE: QUẢN TRỊ MẪU THỬ MIỄN PHÍ CHO NHÀ SÁNG TẠO, SLA RÀNG BUỘC VIDEO 14 NGÀY & KÝ QUỸ BẢO CHỨNG
+6. ĐẶC TẢ CHI TIẾT SOC-AFFIL-FRAUD: ĐỘNG CƠ CHỐNG GIAN LẬN TIẾP THỊ LIÊN KẾT, NHỒI COOKIE, BOT CLICK & TỰ MUA CHÍNH MÌNH
+7. MA TRẬN DỮ LIỆU ĐỐI SOÁT HOA HỒNG TÀI CHÍNH, BẢNG KÊ QUYẾT TOÁN & YÊU CẦU PHI CHỨC NĂNG (NFRS)
+————————————————————————————————————————————————————————————————————
+1. TỔNG QUAN KIẾN TRÚC SOCIAL COMMERCE & THƯƠNG MẠI DẪN DẮT BỞI NỘI DUNG
+Thương mại điện tử hiện đại đã chuyển dịch mạnh mẽ từ mô hình tìm kiếm chủ động (Search-based Commerce) sang Thương mại Khám phá (Discovery Commerce) và Thương mại Mạng Xã hội (Social Commerce). Khách hàng không còn gõ tên sản phẩm vào thanh tìm kiếm một cách thụ động, mà nhu cầu mua sắm được đánh thức trực tiếp thông qua nội dung sáng tạo video ngắn (Short-form Videos) và các buổi phát sóng trực tiếp (Livestreams) của các Nhà sáng tạo nội dung (Creators/KOL/KOC).
+Tuy nhiên, lưu lượng truy cập trong các phiên Livestream bán hàng (Live Shopping) có đặc thù tăng vọt cực hạn (Flash Spikes): Hàng chục nghìn người xem cùng bấm nút mua hàng tại đúng một giây khi streamer hô "Mở bán deal 1k". Sự đột biến này đặt ra 4 thách thức kỹ thuật và rủi ro vận hành sống còn:
+1. Tranh chấp dữ liệu tồn kho (Concurrency Race Conditions): Hàng nghìn người cùng tranh mua 50 sản phẩm ghim dẫn đến nguy cơ bán vượt tồn kho (Overselling) hoặc gây nghẽn sập cơ sở dữ liệu quan hệ (RDBMS).
+2. Trải nghiệm mua sắm bị đứt đoạn: Khách hàng bị đẩy ra trang thanh toán toàn màn hình làm mất luồng video/âm thanh phiên live, dẫn đến tỷ lệ bỏ giỏ hàng (Cart Abandonment) cao.
+3. Thảm họa rủi ro do nhập nhầm giá (Mass Price Glitch Catastrophe): Nhân viên gõ nhầm số 0 (ví dụ máy 25.000.000đ thành 25.000đ) kết hợp với các hội nhóm săn lỗi giá sử dụng công cụ bot tự động tạo ra hàng nghìn đơn hàng trong 1-2 phút, đẩy nhà bán hàng và sàn tới bờ vực phá sản nếu không có bộ ngắt mạch tự động (Circuit Breaker).
+4. Gian lận tiếp thị liên kết tinh vi (Affiliate Fraud & Sybil Exploits): Nhồi cookie lậu (Cookie Stuffing qua hidden iframe), trang trại nhấp chuột tự động (Bot click farms) với thời gian mua dưới 2 giây, và hành vi Creator tự mua hàng qua link của chính mình (Self-referral) để chiếm đoạt hoa hồng và voucher trợ giá sàn.
+Kiến trúc phân hệ Social Commerce giải quyết triệt để các bài toán trên thông qua 5 trụ cột công nghệ:
+--- TABLE START ---
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐│              KIẾN TRÚC PHÂN HỆ SOCIAL COMMERCE, LIVE SHOPPING & AFFILIATE AN TOÀN               │├────────────────────────────────┬────────────────────────────────┬───────────────────────────────┤│ 1. TƯƠNG TÁC PHIÊN LIVE        │ 2. KIỂM SOÁT TỒN KHO & GIÁ CẢ  │ 3. LIÊM CHÍNH TIẾP THỊ        │├────────────────────────────────┼────────────────────────────────┼───────────────────────────────┤│ • SOC-LIVE-01: Ghim SP WebRTC  │ • SOC-LIVE-CARTLOCK: Khóa tồn  │ • SOC-AFFIL-SAMPLE: Quản trị  ││   độ trễ <2s, Bottom-sheet     │   kho ảo bằng Redis Lua 180s,  │   mẫu thử SLA 14 ngày, khóa   ││   nổi 1-chạm không mất tiếng   │   WebSocket Stock Meter & Queue│   hạn mức thẻ tín dụng bảo lãnh││ • Voucher phiên live tự hủy    │ • SOC-PRICE-ERROR: Circuit     │ • SOC-AFFIL-FRAUD: Chống nhồi ││   khi phiên phát sóng kết thúc │   Breaker tự ngắt khi sụt >70% │   Cookie, lọc Bot Click <2s,  ││ • Gắn thẻ nguồn gốc đơn hàng   │   hoặc vận tốc >500 đơn/phút;  │   Self-referral và đóng băng  ││   `is_from_livestream = true`  │   Hủy đơn & Voucher đền bù 50k │   hoa hồng 14-30 ngày Clawback│└────────────────────────────────┴────────────────────────────────┴───────────────────────────────┘
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+2. ĐẶC TẢ CHI TIẾT SOC-LIVE-01: NỀN TẢNG LIVE SHOPPING, GHIM SẢN PHẨM & THANH TOÁN 1-CHẠM LIỀN MẠCH
+2.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: SOC-LIVE-01
+• Tên nghiệp vụ: Nền tảng Bán hàng Trực tiếp, Ghim Sản phẩm & Thanh toán 1-Chạm Liền mạch (In-Stream Live Shopping, Real-Time Pinning & Floating Bottom-Sheet 1-Tap Checkout)
+• Tương đương thực tế: TikTok Shop Live Shopping Studio, Shopee Live Interactive Stream & Orange Bag Checkout.
+2.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Cung cấp trải nghiệm mua sắm đồng bộ thời gian thực: Khách hàng vừa xem livestream giải trí vừa có thể chốt đơn mua hàng mà không bị ngắt quãng dòng cảm xúc hay luồng video/âm thanh của streamer.
+• Tối đa hóa tỷ lệ chuyển đổi (Conversion Rate): Tận dụng hiệu ứng tâm lý khan hiếm (FOMO) thông qua bộ đếm tồn kho động (Dynamic Stock Ticker) và voucher giảm giá chớp nhoáng chỉ phát trong phiên live.
+• Tích hợp giao diện nửa màn hình nổi (Floating Bottom-sheet Checkout) cho phép chọn biến thể, địa chỉ và thanh toán trong 3 giây.
+• Tác nhân tham gia:
+• Người xem / Người mua (Viewer/Buyer): Xem luồng live, tương tác chat, nhận voucher phiên live, đặt hàng 1-chạm trên giao diện nổi.
+• Người dẫn phiên live / Host (Streamer/Creator): Giới thiệu sản phẩm, kích hoạt ghim sản phẩm lên màn hình, tung deal độc quyền.
+• Trợ lý phiên live / Quản trị viên (Moderator/Live Operator): Điều khiển giỏ hàng livestream trên Live Studio Dashboard, điều chỉnh tồn kho flash, lọc bình luận.
+• Hệ thống Phát sóng & Đồng bộ Thời gian thực (Live Streaming & WebSocket Gateway): Đẩy thông điệp ghim hàng và cập nhật tồn kho với độ trễ dưới 300ms.
+2.3. Điều kiện tiên quyết
+1. Phiên phát trực tiếp (Live Stream Session) đang ở trạng thái phát sóng công khai (LIVE_BROADCASTING).
+2. Sản phẩm được đưa vào danh mục giỏ hàng phiên live (Live_Cart_Catalog) đã được phê duyệt hợp lệ và liên kết với kho hàng thực tế.
+3. Người xem đã đăng nhập ứng dụng và có sẵn hồ sơ địa chỉ giao hàng mặc định cùng phương thức thanh toán ưu tiên (Thẻ, Ví điện tử, COD).
+2.4. Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[Người xem đang xem phiên Live Stream phát toàn màn hình]                          │                          ▼[Host/Moderator bấm "GHIM SẢN PHẨM" (Pin Product) trên Live Studio]                          │                          ▼ (WebSocket / Server-Sent Events phát tán trong < 300ms)[Màn hình Người xem: Xuất hiện THẺ SẢN PHẨM GHIM ở góc dưới bên trái]  ├── Ảnh động biến thể đang được Host review  ├── Giá Flash Live gạch giá niêm yết  ├── STOCK TICKER ĐỘNG: "Chỉ còn 15 chiếc" (Cập nhật thời gian thực)  └── Nút hành động kêu gọi: "MUA NGAY"                          │                          ▼[Host kích hoạt "TUNG VOUCHER ĐỘC QUYỀN PHIÊN LIVE" (Flash Voucher Drop)]  └── Banner nhỏ rơi từ đỉnh màn hình: "Mã LIVE Giảm 50% - Lưu ngay" -> Tự động lưu                          │                          ▼[Người xem bấm nút "MUA NGAY" trên Thẻ Sản Phẩm Ghim]                          │                          ▼[GIAO DIỆN NỔI NỬA MÀN HÌNH DƯỚI (Floating Bottom-Sheet) TRƯỢT LÊN]  ├── NỬA TRÊN MÀN HÌNH: Video & Âm thanh phiên Live vẫn PHÁT LIÊN TỤC KHÔNG DỪNG  └── NỬA DƯỚI MÀN HÌNH:        ├── Chọn biến thể nhanh (Màu sắc, Dung lượng/Size)        ├── Tự động áp dụng Địa chỉ nhận hàng mặc định        ├── Tự động tối ưu Voucher Sàn + Voucher Live độc quyền        └── Hiển thị tổng tiền thực trả cuối cùng                          │                          ▼[Người xem bấm nút "THANH TOÁN 1-CHẠM" (FaceID / TouchID / Bấm chốt)]                          │                          ▼[Đơn hàng tạo thành công -> Trả về màn hình Xác nhận Đặt hàng thành công]                          │                          ▼[Bottom-Sheet tự động thu gọn xuống sau 1.5 giây -> Tiếp tục xem Live liền mạch]
+--- TABLE END ---
+• Bước 1 (Ghim sản phẩm trực tiếp - In-stream Product Pinning):
+• Host trên Live Studio Dashboard chọn một sản phẩm trong danh mục hàng chục sản phẩm đã nạp sẵn, bấm "Ghim lên màn hình" (Pin to Stream).
+• Live Gateway phát bản tin WebSocket ACTION_PRODUCT_PINNED tới hàng trăm nghìn kết nối client của người xem trong phòng live.
+• Trên màn hình của toàn bộ người xem, một Thẻ sản phẩm nổi (Floating Product Card) xuất hiện ở góc dưới bên trái, đè nhẹ lên luồng video nhưng không che mất khuôn mặt người live: Ảnh sản phẩm, Giá bán độc quyền phiên live (Live Flash Price), Bộ đếm tồn kho động.
+• Bước 2 (Tung Voucher chớp nhoáng phiên live - Live-Only Flash Voucher Drop):
+• Host thông báo: "Mình vừa mở 100 mã giảm giá 50.000đ độc quyền chỉ có hiệu lực trong phiên live này!". Trợ lý bấm "Kích hoạt Voucher".
+• Banner hiệu ứng trượt từ trên đỉnh màn hình. Khách hàng chạm vào màn hình là mã được lưu tự động vào ví voucher của tài khoản (Voucher_Auto_Claimed).
+• Ràng buộc hiệu lực cứng: Mã voucher được gắn cờ IS_LIVE_ONLY = TRUE và liên kết với live_session_id. Mã chỉ có thể sử dụng thành công khi đơn hàng được đặt từ phiên live này; khi phiên live kết thúc, toàn bộ các voucher chưa sử dụng sẽ tự động bốc hơi và bị hủy khỏi ví người dùng.
+• Bước 3 (Kích hoạt Giỏ hàng nổi 1-chạm - Floating Bottom-sheet 1-Tap Checkout):
+• Người xem bấm vào nút "Mua ngay" trên Thẻ ghim sản phẩm.
+• Ứng dụng TUYỆT ĐỐI KHÔNG CHUYỂN TRANG (No Page Navigation / No Redirect). Thay vào đó, một giao diện Bottom-sheet trượt lên từ đáy màn hình, chiếm khoảng 50% - 60% chiều cao màn hình:
+• Luồng video phát sóng của streamer tự động co lại vừa vặn vào nửa trên màn hình (hoặc chạy nền mờ), âm thanh giọng nói của host vẫn phát to, rõ ràng và liên tục không bị ngắt 1 giây nào.
+• Trên bảng Bottom-sheet, khách hàng thực hiện các thao tác siêu tốc: Chạm chọn biến thể, địa chỉ mặc định điền sẵn, tự động áp mã giảm giá live tối ưu.
+• Bước 4 (Chốt đơn nguyên tử & Xác thực sinh trắc học):
+• Người mua bấm nút lớn: "Thanh toán ngay" (1-Tap Checkout). Xác thực vân tay hoặc nhận diện khuôn mặt FaceID hoàn tất trong 0.5 giây.
+• Hệ thống gọi API tạo đơn hàng, trừ tồn kho và cập nhật bộ đếm WebSocket thời gian thực cho toàn bộ người xem trong phòng.
+• Bước 5 (Đóng giao diện & Trở lại phiên live):
+• Khi đơn hàng tạo thành công, Bottom-sheet hiển thị dấu tích xanh "Đặt hàng thành công!" trong 1.5 giây, sau đó tự động trượt xuống và biến mất. Người xem tiếp tục tương tác trong phiên live.
+2.5. Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Phiên live bị mất kết nối mạng đột ngột (Streamer Offline Outage):
+• Video stream dừng lại, nhưng giao diện Bottom-sheet thanh toán của khách hàng vẫn được duy trì hoạt động độc lập (Decoupled Checkout Resilience) trong vòng 05 phút tiếp theo.
+• Khách hàng vẫn được quyền bấm "Thanh toán ngay" và vẫn được áp dụng mức giá ưu đãi Live Sale cùng voucher phiên live đã lưu. Quá 5 phút, giá tự động chuyển hoàn về giá niêm yết ban đầu.
+• Ngoại lệ 2: Người xem đổi địa chỉ giao hàng ngoài vùng phủ sóng:
+• Khách bấm sửa địa chỉ trên Bottom-sheet và chọn một địa chỉ ở vùng sâu vùng xa không hỗ trợ tuyến vận chuyển nhanh: Hệ thống hiển thị cảnh báo phụ phí vận chuyển rõ ràng trước khi bấm chốt đơn.
+2.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-LIV-01 | Ràng Buộc Thẻ Nguồn Gốc Đơn Hàng (Live Attribution Tagging) | Mọi đơn hàng tạo từ phiên live bắt buộc mang siêu dữ liệu bất biến: { is_from_livestream: true, live_session_id: "...", stream_host_id: "..." }. Đây là căn cứ kỹ thuật bắt buộc để cho phép áp dụng voucher live, tính hoa hồng cho Streamer và thống kê báo cáo Live Analytics.
+BR-LIV-02 | Quy Tắc Tự Hủy Voucher Phiên Live (Ephemeral Flash Voucher Rule) | Ngay khi Streamer bấm nút "Kết thúc phiên Live", toàn bộ các mã voucher độc quyền được phát trong phiên live đó chuyển trạng thái sang INVALIDATED_LIVE_ENDED và tự động bị gỡ bỏ khỏi ví trong vòng 60 giây, ngăn chặn việc người mua "ôm mã" mang ra mua sắm sau khi live kết thúc.
+BR-LIV-03 | Duy Trì Luồng Âm Thanh Nền Bất Biến (Continuous Background Audio Mandate) | Khi Bottom-sheet thanh toán trượt lên, hệ thống Media Player bắt buộc tiếp tục phát âm thanh và video ở tốc độ khung hình tiêu chuẩn, cấm tuyệt đối việc Pause video hoặc Mute âm thanh làm tụt cảm xúc hưng phấn của người mua.
+--- TABLE END ---
+2.7. Dữ liệu vào/ra & Máy trạng thái
+(Thực thể `GiaoDichLiveOrder` và ma trận trạng thái ghim sản phẩm đã được chuẩn hóa tại Mục 2.7 của tài liệu gốc).
+2.8. Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Nền Tảng Bán Hàng Trực Tiếp Ghim Sản Phẩm & Thanh Toán 1-Chạm (SOC-LIVE-01)  Scenario: Khách hàng mở Bottom-sheet chốt đơn 1-chạm mà không bị gián đoạn âm thanh phiên live    Given Khách hàng đang theo dõi phiên livestream bán hàng của Streamer A    When Streamer bấm ghim sản phẩm Son Môi Matte Red giá flash 189.000 VNĐ    Then Thẻ ghim sản phẩm xuất hiện trên màn hình khách hàng trong vòng 300ms    When Khách hàng bấm nút "MUA NGAY" trên thẻ ghim    Then Bảng Bottom-sheet trượt lên chiếm 50% màn hình phía dưới    And Luồng video và giọng nói của Streamer ở nửa trên màn hình vẫn tiếp tục phát liền mạch không ngắt    When Khách hàng bấm thanh toán FaceID hoàn tất đơn hàng    Then Tồn kho trên phòng live tự động nhảy số giảm 1 đơn vị    And Bottom-sheet tự động thu gọn lại để khách hàng tiếp tục xem live.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+3. ĐẶC TẢ CHI TIẾT SOC-LIVE-CARTLOCK: KHÓA GIỮ GIỎ HÀNG ẢO KHI LIVESTREAM CHÁY HÀNG, REDIS LUA 180S TTL & HÀNG CHỜ WAITLIST
+3.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: SOC-LIVE-CARTLOCK
+• Tên nghiệp vụ: Khóa Giữ Giỏ Hàng Ảo Khi Livestream Mở Bán Cháy Hàng, Thuật Toán Nguyên Tử Redis Lua 180s TTL, Đồng Hồ Tồn Kho WebSocket & Hàng Chờ Ảo Waitlist (Virtual Inventory Cart Lock, Redis Atomic Reservation, Real-Time Stock Meter & Waitlist Auto-Release Engine)
+• Tương đương thực tế: TikTok Shop Flash Deal Cart Reservation, Shopee Flash Sale Virtual Lock & Waitlist.
+3.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Giải quyết triệt để vấn nạn "Bị văng ra khi đang nhập thẻ" (Cart Sniping & Checkout Bumping): Khi streamer mở bán 50 deal sốc giá 1k, nếu không có cơ chế giữ chỗ ảo, khách hàng vừa mở màn hình thanh toán nhập địa chỉ thì hàng đã bị người khác mua mất, gây ức chế tột độ.
+• Sử dụng Script nguyên tử Redis Lua (Redis Atomic Lua Script) để cấp quyền giữ chỗ tồn kho ảo (Virtual Cart Reservation Token) trong đúng 180 giây (3 phút) với độ trễ xử lý dưới 5 mili-giây.
+• Hiển thị Đồng hồ đo tồn kho thời gian thực (Real-time Stock Meter) qua kênh WebSocket với 4 trạng thái trực quan: Sẵn sàng, Sắp hết, Đang trong giỏ hàng người khác (Locked in carts), và Cháy hàng hoàn toàn.
+• Thiết lập Hàng chờ ảo (Waitlist Queue) bằng cấu trúc dữ liệu Redis Sorted Sets (ZSET): Khi khách hàng trong top đầu bỏ rơi giỏ hàng (Cart Abandonment) hoặc để hết hạn 180 giây, hệ thống tự động nhả tồn kho và bắn thông báo đẩy tức thời cho người tiếp theo trong hàng chờ chốt đơn trong vòng 200 mili-giây.
+• Tác nhân tham gia:
+• Người xem phiên live (Live Viewers): Bấm tranh mua deal sốc, nhận Token giữ giỏ hàng 180s hoặc được xếp vào hàng chờ Waitlist.
+• Động cơ Giữ Tồn Kho Ảo (Virtual Cart Lock Engine - Redis Cluster): Quản lý bộ nhớ đệm nguyên tử, thực thi Lua script phân bổ suất mua độc quyền.
+• Hệ thống Hàng Chờ & Đẩy Sự Kiện (Waitlist Queue & WebSocket Broadcaster): Quản lý danh sách hàng chờ theo thứ tự thời gian mili-giây và phát sóng trạng thái kho.
+• Động cơ Hủy Giữ Chỗ & Tái Phân Phối (Abandonment & Auto-Release Worker): Lắng nghe sự kiện hết hạn TTL (Redis Keyspace Expiration) và nhả tồn kho ngay lập tức.
+3.3. Điều kiện tiên quyết
+1. Sản phẩm trong phiên live được cài đặt chế độ Flash Sale Deal Sốc với số lượng có hạn (is_flash_deal = TRUE).
+2. Phiên phát trực tiếp đang phát sóng ổn định với kênh WebSocket kết nối hai chiều sẵn sàng.
+3. Cụm máy chủ Redis In-Memory Cluster có cấu hình tối ưu độ trễ thấp và hỗ trợ Lua script execution.
+3.4. Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[HOST ĐẾM NGƯỢC: 3... 2... 1... MỞ BÁN 50 TAI NGHE BLUETOOTH GIÁ 1K!]                                 │                                 ▼      [5.000 NGƯỜI XEM CÙNG BẤM "MUA NGAY" TẠI GIÂY ĐẦU TIÊN (00:00:00)]                                 │                                 ▼     [HỆ THỐNG GỌI REDIS LUA SCRIPT NGUYÊN TỬ (ATOMIC CART LOCK SCRIPT)]     ├── Kiểm tra `live_pool_stock` còn lại trong RAM Redis     ├── Trừ nguyên tử: `stock = stock - 1`     └── Ghi nhận khóa giữ chỗ: `SETEX virtual_cart_lock:{user_id} 180 1`                                 │         ┌───────────────────────┴───────────────────────┐         ▼                                               ▼[NHÁNH 1: TOP 50 NGƯỜI NHANH NHẤT]             [NHÁNH 2: 4.950 NGƯỜI CHẬM HƠN]         │                                               │         ▼                                               ▼[NHẬN TOKEN GIỮ GIỎ HÀNG THÀNH CÔNG]           [XẾP VÀO HÀNG CHỜ ẢO (WAITLIST QUEUE)]- Bottom-sheet mở ra hiển thị ĐỒNG HỒ          - Màn hình hiện thông báo: "Bạn đang ở  ĐẾM NGƯỢC 180 GIÂY (02:59... 02:58)            hàng chờ số #14. Giữ máy chờ giỏ nhả!"- Tồn kho được BẢO LƯU 100% cho khách          - Ghi vào Redis ZSET theo timestamp- Ticker phòng live đổi sang trạng thái:                         │  "ĐANG TRONG GIỎ HÀNG NGƯỜI KHÁC"                               │         │                                                       │         ├──► TRƯỜNG HỢP 1A: THANH TOÁN THÀNH CÔNG TRƯỚC 180S   │         │      ├── Chốt đơn chính thức, trừ kho vật lý          │         │      └── Bottom-sheet đóng lại hoàn tất.              │         │                                                       │         └──► TRƯỜNG HỢP 1B: BỎ RƠI GIỎ HÀNG / QUÁ 180S HẾT HẠN │                ├── Khách bấm dấu X đóng giỏ HOẶC hết 180s       │                ├── Redis xóa key lock, thu hồi token           │                │                                                │                └───────────────────────┬────────────────────────┘                                        │                                        ▼ (Sự kiện nhả kho phát tán trong < 200ms)                [ĐỘNG CƠ TỰ ĐỘNG BỐC NGƯỜI ĐẦU TIÊN TRONG HÀNG CHỜ WAITLIST]                ├── Người xếp vị trí #1 nhận được Thông báo Đẩy nổi khẩn cấp:                │   "GIỎ HÀNG VỪA ĐƯỢC GIẢI PHÓNG! BẠN CÓ 180S ĐỂ CHỐT ĐƠN!"                ├── Mở khóa nút thanh toán cho Người #1                └── Nếu Người #1 tiếp tục bỏ rơi -> Nhường tiếp cho Người #2.
+--- TABLE END ---
+• Bước 1 (Mở bán & Xử lý tranh chấp bằng Redis Lua Script):
+• Khi Host bấm kích hoạt mở bán 50 sản phẩm flash sale, 5.000 người xem đồng thời bấm "Mua ngay".
+• Mỗi yêu cầu gọi tới API POST /api/v1/social/live/cart-lock. Máy chủ API không truy vấn vào cơ sở dữ liệu quan hệ PostgreSQL mà thực thi ngay một đoạn mã Script nguyên tử Redis Lua:
+--- TABLE START ---
+-- KEYS[1]: live_pool_stock:{session_id}:{sku_id}    -- KEYS[2]: virtual_cart_lock:{session_id}:{sku_id}:{user_id}    -- ARGV[1]: Số lượng mua (1)    -- ARGV[2]: TTL thời gian khóa giữ chỗ (180 giây)    local available = tonumber(redis.call('get', KEYS[1]) or 0)    local requested = tonumber(ARGV[1])    if available >= requested then        redis.call('decrby', KEYS[1], requested)        redis.call('setex', KEYS[2], tonumber(ARGV[2]), requested)        return 1 -- Cấp quyền giữ chỗ thành công    else        return 0 -- Đã hết suất trong kho live    end
+--- TABLE END ---
+• Bước 2 (Trải nghiệm Người nhận quyền giữ chỗ - Top 50 Người):
+• 50 người bấm nhanh nhất nhận được phản hồi 200 OK kèm cart_lock_reservation_token.
+• Trên màn hình của 50 người này, Bottom-sheet thanh toán lập tức trượt lên.
+• Trên đỉnh Bottom-sheet xuất hiện một thanh tiến trình màu cam và Đồng hồ đếm ngược 180 giây (02:59... 02:58...) kèm lời nhắn: "Sản phẩm đã được giữ riêng cho bạn trong 3 phút. Vui lòng hoàn tất thanh toán trước khi thời gian kết thúc".
+• Trong suốt 180 giây này, không ai khác trên toàn bộ hệ thống có thể mua được sản phẩm đã giữ của khách hàng.
+• Bước 3 (Đồng bộ Ticker Tồn kho thời gian thực qua WebSocket):
+• Ngay khi 50 suất bị khóa, máy chủ WebSocket Server phát thông điệp cập nhật trạng thái kho tới 4.950 người xem còn lại:
+• Trạng thái trên thẻ ghim chuyển sang màu vàng: "TẠM THỜI HẾT SUẤT - ĐANG TRONG GIỎ HÀNG NGƯỜI KHÁC".
+• Kèm lời khuyên: "Đừng rời mắt! Giỏ hàng có thể được giải phóng bất kỳ lúc nào nếu có người bỏ cuộc".
+• Bước 4 (Xếp hàng vào Hàng chờ ảo - Waitlist Queue):
+• 4.950 người bấm chậm hơn không bị báo lỗi thất bại vô vọng, mà nhận được bảng thông báo: "Bạn đang ở hàng chờ nhận suất nhả số #[Vị trí]".
+• Hệ thống ghi nhận ID người dùng vào danh sách hàng chờ Redis Sorted Set:
+ZADD live_waitlist:{session_id}:{sku_id} {current_timestamp_millis} {user_id}.
+• Bước 5 (Giải phóng giỏ hàng tự động & Nhượng suất siêu tốc - Auto-Release Flow):
+• Tình huống: Trong số 50 người đầu tiên, có 03 người đổi ý bấm dấu X đóng Bottom-sheet, hoặc để đồng hồ đếm ngược trôi hết 180 giây mà không bấm thanh toán (Cart Abandonment).
+• Ngay tại mili-giây thứ 180:001, Redis phát sinh sự kiện hết hạn expired trên key virtual_cart_lock.
+• Worker nhả tồn kho lập tức lấy ra 03 người đứng đầu trong danh sách hàng chờ live_waitlist bằng lệnh:
+ZRANGE live_waitlist:{session_id}:{sku_id} 0 2.
+• Hệ thống tự động cấp phát 03 token giữ chỗ mới và bắn một bản tin WebSocket ưu tiên cao tới màn hình của 03 người đó:
+• Màn hình của họ rung nhẹ, âm thanh "Ting-ting" vang lên kèm thông báo: "Chúc mừng! Có 1 giỏ hàng vừa được giải phóng. Bạn có 180 giây để hoàn tất đơn hàng!".
+• Bảng Bottom-sheet thanh toán của họ tự động bật mở sẵn sàng để bấm thanh toán FaceID.
+• Bước 6 (Chốt đơn hoàn tất & Đóng deal):
+• Khi toàn bộ 50 sản phẩm được thanh toán thành công 100%: Thẻ ghim trên phòng live chính thức chuyển sang nhãn xám: "CHÁY HÀNG HOÀN TOÀN (SOLD OUT)".
+• Hệ thống xóa sạch hàng chờ Waitlist và Streamer chuyển sang ghim sản phẩm tiếp theo.
+3.5. Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Khách hàng cố tình dùng nhiều thiết bị để giữ chỗ ảo (Sybil Hoarding Prevention):
+• Kẻ gian mở 5 điện thoại cùng một tài khoản để bấm giữ nhiều suất mà không mua.
+• Thuật toán kiểm tra ràng buộc: Giới hạn cứng chỉ cấp tối đa 01 Token giữ chỗ ảo (`virtual_cart_lock`) cho mỗi `User_ID` và mỗi `Device_Fingerprint` trong cùng một phiên live. Mọi yêu cầu bấm giữ chỗ thứ 2 từ cùng thiết bị bị từ chối ngay lập tức.
+• Ngoại lệ 2: Người trong hàng chờ Waitlist đã thoát ứng dụng hoặc tắt màn hình:
+• Khi đến lượt người xếp vị trí kế tiếp, hệ thống gửi thông báo WebSocket kiểm tra kết nối (Ping-Pong Check).
+• Nếu sau 3 giây không nhận được phản hồi kết nối còn sống từ client của người đó (client đã offline): Hệ thống lập tức bỏ qua người này và nhường suất giữ giỏ hàng cho người xếp vị trí tiếp theo trong danh sách Sorted Set.
+3.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-LCK-01 | Thời Hạn Khóa Giữ Giỏ Hàng 180 Giây Tuyệt Đối (Strict 180s TTL Mandate) | Thời gian giữ chỗ giỏ hàng ảo trong phiên live được cấu hình cố định là 180 giây (3 phút). Đồng hồ đếm ngược trên client đồng bộ với giá trị TTL trên Redis server. Khi hết 180 giây, token giữ chỗ bị hủy vô điều kiện và nhả lại cho hàng chờ, cấm gia hạn thêm thời gian.
+BR-LCK-02 | Ràng Buộc Thao Tác Nguyên Tử Không Gây Race-Condition (Atomic Execution Guarantee) | Toàn bộ thao tác kiểm tra tồn kho và cấp khóa giữ chỗ bắt buộc phải thực thi bên trong 01 câu lệnh Redis Lua Script duy nhất. Cấm thực hiện nhiều lệnh tuần tự riêng lẻ (GET rồi mới DECR) để triệt tiêu hoàn toàn nguy cơ tranh chấp dữ liệu khi có hàng nghìn lượt truy cập đồng thời.
+BR-LCK-03 | Giới Hạn Tối Đa 1 Deal Sốc Cho Mỗi Khách Hàng (Single Unit Allocation Rule) | Đối với các sản phẩm có nhãn Flash Sale Live, số lượng sản phẩm được phép giữ chỗ trong giỏ hàng ảo bị khóa cứng: Quantity = 1. Cấm tăng số lượng lên 2 hay 3 sản phẩm trên Bottom-sheet để đảm bảo cơ hội cho nhiều người xem khác.
+BR-LCK-04 | Cơ Chế Thu Hồi Tức Thì Khi Bấm Đóng (Instant Release on Explicit Dismiss) | Nếu khách hàng chủ động bấm vào nút đóng [X] của Bottom-sheet, ứng dụng client lập tức phát API POST /api/v1/social/live/cart-lock/release. Hệ thống xóa ngay key lock trên Redis mà không chờ hết 180 giây, giải phóng suất mua cho hàng chờ chỉ trong vòng dưới 100 mili-giây.
+--- TABLE END ---
+3.7. Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Khóa Giữ Giỏ Hàng Ảo (`virtual_inventory_locks`):
+--- TABLE START ---
+{  "lock_id": "VLOCK-20261105-09921",  "live_session_id": "LIVE-ROOM-7749",  "sku_id": "SKU-HEADPHONE-TWS-01",  "user_id": "CUST-881204",  "device_fingerprint": "dev_fp_9a8b7c6d5e4f3a2b1c",  "reservation_token": "RES-TOK-180S-88219401",  "locked_quantity": 1,  "locked_at": "2026-11-05T12:00:00.125Z",  "expires_at": "2026-11-05T12:03:00.125Z",  "ttl_remaining_seconds": 164,  "lock_state": "ACTIVE_COUNTDOWN",  "waitlist_queue_position": null}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Giữ Tồn Kho Ảo Flash Sale:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[LIVE_POOL_AVAILABLE] | USER_CLICK_QUICK_BUY | Còn tồn kho trên Redis (stock > 0) | VIRTUAL_LOCKED_180S | Trừ kho Redis, bật đếm ngược 180s trên client
+[LIVE_POOL_AVAILABLE] | USER_CLICK_QUICK_BUY | Hết tồn kho trên Redis (stock == 0) | WAITLIST_QUEUED | Thêm vào Redis ZSET, trả về số thứ tự hàng chờ
+VIRTUAL_LOCKED_180S | ORDER_CHECKOUT_COMPLETED | Thanh toán thành công trước 180s | PERMANENTLY_CAPTURED | Trừ kho vật lý PostgreSQL, xóa token lock
+VIRTUAL_LOCKED_180S | TTL_EXPIRED_OR_DISMISSED | Quá 180s hoặc khách bấm nút X đóng | RELEASED_TO_WAITLIST | Thu hồi token, bốc người đầu tiên trong ZSET
+WAITLIST_QUEUED | PROMOTED_FROM_WAITLIST | Được nhượng suất từ người bỏ rơi | VIRTUAL_LOCKED_180S | Bắn WebSocket mời chốt đơn, bật 180s mới
+WAITLIST_QUEUED | ALL_STOCK_CAPTURED | 100% kho đã bán hết sạch | SOLD_OUT_DISMISSED | Gỡ ghim sản phẩm, xóa sạch hàng chờ Waitlist
+--- TABLE END ---
+3.8. Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Khóa Giữ Giỏ Hàng Ảo Khi Livestream Cháy Hàng và Hàng Chờ Waitlist (SOC-LIVE-CARTLOCK)  Scenario: Khách hàng trong top nhanh nhất nhận được quyền giữ giỏ hàng 180 giây an tâm thanh toán    Given Phiên live stream mở bán 20 chiếc tai nghe Bluetooth giá 1.000 VNĐ    When Có 1.000 người cùng bấm "Mua ngay" tại giây đầu tiên    And Khách hàng A là một trong 20 người bấm nhanh nhất    Then Hệ thống thực thi Redis Lua script cấp thành công Token giữ giỏ hàng cho Khách hàng A    And Bảng Bottom-sheet của Khách hàng A hiển thị đồng hồ đếm ngược 180 giây    And Tồn kho sản phẩm được bảo lưu riêng cho Khách hàng A không bị ai cướp mất    When Khách hàng A mất 45 giây để chọn màu và bấm thanh toán FaceID    Then Đơn hàng được tạo thành công với giá 1.000 VNĐ.  Scenario: Tự động giải phóng tồn kho cho người xếp hàng chờ khi khách hàng trong giỏ bỏ rơi quá 180s    Given Khách hàng B giữ chiếc tai nghe cuối cùng trong giỏ hàng nhưng để quên không thanh toán    And Khách hàng C đang đứng ở vị trí số #1 trong Hàng chờ ảo Waitlist    When Đúng 180 giây trôi qua mà Khách hàng B không hoàn tất thanh toán    Then Hệ thống Redis tự động kích hoạt sự kiện hết hạn và thu hồi quyền giữ chỗ của Khách hàng B    And Hệ thống phát tín hiệu WebSocket tức thì tới điện thoại của Khách hàng C trong vòng 150ms    Then Màn hình của Khách hàng C phát chuông thông báo: "Có 1 suất vừa nhả! Bạn có 180s để mua ngay"    And Bottom-sheet của Khách hàng C tự động mở ra và Khách hàng C chốt đơn thành công.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4. ĐẶC TẢ CHI TIẾT SOC-PRICE-ERROR: CẦU DAO TỰ ĐỘNG NGẮT KHẨN CẤP & QUY TRÌNH HỦY HÀNG LOẠT DO SỰ CỐ LỖI GIÁ FLASH SALE
+4.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: SOC-PRICE-ERROR
+• Tên nghiệp vụ: Cầu Dao Tự Động Ngắt Khẩn Cấp, Quy Trình Xử Lý Hủy Đơn Hàng Loạt Do Lỗi Giá Flash Sale, Đền Bù Thiện Chí & Miễn Trừ Điểm Phạt Người Bán (Mass Price Error Incident Protocol, Emergency Circuit Breaker Kill Switch, Legally-Compliant Mass Cancellation & Goodwill Voucher Compensation)
+• Tương đương thực tế: Amazon & Shopee Price Glitch Incident Protocol, TikTok Shop Flash Sale Abnormal Price Circuit Breaker.
+4.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Bảo vệ toàn diện sự an toàn tài chính của Người bán và Nền tảng trước các thảm họa lỗi giá (nhập nhầm số 0, lỗi cấu hình voucher chồng chéo làm giá rơi về 0đ hoặc 1k).
+• Tự động kích hoạt Cầu dao ngắt mạch khẩn cấp (Emergency Circuit Breaker Kill Switch) trong vòng chưa đầy 10 giây khi phát hiện các chỉ số sụt giá dị thường hoặc vận tốc tạo đơn tăng vọt bất thường.
+• Tự động đóng băng toàn bộ các đơn hàng bị ảnh hưởng ở trạng thái ON_HOLD_PRICE_VERIFICATION, khóa cổng xuất kho WMS để ngăn chặn hàng bị gửi đi.
+• Vận hành quy trình kiểm toán thẩm định lỗi giá trong 60 phút và thực thi Quy trình hủy đơn hàng loạt hợp chuẩn pháp lý (Legally Compliant Mass Cancellation) dựa trên quy định Bộ luật Dân sự về giao dịch vô hiệu do nhầm lẫn nghiêm trọng.
+• Thực thi chính sách xoa dịu khách hàng: Hoàn tiền 100% tức thì kèm Voucher đền bù thiện chí trị giá 50.000 - 200.000 VNĐ (hoặc 50k xu).
+• Xem xét miễn trừ điểm phạt vận hành (Seller Penalty Waiver) cho Người bán nếu người bán chủ động báo cáo sự cố trong vòng 30 phút.
+• Tác nhân tham gia:
+• Hệ thống Giám sát Vận tốc & Giá (Price & Velocity Anomaly Monitor): Thuật toán AI quét liên tục phát hiện độ lệch giá so với giá bán trung bình 90 ngày (ASP).
+• Cầu Dao Ngắt Mạch Khẩn Cấp (Circuit Breaker Engine): Tự động khóa bán listing sản phẩm trên toàn sàn và chặn đẩy đơn sang kho WMS.
+• Hội đồng Thẩm định Vận hành Sàn (Operations & Legal Incident Council): Đánh giá bản chất sự cố (lỗi kỹ thuật/lỗi nhập liệu vs gian lận) trong 60 phút.
+• Động cơ Xử lý Đơn Hàng Loạt (Mass Batch Job Engine): Thực thi hủy đồng loạt hàng nghìn đơn và hoàn tiền tự động về nguồn ban đầu.
+• Hệ thống Chăm sóc Khách hàng & Truyền thông SLA (CS & Public Relations Gateway): Gửi thông báo xin lỗi đồng bộ qua SMS, App Push và Email trong 2 giờ.
+4.3. Điều kiện tiên quyết
+1. Một sản phẩm đang mở bán phát sinh các chỉ số biến động vượt ngưỡng rủi ro an ninh sàn (Risk Thresholds).
+2. Hoặc Người bán phát hiện nhập nhầm giá và chủ động bấm nút khẩn cấp "Báo Cáo Sự Cố Lỗi Giá" trên Kênh Người Bán (Seller Center).
+4.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[PHÁT HIỆN LỖI GIÁ: VƯỢT NGƯỠNG VẬN TỐC > 500 ĐƠN/PHÚT HOẶC GIÁ SỤT > 70% ASP]                               │                               ▼        [KÍCH HOẠT BỘ NGẮT MẠCH TỰ ĐỘNG (CIRCUIT BREAKER KILL SWITCH)]        ├── Chuyển trạng thái Listing sản phẩm sang `FORCE_SUSPENDED` (Ngừng bán ngay)        ├── Khóa toàn bộ các đơn hàng đã tạo vào trạng thái `ON_HOLD_PRICE_AUDIT`        └── CHẶN XUẤT KHO TUYỆT ĐỐI: Khóa API đẩy vận đơn sang WMS và đơn vị vận chuyển                               │                               ▼            [HỘI ĐỒNG THẨM ĐỊNH VẬN HÀNH & PHÁP CHẾ TRONG VÒNG 60 PHÚT]        ├── Đối soát: So sánh giá niêm yết với Giá bán trung bình 90 ngày (ASP_90D)        ├── Xác nhận nguyên nhân: Gõ nhầm số 0 / Lỗi rò rỉ voucher chồng chéo        └── Phê duyệt: Ban hành Lệnh Hủy Đơn Hàng Loạt theo quy chuẩn pháp lý                               │                               ▼          [THỰC THI BATCH JOB HỦY HÀNG LOẠT & HOÀN TIỀN 100% TỨC THÌ]        ├── Hủy đồng loạt 5.000 đơn hàng trong vòng chưa đầy 5 phút        ├── Cổng thanh toán hoàn trả 100% tiền thanh toán về đúng tài khoản gốc        └── Khôi phục lại toàn bộ voucher và Shopee Xu khách đã sử dụng                               │                               ▼           [CAM KẾT TRUYỀN THÔNG MINH BẠCH & XIN LỖI TRONG VÒNG 02 GIỜ]        ├── Bắn thông báo Push + SMS Brandname + Email giải thích minh bạch sự cố kỹ thuật        └── TỰ ĐỘNG PHÁT HÀNH VOUCHER ĐỀN BÙ THIỆN CHÍ (GOODWILL COMPENSATION):              ├── Tặng 01 Voucher toàn sàn trị giá 50.000 - 200.000 VNĐ (Không điều kiện)              └── Hoặc cộng trực tiếp 50.000 - 200.000 Xu vào ví người mua                               │                               ▼        [ĐÁNH GIÁ MIỄN PHẠT CHO NGƯỜI BÁN (SELLER PENALTY WAIVER REVIEW)]        ├── Nếu Người bán chủ động báo cáo sự cố < 30 phút:        │     ├── Miễn tính tỷ lệ đơn không thành công (Non-Fulfillment Rate - NFR)        │     └── Miễn trừ 100% điểm phạt Sao Quả Tạ / Shop Violation Points        └── Người bán được mở lại gian hàng bình thường sau khi cập nhật lại giá chuẩn.
+--- TABLE END ---
+• Bước 1 (Kích hoạt Cầu dao tự động - Circuit Breaker Anomaly Trigger):
+• Hệ thống giám sát vận tốc giao dịch (Velocity_Monitor) quét dữ liệu liên tục:
+• Điều kiện 1 (Vận tốc tạo đơn tăng vọt bất thường): Vận tốc tạo đơn $\ge 500 \text{ đơn/phút}$ đối với 1 SKU duy nhất (dấu hiệu bot kéo bão đơn).
+• Điều kiện 2 (Chỉ số sụt giá dị thường): Giá niêm yết bán ra sụt giảm $> 70\%$ so với Giá bán trung bình 90 ngày:
+$$\text{Price\_Drop\_Rate} = \left( 1 - \frac{\text{Listed\_Price}}{\text{ASP}_{90\text{D}}} \right) \times 100\% > 70\%$$
+(Ví dụ: Điện thoại thông minh ASP 20.000.000đ nhưng bị niêm yết bán với giá 20.000đ, mức sụt 99.9%).
+• Khi một trong hai điều kiện hoặc cả hai điều kiện thỏa mãn: Hệ thống tự động bập cầu dao khẩn cấp EMERGENCY_CIRCUIT_BREAKER:
+1. Chuyển trạng thái sản phẩm sang FORCE_SUSPENDED (Gỡ khỏi sàn ngay lập tức).
+2. Chuyển toàn bộ các đơn hàng đã tạo trong khoảng thời gian lỗi giá sang trạng thái Đóng Băng Chờ Kiểm Toán (`ON_HOLD_PRICE_AUDIT`).
+3. Gửi lệnh khóa cổng API sang hệ thống kho WMS và các đơn vị vận chuyển (SPX, GHN, Viettel Post): Chặn tuyệt đối việc in nhãn và cấm xuất kho các đơn hàng này.
+• Bước 2 (Thẩm định sự cố trong vòng 60 phút):
+• Ban Quản trị Vận hành Sàn và Pháp chế phối hợp với Người bán thực hiện kiểm toán khẩn cấp:
+• Xác minh nhật ký chỉnh sửa giá (Audit Logs) của tài khoản Người bán để chứng minh đây là nhầm lẫn do thao tác nhập liệu cơ học hoặc lỗi đồng bộ API (Clerical Error).
+• Xác định mức độ tổn thất tài chính nếu thực hiện giao hàng (Total Exposure Amount, ví dụ: Lỗ 50 tỷ VNĐ).
+• Hội đồng ban hành quyết định chính thức: Phê duyệt kích hoạt Quy trình Hủy Hàng Loạt vì lý do bất khả kháng.
+• Bước 3 (Thực thi Batch Job Hủy hàng loạt & Hoàn tiền 100%):
+• Hệ thống kích hoạt tiến trình xử lý hàng loạt phân tán (Mass_Cancel_Batch_Job):
+• Hủy toàn bộ hàng nghìn đơn hàng trong vòng 3 đến 5 phút với lý do hệ thống: CANCELLED_DUE_TO_MASS_PRICE_ERROR.
+• Gọi API Cổng thanh toán hoàn trả lại 100% tiền thanh toán về đúng tài khoản ngân hàng, ví điện tử hoặc thẻ của khách hàng.
+• Tự động khôi phục lại 100% các mã voucher toàn sàn và điểm tích lũy/Shopee Xu mà khách hàng đã áp dụng vào đơn hàng đó.
+• Bước 4 (SLA Truyền thông minh bạch & Bồi thường thiện chí trong 2 giờ):
+• Trong vòng tối đa 02 giờ kể từ khi kích hoạt hủy đơn, hệ thống gửi thông báo giải trình minh bạch đồng bộ qua: Push App, SMS Brandname và Email:
+• Giải thích rõ ràng sự cố hiển thị sai giá bất khả kháng căn cứ theo Điều khoản Dịch vụ Sàn TMĐT và Điều 126 Bộ luật Dân sự 2015 (Giao dịch dân sự vô hiệu do bị nhầm lẫn).
+• Chính sách Bồi thường Thiện chí (Goodwill Compensation Protocol):
+• Nhằm xoa dịu sự thất vọng của khách hàng và giữ vững uy tín thương hiệu, hệ thống tự động phát hành vào ví của mỗi khách hàng bị hủy đơn:
+• Phương án A: 01 Voucher toàn sàn trị giá 50.000 - 200.000 VNĐ (tùy theo giá trị đơn hàng bị ảnh hưởng), không yêu cầu giá trị đơn hàng tối thiểu, có hạn dùng 30 ngày.
+• Phương án B: Cộng trực tiếp 50.000 - 200.000 Xu vào tài khoản người mua.
+• Chi phí voucher đền bù thiện chí được chia sẻ: 50% Sàn hỗ trợ, 50% Người bán chịu.
+• Bước 5 (Đánh giá miễn phạt cho Người bán - Seller Penalty Waiver):
+• Thông thường, việc người bán tự ý hủy đơn sẽ bị phạt rất nặng: Tăng Tỷ lệ đơn không thành công (Non-Fulfillment Rate - NFR), phạt điểm Sao Quả Tạ hoặc khóa tính năng hiển thị sản phẩm.
+• Quy tắc ân hạn: Nếu Người bán chủ động bấm nút "Báo cáo sự cố lỗi giá" trên Seller Center trong vòng 30 phút kể từ thời điểm phát sinh đơn lỗi đầu tiên:
+• Ban Quản trị Sàn sẽ duyệt lệnh WAIVE_PENALTY: Miễn tính các đơn hủy này vào tỷ lệ NFR của Shop, không cộng điểm phạt Sao Quả Tạ.
+• Người bán được quyền cập nhật lại giá chuẩn và mở bán lại sản phẩm bình thường.
+4.5. Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Người bán quyết định chịu lỗ để giao hàng tạo uy tín (Merchant Absorbed Loss):
+• Trong một số trường hợp số lượng đơn lỗi giá ít (dưới 50 đơn) và Người bán là một thương hiệu lớn muốn tận dụng làm chiến dịch truyền thông:
+• Người bán có quyền bấm chọn: "Tôi chấp nhận bán chịu lỗ và giao toàn bộ các đơn hàng này" (HONOR_AND_FULFILL_ALL).
+• Hệ thống mở khóa trạng thái ON_HOLD, cho phép đẩy các đơn hàng sang kho WMS để đóng gói giao bình thường cho khách hàng.
+• Ngoại lệ 2: Có một số ít đơn hàng đã lọt qua kho xuất đi trước khi Cầu dao ngắt kịp thời:
+• Nếu có 10 đơn hàng đã kịp bàn giao cho bưu tá 3PL rời kho (IN_TRANSIT):
+• Hệ thống gửi lệnh chặn phát khẩn cấp (Emergency Transit Intercept) tới hãng vận chuyển. Bưu tá thu hồi kiện hàng mang quay đầu về kho. Khách hàng nhận hoàn tiền 100% kèm voucher đền bù 200.000 VNĐ.
+4.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-ERR-01 | Ngưỡng Kích Hoạt Cầu Dao Tự Động (Circuit Breaker Trigger Thresholds) | Cầu dao ngắt tự động kích hoạt ngay lập tức khi: (order_velocity >= 500 orders/min) OR (price_drop_percentage >= 70% vs ASP_90D). Toàn bộ quyền bán hàng của SKU bị khóa tự động trong vòng $\le 10$ giây mà không cần sự can thiệp thủ công của con người.
+BR-ERR-02 | Khóa Cứng Cổng Xuất Kho WMS (Mandatory WMS Lockout) | Ngay khi sự cố được kích hoạt, hệ thống OMS gửi tín hiệu khóa cứng LOCK_DISPATCH tới toàn bộ các hệ thống WMS và đơn vị vận chuyển 3PL. Mọi thao tác in nhãn vận đơn của các đơn hàng thuộc diện nghi vấn bị từ chối với mã lỗi ERR_PRICE_AUDIT_LOCKED.
+BR-ERR-03 | Bồi Thường Thiện Chí Không Điều Kiện (Unconditional Goodwill Compensation) | Mã voucher đền bù thiện chí (50k - 200k VNĐ) phát hành cho khách hàng bị ảnh hưởng bắt buộc là Voucher Toàn Sàn Không Điều Kiện (No Minimum Spend), áp dụng được cho mọi ngành hàng và có hạn dùng tối thiểu 30 ngày, đảm bảo tính chân thành trong việc khắc phục sự cố.
+BR-ERR-04 | Điều Kiện Miễn Phạt 30 Phút Cho Người Bán (30-Minute Penalty Waiver Grace Period) | Người bán chỉ được hưởng chính sách miễn phạt NFR và điểm Sao Quả Tạ nếu bấm báo cáo sự cố trong vòng 30 phút kể từ đơn lỗi đầu tiên. Nếu để quá 30 phút mà sàn phải tự động can thiệp, Người bán sẽ bị trừ điểm đánh giá theo quy chế vận hành thông thường.
+--- TABLE END ---
+4.7. Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Sự Cố Lỗi Giá Hàng Loạt (`mass_price_error_incidents`):
+--- TABLE START ---
+{  "incident_id": "INC-PRICE-20261105-0012",  "sku_id": "SKU-IPHONE16PRO-256GB",  "seller_id": "SELLER-APPLE-VN-0991",  "normal_asp_price": 28990000,  "erroneous_price": 28990,  "price_drop_percentage": 99.90,  "order_velocity_per_minute": 1250,  "affected_orders_count": 3412,  "total_financial_exposure": 98913900000,  "circuit_breaker_triggered_at": "2026-11-05T03:15:20Z",  "audit_verdict": "CONFIRMED_CLERICAL_TYPO",  "mass_cancellation_completed_at": "2026-11-05T04:10:00Z",  "compensation_plan": {    "voucher_code_prefix": "APOLOGY200K",    "voucher_value": 200000,    "total_vouchers_issued": 3412  },  "seller_penalty_waived": true,  "incident_status": "MASS_CANCELLED_COMPENSATED_CLOSED"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Sự Cố Lỗi Giá Hàng Loạt:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[NORMAL_SELLING] | PRICE_ANOMALY_DETECTED | Sụt >70% hoặc vận tốc >500 đơn/p | CIRCUIT_BREAKER_ACTIVE | Khóa bán tức thì, đóng băng đơn, khóa WMS
+CIRCUIT_BREAKER_ACTIVE | AUDIT_CONFIRMED_ERROR | Hội đồng xác nhận lỗi nhập liệu | MASS_CANCEL_IN_PROGRESS | Chạy Batch Job hủy hàng loạt 5.000 đơn
+CIRCUIT_BREAKER_ACTIVE | SELLER_ABSORBED_LOSS | Shop chọn tự chịu lỗ giao hàng | UNFROZEN_HONORED | Mở khóa WMS, cho phép đóng gói gửi đi
+MASS_CANCEL_IN_PROGRESS | BATCH_CANCEL_REFUND_DONE | 100% đơn đã hủy và hoàn tiền | COMPENSATION_DISPATCHED | Phát hành Voucher 100k-200k, gửi SMS xin lỗi
+COMPENSATION_DISPATCHED | PENALTY_WAIVER_REVIEWED | Đã duyệt miễn phạt cho Shop | INCIDENT_CLOSED_POSTMORTEM | Khôi phục chỉ số Shop, đóng hồ sơ sự cố
+--- TABLE END ---
+4.8. Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Cầu Dao Tự Động Ngắt Khẩn Cấp và Xử Lý Sự Cố Lỗi Giá Flash Sale (SOC-PRICE-ERROR)  Scenario: Tự động ngắt bán và đóng băng đơn hàng khi phát hiện lỗi giá sụt giảm 99%    Given Sản phẩm iPhone 16 Pro có giá bán trung bình 90 ngày là 28.990.000 VNĐ    When Do nhập liệu nhầm, sản phẩm bị niêm yết bán với giá 28.990 VNĐ (sụt giảm 99.9%)    And Trong vòng 1 phút có 600 đơn hàng được tạo liên tục    Then Hệ thống Anomaly Monitor lập tức kích hoạt Emergency Circuit Breaker trong vòng 5 giây    And Sản phẩm bị gỡ bỏ khỏi sàn ngay lập tức sang trạng thái "FORCE_SUSPENDED"    And Toàn bộ 600 đơn hàng bị đưa vào trạng thái đóng băng "ON_HOLD_PRICE_AUDIT"    And Cổng xuất kho WMS bị khóa cứng không cho phép in bất kỳ vận đơn nào.  Scenario: Hủy đơn hàng loạt hợp chuẩn pháp lý và tự động phát hành voucher đền bù 200.000 VNĐ    Given 3.000 đơn hàng đang bị đóng băng do sự cố lỗi giá hiển thị sai    When Hội đồng sàn và người bán xác nhận sự cố kỹ thuật bất khả kháng trong 60 phút    And Quản trị viên phê duyệt Lệnh Hủy Đơn Hàng Loạt    Then Batch Job tự động hủy 3.000 đơn hàng trong vòng 3 phút    And 100% tiền thanh toán được hoàn trả tức thì về tài khoản của người mua    And Hệ thống tự động gửi tin nhắn SMS xin lỗi kèm 01 Voucher đền bù thiện chí trị giá 200.000 VNĐ vào ví mỗi người mua    And Người bán được duyệt miễn phạt Tỷ lệ đơn không thành công (NFR) do đã báo cáo trong vòng 20 phút.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+5. ĐẶC TẢ CHI TIẾT SOC-AFFIL-SAMPLE: QUẢN TRỊ MẪU THỬ MIỄN PHÍ CHO NHÀ SÁNG TẠO, SLA RÀNG BUỘC VIDEO 14 NGÀY & KÝ QUỸ BẢO CHỨNG
+5.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: SOC-AFFIL-SAMPLE
+• Tên nghiệp vụ: Quản Trị Quy Trình Mẫu Thử Miễn Phí Cho Nhà Sáng Tạo, SLA Cam Kết Xuất Bản Video 14 Ngày, Tạm Khóa Hạn Mức Bảo Lãnh & Chế Tài Điểm Tín Nhiệm (Creator Free Sample Management, 14-Day Content Submission SLA, Pre-Auth Deposit Hold & Trust Score Governance)
+• Tương đương thực tế: TikTok Shop Creator Center Free Sample Governance & Creator Trust Score System.
+5.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Vận hành quy trình Xin và Gửi Mẫu thử Miễn phí (Free Sample Request Flow) chuyên nghiệp, thúc đẩy Nhà sáng tạo nội dung (KOL/KOC) tiếp cận sản phẩm thật để sản xuất nội dung review chân thực.
+• Bảo vệ tối đa tài sản của Nhà bán hàng khỏi tình trạng bị lợi dụng "xin mẫu thử chùa" rồi biến mất không đăng bài.
+• Thiết lập Cam kết SLA xuất bản nội dung nghiêm ngặt trong 14 ngày (Content Submission SLA 336 giờ) tính từ thời điểm nhận mẫu thành công.
+• Áp dụng cơ chế Tạm khóa hạn mức thẻ tín dụng bảo lãnh (Pre-auth Security Hold) hoặc Ký quỹ 50-100% đối với các mẫu thử có giá trị cao ($\ge 1.000.000$ VNĐ hoặc thiết bị công nghệ) của Creator.
+• Thực thi chế tài trừ Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score), khóa tính năng xin mẫu từ 30 đến 90 ngày, và tự động cấn trừ vào số dư hoa hồng tồn đọng (Commission Offset) nếu cố tình quỵt mẫu thử.
+• Tác nhân tham gia:
+• Nhà sáng tạo nội dung (Creator/Affiliate Partner): Xem danh mục mẫu thử, gửi yêu cầu xin mẫu, xác thực bảo lãnh thẻ, nộp video review đúng hạn.
+• Nhà bán hàng (Seller/Merchant): Duyệt hoặc từ chối yêu cầu xin mẫu của Creator trên Seller Center trong vòng 48 giờ.
+• Động cơ Giám sát SLA & Kiểm Duyệt Nội Dung AI (Sample SLA & Content Audit AI): Đếm ngược 14 ngày, quét đối soát video đã đăng có gắn đúng link sản phẩm hay không.
+• Cổng Thanh toán & Ký Quỹ Bảo Lãnh (Pre-Auth Hold & Escrow Gateway): Thực hiện lệnh tạm khóa hạn mức thẻ và giải phóng tiền cọc khi video được nghiệm thu đạt chuẩn.
+5.3 Điều kiện tiên quyết
+1. Creator có tài khoản hoạt động $\ge 30$ ngày, có tối thiểu 1.000 người theo dõi (Followers).
+2. Điểm Tín Nhiệm Nhà Sáng Tạo hiện tại đạt mức chuẩn: $\text{Creator\_Trust\_Score} \ge 90/100$.
+3. Creator không có quá 03 mẫu thử đang trong thời hạn chờ nộp bài (Pending Content Submission).
+4. Đối với mẫu thử giá trị $\ge 1.000.000$ VNĐ: Creator phải có thẻ ngân hàng hợp lệ có đủ hạn mức để thực hiện tạm khóa bảo lãnh (Pre-auth Hold).
+5.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[Creator vào Sàn Mẫu Thử Miễn Phí (Free Sample Marketplace) trên Creator Center]                                │                                ▼[Bấm "YÊU CẦU MẪU THỬ MIỄN PHÍ" (Request Free Sample)]  ├── Kiểm tra điều kiện: Followers >= 1k? Trust Score >= 90? Số mẫu nợ < 3?  └── PHÂN LOẠI GIÁ TRỊ MẪU THỬ (SAMPLE VALUE TIER):        ├── Tier 1 (Mẫu < 1.000.000đ): Miễn đặt cọc bảo lãnh        └── Tier 2 (Mẫu >= 1.000.000đ): BẮT BUỘC TẠM KHÓA HẠN MỨC THẺ (PRE-AUTH HOLD)              ├── Creator xác thực FaceID/OTP khóa hạn mức thẻ tín dụng thành công              └── Cổng thanh toán giữ hạn mức bảo lãnh (Chưa trừ tiền thực tế)                                │                                ▼[THÔNG BÁO CHUYỂN SANG SELLER CENTER: TIMER 48 GIỜ BẮT ĐẦU ĐẾM]  ├── Seller xem hồ sơ kênh: Lượt view trung bình, Tỷ lệ nộp bài quá khứ  ├── Seller Bấm "Chấp thuận" -> Đóng gói & Gửi hàng mẫu (Mã vận đơn sàn)  └── Nếu Seller không phản hồi sau 48h -> Tự động đóng yêu cầu, giải phóng Hold thẻ                                │                                ▼[BƯU TÁ GIAO MẪU THỬ THÀNH CÔNG CHO CREATOR (STATUS: DELIVERED)]                                │                                ▼[HỆ THỐNG KÍCH HOẠT ĐỒNG HỒ ĐẾM NGƯỢC SLA 14 NGÀY (336:00:00)]  (Nhiệm vụ: Creator bắt buộc phải xuất bản Video hoặc Livestream gắn link sản phẩm)                                │        ┌───────────────────────┴───────────────────────┐        ▼                                               ▼[NHÁNH A: HOÀN THÀNH ĐÚNG HẠN TRONG 14 NGÀY]     [NHÁNH B: QUÁ HẠN 14 NGÀY KHÔNG ĐĂNG BÀI]        │                                               │        ▼                                               ▼[Creator đăng Video gắn đúng Tag sản phẩm]       [KÍCH HOẠT CHẾ TÀI XỬ PHẠT TỰ ĐỘNG]        │                                        ├── Trừ ngay lập tức 10 ĐIỂM UY TÍN        ▼                                        ├── KHÓA TÍNH NĂNG XIN MẪU TRONG 30-90 NGÀY[AI Audit: Video công khai >= 7 ngày, >= 500 view]├── Chuyển đổi lệnh Hold thành THU TIỀN THẬT        │                                        ├── Cấn trừ vào Hoa hồng đang chờ thanh toán        ▼                                        └── Đưa vào DANH SÁCH ĐEN TOÀN SÀN nếu quỵt[ĐÓNG NHIỆM VỤ THÀNH CÔNG: +2 ĐIỂM UY TÍN][TỰ ĐỘNG GIẢI PHÓNG HẠN MỨC TẠM KHÓA THẺ 100%]
+--- TABLE END ---
+• Bước 1 (Gửi yêu cầu mẫu thử & Thẩm định điều kiện kênh):
+• Creator duyệt danh mục sản phẩm trên Creator Center, chọn sản phẩm có nhãn "Free Sample Available".
+• Bấm "Yêu cầu Mẫu thử Miễn phí". Hệ thống kiểm tra: Follower $\ge 1.000$, Trust Score $\ge 90$, số mẫu đang nợ bài $< 3$.
+• Bước 2 (Cơ chế Tạm Khóa Hạn Mức Bảo Lãnh Thẻ Tín Dụng - Pre-auth Hold):
+• Nếu sản phẩm có giá trị niêm yết $\ge 1.000.000$ VNĐ (ví dụ: Tai nghe chống ồn 2.500.000 VNĐ hoặc Điện thoại thông minh):
+• Hệ thống yêu cầu Creator nhập thông tin thẻ tín dụng/ghi nợ quốc tế. Cổng thanh toán gửi lệnh PRE_AUTH_HOLD số tiền 2.500.000 VNĐ.
+• Hạn mức thẻ của Creator bị tạm khóa trong suốt thời gian nhận mẫu cho đến khi hoàn tất nghĩa vụ đăng video review. Nếu Creator không xác thực khóa thẻ trong vòng 24 giờ, yêu cầu tự động bị hủy.
+• Bước 3 (Người bán xét duyệt trong vòng 48 giờ):
+• Người bán nhận thông báo trên Seller Center: Xem xét các chỉ số kênh của Creator.
+• Nếu Người bán bấm "Chấp thuận": Hệ thống tạo đơn hàng 0đ (Free Sample Order), chỉ định đơn vị vận chuyển đến kho lấy hàng.
+• Nếu Người bán bấm "Từ chối" hoặc không phản hồi sau 48 giờ: Phiếu yêu cầu tự động đóng; Lệnh tạm khóa hạn mức thẻ của Creator được giải phóng hoàn trả ngay lập tức (RELEASE_HOLD_100%).
+• Bước 4 (Giao mẫu & Kích hoạt SLA Cam kết nội dung 14 ngày):
+• Khi đơn vị vận chuyển giao kiện hàng mẫu thành công tới tay Creator (trạng thái DELIVERED), hệ thống lập tức kích hoạt đồng hồ đếm ngược 14 ngày lịch (đúng 336:00:00).
+• Bảng điều khiển Creator Dashboard hiển thị thanh cảnh báo đỏ: "Bạn có 14 ngày (hạn chót: [Ngày/Giờ]) để xuất bản Video hoặc Livestream có gắn link sản phẩm này."
+• Bước 5 (Nghiệm thu nội dung AI & Giải phóng bảo lãnh):
+• Creator xuất bản một video ngắn hoặc livestream, sử dụng công cụ gắn thẻ sản phẩm (Product Anchor Tag) trỏ đúng vào mã SKU của mẫu thử đã nhận.
+• Động cơ AI Content Audit quét tự động:
+1. Video có gắn đúng thẻ sản phẩm đã nhận mẫu hay không.
+2. Video có ở chế độ Công khai (Public) và duy trì tối thiểu 07 ngày liên tục hay không.
+3. Video đạt tối thiểu 500 lượt xem tự nhiên (Organic Views).
+• Nếu đạt: Trạng thái chuyển sang CONTENT_SUBMISSION_COMPLETED.
+• Creator được cộng +2 điểm Tín nhiệm uy tín.
+• Hệ thống tự động giải phóng 100% lệnh tạm khóa hạn mức thẻ tín dụng (`VOID_HOLD_SUCCESS`), Creator không mất một đồng nào.
+5.5. Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Creator vi phạm quá hạn 14 ngày không đăng nội dung (SLA Breach Sanctions):
+• Tình huống: Đã qua 14 ngày (336:00:01) kể từ lúc nhận mẫu nhưng Creator không đăng video và không gửi trả mẫu.
+• Chế tài tự động 4 tầng (Automated 4-Tier Sanctions):
+1. Trừ điểm tín nhiệm: Trừ ngay lập tức 10 Điểm Tín Nhiệm (Creator_Trust_Score = Creator_Trust_Score - 10).
+2. Khóa quyền xin mẫu:
+• Vi phạm lần 1: Khóa tính năng xin mẫu trong 30 ngày.
+• Vi phạm lần 2: Khóa tính năng xin mẫu trong 90 ngày.
+• Điểm tín nhiệm dưới 70: Khóa vĩnh viễn quyền xin mẫu thử trên toàn sàn.
+3. Thu tiền thực tế từ thẻ bảo lãnh: Nếu mẫu thử có lệnh Pre-auth Hold, hệ thống tự động chuyển lệnh Hold thành lệnh Thu Tiền Thật (`CAPTURE_HOLD_AS_PAYMENT`), trừ thẳng 2.500.000 VNĐ từ thẻ của Creator chuyển trả bồi thường cho Người bán.
+4. Cấn trừ vào hoa hồng tồn đọng (Commission Offset): Nếu không có thẻ bảo lãnh, hệ thống tự động đóng băng và cấn trừ số tiền tương đương giá trị mẫu thử vào toàn bộ khoản tiền hoa hồng đang chờ rút (Pending Commissions) của Creator từ các đơn hàng khác trên toàn sàn.
+5.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-SMP-01 | Cam Kết SLA Nộp Bài 14 Ngày Tuyệt Đối (Strict 14-Day Content SLA) | Thời hạn hoàn thành nghĩa vụ đăng bài là 336 giờ liên tục (14 ngày) tính từ con dấu thời gian bưu tá bấm giao hàng thành công. Mọi lý do cá nhân (bận việc, đi du lịch) không được chấp nhận nếu Creator không nộp đơn xin gia hạn trước ngày thứ 10 kèm sự đồng thuận bằng văn bản của Người bán.
+BR-SMP-02 | Bắt Buộc Khóa Hạn Mức Cho Mẫu Giá Trị Cao (High-Value Pre-Auth Hold Mandate) | Mọi mẫu thử có giá niêm yết $\ge 1.000.000$ VNĐ hoặc thuộc ngành hàng thiết bị công nghệ bắt buộc phải thực hiện khóa hạn mức thẻ tín dụng bảo lãnh 100% giá trị sản phẩm. Giao dịch khóa thẻ chỉ được hủy bỏ khi video review được AI nghiệm thu đạt chuẩn.
+BR-SMP-03 | Thang Bậc Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score Matrix) | - Điểm 90 - 100: Hạng Xuất sắc -> Xin tối đa 05 mẫu thử đồng thời.<br>- Điểm 80 - 89: Hạng Tiêu chuẩn -> Xin tối đa 02 mẫu thử đồng thời.<br>- Điểm 70 - 79: Hạng Cảnh báo -> Chỉ được xin 01 mẫu thử duy nhất.<br>- Điểm < 70: Hạng Vi phạm -> Khóa toàn bộ quyền xin mẫu thử miễn phí.
+BR-SMP-04 | Quy Tắc Duy Trì Video Tối Thiểu 7 Ngày (7-Day Public Retention Rule) | Video nộp bài phải duy trì ở chế độ Công khai tối thiểu 07 ngày liên tục. Nếu Creator xóa video hoặc chuyển sang chế độ riêng tư trước 7 ngày: Hệ thống lập tức kích hoạt sự kiện vi phạm hủy ngang (VIDEO_DELETED_PREMATURELY), trừ 10 điểm uy tín và truy thu tiền mẫu thử.
+--- TABLE END ---
+5.7. Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Yêu Cầu Mẫu Thử (`creator_sample_requests`):
+--- TABLE START ---
+{  "sample_request_id": "SMP-REQ-20261105-0042",  "creator_id": "CREATOR-7712",  "seller_id": "SELLER-3301",  "sku_id": "SKU-TWS-ANC-PRO",  "sample_declared_value": 2500000,  "preauth_security_hold": {    "is_required": true,    "hold_transaction_id": "hold_tx_992140129",    "card_masked": "Visa **** 4242",    "hold_amount": 2500000,    "hold_status": "HELD_ACTIVE"  },  "seller_review_deadline": "2026-11-07T08:00:00Z",  "sample_order_id": "ORD-SAMPLE-88412",  "delivered_to_creator_at": "2026-11-09T14:30:00Z",  "content_submission_deadline": "2026-11-23T14:30:00Z",  "submitted_video_url": "https://tiktok.com/@creator7712/video/99120491",  "content_audit_verdict": "PASSED_VERIFIED",  "trust_score_delta": 2,  "request_lifecycle_state": "COMPLETED_CLOSED"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Mẫu Thử Miễn Phí (Sample Lifecycle State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[REQUEST_SUBMITTED] | PREAUTH_HOLD_SUCCESS | Thẻ tín dụng đủ hạn mức bảo lãnh | AWAITING_SELLER_APPROVAL | Đếm ngược 48h dành cho Người bán
+AWAITING_SELLER_APPROVAL | SELLER_APPROVED_48H | Seller bấm chấp thuận | SAMPLE_DISPATCH_PREPARING | Tạo đơn hàng 0đ, gọi bưu tá lấy hàng
+AWAITING_SELLER_APPROVAL | SELLER_TIMEOUT_OR_REJECT | Hết 48h hoặc Seller từ chối | REQUEST_CLOSED_CANCELLED | Giải phóng 100% hạn mức thẻ tín dụng
+SAMPLE_DISPATCH_PREPARING | CARRIER_DELIVERED_SAMPLE | Giao hàng mẫu thành công | SLA_14D_COUNTDOWN_ACTIVE | Bắt đầu đếm ngược 14 ngày (336 giờ)
+SLA_14D_COUNTDOWN_ACTIVE | VIDEO_SUBMITTED_AND_AUDITED | Đăng video gắn link đạt chuẩn | COMPLETED_CLOSED | Giải phóng thẻ Hold, +2 điểm uy tín
+SLA_14D_COUNTDOWN_ACTIVE | SLA_14D_EXPIRED_NO_CONTENT | Quá 336 giờ không đăng bài | PENALIZED_BREACH_ENFORCED | Trừ 10 điểm, Capture tiền thẻ, khóa xin
+--- TABLE END ---
+5.8. Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Quản Trị Mẫu Thử Miễn Phí Cho Nhà Sáng Tạo và Ràng Buộc SLA 14 Ngày (SOC-AFFIL-SAMPLE)  Scenario: Creator xin mẫu thử công nghệ 2.5 triệu có bảo lãnh thẻ và hoàn thành đăng bài đúng hạn    Given Creator có 50.000 followers và điểm uy tín 95 điểm xin mẫu thử tai nghe 2.500.000 VNĐ    When Hệ thống yêu cầu bảo lãnh và Creator thực hiện Pre-auth Hold thành công 2.500.000 VNĐ trên thẻ Visa    And Người bán duyệt yêu cầu và bưu tá giao mẫu thành công vào ngày 01/11/2026    Then Hệ thống kích hoạt đồng hồ đếm ngược SLA 14 ngày kết thúc vào 15/11/2026    When Vào ngày 08/11/2026, Creator xuất bản video review công khai có gắn đúng link sản phẩm tai nghe    And Động cơ AI xác nhận video duy trì công khai đủ 7 ngày và đạt trên 1.000 lượt xem    Then Trạng thái nhiệm vụ chuyển sang "COMPLETED_CLOSED"    And Lệnh tạm khóa hạn mức thẻ 2.500.000 VNĐ được tự động giải phóng 100% hoàn trả cho Creator    And Creator được cộng 2 điểm uy tín lên mức 97 điểm.  Scenario: Tự động trừ tiền thẻ bảo lãnh và khóa tính năng xin mẫu khi Creator quỵt mẫu thử quá 14 ngày    Given Creator đã nhận mẫu thử giá trị 2.500.000 VNĐ có lệnh khóa hạn mức bảo lãnh thẻ tín dụng    When Đã trôi qua 336 giờ liên tục (hết hạn 14 ngày) mà Creator không đăng bất kỳ video nào    Then Hệ thống tự động kích hoạt chế tài xử phạt "PENALIZED_BREACH_ENFORCED"    And Hệ thống chuyển lệnh Pre-auth Hold thành lệnh Capture trừ thực tế 2.500.000 VNĐ từ thẻ của Creator    And Số tiền này được chuyển bồi hoàn trực tiếp vào ví của Người bán    And Creator bị trừ ngay 10 điểm uy tín và bị khóa toàn bộ tính năng xin mẫu thử trong vòng 90 ngày.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+6. ĐẶC TẢ CHI TIẾT SOC-AFFIL-FRAUD: ĐỘNG CƠ CHỐNG GIAN LẬN TIẾP THỊ LIÊN KẾT, NHỒI COOKIE, BOT CLICK & TỰ MUA CHÍNH MÌNH
+6.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: SOC-AFFIL-FRAUD
+• Tên nghiệp vụ: Động Cơ Phòng Chống Gian Lận Tiếp Thị Liên Kết, Phát Hiện Nhồi Cookie (Cookie Stuffing), Lọc Bot Click Ảo Dưới 2 Giây, Chặn Tự Mua (Self-Referral) & Cơ Chế Đóng Băng Hoa Hồng 14-30 Ngày Truy Thu Tự Động (Affiliate Anti-Fraud Engine, Hidden Iframe Cookie Stuffing Detection, Sub-2s Bot Click Filter, Self-Referral Prevention & 14-30 Day Clawback Automation)
+• Tương đương thực tế: TikTok Shop Affiliate Anti-Fraud Engine, Shopee Affiliate Fraud Protection & Commission Clawback Protocol.
+6.2. Mục tiêu & Tác nhân
+• Mục tiêu:
+• Bảo vệ ngân sách hoa hồng của Người bán và ngân sách trợ giá của Sàn khỏi các hình thức gian lận tiếp thị tinh vi.
+• Ngăn chặn triệt để hành vi Nhồi Cookie (Cookie Stuffing) thông qua mã JavaScript ẩn hoặc khung ẩn (Hidden Iframe) trên các trang web lậu.
+• Lọc và vô hiệu hóa các trang trại nhấp chuột tự động (Bot Click Farms) có thời gian từ lúc nhấp chuột đến lúc mua hàng (Click-to-Purchase Time - CTPT) dưới 2 giây (< 2.000ms) hoặc sử dụng trình duyệt tự động Headless Browser.
+• Ngăn chặn hành vi Tự mua qua liên kết của chính mình (Self-Referral Fraud) để trục lợi hoa hồng chiết khấu cao bằng thuật toán đối soát quan hệ chéo đa biến (IP, Device Fingerprint, Thẻ ngân hàng, Địa chỉ nhận hàng).
+• Thiết lập chu kỳ đóng băng hoa hồng an toàn từ 14 đến 30 ngày (Commission Holding Lock Period) khớp với thời hạn đổi trả/bảo hành và thực thi Quy tắc truy thu hoa hồng tự động (Automated Commission Clawback) khi phát sinh đơn hàng trả lại.
+• Tác nhân tham gia:
+• Động cơ Theo dõi & Chấm điểm Gian lận Click (Click Telemetry & Fraud Scoring Engine): Thu thập thông tin vi mô của mỗi lượt nhấp chuột (User-Agent, Canvas Hash, Latency, Referrer URL, Viewport).
+• Động cơ Đối Soát Quan Hệ Chéo (Cross-Correlation Attribution Engine): So khớp nhận dạng giữa người mua (Buyer) và người sáng tạo (Creator).
+• Hệ thống Sổ Cái Hoa Hồng & Đóng Băng (Commission Ledger & Freeze Vault): Quản lý trạng thái khóa hoa hồng trong 14-30 ngày.
+• Động cơ Truy Thu Tự Động (Automated Clawback Engine): Lắng nghe sự kiện trả hàng hoàn tiền từ phân hệ Hậu Mãi để cấn trừ hoa hồng.
+6.3 Điều kiện tiên quyết
+1. Đơn hàng phát sinh thông qua đường dẫn liên kết tiếp thị (affiliate_tracking_token) của Creator.
+2. Hệ thống Tracking đã ghi nhận dữ liệu telemetry của lượt nhấp chuột vào hàng đợi Kafka Stream.
+6.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[NGƯỜI DÙNG DUYỆT WEB / XEM VIDEO -> PHÁT SINH SỰ KIỆN CLICK LINK TIẾP THỊ]                               │                               ▼        [ĐỘNG CƠ PHÂN TÍCH NHẬP LIỆU THỜI GIAN THỰC (CLICK TELEMETRY)]        ├── Thu thập: Client IP, Device Fingerprint, Referrer URL, Viewport        ├── Kiểm tra chữ ký Headless Browser: `navigator.webdriver == true`?        └── Kiểm tra ẩn giấu: Có nằm trong thẻ <iframe> ẩn kích thước 0x0px?              │              ├──► NẾU PHÁT HIỆN GIAN LẬN CLICK / NHỒI COOKIE (COOKIE STUFFING):              │      ├── Lập tức hủy bỏ ghi nhận Cookie Attribution              │      ├── Ghi log an ninh: `FRAUD_COOKIE_STUFFING_BLOCKED`              │      └── Creator không được hưởng bất kỳ ghi nhận nào từ click này              │              └──► NẾU CLICK HỢP LỆ -> GHI NHẬN ATTRIBUTION COOKIE (HIỆU LỰC 7 NGÀY)                               │                               ▼            [NGƯỜI DÙNG ĐẶT MUA SẢN PHẨM TRONG VÒNG 7 NGÀY]                               │                               ▼        [ĐỘNG CƠ ĐỐI SOÁT QUAN HỆ CHÉO: KIỂM TRA TỰ MUA (SELF-REFERRAL)]        ├── Đối soát 1: `Buyer_User_ID == Creator_User_ID`?        ├── Đối soát 2: `Buyer_Device_Hash == Creator_Device_Hash`?        ├── Đối soát 3: `Buyer_Bank_Card_Hash == Creator_Payout_Card_Hash`?        ├── Đối soát 4: Khoảng cách GPS và Levenshtein địa chỉ giao hàng trùng địa chỉ shop/nhà Creator?        └── Đối soát 5: Thời gian Click-to-Purchase có bất thường (< 2.000ms)?              │              ├──► NẾU PHÁT HIỆN GIAN LẬN TỰ MUA (SELF-REFERRAL DETECTED):              │      ├── Vô hiệu hóa hoa hồng đơn hàng: `commission_amount = 0`              │      ├── Gắn cờ cảnh báo tài khoản Creator: `WARNING_SELF_REFERRAL`              │      └── Nếu vi phạm >= 3 lần: Khóa vĩnh viễn quyền tham gia Affiliate              │              └──► NẾU ĐƠN HÀNG HỢP LỆ VÀ GIAO THÀNH CÔNG:                               │                               ▼        [HOA HỒNG CHUYỂN VÀO TRẠNG THÁI "ĐÓNG BĂNG 14-30 NGÀY" (LOCKED HOLDING)]        ├── Không cho phép rút tiền ngay khi vừa giao hàng xong        └── Đợi hết thời hạn đổi trả 14 ngày của khách hàng                               │        ┌──────────────────────┴──────────────────────┐        ▼                                             ▼[NHÁNH A: PHÁT SINH TRẢ HÀNG / HOÀN TIỀN]    [NHÁNH B: KHÔNG PHÁT SINH ĐỔI TRẢ]        │                                             │        ▼                                             ▼[KÍCH HOẠT CƠ CHẾ TRUY THU (CLAWBACK)]       [HẾT THỜI HẠN PHONG TỎA 14-30 NGÀY]- Trả 100% hàng: Thu hồi 100% hoa hồng       - Hoa hồng chuyển sang "KHẢ DỤNG RÚT TIỀN"- Trả 1 phần: Cấn trừ theo tỷ lệ giữ lại     - Quyết toán định kỳ ngày 15 và 30 hàng tháng- Trừ thẳng vào ví hoa hồng đóng băng.       - Khấu trừ 10% thuế TNCN, chuyển khoản bank.
+--- TABLE END ---
+• Bước 1 (Lọc gian lận nhấp chuột & Nhồi Cookie - Anti-Cookie Stuffing):
+• Khi có một lượt nhấp chuột vào liên kết tiếp thị, Động cơ Telemetry phân tích ngay lập tức các tham số kỹ thuật:
+• Nhận diện khung ẩn (Hidden Iframe Detection): Nếu sự kiện click phát sinh từ một thẻ <iframe> có thuộc tính display: none, visibility: hidden, hoặc kích thước width <= 1px, height <= 1px $\rightarrow$ Đánh dấu vi phạm nghiêm trọng FRAUD_COOKIE_STUFFING.
+• Nhận diện trình duyệt tự động (Headless Bot Detection): Kiểm tra cờ navigator.webdriver == true, sự vắng mặt của các plugin tiêu chuẩn, hoặc hàm băm đồ họa WebGL bất thường $\rightarrow$ Đánh dấu FRAUD_BOT_AUTOMATION.
+• Mọi lượt click bị đánh dấu gian lận đều bị loại bỏ ngay lập tức, không sinh token ghi nhận hoa hồng và ghi nhật ký xử lý vi phạm.
+• Bước 2 (Ghi nhận Last-Click Attribution 7 ngày cho click hợp lệ):
+• Nếu click vượt qua các bài kiểm tra an ninh: Hệ thống cấp phát token theo dõi lưu vào cookie an toàn của người dùng với thời hạn 07 ngày (168 giờ) theo nguyên tắc Người nhấp cuối cùng (Last-Click Wins).
+• Bước 3 (Kiểm tra thời gian chuyển đổi siêu tốc - Sub-2s Latency Filter):
+• Khi đơn hàng được tạo, hệ thống đo lường khoảng thời gian từ lúc click đến lúc thanh toán (Click-to-Purchase Time - CTPT):
+$$\text{CTPT} = T_{\text{order\_placed}} - T_{\text{click\_timestamp}}$$
+• Quy tắc ngưỡng người thật: Một người tiêu dùng bình thường không thể đọc thông tin sản phẩm, chọn biến thể và bấm thanh toán trong vòng dưới 2.0 giây (2.000 mili-giây). Nếu $\text{CTPT} < 2.000\text{ms}$ $\rightarrow$ Hệ thống lập tức đánh cờ nghi vấn gian lận kịch bản tự động (Scripting Bot), hủy phân bổ hoa hồng cho đơn hàng này.
+• Bước 4 (Thuật toán kiểm soát Tự mua - Self-Referral Cross-Correlation Check):
+• Động cơ đối soát chạy thuật toán so khớp quan hệ chéo giữa Người mua (Buyer) và Người sáng tạo (Creator):
+1. So khớp ID tài khoản: Buyer_ID == Creator_ID.
+2. So khớp dấu vân tay thiết bị: Buyer_Device_Hash == Creator_Device_Hash.
+3. So khớp phương thức thanh toán: Hàm băm số thẻ tín dụng hoặc số tài khoản ngân hàng của Buyer trùng khớp với tài khoản ngân hàng nhận hoa hồng của Creator.
+4. So khớp địa chỉ nhận hàng: Tính toán khoảng cách tọa độ GPS ($< 50\text{m}$) và khoảng cách chuỗi ký tự Levenshtein ($> 85\%$) giữa địa chỉ giao hàng của Buyer và địa chỉ kho hàng / địa chỉ nhận mẫu thử đã đăng ký của Creator.
+• Nếu phát hiện bất kỳ sự trùng khớp nào: Hệ thống gắn nhãn đơn hàng là Tự Mua Trục Lợi (`FRAUD_SELF_REFERRAL_DETECTED`). Hoa hồng bị gạch về 0 VNĐ (Commission_Amount = 0).
+• Bước 5 (Đóng băng hoa hồng 14-30 ngày - Commission Lock Holding Period):
+• Khi đơn hàng hợp lệ được giao thành công cho khách, khoản hoa hồng tạm tính được chuyển vào két an toàn ở trạng thái Đóng Băng Tạm Giữ (`COMMISSION_LOCKED_HOLDING`) trong vòng 14 ngày (đối với hàng thông thường) hoặc 30 ngày (đối với hàng công nghệ Shopee Mall / TikTok Mall).
+• Số tiền này hiển thị trên bảng điều khiển của Creator dưới mục "Hoa hồng chờ giải phóng", Creator hoàn toàn không thể rút tiền trong giai đoạn này.
+• Bước 6 (Cơ chế Truy thu Hoa hồng Tự động - Automated Clawback Protocol):
+• Nếu trong thời gian 14-30 ngày, khách hàng mở khiếu nại Trả hàng / Hoàn tiền:
+• Trường hợp trả toàn bộ đơn (Full Return): Hệ thống kích hoạt lệnh thu hồi 100% hoa hồng (COMMISSION_CLAWBACK_CANCELLED).
+• Trường hợp trả một phần đơn (Partial Return): Hệ thống tự động tính lại hoa hồng theo tỷ lệ giá trị hàng hóa thực tế được giữ lại:
+$$\text{Commission}_{\text{final}} = \text{Commission}_{\text{initial}} \times \left( \frac{\text{Net\_Retained\_Subtotal}}{\text{Original\_Subtotal}} \right)$$
+• Số tiền chênh lệch bị khấu trừ trực tiếp khỏi số dư hoa hồng đang đóng băng.
+• Bước 7 (Giải ngân an toàn & Khấu trừ thuế TNCN):
+• Vượt qua chu kỳ 14-30 ngày mà không phát sinh đổi trả, tiền hoa hồng chuyển sang trạng thái Khả Dụng Rút Tiền (`UNLOCKED_AVAILABLE`).
+• Quyết toán định kỳ vào ngày 15 và ngày 30 hàng tháng: Hệ thống tự động trích nộp 10% thuế TNCN theo quy định pháp luật và chuyển khoản số tiền thực nhận (Net Payout) về tài khoản ngân hàng của Creator.
+6.5. Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Creator phát sinh tỷ lệ hoàn trả bất thường (Abnormal Return Rate Anomaly):
+• Nếu một Creator có tỷ lệ hoàn trả đơn hàng (Return Rate) từ các link tiếp thị vượt quá 35% trong vòng 30 ngày liên tục (dấu hiệu cấu kết với người mua để tạo đơn ảo nhận hoa hồng rồi trả hàng):
+• Hệ thống tự động chuyển tài khoản Creator sang diện Giám sát Đặc biệt (High-Risk Audit). Thời hạn đóng băng hoa hồng của toàn bộ các đơn hàng tiếp theo tự động nâng từ 14 ngày lên 45 ngày.
+• Ngoại lệ 2: Xử lý Clawback khi số dư hoa hồng đóng băng không đủ cấn trừ:
+• Nếu đơn hàng bị hoàn tiền sau khi hoa hồng đã lỡ được giải ngân do lỗi kỹ thuật:
+• Hệ thống ghi nhận khoản tiền nợ hoa hồng âm (NEGATIVE_COMMISSION_BALANCE). Khoản nợ này sẽ được tự động cấn trừ vào các khoản hoa hồng phát sinh tiếp theo của Creator cho đến khi hoàn tất số nợ.
+6.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-AFR-01 | Khóa Tuyệt Đối Cookie Stuffing & Iframe Ẩn (Zero-Tolerance Cookie Stuffing) | Cấm tuyệt đối mọi hành vi nhồi cookie thông qua thẻ iframe ẩn, pop-under, hoặc tự động kích hoạt chuyển hướng URL mà không có hành vi nhấp chuột chủ động của người dùng. Vi phạm lần đầu sẽ bị hủy toàn bộ hoa hồng của tháng, vi phạm lần 2 sẽ bị cấm vĩnh viễn trên toàn sàn.
+BR-AFR-02 | Bộ Lọc Độ Trễ Chuyển Đổi Tối Thiểu 2 Giây (Minimum 2-Second Conversion Latency) | Mọi đơn hàng có thời gian từ lúc click đến lúc thanh toán $\text{CTPT} < 2.000\text{ms}$ đều bị coi là hành vi gian lận của công cụ bot tự động và bị tước 100% quyền hưởng hoa hồng.
+BR-AFR-03 | Khóa Cứng Tự Mua Đa Chiều (Multi-Dimensional Self-Referral Block) | Hệ thống nghiêm cấm Creator tự mua hàng qua liên kết của chính mình. Đối soát chéo bao gồm: User ID, Device Fingerprint Hash, Payment Card Hash, và Phân tích tương đồng địa chỉ nhận hàng (Levenshtein $> 85\%$).
+BR-AFR-04 | Thời Hạn Đóng Băng Hoa Hồng Bắt Buộc 14-30 Ngày (Mandatory Holding Window) | 100% tiền hoa hồng phát sinh bắt buộc phải trải qua thời gian phong tỏa tối thiểu 14 ngày (hàng thường) hoặc 30 ngày (hàng Mall/Điện tử) trước khi được phép rút. Cấm mọi trường hợp ngoại lệ giải ngân sớm trước khi kết thúc thời hạn đổi trả.
+--- TABLE END ---
+6.7. Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Nhật Ký Gian Lận Tiếp Thị (`affiliate_click_fraud_logs`):
+--- TABLE START ---
+{  "fraud_log_id": "FRAUD-LOG-20261105-0091",  "creator_id": "CREATOR-7712",  "click_tracking_id": "CLK-20261105-8841920",  "order_id": "ORD-20261105-99214",  "detected_fraud_type": "COOKIE_STUFFING_HIDDEN_IFRAME",  "telemetry_evidence": {    "click_to_order_latency_ms": 450,    "iframe_detected": true,    "iframe_dimensions": "0x0",    "is_headless_browser": true,    "client_ip": "14.226.120.45",    "ip_subnet": "14.226.120.0/24",    "device_fingerprint": "dev_fp_9a8b7c6d5e4f"  },  "fraud_confidence_score": 98.5,  "enforcement_action": "COMMISSION_VOIDED_AND_LOGGED",  "voided_commission_amount": 45000,  "logged_at": "2026-11-05T09:15:20Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Hoa Hồng Tiếp Thị Liên Kết:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[CLICK_ATTRIBUTED] | ORDER_PLACED_BY_BUYER | Vượt qua bài kiểm tra Self-referral | COMMISSION_CALCULATED_PENDING | Tính toán số tiền hoa hồng tạm tính
+[CLICK_ATTRIBUTED] | ORDER_PLACED_BY_BUYER | Trùng thiết bị/IP/thẻ (Self-referral) | COMMISSION_VOIDED_FRAUD | Gán hoa hồng = 0, gắn cờ cảnh báo
+COMMISSION_CALCULATED_PENDING | ORDER_DELIVERED_SUCCESS | Bưu tá giao hàng thành công | LOCKED_HOLDING_14_30D | Đóng băng tiền hoa hồng trong 14-30 ngày
+LOCKED_HOLDING_14_30D | BUYER_RETURN_FULL_100 | Khách trả hàng hoàn tiền toàn bộ | CLAWBACK_CANCELLED_100 | Thu hồi 100% hoa hồng, số dư khả dụng = 0
+LOCKED_HOLDING_14_30D | BUYER_RETURN_PARTIAL | Khách trả 1 món trong đơn nhiều món | CLAWBACK_PARTIALLY_ADJUSTED | Khấu trừ hoa hồng theo tỷ lệ phần giữ lại
+LOCKED_HOLDING_14_30D | HOLDING_WINDOW_PASSED | Vượt qua 14-30 ngày an toàn | UNLOCKED_AVAILABLE_FOR_PAYOUT | Giải phóng tiền vào Ví hoa hồng khả dụng
+UNLOCKED_AVAILABLE_FOR_PAYOUT | BI_MONTHLY_SETTLEMENT | Đến kỳ thanh toán ngày 15 và 30 | PAYOUT_TRANSFERRED_SETTLED | Khấu trừ 10% thuế TNCN, bắn tiền tài khoản
+--- TABLE END ---
+6.8. Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Động Cơ Phòng Chống Gian Lận Tiếp Thị Liên Kết và Truy Thu Hoa Hồng (SOC-AFFIL-FRAUD)  Scenario: Tự động vô hiệu hóa hoa hồng khi phát hiện nhồi cookie qua iframe ẩn và thời gian mua dưới 2 giây    Given Kẻ gian chèn link tiếp thị vào một iframe ẩn kích thước 0x0px trên một trang web xem phim lậu    When Một người dùng truy cập web và mã script tự động kích hoạt click ngầm    And Một đơn hàng được tạo tự động bởi công cụ bot chỉ sau 450 mili-giây kể từ lúc click    Then Động cơ Anti-Fraud phát hiện vi phạm quy tắc "COOKIE_STUFFING_HIDDEN_IFRAME"    And Hệ thống ghi nhận độ trễ chuyển đổi CTPT là 450ms (nhỏ hơn ngưỡng 2.000ms tối thiểu)    Then Hệ thống lập tức hủy bỏ ghi nhận hoa hồng của đơn hàng này với mã lỗi "COMMISSION_VOIDED_FRAUD"    And Số dư hoa hồng của Creator không được cộng thêm tiền và tài khoản bị ghi log cảnh báo.  Scenario: Tự động khóa hoa hồng 14 ngày và thực thi Clawback thu hồi tiền khi khách hàng trả lại hàng    Given Khách hàng mua chiếc điện thoại 15.000.000 VNĐ qua link của Creator B (hoa hồng 5% là 750.000 VNĐ)    When Đơn hàng được giao thành công vào ngày 01/11/2026    Then Khoản tiền hoa hồng 750.000 VNĐ được đưa vào trạng thái đóng băng "LOCKED_HOLDING_14_30D" đến ngày 15/11/2026    When Vào ngày 07/11/2026 (ngày thứ 6 sau nhận hàng), khách hàng gửi yêu cầu trả hàng do máy lỗi nguồn và được duyệt hoàn tiền    Then Hệ thống kích hoạt quy tắc Clawback tự động thu hồi khoản hoa hồng 750.000 VNĐ    And Trạng thái hoa hồng chuyển sang "CLAWBACK_CANCELLED_100"    And Số dư khả dụng rút tiền của Creator B không bị tăng thêm 750.000 VNĐ.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+7. MA TRẬN DỮ LIỆU ĐỐI SOÁT HOA HỒNG TÀI CHÍNH, BẢNG KÊ QUYẾT TOÁN & YÊU CẦU PHI CHỨC NĂNG (NFRS)
+7.1. Kiến trúc Bảng kê Quyết toán Nhà sáng tạo Bán nguyệt (Bi-Monthly Settlement Statement)
+Nhằm đảm bảo tính minh bạch tài chính, đối soát kiểm toán thuế và hỗ trợ xuất hóa đơn điện tử:
+--- TABLE START ---
++----------------------------------------------------------------------------------------------------+|                         BẢNG KÊ QUYẾT TOÁN HOA HỒNG TIẾP THỊ LIÊN KẾT BÁN NGUYỆT                    || Kỳ đối soát: 01/11/2026 - 15/11/2026 | Mã Creator: CREATOR-7712 | Tên: Nguyễn Văn A               |+----------------------------------------------------------------------------------------------------+| 1. Tổng doanh số GMV tạo ra từ link tiếp thị:                                 185.000.000 VNĐ     || 2. Tổng số đơn hàng phát sinh:                                                 480 đơn             || 3. Tổng hoa hồng phát sinh ban đầu (Gross Commission):                          18.500.000 VNĐ     ||    - Hoa hồng do Người bán chi trả (Shop Commission):                          14.800.000 VNĐ     ||    - Hoa hồng thưởng chiến dịch sàn (Platform Bonus):                           3.700.000 VNĐ     || 4. Khấu trừ đơn hàng gian lận bị hủy (Anti-Fraud Voided Commissions):          -1.500.000 VNĐ     || 5. Khấu trừ hoàn trả đổi hàng trong kỳ (Return Clawback Deductions):          -1.200.000 VNĐ     || 6. Hoa hồng còn lại đang bị đóng băng trong kỳ an toàn (Held in 14-30d lock):  -4.800.000 VNĐ     || 7. HOA HỒNG ĐỦ ĐIỀU KIỆN GIẢI NGÂN KỲ NÀY (Eligible Payout Subtotal):          11.000.000 VNĐ     || 8. Khấu trừ Thuế Thu nhập Cá nhân (Thuế TNCN 10% theo quy định pháp luật):    -1.100.000 VNĐ     || 9. SỐ TIỀN THỰC CHUYỂN VỀ TÀI KHOẢN NGÂN HÀNG (NET PAYOUT):                     9.900.000 VNĐ     |+----------------------------------------------------------------------------------------------------+| Trạng thái giải ngân: COMPLETED_SETTLED | Mã giao dịch ngân hàng (FT): FT2611159841029              |+----------------------------------------------------------------------------------------------------+
+--- TABLE END ---
+7.2. Yêu cầu Phi chức năng & Kiến trúc Chịu tải Cao (NFRs & Scalability)
+1. Hiệu năng Xử lý Khóa Tồn Kho Ảo (Virtual Cart Lock Throughput & Latency):
+• Động cơ Redis Lua Script phải xử lý được lưu lượng đột biến tối thiểu 50.000 giao dịch/giây (50,000 TPS) tại thời điểm mở bán deal sốc livestream mà thời gian phản hồi (p99 Latency) không vượt quá 5 mili-giây (5ms).
+2. Thời gian Phản ứng của Cầu Dao Ngắt Mạch Khẩn Cấp (Circuit Breaker Kill Switch Response Time):
+• Từ thời điểm chỉ số sụt giá hoặc vận tốc đơn vượt ngưỡng rủi ro, hệ thống phải thực thi lệnh khóa ngừng bán listing sản phẩm và khóa cổng WMS trong thời gian tối đa dưới 10 giây (10s).
+3. Độ trễ Đồng bộ Ticker Tồn Kho Qua WebSocket (WebSocket Stock Meter Broadcast Latency):
+• Khi có bất kỳ sự thay đổi tồn kho nào (khóa giữ chỗ, thanh toán thành công, hoặc nhả kho do hết hạn), gói tin cập nhật trạng thái phải được phát tán tới 100% người xem trong phòng live với độ trễ dưới 300 mili-giây (300ms).
+4. Độ Toàn Vẹn & Khả Năng Kiểm Toán Dữ Liệu Gian Lận (Anti-Fraud Audit Trail & Immutability):
+• Toàn bộ nhật ký nhấp chuột (Click Telemetry Logs) và các quyết định vô hiệu hóa hoa hồng phải được lưu trữ bất biến (Append-Only Log) trên Apache Kafka và cụm lưu trữ phân tán trong thời gian tối thiểu 365 ngày (1 năm), sẵn sàng phục vụ công tác thanh tra tài chính và giải quyết khiếu nại của Creator.
+5. Bảo Mật Quyền Riêng Tư (Privacy & PII Protection):
+• Thông tin cá nhân của Creator (Số điện thoại, địa chỉ nhà riêng nhận mẫu thử) bắt buộc phải được che giấu một phần (Masking) trên giao diện Seller Center của Người bán, tuân thủ nghiêm ngặt Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân.
+————————————————————————————————————————————————————————————————————
+Tài liệu đặc tả nghiệp vụ phân hệ Thương mại Mạng xã hội, Live Shopping và Tiếp thị Liên kết SPEC-SOC-06 được biên soạn theo chuẩn phân tích kỹ thuật sản xuất, đồng bộ hóa 100% với các thực thể CSDL PostgreSQL và các hợp đồng API RESTful trong File 07.

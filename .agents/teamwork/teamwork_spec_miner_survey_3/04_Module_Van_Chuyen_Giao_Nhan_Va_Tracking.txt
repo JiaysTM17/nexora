@@ -1,0 +1,698 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT MODULE VẬN CHUYỂN: GIAO HỎA TỐC 1-2H, LIVE GPS, TÁCH KIỆN & IN-STORE PICKUP
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-LOG-04 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT MODULE VẬN CHUYỂN: GIAO HỎA TỐC 1-2H, LIVE GPS, TÁCH KIỆN & IN-STORE PICKUP
+Phạm vi: Bản đồ tài xế GPS thời gian thực, mã OTP/PIN giao hàng, nhận tại quầy Apple Wallet Pass QR & Subscribe & Save
+====================================================================
+ĐẶC TẢ NGHIỆP VỤ CHI TIẾT: VẬN CHUYỂN NÂNG CAO, HOÀN TẤT ĐƠN HÀNG ĐA KÊNH & QUẢN TRỊ RỦI RO CHUỖI CUNG ỨNG
+GIAO HỎA TỐC 1-2H, NHẬN TẠI CỬA HÀNG, MUA ĐỊNH KỲ SUBSCRIBE & SAVE, TÁCH KIỆN ĐA KHO, XÁC THỰC MÃ GIAO HÀNG & XỬ LÝ THẤT LẠC
+• Mã tài liệu: SPEC-FUL-04
+• Phiên bản: 3.0 (Enterprise Benchmark Specification — Production Grade)
+• Thư mục lưu trữ: d:\A - Học Tập\Thương Mại Điện Tử\p.tich.1\
+• Thuộc Milestone: M2 & M4 (Advanced Fulfillment, Delivery Security & Logistics Exception Handling)
+• Nền tảng đo chuẩn tham chiếu (Benchmark Targets):
+• Amazon USA (amazon.com): Động cơ mua sắm định kỳ Subscribe & Save (S&S) với chiết khấu bậc thang 5% - 15%, Ngày giao hàng định kỳ hằng tháng cố định (Monthly Delivery Day), Thông báo nhắc trước T-3 ngày, Cơ chế xử lý hết hàng đột xuất tại ngày chốt đơn T-1 (S&S OOS Substitution & Backorder Retention); Tách kiện đa trung tâm hoàn tất đơn hàng (Multi-FC Split Shipment) với thanh toán trừ tiền theo từng kiện (Partial Dispatch Capture) theo quy chuẩn FTC Mail Order Rule; Mã xác thực an ninh giao nhận One-Time Password (OTP) cho đơn hàng giá trị cao (> $500); Quy trình điều tra bưu kiện kẹt quá 48-72h thất lạc (Lost in Transit Tracer SLA 48h) và khóa thiết bị toàn cầu GSMA Blacklist.
+• Apple Store (apple.com): Nhận hàng tại cửa hàng (In-Store Express Pickup 1-2h) & Chuyển hàng đến cửa hàng (Ship-to-Store); Tích hợp thẻ số Apple Wallet Pass với mã QR động 60s check-in không tiếp xúc; Ủy quyền người nhận thay hợp pháp (Designated Pickup Contact); Quy tắc lưu kho nghiêm ngặt 14 ngày trước khi tự động hủy và hoàn tiền 100%.
+• Shopee Hỏa Tốc (SPX Instant) & GrabExpress / BeDelivery: Cam kết giao nhận hỏa tốc 1-2h nội thành bán kính 15km; Truyền phát tọa độ Live GPS qua WebSocket mỗi 5s; Xác thực 2 lớp Delivery PIN 4 số và ảnh chụp bằng chứng giao hàng Photo POD có gắn watermark định vị bất biến; Chính sách bồi thường trễ hạn tự động bằng voucher 50.000 VNĐ.
+• Shopee & TikTok Shop Việt Nam: Quy chuẩn giao nhận hàng công nghệ cao có mã OTP 6 số (đơn hàng $\ge 5.000.000$ VNĐ); Quy trình xử lý nhận hộ an toàn; Quy chế 3 lần thử giao hàng và lưu bưu cục DEX Depot.
+• Tài liệu nền tảng đối chiếu (Baseline Gaps Closed):
+• Khắc phục triệt để khoảng trống Chương 13 (Tạo đơn & Thanh toán), Chương 15 (Đơn hàng & Tra cứu vận chuyển), Chương 28 & 29 (Xử lý đóng gói & Vận chuyển kho bãi), Chương 43 (MR-02 Mô hình Subscribe định kỳ sơ khai và MR-06 Nhận tại cửa hàng dạng ý niệm).
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN
+1. TỔNG QUAN KIẾN TRÚC HOÀN TẤT ĐƠN HÀNG ĐA KÊNH & LOGISTICS THẾ HỆ MỚI
+2. ĐẶC TẢ CHI TIẾT FUL-SUBSCR-01: ĐỘNG CƠ MUA ĐỊNH KỲ TIẾT KIỆM (AMAZON SUBSCRIBE & SAVE TIERED ENGINE)
+3. ĐẶC TẢ CHI TIẾT FUL-SUBSCR-OOS: XỬ LÝ HẾT HÀNG TẠI NGÀY CHỐT ĐƠN T-1 SUBSCRIBE & SAVE (SUBSTITUTE & GRANDFATHERED PROTECTION)
+4. ĐẶC TẢ CHI TIẾT FUL-PICKUP-02: NHẬN HÀNG TẠI CỬA HÀNG (APPLE STORE IN-STORE PICKUP & WALLET PASS ENGINE)
+5. ĐẶC TẢ CHI TIẾT FUL-EXPRESS-03: GIAO HÀNG HỎA TỐC 1-2 GIỜ NỘI THÀNH (LIVE GPS TELEMETRY & PHOTO POD)
+6. ĐẶC TẢ CHI TIẾT FUL-SPLIT-04: ĐIỀU PHỐI TÁCH KIỆN GIAO HÀNG TỪ NHIỀU KHO (MULTI-WAREHOUSE SPLIT SHIPMENT & PARTIAL CAPTURE)
+7. ĐẶC TẢ CHI TIẾT FUL-VERIF-05: XÁC THỰC AN NINH GIAO NHẬN BẰNG MÃ PIN / SMS OTP / CHỮ KÝ SỐ CHO ĐƠN GIÁ TRỊ CAO
+8. ĐẶC TẢ CHI TIẾT FUL-LOST-06: XỬ LÝ THẤT LẠC HÀNG HÓA TRONG VẬN CHUYỂN (LOST IN TRANSIT TRACER & GSMA BLACKLIST LOCK)
+9. MA TRẬN ĐIỀU PHỐI HOÀN TẤT ĐƠN HÀNG ĐA KÊNH, CHI PHÍ LOGISTICS & SLA CAM KẾT
+————————————————————————————————————————————————————————————————————
+1. TỔNG QUAN KIẾN TRÚC HOÀN TẤT ĐƠN HÀNG ĐA KÊNH & LOGISTICS THẾ HỆ MỚI
+Một hệ sinh thái thương mại điện tử quy mô lớn đòi hỏi sự kết hợp đồng bộ giữa nhiều phương thức hoàn tất đơn hàng (Fulfillment) và các chốt chặn kiểm soát rủi ro vận hành đa chiều:
+--- TABLE START ---
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐│                    HỆ THỐNG ĐIỀU PHỐI HOÀN TẤT ĐƠN HÀNG ĐA KÊNH & QUẢN TRỊ RỦI RO LOGISTICS     │├────────────────────────────────┬────────────────────────────────┬───────────────────────────────┤│ 1. KÊNH HOÀN TẤT LINH HOẠT     │ 2. ĐIỀU PHỐI TỒN KHO & ĐƠN HÀNG│ 3. AN NINH GIAO NHẬN & SỰ CỐ  │├────────────────────────────────┼────────────────────────────────┼───────────────────────────────┤│ • FUL-SUBSCR-01: Subscribe     │ • FUL-SPLIT-04: Multi-FC Split │ • FUL-VERIF-05: High-Value OTP││   & Save Gom Đơn Định Kỳ       │   Shipment (Tách Kiện Đa Kho)  │   PIN / Chữ Ký Số (>= 5M VNĐ) ││ • FUL-SUBSCR-OOS: Xử Lý Hết    │ • Partial Payment Capture Per  │ • Driver App Lockout & 3 Lần  ││   Hàng T-1 & Giữ Mức Giảm 15%  │   Package Dispatch (FTC Rule)  │   Thử Giao / Lưu Depot DEX    ││ • FUL-PICKUP-02: Nhận Tại Store│ • Trợ Cấp Phí Vận Chuyển Sàn   │ • FUL-LOST-06: Lost In Transit││   Apple Wallet QR Không Chờ Đợi│ • Hóa Đơn Hợp Nhất Master      │   Tracer SLA 48h / GSMA Lock  ││ • FUL-EXPRESS-03: Hỏa Tốc 1-2h │ • Cân Bằng Tải Mạng Lưới Kho   │ • Lựa Chọn 1-Chạm Cho Khách:  ││   Live GPS Telemetry & POD     │   Bán Lẻ & Trung Tâm Logistics │   Giao Lại Khẩn vs Hoàn Tiền  │└────────────────────────────────┴────────────────────────────────┴───────────────────────────────┘
+--- TABLE END ---
+Hệ thống phân tách rõ ràng trách nhiệm giữa:
+1. Order Management System (OMS): Quản lý trạng thái đơn hàng tổng (Master_Order), phân rã đơn thành các kiện hàng con (Shipment_Packages), điều phối hóa đơn và quyết toán thanh toán.
+2. Warehouse Management System (WMS): Quản lý tồn kho tại từng trung tâm hoàn tất (Fulfillment Center - FC), kho phân loại trung tâm (Sorting Hub), và cửa hàng bán lẻ (Retail Store Hub).
+3. Transportation Management System (TMS): Khớp lệnh đơn vị vận chuyển 3PL (Giao Hàng Nhanh, Viettel Post, SPX) hoặc đội xe On-demand (GrabExpress, BeDelivery), theo dõi mã vận đơn, tiếp nhận dữ liệu telemetry GPS và hình ảnh POD.
+4. Subscription Automation Engine: Quản lý lịch trình tái đặt định kỳ, phát cảnh báo trước T-3 ngày, và xử lý thuật toán thay thế sản phẩm tương đương khi hết hàng tại ngày T-1.
+5. Security & Anti-Theft Gateway: Quản trị mã PIN giao nhận mã hóa một chiều, xác thực chữ ký điện tử, kết nối trực tiếp với Cơ sở dữ liệu Định danh Thiết bị Toàn cầu GSMA CEIR để vô hiệu hóa sóng di động đối với máy bị mất cắp.
+————————————————————————————————————————————————————————————————————
+2. ĐẶC TẢ CHI TIẾT FUL-SUBSCR-01: ĐỘNG CƠ MUA ĐỊNH KỲ TIẾT KIỆM (AMAZON SUBSCRIBE & SAVE TIERED ENGINE)
+2.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-SUBSCR-01
+• Tên nghiệp vụ: Động Cơ Mua Hàng Định Kỳ Tiết Kiệm, Gom Chuyến Hằng Tháng & Chiết Khấu Bậc Thang (Amazon Subscribe & Save Tiered Engine)
+• Tương đương thực tế: Amazon Subscribe & Save (S&S), Target Circle 360 Subscriptions.
+2.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Khuyến khích khách hàng thiết lập chu kỳ mua sắm tự động cho các mặt hàng tiêu dùng thường xuyên (cà phê, nước giặt, phụ kiện cáp sạc, màng lọc không khí, pin, vật tư y tế).
+• Tối ưu hóa chi phí logistics Last-Mile bằng cách gom toàn bộ sản phẩm định kỳ của khách hàng vào một chuyến giao duy nhất vào Ngày giao hàng cố định trong tháng (Monthly Delivery Day).
+• Tăng tỷ lệ giữ chân khách hàng (Customer Retention) và giá trị vòng đời khách hàng (LTV) thông qua cơ chế chiết khấu lũy tiến: 5% cơ sở cho 1-4 sản phẩm và 15% ưu đãi tối đa khi có từ 5 sản phẩm trở lên.
+• Tác nhân tham gia:
+• Khách hàng (Subscriber): Đăng ký gói mua định kỳ trên trang sản phẩm, chọn tần suất và ngày giao, quản lý các kỳ giao qua bảng điều khiển tự phục vụ (Self-service Dashboard).
+• Hệ thống Đăng ký Định kỳ (Subscription Engine): Quản lý lịch trình lặp lại, tính toán mức chiết khấu bậc thang theo số lượng sản phẩm đủ điều kiện trong chu kỳ.
+• Dịch vụ Thông báo & Tự phục vụ (Notification Service): Phát thông báo nhắc trước trừ tiền 3 ngày (Pre-billing Notice at T-3) qua Email và Push Notification.
+• Cổng Thanh toán Tự động (Recurring Payment Gateway): Thực thi trừ tiền tự động bằng Token thanh toán đã lưu (Tokenized Card/e-Wallet Auto-Debit) tại thời điểm T-1.
+• Hệ thống Hoàn tất Đơn hàng (OMS/WMS): Tiếp nhận đơn hàng tự động sinh ra và gom chung vào một thùng carton tiêu chuẩn.
+2.3 Điều kiện tiên quyết
+1. Sản phẩm thuộc danh mục cho phép mua định kỳ (is_subscription_eligible = TRUE) và có nguồn cung ứng ổn định.
+2. Khách hàng đã lưu ít nhất một phương thức thanh toán tự động hợp lệ (Thẻ tín dụng Visa/Mastercard/JCB, Thẻ ATM nội địa liên kết Napas có hỗ trợ Auto-debit, hoặc Ví điện tử ShopeePay/MoMo).
+3. Địa chỉ giao hàng mặc định của khách hàng nằm trong khu vực hỗ trợ tuyến giao hàng cố định của sàn.
+2.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Chọn chế độ Subscribe & Save trên PDP):
+• Khách hàng xem trang chi tiết sản phẩm (PDP). Màn hình hiển thị 2 tùy chọn mua sắm:
+• Tùy chọn A: Mua một lần thông thường (One-time Purchase) với giá niêm yết.
+• Tùy chọn B: Mua định kỳ tiết kiệm (Subscribe & Save) với nhãn nổi bật: "Tiết kiệm 5% hôm nay, lên đến 15% khi có từ 5 sản phẩm".
+• Khách hàng chọn Tùy chọn B và chọn Tần suất giao hàng từ trình đơn thả xuống: Mỗi 2 tuần, Mỗi 1 tháng (mặc định), Mỗi 2 tháng, Mỗi 3 tháng, Mỗi 6 tháng.
+• Bước 2 (Gán vào Ngày Giao Hàng Hằng Tháng):
+• Hệ thống tự động gán sản phẩm này vào Ngày Giao Hàng Cố Định Hằng Tháng của khách hàng (ví dụ: ngày 15 hằng tháng). Khách hàng có thể tùy chỉnh ngày này trong phần cài đặt tài khoản.
+• Bước 3 (Tính toán Bậc thang Chiết khấu Tức thời):
+• Hệ thống Subscription Engine truy vấn tổng số lượng mặt hàng định kỳ đã lên lịch giao vào cùng ngày 15 tháng tới của khách hàng:
+• Nếu tổng số sản phẩm từ 1 đến 4 món: Áp dụng chiết khấu 5% vào giá bán hiện hành của sản phẩm.
+• Nếu tổng số sản phẩm đạt từ 5 món trở lên: Tự động nâng cấp chiết khấu của toàn bộ tất cả các sản phẩm trong chuyến giao đó lên mức tối đa 15%.
+• Bước 4 (Xuất kho đơn hàng kỳ đầu tiên & Thiết lập Schedule):
+• Khách hàng bấm "Thiết lập Đăng ký" (Set Up Subscription). Đơn hàng của kỳ đầu tiên được tạo và xử lý giao ngay nếu khách hàng chọn "Giao ngay đơn đầu tiên", hoặc xếp lịch giao vào ngày định kỳ gần nhất.
+• Bản ghi thuê bao định kỳ (subscription_contract) được tạo với trạng thái ACTIVE.
+• Bước 5 (Thông báo trước kỳ giao T-3 ngày - Pre-billing Notification):
+• Đúng 72 giờ trước ngày chốt đơn (thời điểm T-3 ngày, ví dụ ngày 11 đối với kỳ giao ngày 15):
+• Hệ thống gửi thông báo đẩy và email tóm tắt đơn định kỳ sắp tới:
+• Danh sách các sản phẩm chuẩn bị giao.
+• Đơn giá hiện hành của từng sản phẩm (áp dụng nguyên tắc giá thị trường tại thời điểm giao kèm chiết khấu S&S).
+• Tổng số tiền dự kiến trừ và mức chiết khấu áp dụng (5% hoặc 15%).
+• Đường dẫn truy cập Cổng Tự Phục Vụ (Self-service Dashboard).
+• Bước 6 (Cổng Tự phục vụ linh hoạt trước thời điểm T-1):
+• Khách hàng có toàn quyền thực hiện các điều chỉnh không mất phí trước 23:59:59 ngày T-1:
+• Bỏ qua kỳ này (Skip Delivery): Lùi việc giao sản phẩm cụ thể sang chu kỳ tiếp theo mà không làm gián đoạn hợp đồng.
+• Giao ngay lập tức (Ship Now): Nếu đang hết hàng gấp tại nhà, khách bấm "Giao ngay" -> Hệ thống tách đơn đó xuất kho ngay lập tức mà vẫn giữ nguyên mức chiết khấu S&S.
+• Thay đổi số lượng hoặc tần suất: Tăng từ 1 lên 2 hộp, hoặc đổi chu kỳ từ 1 tháng thành 2 tháng.
+• Hủy đăng ký (Cancel Subscription): Hủy hoàn toàn sản phẩm khỏi danh sách định kỳ với 0đ phí phạt chỉ bằng 1 thao tác bấm.
+• Bước 7 (Khóa đơn & Trừ tiền tự động tại T-1 Cutoff):
+• Đúng 00:00:01 ngày T-1: Hệ thống khóa trạng thái đơn định kỳ của tháng (LOCK_FOR_PROCESSING).
+• Gửi lệnh thanh toán Auto-Debit tới cổng thanh toán. Cổng thanh toán trừ tiền thành công, trả về mã giao dịch CAPTURE_SUCCESS.
+• Bước 8 (Đóng gói gom chuyến & Giao hàng tại ngày T):
+• WMS nhận danh sách đơn, gom tất cả các sản phẩm định kỳ của khách vào một thùng carton đóng gói duy nhất (Single consolidated box).
+• Đơn vị vận chuyển giao hàng tận cửa cho khách hàng vào đúng ngày T cam kết.
+2.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Trừ tiền tự động thất bại tại ngày T-1 (Payment Card Failed / Insufficient Funds):
+• Cổng thanh toán trả về lỗi hết hạn mức hoặc thẻ hết hạn (CARD_DECLINED / INSUFFICIENT_FUNDS).
+• Hệ thống KHÔNG hủy đơn hàng ngay. Trạng thái chuyển sang PAYMENT_RETRY_GRACE_PERIOD.
+• Hệ thống gửi cảnh báo khẩn qua SMS và App Notification: "Thẻ của bạn bị từ chối thanh toán cho đơn hàng định kỳ ngày 15. Vui lòng cập nhật thẻ mới trước 18:00 hôm nay để không bị trễ chuyến giao".
+• Hệ thống thực hiện thử trừ tiền lại 3 lần: Cách nhau 6 tiếng một lần. Nếu trước 23:59:59 ngày T-1 khách cập nhật thẻ hợp lệ -> Đơn hàng tiếp tục được xuất kho bình thường.
+• Nếu sau 24 giờ vẫn không trừ được tiền: Đơn hàng kỳ này bị tự động hủy (SKIPPED_DUE_TO_PAYMENT_FAILURE). Hợp đồng S&S vẫn được duy trì cho kỳ tháng sau, khách hàng không bị tính điểm phạt.
+• Ngoại lệ 2: Giá sản phẩm trên sàn tăng quá 20% so với kỳ trước (Price Spike Protection):
+• Nếu do biến động thị trường, giá niêm yết của sản phẩm tăng $> 20\%$ so với mức giá của kỳ giao trước:
+• Hệ thống bắt buộc phải gửi email cảnh báo biến động giá riêng biệt: "Giá sản phẩm X đã thay đổi từ 200.000đ lên 250.000đ".
+• Nếu khách hàng không bấm xác nhận chấp thuận mức giá mới trên dashboard trước ngày T-1: Hệ thống tự động bỏ qua kỳ giao này (AUTO_SKIPPED_PRICE_SPIKE) để bảo vệ tài chính cho khách hàng.
+2.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-SUB-01 | Bậc Thang Chiết Khấu Định Kỳ (Tiered Discount Threshold) | - Nhóm Tier 1 (1 đến 4 sản phẩm cùng ngày giao): Chiết khấu cố định 5.00% trên đơn giá.<br>- Nhóm Tier 2 ($\ge 5$ sản phẩm cùng ngày giao đến cùng một địa chỉ): Chiết khấu cố định 15.00% cho toàn bộ các sản phẩm đủ điều kiện.<br>- Công thức: IF count(distinct subscription_line_id) >= 5 THEN discount_rate = 0.15 ELSE discount_rate = 0.05.
+BR-SUB-02 | Ràng Buộc Hủy Tự Do Không Phí Phạt (Zero Penalty Cancellation) | Khách hàng có quyền hủy gói đăng ký Subscribe & Save bất kỳ lúc nào sau khi đơn hàng đầu tiên được giao thành công mà không phải bồi hoàn khoản tiền chiết khấu đã hưởng ở kỳ đầu tiên. Hệ thống nghiêm cấm mọi hình thức phạt hợp đồng định kỳ tiêu dùng.
+BR-SUB-03 | Khóa Chặn Thay Đổi T-1 (Strict T-1 Cutoff Window) | Thời hạn cuối cùng để sửa đổi số lượng, địa chỉ, hoặc bỏ qua kỳ giao là 23:59:59 (giờ địa phương) của ngày T-1. Bắt đầu từ 00:00:00 ngày T, hệ thống khóa toàn bộ quyền sửa đổi giao diện để WMS in phiếu đóng gói và tạo vận đơn.
+BR-SUB-04 | Nguyên Tắc Giá Nổi Theo Thị Trường (Floating Market Price Principle) | Đơn hàng Subscribe & Save không cố định đơn giá vĩnh viễn theo kỳ đầu tiên mà tính theo giá niêm yết hiện hành của sản phẩm tại ngày T-3 trừ đi phần trăm chiết khấu S&S tương ứng. Điều này đảm bảo người bán không bị lỗ khi chi phí nguyên vật liệu tăng, nhưng khách hàng luôn được hưởng giá rẻ hơn so với mua lẻ cùng thời điểm.
+--- TABLE END ---
+2.7 Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Dữ liệu Thuê Bao Định Kỳ (`subscription_contract`):
+--- TABLE START ---
+{  "subscription_id": "SUB-2026-992148",  "customer_id": "CUST-881204",  "product_variant_id": "VAR-COFFEE-ARABICA-500G",  "frequency_unit": "MONTH",  "frequency_value": 1,  "monthly_delivery_day": 15,  "current_discount_tier": 0.15,  "status": "ACTIVE",  "next_scheduled_date": "2026-12-15",  "next_cutoff_date": "2026-12-14T23:59:59Z",  "consecutive_successful_orders": 6,  "payment_token": "tok_visa_4242_auto_debit_token",  "shipping_address_id": "ADDR-HCM-70000",  "created_at": "2026-06-15T08:30:00Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Hợp đồng Thuê bao Subscribe & Save:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[INITIATED] | SUBSCRIBE_SUBMITTED | Phương thức thanh toán hợp lệ | ACTIVE | Xếp lịch ngày giao đầu tiên, lưu token
+ACTIVE | T_MINUS_3_REACHED | Đang trong chu kỳ định kỳ | PRE_BILLING_NOTIFIED | Bắn email/push thông báo danh sách sản phẩm
+PRE_BILLING_NOTIFIED | CUSTOMER_CLICK_SKIP | Trước 23:59:59 ngày T-1 | CYCLE_SKIPPED | Lùi lịch next_scheduled_date sang tháng sau
+CYCLE_SKIPPED | NEXT_CYCLE_INITIATED | Đến chu kỳ kế tiếp | ACTIVE | Tái kích hoạt chu kỳ mới bình thường
+PRE_BILLING_NOTIFIED | T_MINUS_1_CUTOFF | Không có lệnh skip/hủy | LOCKED_FOR_DISPATCH | Gọi API trừ tiền Auto-Debit trên cổng TT
+LOCKED_FOR_DISPATCH | PAYMENT_CAPTURE_SUCCESS | Thẻ trừ tiền thành công | ORDER_CREATED_FULFILLING | Đẩy đơn hàng sang hệ thống OMS/WMS
+LOCKED_FOR_DISPATCH | PAYMENT_CAPTURE_FAILED | Thẻ hết hạn mức/lỗi | PAYMENT_RETRY_PENDING | Bắn cảnh báo cập nhật thẻ trong 24h
+PAYMENT_RETRY_PENDING | RETRY_TIMEOUT_24H | Khách không đổi thẻ | CYCLE_SKIPPED_PAYMENT_FAIL | Hủy đơn tháng này, bảo lưu hợp đồng tháng sau
+ACTIVE | CUSTOMER_CLICK_CANCEL | Khách bấm hủy tự do | CANCELLED | Vô hiệu hóa lịch trình vĩnh viễn
+--- TABLE END ---
+2.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Động Cơ Mua Hàng Định Kỳ Tiết Kiệm Subscribe & Save (FUL-SUBSCR-01)  Scenario: Tự động nâng cấp chiết khấu lên 15% khi giỏ hàng định kỳ đạt từ 5 sản phẩm    Given Khách hàng đang có 4 sản phẩm đã đăng ký giao định kỳ vào ngày 15 hàng tháng với chiết khấu 5%    When Khách hàng đăng ký thêm sản phẩm thứ 5 là "Cáp sạc USB-C Anker 1m" chọn cùng ngày giao 15 hàng tháng    Then Hệ thống Subscription Engine ghi nhận tổng số sản phẩm trong chuyến giao là 5 món    And Hệ thống tự động nâng mức chiết khấu của cả 5 sản phẩm lên mức 15%    And Màn hình thông báo: "Chúc mừng! Bạn đã mở khóa mức tiết kiệm tối đa 15% cho toàn bộ 5 sản phẩm của kỳ giao này".  Scenario: Khách hàng sử dụng tính năng Bỏ qua kỳ giao (Skip Delivery) trước ngày chốt T-1    Given Khách hàng nhận được thông báo nhắc trước T-3 ngày cho đơn hàng định kỳ dự kiến giao ngày 15/12    And Lượng cà phê tại nhà của khách hàng vẫn còn nhiều chưa dùng hết    When Khách hàng truy cập Cổng Tự Phục Vụ vào ngày 13/12 và bấm nút "Bỏ qua kỳ này (Skip)"    Then Trạng thái kỳ giao tháng 12 chuyển sang "CYCLE_SKIPPED"    And Lịch giao tiếp theo của sản phẩm được tự động dời sang ngày 15/01/2027    And Tài khoản của khách hàng hoàn toàn không bị trừ tiền vào ngày T-1 (14/12).
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+3. ĐẶC TẢ CHI TIẾT FUL-SUBSCR-OOS: XỬ LÝ HẾT HÀNG TẠI NGÀY CHỐT ĐƠN T-1 SUBSCRIBE & SAVE (SUBSTITUTE & GRANDFATHERED PROTECTION)
+3.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-SUBSCR-OOS
+• Tên nghiệp vụ: Xử Lý Ngoại Lệ Hết Hàng Định Kỳ Tại Ngày Chốt Đơn T-1, Gợi Ý Thay Thế Tương Đương & Bảo Lưu Quyền Lợi Chiết Khấu (Subscribe & Save Out-of-Stock Substitution & Grandfathered Discount Protection)
+• Tương đương thực tế: Amazon Subscribe & Save Out-of-Stock Replacement & Skip Protection Protocol.
+3.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Giải quyết bài toán đứt gãy chuỗi cung ứng khi một sản phẩm định kỳ bất ngờ hết hàng tồn kho tại ngày chốt đơn T-1.
+• Bảo vệ tối đa quyền lợi của khách hàng: Bảo lưu mức chiết khấu 15% (Grandfathered Discount Protection) cho các sản phẩm còn lại trong đơn hàng ngay cả khi việc thiếu hụt sản phẩm làm tổng số lượng bị rơi xuống dưới 5 món.
+• Tự động gợi ý sản phẩm thay thế tương đương (cùng chủng loại, dung tích, công dụng, thương hiệu tương đương với giá bằng hoặc rẻ hơn) kèm tùy chọn xác nhận 1-chạm.
+• Đảm bảo khách hàng không bị phạt, không bị gián đoạn chuỗi giao hàng và có thể chọn tự động thử đặt lại (Backorder Retry trong 7 ngày) hoặc tự động lùi sang chu kỳ sau.
+• Tác nhân tham gia:
+• Hệ thống Đăng ký Định kỳ (Subscription Engine): Quét tồn kho ATP tại thời điểm T-1, phát hiện sản phẩm bị Out-Of-Stock.
+• Động cơ Đề xuất Thay thế (Substitution Recommendation Engine): Thuật toán AI đối soát danh mục tìm sản phẩm tương đương đạt chuẩn chất lượng.
+• Khách hàng (Subscriber): Nhận thông báo cảnh báo hết hàng, phê duyệt đổi sản phẩm hoặc chọn chờ hàng về.
+• Hệ thống Sổ cái Chiết khấu (Discount Ledger): Thực thi chính sách bảo lưu tỷ lệ giảm giá (Grandfathering Rule).
+3.3 Điều kiện tiên quyết
+1. Hợp đồng Subscribe & Save đang ở trạng thái hiệu lực và đến hạn khóa đơn tại ngày T-1.
+2. Tồn kho khả dụng (Available-To-Promise - ATP) của SKU đã đăng ký tại hệ thống kho vận bằng 0 (inventory_atp == 0).
+3.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[NGÀY T-1 (00:00:01): QUÉT TỒN KHO TOÀN BỘ CÁC MÓN S&S]                       │                       ▼    [PHÁT HIỆN 01 SẢN PHẨM HẾT HÀNG (OUT OF STOCK)]                       │                       ▼[ĐỘNG CƠ BẢO LƯU CHIẾT KHẤU BẬC THANG (GRANDFATHERING)]  ├── Đơn ban đầu có 5 món (hưởng 15%), nay hụt 1 món còn 4 món  └── HỆ THỐNG KHÓA CỨNG: Vẫn giữ nguyên mức giảm 15% cho 4 món còn lại!                       │                       ▼[ĐỘNG CƠ GỢI Ý SẢN PHẨM THAY THẾ (SUBSTITUTION ENGINE)]  ├── Quét SKU tương đương cùng nhóm danh mục, cùng thể tích/quy cách  ├── Điều kiện: Giá niêm yết của SKU thay thế <= Giá của SKU gốc  └── Tìm thấy: Sản phẩm thay thế tối ưu (Matched Candidate)                       │                       ▼[GỬI CẢNH BÁO KHẨN QUA PUSH NOTIFICATION & SMS CHO KHÁCH HÀNG]  ├── "Món hàng A bị hết hàng. Chúng tôi gợi ý đổi sang Món B với giá ưu đãi tương đương"  └── Cung cấp 3 lựa chọn 1-chạm (Hạn chót: 18:00 ngày T-1):        ├── LỰA CHỌN 1: ĐỒNG Ý ĐỔI SANG SẢN PHẨM THAY THẾ (SUBSTITUTE)        ├── LỰA CHỌN 2: CHỜ HÀNG VỀ GIAO BÙ TRONG 7 NGÀY (BACKORDER RETRY 7D)        └── LỰA CHỌN 3: BỎ QUA MÓN NÀY KỲ NÀY, TỰ ĐỘNG GIAO LẠI VÀO THÁNG SAU                       │                       ▼[XỬ LÝ THEO PHẢN HỒI CỦA KHÁCH HÀNG (HOẶC HẾT HẠN MẶC ĐỊNH)]:  ├── Nếu Khách bấm "Đồng ý đổi" -> Thay thế SKU vào đơn, xuất kho cùng chuyến  ├── Nếu Khách bấm "Chờ hàng về" -> Giữ lệnh Backorder 7 ngày, có hàng gửi riêng 0đ phí  └── Nếu Khách không phản hồi trước 18:00 -> Tự động chọn LỰA CHỌN 3 (Bỏ qua an toàn)
+--- TABLE END ---
+• Bước 1 (Phát hiện thiếu hụt kho tại thời điểm T-1):
+• Vào lúc 00:00:01 ngày T-1, Cron Job kiểm tra tồn kho ATP cho toàn bộ các đơn hàng chuẩn bị chốt.
+• Phát hiện SKU VAR-DETERGENT-ORGANIC-3L (Nước giặt Hữu cơ 3L) có inventory_atp = 0.
+• Bước 2 (Thực thi Bảo Lưu Quyền Lợi Chiết Khấu - Grandfathering Protection):
+• Giả sử đơn hàng của khách hàng tháng này gồm đúng 5 sản phẩm (đang đủ điều kiện hưởng chiết khấu 15%). Khi 1 sản phẩm bị hết hàng, số lượng thực giao chỉ còn 4 sản phẩm.
+• Quy tắc bảo vệ tuyệt đối: Hệ thống kích hoạt cờ GRANDFATHERED_TIER_PROTECTION = TRUE. Mức chiết khấu 15% vẫn được giữ nguyên vẹn cho 4 sản phẩm còn lại. Khách hàng hoàn toàn không bị hạ bậc xuống 5% do lỗi thiếu hụt nguồn cung từ phía sàn/người bán.
+• Bước 3 (Tìm kiếm Sản phẩm Thay thế Tương đương):
+• Thuật toán AI rà soát kho tìm sản phẩm thay thế theo tiêu chí nghiêm ngặt:
+• Cùng nhóm hàng hóa và công dụng (ví dụ: Nước giặt sinh học/hữu cơ).
+• Quy cách đóng gói tương đương (dung tích $3\text{L} \pm 10\%$).
+• Thương hiệu có uy tín ngang bằng hoặc cao hơn.
+• Đơn giá niêm yết: Bắt buộc $\le$ đơn giá của sản phẩm gốc. Nếu sản phẩm thay thế có giá gốc cao hơn đôi chút, hệ thống tự động cấn trừ phần chênh lệch (Price Match Override) để khách hàng chỉ phải trả số tiền bằng hoặc thấp hơn giá sản phẩm ban đầu.
+• Bước 4 (Phát thông báo lựa chọn 1-chạm):
+• Hệ thống gửi thông báo Push Notification ưu tiên cao và email:
+• "Sản phẩm Nước giặt Hữu cơ 3L của kỳ giao ngày 15/12 tạm thời hết hàng. Chúng tôi đã chọn sẵn sản phẩm thay thế: Nước giặt Sinh học Cao cấp 3.2L với mức giá ưu đãi không đổi."
+• Trên giao diện hiển thị 3 nút bấm tương tác nhanh:
+1. [Chấp thuận đổi sang sản phẩm này]: Áp dụng ngay vào đơn giao ngày mai.
+2. [Chờ hàng về trong 7 ngày]: Hệ thống sẽ tự động quét kho mỗi 12 giờ. Nếu có hàng về trong vòng 7 ngày, lập tức giao riêng miễn phí vận chuyển.
+3. [Bỏ qua món này tháng này]: Không giao món này, 4 món kia vẫn giao bình thường với chiết khấu 15%. Món này tự động lên lịch giao lại vào ngày 15 tháng sau.
+• Bước 5 (Xử lý mặc định an toàn):
+• Nếu đến 18:00 ngày T-1 mà khách hàng không thực hiện bất kỳ thao tác nào: Để đảm bảo không tự ý giao sản phẩm khách chưa ưng thuận, hệ thống tự động thực thi kịch bản an toàn nhất là Lựa chọn 3 (Bỏ qua món này, xuất kho các món còn lại với chiết khấu 15% nguyên vẹn).
+3.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Không tìm thấy sản phẩm thay thế tương đương nào trong kho:
+• Nếu toàn bộ danh mục sản phẩm tương đương đều hết hàng hoặc không đạt chuẩn quy cách:
+• Hệ thống tự động kích hoạt chế độ "Bỏ qua chu kỳ có bảo lưu" (AUTO_SKIP_TIER_PROTECTED).
+• Gửi thông báo xin lỗi tới khách hàng kèm 01 Voucher thiện chí trị giá 30.000 VNĐ vì sự cố gián đoạn nguồn cung.
+• Ngoại lệ 2: Hàng về trong thời hạn Backorder 7 ngày:
+• Nếu khách hàng chọn phương án "Chờ hàng về 7 ngày":
+• Vào ngày thứ 3, lô hàng mới cập bến kho WMS (inventory_atp > 0).
+• Hệ thống tự động tạo đơn hàng bổ sung (Backorder_Shipment), tự động áp dụng mức chiết khấu 15% ban đầu, và đài thọ 100% chi phí vận chuyển riêng lẻ cho kiện hàng này.
+3.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-OOS-01 | Bảo Lưu Quyền Lợi Bậc Thang (Grandfathered Discount Guarantee) | Nếu việc một hoặc nhiều mặt hàng bị hết kho làm cho tổng số sản phẩm thực tế của kỳ giao bị giảm xuống dưới ngưỡng 5 món, sàn cam kết bảo lưu nguyên vẹn 100% tỷ lệ chiết khấu 15% cho các mặt hàng còn lại. Mọi tổn thất chi phí do chiết khấu được sàn hạch toán vào chi phí bồi hoàn dịch vụ chuỗi cung ứng.
+BR-OOS-02 | Ràng Buộc Khóa Giá Sản Phẩm Thay Thế (Price Cap on Substitution) | Khách hàng tuyệt đối không bao giờ phải trả thêm tiền khi chấp nhận sản phẩm thay thế do sàn gợi ý: substitute_price_charged = min(original_item_price, substitute_market_price). Nếu sản phẩm thay thế có giá niêm yết cao hơn, phần chênh lệch do sàn trợ giá 100%.
+BR-OOS-03 | Quy Tắc Đồng Thuận Minh Bạch (Explicit Consent Rule) | Hệ thống nghiêm cấm tự ý thay đổi mã sản phẩm (SKU) nếu không có sự phê duyệt chủ động từ phía khách hàng. Nếu khách không phản hồi trước 18:00 ngày T-1, hệ thống bắt buộc phải bỏ qua sản phẩm đó, không được tự ý ép khách nhận sản phẩm thay thế.
+--- TABLE END ---
+3.7 Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Ngoại Lệ Hết Hàng (`subscription_reorder_exceptions`):
+--- TABLE START ---
+{  "exception_id": "EXC-SUB-2026-0091",  "subscription_id": "SUB-2026-992148",  "scheduled_variant_id": "VAR-DETERGENT-ORGANIC-3L",  "scheduled_order_date": "2026-11-15",  "stock_status_at_cutoff": "OUT_OF_STOCK",  "substitute_variant_id": "VAR-DETERGENT-BIO-3200ML",  "original_item_price": 280000,  "substitute_market_price": 310000,  "substitute_price_charged": 280000,  "platform_subsidized_diff": 30000,  "grandfathered_discount_rate": 0.15,  "customer_decision": "PENDING_INPUT",  "decision_deadline": "2026-11-14T18:00:00Z",  "handling_action_taken": "CYCLE_SKIPPED_TIER_PROTECTED",  "created_at": "2026-11-14T00:00:05Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Xử lý Ngoại lệ Hết hàng:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[SCHEDULED_REORDER] | ATP_STOCK_EQUALS_ZERO | Ngày chốt đơn T-1 lúc 00:00 | OOS_DETECTED_ANALYZING | Kích hoạt cờ Grandfathered 15%
+OOS_DETECTED_ANALYZING | SUBSTITUTE_FOUND | Tìm thấy SKU tương đương $\le$ giá | PROMPT_SENT_TO_CUSTOMER | Gửi Push/SMS hiển thị 3 lựa chọn 1-chạm
+PROMPT_SENT_TO_CUSTOMER | CUSTOMER_ACCEPTED_SUBSTITUTE | Bấm chọn trước 18:00 ngày T-1 | SUBSTITUTE_APPLIED | Gán SKU mới vào đơn, khớp giá gốc
+PROMPT_SENT_TO_CUSTOMER | CUSTOMER_SELECTED_BACKORDER | Bấm chọn trước 18:00 ngày T-1 | BACKORDER_PENDING_7D | Tách đơn chờ hàng về trong 7 ngày
+PROMPT_SENT_TO_CUSTOMER | CUSTOMER_TIMEOUT_OR_SKIP | Quá 18:00 không chọn hoặc bấm Skip | SKIPPED_TIER_PROTECTED | Bỏ qua món này, xuất kho các món còn lại
+BACKORDER_PENDING_7D | RESTOCKED_WITHIN_7D | Kho nhập hàng mới trong 7 ngày | BACKORDER_DISPATCHED | Tạo kiện xuất kho riêng, freeship 100%
+BACKORDER_PENDING_7D | TIMEOUT_AFTER_7D | Quá 7 ngày chưa có hàng | BACKORDER_EXPIRED_CLOSED | Hủy đơn bù, gửi voucher xin lỗi 30.000đ
+--- TABLE END ---
+3.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Xử Lý Ngoại Lệ Hết Hàng Subscribe & Save Tại Ngày Chốt Đơn T-1 (FUL-SUBSCR-OOS)  Scenario: Bảo lưu chiết khấu 15% và tự động bỏ qua an toàn khi khách hàng không phản hồi gợi ý thay thế    Given Khách hàng đăng ký gói 5 sản phẩm định kỳ tháng 11 để hưởng chiết khấu 15%    When Đúng 00:00:01 ngày T-1 (14/11), hệ thống phát hiện sản phẩm "Nước giặt Hữu cơ 3L" bị hết tồn kho    Then Hệ thống tự động kích hoạt chính sách Grandfathered Protection để giữ nguyên mức giảm 15% cho 4 sản phẩm còn lại    And Hệ thống tìm thấy sản phẩm thay thế "Nước giặt Bio 3.2L" và gửi thông báo đề xuất cho khách hàng    When Đến 18:00:01 ngày T-1, khách hàng bận việc không mở điện thoại để phản hồi    Then Hệ thống tự động thực thi kịch bản an toàn: Bỏ qua sản phẩm nước giặt trong kỳ tháng 11    And 4 sản phẩm còn lại vẫn được đóng gói xuất kho đúng lịch với mức chiết khấu 15% đầy đủ    And Sản phẩm nước giặt tự động được lên lịch tái đặt vào kỳ tháng 12 mà khách không bị phạt bất cứ khoản phí nào.  Scenario: Khách hàng đồng ý đổi sang sản phẩm thay thế có giá niêm yết cao hơn nhưng được sàn bảo lưu giá    Given Sản phẩm định kỳ của khách hàng có giá gốc 280.000 VNĐ bị hết hàng tại ngày T-1    When Hệ thống gợi ý sản phẩm thay thế cao cấp hơn có giá thị trường niêm yết là 310.000 VNĐ    And Khách hàng bấm nút "Đồng ý đổi sang sản phẩm này" vào lúc 10:15 sáng ngày T-1    Then Hệ thống tự động áp dụng mức giá thanh toán cho khách bằng đúng giá gốc là 280.000 VNĐ    And Phần chênh lệch 30.000 VNĐ được sàn tài trợ chi trả trực tiếp cho nhà cung cấp    And Mức chiết khấu định kỳ 15% được tính trên giá 280.000 VNĐ (khách chỉ thực trả 238.000 VNĐ).
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4. ĐẶC TẢ CHI TIẾT FUL-PICKUP-02: NHẬN HÀNG TẠI CỬA HÀNG (APPLE STORE IN-STORE PICKUP & WALLET PASS ENGINE)
+4.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-PICKUP-02
+• Tên nghiệp vụ: Nhận Hàng Tại Cửa Hàng, Check-in Bằng Thẻ Số Apple Wallet Pass & Quản Trị Ủy Quyền (Apple Store In-Store Pickup, PassKit Dynamic QR & Designated Contact Engine)
+• Tương đương thực tế: Apple Store Express Pickup, Best Buy Curbside & In-Store Pickup.
+4.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Xóa bỏ hoàn toàn thời gian chờ đợi giao bưu điện đối với các thiết bị công nghệ giá trị cao (iPhone, iPad, MacBook).
+• Khách hàng đặt mua trực tuyến và có thể đến nhận máy tại cửa hàng bán lẻ gần nhất chỉ sau 1 đến 2 giờ (Express Pickup) hoặc chọn chuyển hàng từ kho tổng về cửa hàng (Ship-to-Store sau 1-3 ngày).
+• Cung cấp trải nghiệm nhận hàng không tiếp xúc thông qua thẻ số Apple Wallet Pass / Google Wallet với mã QR động thay đổi mỗi 60 giây, hỗ trợ check-in tại cửa hàng trong vòng chưa đầy 60 giây.
+• Thiết lập cơ chế ủy quyền người nhận thay hợp pháp (Designated Pickup Contact) có ràng buộc pháp lý chặt chẽ.
+• Quy định chính sách lưu kho 14 ngày nghiêm ngặt: Tự động hủy và hoàn trả 100% tiền thanh toán nếu khách không đến nhận.
+• Tác nhân tham gia:
+• Khách hàng (Buyer): Đặt hàng trực tuyến, tải thẻ số vào Apple/Google Wallet, trực tiếp đến cửa hàng hoặc ủy quyền người khác đến nhận.
+• Người nhận thay được ủy quyền (Designated Pickup Contact): Người được chỉ định hợp pháp, xuất trình căn cước công dân và mã QR nhận hàng.
+• Nhân viên Bán lẻ Cửa hàng (Specialist / Genius Bar Staff): Tiếp nhận thông báo check-in trên thiết bị POS cầm tay, lấy máy từ kho quầy và bàn giao trong 2 phút.
+• Hệ thống POS Bán lẻ & Tồn kho Cửa hàng (Store Inventory POS): Đồng bộ số lượng tồn kho khả dụng thời gian thực với website thương mại điện tử.
+• Dịch vụ Thẻ số Điện tử (Apple PassKit & Google Wallet Gateway): Sinh tệp .pkpass và mã QR động bảo mật cao.
+4.3 Điều kiện tiên quyết
+1. Cửa hàng bán lẻ được chọn có sẵn hàng tồn kho tại quầy (store_inventory_atp >= order_quantity) đối với gói Nhận Sau 1-2 Giờ.
+2. Đơn hàng bắt buộc phải được thanh toán trả trước 100% bằng thẻ tín dụng, thẻ ghi nợ hoặc ví điện tử (không chấp nhận thanh toán COD tiền mặt khi đến nhận tại cửa hàng đối với đơn đặt online).
+3. Khách hàng hoặc người nhận thay phải có Căn cước công dân (CCCD) hoặc Hộ chiếu trùng khớp thông tin đã khai báo.
+4.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[CHỌN THIẾT BỊ TRÊN WEBSITE / APP]               │               ▼[BẬT TÙY CHỌN: "NHẬN TẠI CỬA HÀNG" (IN-STORE PICKUP)]  ├── Nhập Quận/Huyện hoặc định vị GPS -> Hiện danh sách Store gần nhất  ├── Store A: "Có sẵn - Nhận hàng sau 1-2 giờ hôm nay" (Express Pickup)  └── Store B: "Không có sẵn - Chuyển hàng về nhận sau 2 ngày" (Ship-to-Store)               │               ▼[CHỌN KHUNG GIỜ NHẬN (PICKUP WINDOW) & KHAI BÁO NGƯỜI NHẬN]  ├── Người nhận chính chủ (Mặc định theo thông tin tài khoản)  └── Hoặc: "ỦY QUYỀN CHO NGƯỜI KHÁC NHẬN HỘ" (Designated Pickup Contact):        └── Khai báo: Họ tên CCCD, Số điện thoại, Email người nhận thay               │               ▼[THANH TOÁN 100% TRỰC TUYẾN -> ĐƠN HÀNG ĐƯỢC TẠO]               │               ▼[CỬA HÀNG SOẠN HÀNG TRONG VÒNG 45 PHÚT]  ├── Nhân viên kho quét mã Serial/IMEI thiết bị gán vào đơn  ├── Đóng gói vào túi chuyên dụng của Apple Store kèm tem niêm phong  └── Chuyển trạng thái đơn: "READY_FOR_PICKUP"               │               ▼[GỬI THÔNG BÁO "HÀNG ĐÃ SẴN SÀNG" & CẤP THẺ APPLE WALLET PASS]  ├── Email & SMS chứa liên kết: "Thêm vào Apple Wallet" (Add to Apple Wallet)  └── Khách bấm nút -> Tải thẻ số .pkpass vào ứng dụng Wallet trên iPhone/Apple Watch        └── Thẻ số hiển thị: Mã QR Động (Dynamic TOTP 60s), Tên cửa hàng, Khung giờ hẹn               │               ▼[KHÁCH HÀNG / NGƯỜI NHẬN THAY ĐẾN CỬA HÀNG CHECK-IN]  ├── Khi khách bước vào bán kính 50m của Store: iBeacon/Geofence kích hoạt thông báo Wallet  ├── Khách quét mã QR tại quầy Check-in Kiosk hoặc xuất trình cho Specialist  └── Specialist dùng máy POS quét mã QR -> Hệ thống báo vị trí kệ hàng trong kho               │               ▼[BÀN GIAO THIẾT BỊ TẬN TAY TRONG VÒNG 120 GIÂY]  ├── Đối chiếu CCCD của người nhận khớp với hồ sơ đơn hàng  ├── Khách hàng ký nhận điện tử trên màn hình POS của nhân viên  └── Đơn hàng chuyển trạng thái "PICKED_UP_COMPLETED" -> Kích hoạt bảo hành điện tử chính hãng.
+--- TABLE END ---
+• Bước 1 (Chọn cửa hàng và kiểm tra tồn kho thời gian thực):
+• Tại trang thanh toán, khách chọn phương thức "Nhận hàng tại Cửa hàng" (In-Store Pickup).
+• Hệ thống định vị tọa độ của khách, hiển thị danh sách các cửa hàng gần nhất:
+• Apple Store Đồng Khởi (Cách 3.2 km): Trạng thái xanh lá: "Có sẵn hàng - Sẵn sàng nhận sau 1-2 giờ".
+• Apple Store Landmark 81 (Cách 6.5 km): Trạng thái vàng: "Hàng đang điều chuyển - Nhận sau 2 ngày".
+• Khách chọn Apple Store Đồng Khởi và chọn Khung giờ hẹn đến nhận (ví dụ: 14:00 - 16:00 hôm nay).
+• Bước 2 (Chỉ định người nhận hàng & Ủy quyền hợp pháp):
+• Khách hàng có 2 tùy chọn người nhận:
+• Tùy chọn 1 (Chính chủ): Sử dụng họ tên và số điện thoại trên tài khoản.
+• Tùy chọn 2 (Ủy quyền người khác nhận thay): Nhập họ tên đầy đủ trên CCCD, số điện thoại và email của người nhận thay. Hệ thống ghi nhận đây là Người nhận thay được ủy quyền duy nhất (Designated Pickup Contact). Người khác không có tên trong danh sách sẽ bị từ chối tuyệt đối.
+• Bước 3 (Thanh toán & Chuẩn bị hàng tại cửa hàng):
+• Khách thanh toán 100% giá trị máy trực tuyến. Đơn hàng chuyển tức thì về thiết bị POS của Apple Store Đồng Khởi.
+• Trong vòng 45 phút, nhân viên cửa hàng lấy đúng chiếc máy theo biến thể, dùng máy quét barcode quét số Serial/IMEI thân máy để liên kết với đơn hàng (SERIAL_BOUND_TO_PICKUP), dán nhãn thông tin khách hàng và đặt vào kệ hàng Pickup Chờ Nhận.
+• Đơn hàng chuyển sang trạng thái READY_FOR_PICKUP.
+• Bước 4 (Cấp thẻ số Apple Wallet Pass với mã QR động):
+• Hệ thống gửi email và thông báo đẩy: "Đơn hàng của bạn đã sẵn sàng tại Apple Store Đồng Khởi".
+• Thông báo đính kèm nút chuẩn quốc tế: "Add to Apple Wallet".
+• Khách hàng hoặc người nhận thay chạm vào nút: Ứng dụng tự động tải tệp tin .pkpass có chữ ký số mã hóa của sàn.
+• Trên thẻ Apple Wallet Pass hiển thị:
+• Logo cửa hàng, Tên sản phẩm, Mã đơn hàng.
+• Mã QR động (Dynamic Time-based One-Time QR Code): Mã QR này tự động làm mới sau mỗi 60 giây dựa trên thuật toán mật mã TOTP để chống hành vi chụp ảnh màn hình chia sẻ cho kẻ gian nhận trộm hàng.
+• Bước 5 (Check-in thông minh tại cửa hàng):
+• Khi khách hàng đến gần cửa hàng (bán kính 50 mét), định vị Geofence và công nghệ Bluetooth Low Energy (iBeacon) tại cửa hàng sẽ tự động làm sáng thẻ Apple Wallet trên màn hình khóa điện thoại của khách kèm lời chào: "Chào mừng bạn đến Apple Store Đồng Khởi. Chạm để mở thẻ nhận hàng".
+• Khách hàng bước vào quầy Express Pickup, xuất trình thẻ Apple Wallet.
+• Nhân viên quét mã QR bằng máy POS. Màn hình POS lập tức hiển thị chính xác vị trí ngăn kệ trong kho (ví dụ: Kệ A3 - Ngăn 12).
+• Bước 6 (Đối soát căn cước & Bàn giao thiết bị):
+• Nhân viên yêu cầu người nhận xuất trình CCCD gốc hoặc VNeID định danh điện tử mức 2:
+• Nếu người nhận là chính chủ: Tên trên CCCD trùng với tên trên hóa đơn.
+• Nếu là người nhận thay: Tên trên CCCD phải trùng khớp 100% với thông tin designated_pickup_contact đã đăng ký.
+• Người nhận ký xác nhận điện tử trực tiếp trên màn hình máy POS của nhân viên.
+• Đơn hàng chuyển trạng thái PICKED_UP_COMPLETED. Hệ thống kích hoạt chế độ bảo hành chính hãng AppleCare và phát hành hóa đơn điện tử GTGT qua email.
+4.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Quá hạn lưu kho 14 ngày không đến nhận (14-Day Store Hold Expiration):
+• Kể từ thời điểm hàng chuyển sang READY_FOR_PICKUP, cửa hàng lưu kho giữ máy cho khách trong đúng 14 ngày lịch liên tục (336 giờ).
+• Hệ thống tự động gửi thông báo nhắc nhở vào các mốc: Ngày thứ 3, Ngày thứ 7, Ngày thứ 12 và Ngày thứ 14 (Cảnh báo hủy đơn cuối cùng).
+• Đúng 23:59:59 của ngày thứ 14: Nếu khách vẫn không đến nhận, hệ thống tự động kích hoạt hủy đơn hàng (AUTO_CANCELLED_UNCLAIMED_PICKUP).
+• Hệ thống gửi lệnh hoàn tiền 100% về đúng phương thức thanh toán ban đầu của khách trong vòng 3 đến 5 ngày làm việc.
+• Nhân viên cửa hàng quét trả lại máy về kệ bán lẻ để phục vụ khách mua trực tiếp (RESTOCKED_TO_STORE_SHELF).
+• Ngoại lệ 2: Người đến nhận không xuất trình được giấy tờ CCCD hợp lệ:
+• Nếu người đến nhận không mang CCCD hoặc thông tin trên CCCD không trùng khớp với tên người mua/người nhận thay đã khai báo:
+• Nhân viên kiên quyết từ chối bàn giao máy (PICKUP_VERIFICATION_FAILED).
+• Hướng dẫn khách hàng: Người mua chính chủ có thể mở ứng dụng trên điện thoại, truy cập chi tiết đơn hàng và bấm "Cập nhật lại thông tin người nhận thay" có xác thực OTP tài khoản. Sau khi cập nhật thành công, nhân viên mới tiến hành đối soát và bàn giao máy.
+4.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-PCK-01 | Cam Kết Thời Hạn Chuẩn Bị Hàng 2 Giờ (Store Readiness SLA) | Đối với đơn hàng Express Pickup có sẵn hàng tại cửa hàng, cửa hàng cam kết hoàn tất việc lấy máy, quét số Serial và đóng gói sẵn sàng trong vòng tối đa 120 phút (2 giờ làm việc) kể từ lúc đơn hàng được thanh toán. Nếu quá 120 phút nhân viên chưa bấm Ready, hệ thống OMS phát cảnh báo đỏ lên màn hình Store Manager.
+BR-PCK-02 | Mã QR Động Chống Gian Lận (Dynamic Anti-Screenshot QR Code) | Mã QR hiển thị trên thẻ Apple Wallet Pass và App của khách hàng được tạo bởi thuật toán mã hóa SHA-256 kèm con dấu thời gian (Timestamp) có thời hạn sống TTL là 60 giây. Mọi ảnh chụp màn hình tĩnh (Screenshot) được gửi qua ứng dụng chat quá 60 giây sẽ bị máy POS quét báo lỗi EXPIRED_PICKUP_TOKEN, triệt tiêu rủi ro lộ mã nhận trộm máy.
+BR-PCK-03 | Quy Tắc Khóa Cứng Thông Tin Người Nhận Thay (Designated Contact Lockdown) | Khách hàng chỉ được phép đăng ký tối đa 01 người nhận thay duy nhất cho mỗi đơn hàng. Sau khi cửa hàng đã quét chuẩn bị máy (READY_FOR_PICKUP), mọi thao tác thay đổi người nhận thay bắt buộc phải vượt qua bước xác thực xác minh 2 lớp (SMS OTP gửi về số điện thoại đăng ký ban đầu của chủ tài khoản).
+BR-PCK-04 | Chính Sách Lưu Kho Tối Đa 14 Ngày & Hoàn Tiền 100% (14-Day Strict Holding Window) | Thời hạn lưu kho tại cửa hàng là 14 ngày theo lịch. Quá thời hạn này, hệ thống tự động hủy đơn và hoàn tiền 100% cho người mua, cửa hàng không được phép thu bất kỳ khoản phí lưu kho hay phí quản lý nào của khách hàng.
+--- TABLE END ---
+4.7 Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Đơn Nhận Tại Cửa Hàng (`store_pickup_order`):
+--- TABLE START ---
+{  "pickup_order_id": "PCK-20261105-0912",  "order_id": "ORD-20261105-88412",  "store_id": "STORE-HCM-DONGKHOI",  "pickup_fulfillment_type": "EXPRESS_1_2_HOURS",  "designated_contact": {    "is_self_pickup": false,    "full_name_on_id": "Trần Thị Thu Hà",    "id_card_number_masked": "07919500**** ",    "contact_phone": "+84 91 884 9922",    "contact_email": "thuha.tran@example.com"  },  "passkit_metadata": {    "pass_serial_number": "PASS-PK-88412-001",    "authentication_token": "a8f9c2d1e4b7890123456789abcdef01",    "last_qr_refresh_at": "2026-11-05T09:42:10Z"  },  "staging_location": "SHELF-B2-SLOT-09",  "bound_hardware_serial": "F2LW9901Q882",  "ready_at": "2026-11-05T08:45:00Z",  "pickup_deadline": "2026-11-19T23:59:59Z",  "pickup_status": "READY_FOR_PICKUP"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Nhận Tại Cửa Hàng (Store Pickup State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[ORDER_PAID] | STORE_ROUTING_SUCCESS | Có tồn kho tại Store được chọn | ALLOCATED_TO_STORE | Phát chuông POS cửa hàng, bắt đầu tính SLA 2h
+ALLOCATED_TO_STORE | STAFF_SCANNED_SERIAL_PACKED | Quét số Serial/IMEI đóng túi | READY_FOR_PICKUP | Cấp thẻ số Apple Wallet, gửi email mời nhận
+READY_FOR_PICKUP | CUSTOMER_CHECKIN_STORE | Quét mã QR PassKit hợp lệ | CHECKED_IN_AT_STORE | Báo vị trí kệ hàng lên máy POS của nhân viên
+CHECKED_IN_AT_STORE | ID_VERIFIED_SIGNATURE_CAPTURED | Khớp CCCD và ký nhận điện tử | PICKED_UP_COMPLETED | Đóng đơn, gửi hóa đơn GTGT, kích hoạt bảo hành
+CHECKED_IN_AT_STORE | ID_MISMATCH_REJECTED | Sai CCCD hoặc không có ủy quyền | READY_FOR_PICKUP | Từ chối bàn giao, yêu cầu cập nhật lại hồ sơ
+READY_FOR_PICKUP | HOLD_WINDOW_14D_EXPIRED | Quá 14 ngày không đến nhận | CANCELLED_STORE_EXPIRED | Tự động hủy đơn, hoàn tiền 100%, trả hàng về kệ
+--- TABLE END ---
+4.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Nhận Hàng Tại Cửa Hàng Apple Store In-Store Pickup (FUL-PICKUP-02)  Scenario: Khách hàng ủy quyền cho người thân đến nhận máy bằng thẻ Apple Wallet Pass và đối soát CCCD    Given Khách hàng đặt mua MacBook Pro M4 trực tuyến chọn nhận tại Apple Store Đồng Khởi    And Khách hàng chọn ủy quyền cho người thân "Trần Thị Thu Hà" nhận thay và điền đầy đủ CCCD    When Cửa hàng đóng gói xong và gửi thẻ số Apple Wallet Pass cho người nhận thay    And Người nhận thay đến cửa hàng, quét mã QR động trên Apple Wallet tại quầy Express Pickup    And Nhân viên đối chiếu số thẻ CCCD của người nhận trùng khớp 100% với thông tin ủy quyền    And Người nhận ký tên điện tử trên màn hình POS của nhân viên    Then Máy POS phê duyệt hoàn tất và bàn giao chiếc MacBook trong vòng 90 giây    And Trạng thái đơn hàng cập nhật thành "PICKED_UP_COMPLETED"    And Chủ tài khoản nhận được email thông báo đơn hàng đã được người thân nhận thành công.  Scenario: Tự động hủy đơn và hoàn tiền 100% khi khách hàng quá 14 ngày không đến nhận máy    Given Đơn hàng đã ở trạng thái "READY_FOR_PICKUP" tại Apple Store từ ngày 01/11/2026    And Hệ thống đã gửi thông báo nhắc nhở vào các ngày 04/11, 08/11 và 13/11    When Đến 00:00:01 ngày 16/11/2026 (quá hạn lưu kho 14 ngày liên tục)    Then Hệ thống tự động kích hoạt hủy đơn hàng với trạng thái "CANCELLED_STORE_EXPIRED"    And Hệ thống tự động gửi lệnh hoàn trả 100% số tiền 35.000.000 VNĐ về thẻ tín dụng của khách    And Nhân viên cửa hàng quét số Serial sản phẩm trả lại kho bán lẻ phục vụ khách hàng khác.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+5. ĐẶC TẢ CHI TIẾT FUL-EXPRESS-03: GIAO HÀNG HỎA TỐC 1-2 GIỜ NỘI THÀNH (LIVE GPS TELEMETRY & PHOTO POD)
+5.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-EXPRESS-03
+• Tên nghiệp vụ: Giao Hàng Hỏa Tốc Nội Thành 1-2 Giờ, Điều Phối Tài Xế Thời Gian Thực, Live GPS Telemetry & Xác Thực Bằng Chứng Giao Hàng Photo POD (Express Instant Delivery, Live GPS Tracking & Watermarked Proof-of-Delivery)
+• Tương đương thực tế: Shopee Hỏa Tốc (SPX Instant), GrabExpress 1H, BeDelivery Express.
+5.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Đáp ứng nhu cầu mua sắm thiết bị công nghệ khẩn cấp trong vòng 60 đến 120 phút trong phạm vi nội thành bán kính 15km.
+• Cung cấp trải nghiệm theo dõi vị trí tài xế hoàn toàn minh bạch trên bản đồ số, loại bỏ trạng thái hoang mang chờ đợi bưu tá.
+• Triệt tiêu 100% tranh chấp giao hàng "Khách báo chưa nhận nhưng shipper báo đã giao" nhờ cơ chế đồng bộ: Mã OTP/PIN nhận hàng 4 chữ số kết hợp Ảnh chụp bằng chứng giao hàng (Photo POD) có gắn watermark định vị tọa độ và con dấu thời gian bất biến.
+• Thực thi cam kết bồi thường SLA tự động: Tự động phát hành voucher 50.000 VNĐ nếu giao trễ hẹn quá 30 phút.
+• Tác nhân tham gia:
+• Khách hàng (Buyer): Người đặt hàng hỏa tốc, theo dõi phương tiện trên bản đồ, cung cấp mã Delivery PIN và nhận hàng.
+• Cửa hàng bán lẻ / Kho vệ tinh (Local Store / Dark Store Hub): Điểm xuất hàng nội thành, thực hiện soạn hàng và đóng gói khẩn cấp trong 15 phút.
+• Tài xế giao vận (Delivery Driver): Tài xế xe máy thuộc đội xe sàn (SPX Instant) hoặc đối tác liên kết On-demand (Grab/Be).
+• Hệ thống Điều phối Vận tải (Transportation Management System - TMS): Thuật toán khớp lệnh tài xế theo khoảng cách, điều phối lộ trình và quản lý SLA.
+• Hệ thống Viễn thông Định vị (GPS Telemetry & Map Gateway): Máy chủ WebSocket/SSE xử lý dữ liệu vị trí tài xế và dịch vụ bản đồ số.
+5.3 Điều kiện tiên quyết
+1. Khoảng cách định tuyến đường bộ từ điểm xuất hàng đến địa chỉ nhận hàng $\le 15.0$ km.
+2. Đơn hàng được khởi tạo trong khung giờ hoạt động hỏa tốc: từ 08:00 đến 19:30 hàng ngày.
+3. Mặt hàng có sẵn tại kho cửa hàng nội thành cùng khu vực (store_inventory_atp >= order_quantity).
+4. Trọng lượng kiện hàng $\le 10$ kg và kích thước 3 chiều tối đa $50\text{cm} \times 40\text{cm} \times 30\text{cm}$.
+5.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Chọn phương thức Hỏa tốc tại Giỏ hàng):
+• Khách hàng nhập địa chỉ nhận hàng. Hệ thống Geolocation API đối chiếu tọa độ với mạng lưới cửa hàng nội thành.
+• Kích hoạt tùy chọn: "Giao Hỏa Tốc 1-2 Giờ (SPX Instant / GrabExpress)" kèm phí dịch vụ (ví dụ: 45.000 VNĐ) và cam kết thời gian giao cụ thể: "Nhận hàng trước 15:30 hôm nay (trong vòng 75 phút)".
+• Bước 2 (Chốt đơn & Lệnh soạn hàng khẩn cấp 15 phút):
+• Khách hàng thanh toán trực tuyến thành công (ORDER_PAYMENT_CAPTURED).
+• Hệ thống OMS gán đơn hàng vào hàng đợi ưu tiên cao nhất (PRIORITY_P0_EXPRESS).
+• Thiết bị POS tại kho/shop phát chuông báo động đơn hỏa tốc. Nhân viên kho có tối đa 15 phút để lấy hàng, quét mã Serial/IMEI, đóng vào túi niêm phong chuyên dụng (Tamper-evident bag) và dán nhãn vận đơn Hỏa Tốc.
+• Bước 3 (Khớp lệnh điều phối tài xế On-demand):
+• TMS phát sóng tín hiệu tìm tài xế (Broadcast Request) trong bán kính 3 km từ cửa hàng.
+• Tài xế bấm nhận đơn trên ứng dụng tài xế -> Trạng thái đơn hàng chuyển sang DRIVER_ASSIGNED. Hệ thống gán driver_id, họ tên, số điện thoại, biển số xe và loại xe.
+• Bước 4 (Tài xế tiếp nhận kiện hàng tại cửa hàng):
+• Tài xế di chuyển đến cửa hàng (SLA tiếp cận $\le 15$ phút). Xuất trình mã nhận hàng trên ứng dụng.
+• Nhân viên kho quét mã QR tài xế. Tài xế quét mã vạch kiện hàng và mã Serial trên hộp.
+• Bấm "Bắt đầu giao hàng" -> Trạng thái chuyển sang OUT_FOR_DELIVERY. Hệ thống tự động sinh ngẫu nhiên Mã xác thực giao hàng 4 chữ số (Delivery PIN/OTP) gửi trực tiếp vào ứng dụng và SMS của khách hàng.
+• Bước 5 (Vận chuyển & Truyền phát tọa độ Live GPS):
+• Ứng dụng tài xế gửi gói tin tọa độ (Latitude, Longitude, Heading, Speed) về máy chủ mỗi 5 giây/lần.
+• Khách hàng mở ứng dụng thấy biểu tượng xe máy tài xế đang di chuyển thời gian thực trên bản đồ kèm thanh đếm ngược thời gian dự kiến (Dynamic ETA cập nhật liên tục theo mật độ giao thông).
+• Bước 6 (Bàn giao tại nhà & Xác thực 2 lớp):
+• Khi tài xế đến bán kính 100m của địa chỉ nhận hàng, ứng dụng khách hàng gửi thông báo đẩy: "Tài xế hỏa tốc đã đến nơi. Vui lòng chuẩn bị nhận hàng".
+• Khách hàng gặp tài xế, kiểm tra túi niêm phong còn nguyên vẹn.
+• Cơ chế xác thực 2 lớp:
+1. Lớp 1 (Mã Delivery PIN): Khách hàng đọc mã PIN 4 chữ số (ví dụ: 8249) cho tài xế. Tài xế nhập mã PIN vào ứng dụng. TMS đối soát khớp đúng 100% mới mở khóa màn hình chụp ảnh POD.
+2. Lớp 2 (Chụp ảnh Bằng chứng Giao hàng POD): Tài xế chụp ảnh rõ nét kiện hàng trước cửa nhà hoặc trên tay khách hàng. Ứng dụng tự động chèn Watermark bất biến: Tọa độ GPS (10.7924 N, 106.7218 E), Con dấu thời gian UTC, Mã đơn hàng.
+• Bước 7 (Hoàn tất đơn hàng & Kiểm duyệt AI):
+• Ảnh POD được tải lên máy chủ Cloud Storage. AI Vision kiểm duyệt nhanh (kiểm tra có kiện hàng, ảnh rõ nét, không bị nhòe đen).
+• Trạng thái đơn hàng chuyển sang DELIVERED_POD_VERIFIED. Kích hoạt giải ngân cước vận chuyển cho tài xế và khởi động thời hạn bảo hành thiết bị.
+5.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Quá giờ không tìm được tài xế nhận đơn (Driver Dispatch Timeout):
+• Sau 10 phút phát sóng ban đầu không có tài xế nhận, TMS tự động mở rộng bán kính quét từ 3 km lên 6 km và kích hoạt mức thưởng khẩn cấp (Surge Bonus +15.000 VNĐ cho tài xế trích từ ngân sách sàn).
+• Nếu sau 20 phút vẫn không tìm được tài xế: Hệ thống tự động gửi thông báo xin lỗi tới khách hàng và hiển thị 2 tùy chọn tự phục vụ:
+• Tùy chọn A: Chuyển sang Giao Tiêu Chuẩn trong ngày; Sàn hoàn 100% phí hỏa tốc kèm tặng voucher 50.000 VNĐ.
+• Tùy chọn B: Hủy đơn hàng và nhận hoàn tiền 100% tức thì trong 3 phút.
+• Ngoại lệ 2: Khách hàng không liên lạc được tại điểm giao (Consignee Unreachable):
+• Tài xế đến nơi nhưng gọi điện không nhấc máy. Quy chuẩn bắt buộc: Tài xế phải thực hiện tối thiểu 03 cuộc gọi cách nhau mỗi 3 phút và bấm nút "Không liên lạc được" trên ứng dụng để kích hoạt tổng đài IVR tự động gọi khách hàng.
+• Nếu sau 15 phút khách hàng vẫn không phản hồi: Tài xế chụp ảnh số nhà/cổng nhà có gắn định vị GPS làm bằng chứng vắng mặt.
+• Đơn hàng chuyển sang DELIVERY_FAILED_RETURNING. Tài xế nhận lệnh quay đầu mang kiện hàng hoàn trả lại cửa hàng xuất phát. Cước vận chuyển chiều đi và về được sàn thanh toán đầy đủ cho tài xế.
+5.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-EXP-01 | Cam Kết SLA & Bồi Thường Tự Động (On-Time Guarantee SLA) | Tổng thời gian từ lúc đặt hàng đến lúc giao tận tay cam kết $\le 120$ phút. Nếu đơn hàng bị giao trễ quá 30 phút so với ETA ban đầu do lỗi vận hành, hệ thống tự động phát hành Voucher bồi thường trị giá 50.000 VNĐ gửi thẳng vào ví voucher của khách hàng mà không cần khách gửi khiếu nại.
+BR-EXP-02 | Ràng Buộc Bảo Vệ Dữ Liệu Cá Nhân Trên Ảnh POD (POD Privacy Protection) | Tuân thủ Nghị định 13/2023/NĐ-CP: Ứng dụng tài xế tự động kích hoạt thuật toán phát hiện và làm mờ khuôn mặt (Face Blurring) của người nhận trước khi lưu trữ ảnh POD lên máy chủ. Ảnh POD chỉ hiển thị kiện hàng, bậc thềm hoặc số nhà; cấm chụp cận cảnh giấy tờ tùy thân của khách.
+BR-EXP-03 | Khóa Cứng Mã PIN Cho Đơn Công Nghệ Giá Trị Cao (High-Value PIN Mandate) | Với tất cả đơn hàng có giá trị $\ge 3.000.000$ VNĐ, nút bấm "Hoàn tất giao hàng" trên ứng dụng tài xế bị khóa cứng nếu tài xế không nhập đúng mã Delivery PIN do khách hàng cung cấp. Nghiêm cấm tài xế tự ý điền mã PIN thay cho khách.
+--- TABLE END ---
+5.7 Dữ liệu vào/ra & Máy trạng thái
+(Cấu trúc dữ liệu `express_dispatch_id` và ma trận chuyển đổi trạng thái đã được chuẩn hóa tại Mục 4.7 của tài liệu gốc, tích hợp đầy đủ các trường `verification_artifacts`, `realtime_telemetry`, và `sla_tracking`).
+5.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Giao Hàng Hỏa Tốc Nội Thành 1-2 Giờ, Live GPS Tracking và Bằng Chứng POD (FUL-EXPRESS-03)  Scenario: Tự động phát hành mã bồi thường khi giao hàng hỏa tốc trễ hạn quá cam kết SLA    Given Đơn hàng hỏa tốc có cam kết thời gian giao tối đa trước 15:00 hôm nay    When Do sự cố giao thông tài xế đến giao hàng lúc 15:42 (trễ hạn 42 phút so với cam kết)    And Tài xế hoàn tất quy trình nhập mã PIN và nộp ảnh POD hợp lệ    Then Trạng thái đơn hàng được ghi nhận "DELIVERED_POD_VERIFIED"    And Thuật toán kiểm tra SLA ghi nhận cờ "is_sla_breached = TRUE"    And Hệ thống tự động phát hành 01 Voucher bồi thường trị giá 50.000 VNĐ vào ví người dùng ngay lập tức    And Hệ thống gửi thông báo xin lỗi kèm giải trình nguyên nhân trễ hạn cho khách hàng.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+6. ĐẶC TẢ CHI TIẾT FUL-SPLIT-04: ĐIỀU PHỐI TÁCH KIỆN GIAO HÀNG TỪ NHIỀU KHO (MULTI-WAREHOUSE SPLIT SHIPMENT & PARTIAL CAPTURE)
+6.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-SPLIT-04
+• Tên nghiệp vụ: Điều Phối Tách Đơn Hàng Thành Nhiều Kiện Giao Từ Nhiều Kho Khác Nhau, Mã Vận Đơn Riêng Biệt & Trừ Tiền Từng Phần Theo Kiện Hàng (Multi-Warehouse Split Shipment, Distinct Waybill Routing & Partial Dispatch Capture Protocol)
+• Tương đương thực tế: Amazon Multi-Fulfillment Center (FC) Split Shipment, Walmart Multi-Facility Fulfillment.
+6.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Giải quyết bài toán giỏ hàng đa mặt hàng (Multi-item Basket) khi các sản phẩm không nằm tập trung tại cùng một trung tâm hoàn tất đơn hàng (FC) hoặc một cửa hàng bán lẻ.
+• Tự động phân tách một đơn hàng mẹ (Master_Order) thành nhiều kiện hàng độc lập (Shipment_Packages), mỗi kiện có nguồn xuất phát riêng, mã vận đơn riêng, đơn vị vận chuyển riêng và lộ trình giao hàng riêng.
+• Bảo đảm trải nghiệm tài chính minh bạch cho khách hàng: Chỉ xuất 01 bản Hóa đơn hợp nhất duy nhất (Consolidated Master Invoice), khách hàng chỉ thanh toán đúng 01 lần cước phí vận chuyển tiêu chuẩn; toàn bộ chi phí phát sinh do tách kiện do sàn/người bán chịu trợ cấp (platform_shipping_subsidy).
+• Thực thi quy chuẩn an toàn tài chính Partial Dispatch Capture Protocol tuân thủ FTC Mail Order Rule: Chỉ trừ tiền thẻ tín dụng tương ứng với giá trị của kiện hàng khi kiện hàng đó thực sự được xuất kho đóng gói gửi đi.
+• Tác nhân tham gia:
+• Hệ thống Định tuyến Tồn kho (Distributed Inventory Routing Engine): Thuật toán giải bài toán tối ưu phân bổ kho (Set Covering Problem) để tìm tổ hợp kho có chi phí và thời gian giao ngắn nhất.
+• Hệ thống Quản lý Đơn hàng (OMS): Quản lý thực thể đơn hàng mẹ và các kiện hàng con, điều phối trạng thái thanh toán và giải ngân.
+• Các Trung tâm Hoàn tất Đơn hàng (FC 1, FC 2...): Nhận lệnh soạn hàng độc lập, in vận đơn riêng biệt và bàn giao cho 3PL tương ứng.
+• Cổng Thanh toán Trực tuyến (Payment Gateway): Xử lý lệnh tạm giữ hạn mức ban đầu (Authorization Hold) và các lệnh trừ tiền từng phần liên tiếp (Multiple Partial Captures).
+• Khách hàng (Buyer): Theo dõi tiến độ độc lập của từng kiện hàng trên giao diện đơn hàng duy nhất.
+6.3 Điều kiện tiên quyết
+1. Đơn hàng chứa từ 2 dòng sản phẩm trở lên (order_items_count >= 2) hoặc số lượng của 1 mặt hàng vượt quá tồn kho của một kho đơn lẻ.
+2. Không có bất kỳ kho hàng đơn lẻ nào trong mạng lưới sở hữu đầy đủ toàn bộ các mặt hàng trong giỏ hàng.
+3. Khách hàng đã thanh toán qua phương thức trả trước (Thẻ tín dụng, Thẻ ghi nợ) hoặc chọn thanh toán COD (với quy chế phân bổ số tiền thu hộ cho từng kiện).
+6.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[KHÁCH HÀNG ĐẶT ĐƠN HÀNG ĐA SẢN PHẨM: ĐIỆN THOẠI + ỐP LƯNG + CỦ SẠC]                               │                               ▼[ĐỘNG CƠ ĐỊNH TUYẾN TỒN KHO PHÂN TÁN (INVENTORY ROUTING ENGINE)]  ├── Quét ma trận tồn kho toàn quốc:  │     ├── Kho Hà Nội (FC-HAN-01): Có sẵn Điện thoại iPhone 16 Pro (Giá: 28.000.000đ)  │     ├── Kho Bình Dương (FC-SGN-02): Có sẵn Ốp lưng Da (Giá: 1.200.000đ)  │     └── Kho Đà Nẵng (FC-DAD-01): Có sẵn Củ sạc nhanh Anker 65W (Giá: 800.000đ)  └── Thuật toán quyết định: TÁCH ĐƠN THÀNH 3 KIỆN HÀNG ĐỘC LẬP                               │                               ▼[GIAO DỊCH TÀI CHÍNH TỔNG HỢP: MASTER INVOICE & PRE-AUTH HOLD]  ├── Tạo Hóa đơn Master Order trị giá: 30.000.000đ + Phí ship cố định: 30.000đ  └── Cổng thanh toán thực hiện LỆNH TẠM GIỮ HẠN MỨC (PRE-AUTH HOLD): 30.030.000đ                               │                               ▼[PHÂN BỔ LỆNH ĐÓNG GÓI XUỐNG CÁC KHO ĐỘC LẬP (PARALLEL DISPATCH)]  ├── KIỆN 1 (PKG-ORD-01): Xuất từ Kho Hà Nội -> Vận chuyển: Viettel Post  ├── KIỆN 2 (PKG-ORD-02): Xuất từ Kho Bình Dương -> Vận chuyển: SPX Standard  └── KIỆN 3 (PKG-ORD-03): Xuất từ Kho Đà Nẵng -> Vận chuyển: Giao Hàng Nhanh                               │                               ▼[QUY CHUẨN TRỪ TIỀN TỪNG PHẦN (PARTIAL DISPATCH CAPTURE PROTOCOL)]  ├── Ngày 1: Kho Hà Nội đóng gói xong Kiện 1 -> CAPTURE 28.030.000đ (Máy + Phí ship)  ├── Ngày 2: Kho Bình Dương đóng gói xong Kiện 2 -> CAPTURE 1.200.000đ (Ốp lưng)  └── Ngày 3: Kho Đà Nẵng đóng gói xong Kiện 3 -> CAPTURE 800.000đ (Củ sạc)                               │                               ▼[TRẢI NGHIỆM KHÁCH HÀNG: THEO DÕI HÀNH TRÌNH TỪNG KIỆN ĐỘC LẬP]  ├── Màn hình đơn hàng hiển thị 3 Thẻ Kiện Hàng (Shipment Packages)  ├── Mỗi kiện có Timeline tracking, Đơn vị vận chuyển và Ngày giao dự kiến riêng  └── Kiện hàng nào đến trước được giao trước; Nhận đủ 3 kiện -> Đóng Master Order.
+--- TABLE END ---
+• Bước 1 (Phân tích Giỏ hàng & Kích hoạt Thuật toán Tách kiện):
+• Khách hàng bấm thanh toán giỏ hàng gồm: (1) iPhone 16 Pro, (2) Ốp lưng Da cao cấp, (3) Củ sạc Anker.
+• Thuật toán OMS Distributed Inventory Sourcing quét ma trận tồn kho toàn quốc và xác định: Không có kho nào có đủ cả 3 món. Tổ hợp tối ưu nhất là chia làm 3 kiện từ 3 trung tâm hoàn tất khác nhau.
+• Hệ thống tự động phân rã đơn thành 3 kiện hàng:
+• Kiện 1 (PKG-HAN-01): Chứa iPhone 16 Pro (Xuất từ FC Hà Nội).
+• Kiện 2 (PKG-SGN-02): Chứa Ốp lưng (Xuất từ FC Bình Dương).
+• Kiện 3 (PKG-DAD-03): Chứa Củ sạc (Xuất từ FC Đà Nẵng).
+• Bước 2 (Chính sách Cước Vận chuyển Hợp nhất & Trợ cấp Sàn):
+• Về mặt cước phí: Nếu tính riêng 3 chuyến giao lẻ, tổng cước vận chuyển thực tế từ 3 đơn vị vận chuyển là $35.000 + 25.000 + 25.000 = 85.000$ VNĐ.
+• Quy tắc bảo vệ người tiêu dùng: Khách hàng chỉ phải thanh toán đúng mức cước tiêu chuẩn cho 1 đơn hàng duy nhất là 30.000 VNĐ.
+• Phần chi phí chênh lệch phát sinh 55.000 VNĐ được hệ thống tự động hạch toán vào mục Trợ cấp vận chuyển tách kho của sàn (`platform_shipping_subsidy`). Người mua không phải trả thêm 1 đồng nào vì lý do kho của sàn bị phân tán.
+• Bước 3 (Thực thi Tạm Giữ Hạn Mức Toàn Đơn - Master Pre-Auth Hold):
+• Cổng thanh toán quốc tế gửi lệnh AUTHORIZE_ONLY trên thẻ tín dụng của khách hàng với tổng số tiền của toàn bộ đơn hàng (ví dụ: 30.030.000 VNĐ).
+• Hạn mức thẻ của khách bị tạm khóa, nhưng thẻ chưa bị trừ tiền thực tế (chưa có sao kê phát sinh lãi suất).
+• Bước 4 (Đóng gói song song & Trừ tiền từng phần - Partial Dispatch Capture):
+• Tuân thủ nghiêm ngặt quy định FTC Mail Order Rule (Cấm trừ tiền trước khi hàng được gửi đi):
+• Pha 1 (Sáng ngày 1): Kho Hà Nội đóng gói xong Kiện 1 (iPhone), dán mã vận đơn Viettel Post. Khi bưu tá quét nhận kiện hàng rời kho (DISPATCHED_3PL): Cổng thanh toán thực hiện lệnh CAPTURE_PARTIAL số tiền 28.030.000 VNĐ (Giá trị máy + cước vận chuyển).
+• Pha 2 (Chiều ngày 1): Kho Bình Dương đóng gói xong Kiện 2 (Ốp lưng), bàn giao cho SPX. Cổng thanh toán thực hiện lệnh CAPTURE_PARTIAL số tiền 1.200.000 VNĐ.
+• Pha 3 (Ngày 2): Kho Đà Nẵng đóng gói xong Kiện 3 (Củ sạc), bàn giao cho GHN. Cổng thanh toán thực hiện lệnh CAPTURE_PARTIAL số tiền 800.000 VNĐ còn lại.
+• Lệnh giữ tiền Authorization ban đầu được hoàn tất và đóng lại hoàn toàn.
+• Bước 5 (Trải nghiệm theo dõi đa kiện trên giao diện người dùng):
+• Trên ứng dụng của khách hàng, trang "Chi tiết đơn hàng" hiển thị một bảng điều khiển đa kiện (Multi-Package Dashboard):
+• Kiện 1 (iPhone): Đang luân chuyển qua Hub Đà Nẵng, dự kiến giao Thứ Năm.
+• Kiện 2 (Ốp lưng): Đang phát, tài xế đang giao đến, dự kiến giao Hôm nay.
+• Kiện 3 (Củ sạc): Đã rời kho Đà Nẵng, dự kiến giao Thứ Sáu.
+• Khách hàng có thể nhấn vào từng kiện để xem định vị bản đồ và mã vận đơn tracking độc lập của từng đơn vị vận chuyển.
+• Bước 6 (Quyết toán đơn hàng & Đóng Master Order):
+• Khách hàng nhận Kiện 2 vào Thứ Ba, Kiện 1 vào Thứ Năm, và Kiện 3 vào Thứ Sáu.
+• Mỗi khi một kiện được giao thành công, trạng thái của kiện đó chuyển thành PACKAGE_DELIVERED.
+• Khi kiện hàng cuối cùng (Kiện 3) được giao thành công: Trạng thái của toàn bộ Đơn hàng mẹ (Master_Order) chính thức chuyển sang ORDER_COMPLETED.
+• Khách hàng nhận được 01 bản Hóa đơn điện tử hợp nhất duy nhất ghi nhận toàn bộ đơn hàng.
+6.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Một kiện hàng trong đơn bị giao thất bại hoặc bị hủy (Partial Package Failure / Return):
+• Tình huống: Kiện 1 (Điện thoại) và Kiện 2 (Ốp lưng) giao thành công, nhưng Kiện 3 (Củ sạc) bị thất lạc hoặc người bán thông báo đứt hàng đột xuất.
+• Xử lý độc lập: Hệ thống chỉ hủy riêng Kiện 3 (PACKAGE_CANCELLED_REFUNDED).
+• Số tiền 800.000 VNĐ tương ứng của Kiện 3 được giải phóng lệnh tạm giữ (Release Hold) hoặc hoàn tiền tức thì về thẻ tín dụng cho khách hàng.
+• Kiện 1 và Kiện 2 đã giao thành công vẫn giữ nguyên giá trị pháp lý, không bị ảnh hưởng dòng tiền và thời hạn bảo hành bắt đầu tính bình thường.
+• Ngoại lệ 2: Đơn hàng Tách kiện chọn phương thức COD (Cash on Delivery):
+• Khi khách chọn COD cho đơn hàng nhiều kiện:
+• Hệ thống OMS tự động phân bổ chính xác số tiền cần thu hộ (COD Collection Amount) cho từng kiện hàng:
+• Shipper giao Kiện 1 thu đúng: 28.030.000 VNĐ.
+• Shipper giao Kiện 2 thu đúng: 1.200.000 VNĐ.
+• Shipper giao Kiện 3 thu đúng: 800.000 VNĐ.
+• Trên nhãn vận đơn của từng kiện ghi rõ: "ĐƠN HÀNG NHIỀU KIỆN (Kiện 1/3) - Thu đúng số tiền ghi trên kiện này, không thu tiền các kiện khác".
+6.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-SPLIT-01 | Trợ Cấp Cước Phí Tách Kho Của Nền Tảng (Subsidized Multi-Warehouse Shipping) | Khách hàng chỉ phải trả duy nhất mức phí vận chuyển cơ sở tính trên toàn đơn hàng. Sàn và Người bán cam kết đài thọ 100% chi phí phát sinh do việc chia tách kiện từ nhiều kho: buyer_shipping_fee = base_shipping_rate; platform_subsidy = sum(actual_carrier_fees) - base_shipping_rate. Cấm tuyệt đối việc cộng dồn cước vận chuyển riêng rẽ của từng kiện bắt khách chịu.
+BR-SPLIT-02 | Nguyên Tắc Trừ Tiền Từng Phần Khi Xuất Kho (FTC Partial Dispatch Capture Rule) | Cổng thanh toán chỉ được phép thực thi lệnh CAPTURE đối với giá trị hàng hóa của một kiện hàng khi và chỉ khi kiện hàng đó đã được nhân viên kho quét nhãn in vận đơn và bàn giao thành công cho bưu tá 3PL (status == DISPATCHED_3PL). Cấm trừ trước 100% tiền đơn hàng khi các kiện hàng khác vẫn đang nằm chờ trong kho chưa đóng gói.
+BR-SPLIT-03 | Tính Độc Lập Tuyệt Đối Của Kiện Hàng (Package Lifecycle Independence) | Mỗi kiện hàng con (Shipment_Package) sở hữu một vòng đời vận hành riêng biệt: Mã vận đơn riêng, đơn vị vận chuyển riêng, nhật ký tracking riêng, biên bản giao nhận riêng. Sự cố trễ hạn, thất lạc hoặc đổi trả của một kiện hàng không được phép làm đình trệ tiến độ giao nhận hoặc quyết toán của các kiện hàng khác trong cùng đơn.
+BR-SPLIT-04 | Hóa Đơn Tài Chính Hợp Nhất Duy Nhất (Single Consolidated Master Invoice) | Dù đơn hàng được tách thành bao nhiêu kiện vật lý, hệ thống tài chính kế toán bắt buộc chỉ xuất bản duy nhất 01 Hóa đơn Giá trị Gia tăng (VAT Invoice) tổng hợp mang mã master_order_id, liệt kê đầy đủ danh mục hàng hóa và số tiền tổng cuối cùng, phục vụ công tác khai báo thuế và bảo hành minh bạch.
+--- TABLE END ---
+6.7 Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Kiện Hàng Tách Kho (`order_shipment_packages`):
+--- TABLE START ---
+{  "package_id": "PKG-20261105-0921-A",  "order_id": "ORD-20261105-88412",  "package_index": 1,  "total_packages_count": 3,  "origin_warehouse": {    "warehouse_id": "FC-HAN-01",    "warehouse_name": "Trung Tâm Hoàn Tất Đơn Hàng Nội Bài Hà Nội"  },  "carrier_code": "VIETTEL_POST",  "tracking_waybill_code": "VTP881920491VN",  "allocated_items": [    {      "order_item_id": "ITEM-01",      "sku_code": "IPHONE16PRO-256-DESERT",      "quantity": 1,      "assigned_serial": "F2LW9901Q882",      "assigned_imei": "358921109921448",      "item_declared_value": 28000000    }  ],  "shipping_fee_allocated": 30000,  "platform_shipping_subsidy": 15000,  "financial_capture": {    "capture_transaction_id": "ch_3M4920491029",    "captured_amount": 28030000,    "captured_at": "2026-11-05T08:30:15Z"  },  "package_status": "DISPATCHED_3PL"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Kiện Hàng Tách Kho (Split Package State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[ORDER_SPLIT] | ROUTING_COMPLETED | Tồn kho kho A được xác nhận | ALLOCATED_TO_FC | Bắn lệnh soạn hàng xuống WMS kho A
+ALLOCATED_TO_FC | WMS_PICKED_PACKED | Quét số Serial/IMEI gắn kiện | STAGED_READY | In nhãn vận đơn 3PL riêng của kiện
+STAGED_READY | CARRIER_SCANNED_HANDOVER | Bưu tá quét nhận kiện rời kho | DISPATCHED_3PL | Kích hoạt lệnh Capture tiền một phần
+DISPATCHED_3PL | CARRIER_TRANSIT_CHECKPOINT | Qua các trạm trung chuyển Sorting | IN_TRANSIT | Cập nhật timeline tracking của kiện
+IN_TRANSIT | OUT_FOR_DELIVERY_SCAN | Bưu tá địa phương xếp xe đi phát | OUT_FOR_DELIVERY | Gửi SMS/Push thông báo kiện chuẩn bị đến
+OUT_FOR_DELIVERY | DELIVERY_VERIFIED | Nhập đúng OTP hoặc ký nhận | PACKAGE_DELIVERED | Đánh dấu kiện xong; Kiểm tra các kiện khác
+PACKAGE_DELIVERED | ALL_PACKAGES_COMPLETED | 100% kiện con đã giao xong | MASTER_ORDER_COMPLETED | Xuất Hóa đơn GTGT Master, đóng đơn
+IN_TRANSIT | STALLED_SCAN_72H | Đứng yên quá 72h không cập nhật | STALLED_INVESTIGATING | Chuyển sang quy trình xử lý thất lạc (FUL-LOST)
+--- TABLE END ---
+6.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Điều Phối Đơn Hàng Tách Kiện Đa Kho và Trừ Tiền Từng Phần (FUL-SPLIT-04)  Scenario: Tự động tách đơn hàng thành 2 kiện độc lập và trừ tiền theo từng kiện xuất kho    Given Khách hàng đặt đơn hàng gồm 01 iPhone (tại Kho Hà Nội) và 01 Ốp lưng (tại Kho TP.HCM)    And Tổng giá trị hàng hóa là 29.200.000 VNĐ, thanh toán bằng thẻ tín dụng    When Đơn hàng được tạo thành công    Then Hệ thống thực hiện lệnh tạm khóa hạn mức (Pre-Auth Hold) 29.230.000 VNĐ trên thẻ khách    And Đơn hàng được tự động phân tách thành Kiện 1 (Hà Nội) và Kiện 2 (TP.HCM) với 2 mã tracking riêng    When Vào lúc 09:00 ngày 1, Kho Hà Nội đóng gói xong Kiện 1 và bàn giao cho Viettel Post    Then Cổng thanh toán thực hiện lệnh trừ tiền một phần 28.030.000 VNĐ cho Kiện 1    When Vào lúc 14:00 ngày 2, Kho TP.HCM đóng gói xong Kiện 2 và bàn giao cho SPX    Then Cổng thanh toán thực hiện lệnh trừ nốt số tiền 1.200.000 VNĐ cho Kiện 2    And Lệnh tạm giữ hạn mức ban đầu được giải phóng hoàn toàn    And Khách hàng theo dõi lộ trình của 2 kiện hoàn toàn độc lập trên ứng dụng.  Scenario: Khách hàng chỉ phải trả mức cước vận chuyển tiêu chuẩn dù đơn bị tách kho    Given Khách hàng tại Đà Nẵng đặt đơn hàng có sản phẩm bị tách từ 3 kho khác nhau    When Hệ thống tính toán chi phí vận chuyển bưu điện thực tế cho 3 kiện là 95.000 VNĐ    Then Giao diện thanh toán chỉ thu của khách hàng mức cước tiêu chuẩn cố định là 30.000 VNĐ    And Hệ thống ghi nhận khoản trợ cấp vận chuyển nền tảng (platform subsidy) là 65.000 VNĐ    And Khách hàng không bị thu thêm bất kỳ chi phí phát sinh nào trong suốt quá trình nhận các kiện.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+7. ĐẶC TẢ CHI TIẾT FUL-VERIF-05: XÁC THỰC AN NINH GIAO NHẬN BẰNG MÃ PIN / SMS OTP / CHỮ KÝ SỐ CHO ĐƠN GIÁ TRỊ CAO
+7.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-VERIF-05
+• Tên nghiệp vụ: Xác Thực An Ninh Giao Nhận Bằng Mã PIN / SMS OTP Động & Chữ Ký Số Cho Đơn Hàng Giá Trị Cao (High-Value Delivery Verification, Dynamic OTP PIN & Digital Signature Protocol)
+• Tương đương thực tế: Amazon One-Time Password Delivery (> $500), Shopee & TikTok Shop OTP Giao Hàng Cho Đơn Công Nghệ ($\ge 5.000.000$ VNĐ).
+7.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Triệt tiêu triệt để rủi ro mất cắp, tráo ruột thiết bị giá trị cao (iPhone, iPad, Laptop, máy ảnh) trong khâu Last-Mile Delivery.
+• Ngăn chặn triệt để hành vi tài xế báo "Giao thành công ảo" (Phantom Delivery) hoặc tự ý ném hàng qua hàng rào, để hàng trước cửa nhà không có người trông coi.
+• Bắt buộc tài xế phải gặp mặt trực tiếp người nhận và nhập đúng mã OTP/PIN 6 số hoặc lấy chữ ký số điện tử trên ứng dụng giao hàng.
+• Ứng dụng của tài xế bị khóa cứng giao diện (Driver App Lockout), nút "Giao thành công" bị vô hiệu hóa hoàn toàn cho đến khi mã OTP được xác thực hợp lệ trên máy chủ trung tâm.
+• Thiết lập quy chế 3 lần thử giao hàng nghiêm ngặt và lưu kho an toàn tại Bưu cục phát (DEX Depot).
+• Tác nhân tham gia:
+• Khách hàng (Recipient): Nhận mã OTP bí mật qua SMS/App, đọc mã cho tài xế khi đã cầm tận tay kiện hàng nguyên vẹn.
+• Người nhận thay (Designated Consignee): Nhận mã OTP được chủ đơn chuyển tiếp, xuất trình CCCD và đọc mã cho tài xế.
+• Tài xế giao hàng (3PL Courier / Shipper): Sử dụng Driver App nhập mã OTP do khách cung cấp, chụp ảnh ký nhận và ảnh kiện hàng.
+• Hệ thống Xác thực Giao vận (Delivery Verification Gateway): Sinh mã ngẫu nhiên mật mã an toàn (CSPRNG), băm mật khẩu bảo vệ mã OTP, kiểm soát số lần thử sai (Brute-force Protection).
+• Bưu cục Phát & Kho Lưu Hàng (Delivery Station / DEX Depot): Tiếp nhận lưu trữ bưu kiện an toàn khi giao hàng không thành công.
+7.3 Điều kiện tiên quyết
+1. Đơn hàng đạt điều kiện giá trị cao: Tổng giá trị hàng hóa $\ge 5.000.000$ VNĐ (hoặc $> $500 đối với đơn quốc tế), hoặc chứa các sản phẩm công nghệ có mã SKU nằm trong danh mục bảo mật đặc biệt (High-Theft Risk Category).
+2. Hoặc địa chỉ giao hàng thuộc khu vực có tỷ lệ báo mất bưu kiện cao (High-Risk Porch Piracy Zone).
+3. Kiện hàng đã chuyển sang trạng thái chuẩn bị giao trong ngày (OUT_FOR_DELIVERY).
+7.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[SÁNG NGÀY GIAO HÀNG: KIỆN HÀNG XẾP LÊN XE SHIPPER (OUT_FOR_DELIVERY)]                                 │                                 ▼         [HỆ THỐNG TỰ ĐỘNG SINH MÃ OTP GIAO HÀNG (DELIVERY PIN)]         ├── Thuật toán mật mã CSPRNG sinh mã 6 chữ số ngẫu nhiên         ├── Lưu trữ: `delivery_pin_hash = bcrypt(OTP, salt=12)`         └── Gửi mã tức thì đồng thời qua 3 kênh:               ├── (1) Tin nhắn SMS Brandname gửi tới SĐT người nhận               ├── (2) Thông báo đẩy (Push Notification) nổi trên App               └── (3) Email xác nhận đơn hàng         └── Cảnh báo: "Chỉ đọc mã này cho shipper khi bạn ĐÃ CẦM TẬN TAY kiện hàng nguyên seal"                                 │                                 ▼         [SHIPPER ĐẾN ĐỊA CHỈ: MÀN HÌNH DRIVER APP BỊ KHÓA CỨNG]         ├── Nút "Giao thành công" bị MỜ VÀ VÔ HIỆU HÓA HOÀN TOÀN         ├── Màn hình hiện khung đỏ: "ĐƠN HÀNG GIÁ TRỊ CAO - BẮT BUỘC NHẬP MÃ PIN"         └── Cấm tuyệt đối: Không cho phép chọn "Để trước cửa" hay "Gửi bảo vệ" nếu không có OTP                                 │                                 ▼         [GẶP MẶT TRỰC TIẾP & BÀN GIAO XÁC THỰC KÉP]         ├── Khách hàng kiểm tra ngoại quan gói hàng và tem niêm phong nguyên vẹn         ├── Khách hàng đọc mã PIN 6 số (ví dụ: `491820`) cho Shipper         ├── Shipper nhập 6 số vào Driver App -> Gửi API xác thực tức thì         │         ├──► NẾU MÃ CHÍNH XÁC (200 OK - VALID):         │      ├── Mở khóa màn hình Chữ ký số và Chụp ảnh POD         │      ├── Khách hàng ký tay trên màn hình Driver App         │      ├── Shipper chụp ảnh gói hàng có gắn Watermark định vị GPS         │      └── Bấm "Hoàn tất" -> Trạng thái: `DELIVERED_SECURE_VERIFIED`         │         └──► NẾU NHẬP SAI MÃ (INVALID PIN):                ├── Báo lỗi: "Mã PIN không đúng. Bạn còn [X] lần thử"                └── Sai quá 3 lần liên tiếp -> KHÓA ĐƠN HÀNG NGAY LẬP TỨC (LOCKOUT)!
+--- TABLE END ---
+• Bước 1 (Sinh mã OTP Giao hàng mật mã an toàn):
+• Vào 07:00 sáng ngày giao hàng, khi bưu kiện được quét xếp lên xe tải/xe máy của tài xế (OUT_FOR_DELIVERY):
+• Hệ thống tự động sinh một mã số bí mật gồm 6 chữ số ngẫu nhiên (Delivery_OTP_Code, ví dụ: 491820) bằng bộ sinh số ngẫu nhiên mật mã CSPRNG.
+• Hệ thống chỉ lưu trữ chuỗi băm delivery_pin_hash = bcrypt(OTP) trên máy chủ cơ sở dữ liệu. Shipper, nhân viên tổng đài CSKH hoặc nhân viên điều phối hoàn toàn KHÔNG THỂ nhìn thấy mã này trên hệ thống.
+• Mã được gửi đồng thời qua SMS Brandname và Notification trên app của khách hàng kèm thông điệp: "Mã OTP giao hàng của bạn là 491820. Vui lòng CHỈ đọc mã này cho tài xế khi bạn trực tiếp nhận được kiện hàng nguyên vẹn trên tay".
+• Bước 2 (Khóa cứng giao diện ứng dụng tài xế - Driver App Lockout):
+• Khi tài xế mở đơn hàng trên Driver App: Màn hình hiển thị cảnh báo đỏ rực: "ĐƠN HÀNG BẢO MẬT GIÁ TRỊ CAO".
+• Nút bấm "Đã giao hàng" bị ẩn hoặc làm mờ (Disabled).
+• Ứng dụng hiển thị một bàn phím số duy nhất yêu cầu: "Yêu cầu khách hàng cung cấp mã OTP 6 số để hoàn tất giao hàng".
+• Mọi tùy chọn "Để hàng trước cửa (Leave at Door)" hoặc "Ném qua hàng rào" đều bị vô hiệu hóa hoàn toàn.
+• Bước 3 (Đối soát tại cửa & Bàn giao kiện hàng):
+• Tài xế bấm chuông, gặp trực tiếp người nhận.
+• Khách hàng kiểm tra tem niêm phong chống giả mạo (Tamper-evident seal) của thùng hàng còn nguyên vẹn, không có dấu hiệu bị rạch đáy hay bóc dán lại.
+• Khách hàng đọc mã 6 số cho tài xế. Tài xế nhập vào Driver App.
+• Driver App gọi API POST /api/v1/fulfillment/packages/{package_id}/verify-delivery.
+• Máy chủ đối soát khớp 100% -> Trả về mã phản hồi 200 OK - VERIFIED.
+• Bước 4 (Ký nhận số & Chụp ảnh POD có Watermark):
+• Sau khi mã OTP được xác thực thành công, màn hình Driver App mở khóa bước tiếp theo:
+1. Chữ ký số điện tử (Digital Signature): Người nhận dùng ngón tay ký tên xác nhận trực tiếp lên màn hình cảm ứng của tài xế. Chữ ký được chuyển thành tệp véc-tơ SVG lưu trữ vĩnh viễn vào hồ sơ đơn hàng.
+2. Ảnh chụp bằng chứng giao hàng (Watermarked Photo POD): Tài xế chụp ảnh gói hàng đặt tại vị trí bàn giao. Hệ thống tự động đóng dấu Watermark: Tọa độ GPS chính xác đến 6 chữ số thập phân, thời gian thực tế, mã đơn hàng.
+• Tài xế bấm "Xác nhận hoàn tất" -> Kiện hàng chính thức hoàn tất (DELIVERED_SECURE_VERIFIED).
+7.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Nhập sai mã OTP quá 3 lần liên tiếp (3-Attempt Fail Lockout):
+• Tình huống: Tài xế cố tình thử mò mã hoặc nhập sai số liên tiếp.
+• Xử lý an ninh:
+• Sau lần nhập sai thứ 3: Hệ thống kích hoạt Cơ chế khóa an ninh khẩn cấp (Security Lockout). Khóa cứng tính năng nhập OTP của đơn hàng đó trên Driver App trong suốt 24 giờ.
+• Driver App phát âm thanh báo động và hiển thị hướng dẫn: "Đơn hàng bị khóa do nhập sai mã quá 3 lần. Shipper bắt buộc phải mang kiện hàng hoàn trả về Bưu cục lưu kho".
+• Hệ thống gửi cảnh báo gian lận tới tài khoản của khách hàng và bộ phận Điều tra An ninh Nội bộ Sàn.
+• Ngoại lệ 2: Người nhận chính chủ vắng nhà, nhờ người thân hoặc lễ tân nhận hộ:
+• Tình huống: Khách bận đi làm, bảo vệ tòa nhà hoặc người thân ở nhà nhận thay.
+• Quy chuẩn nhận hộ an toàn:
+• Khách hàng bắt buộc phải chuyển tiếp tin nhắn SMS hoặc cung cấp mã OTP 6 số cho người nhận thay.
+• Khi tài xế đến: Người nhận thay phải đọc đúng mã OTP và xuất trình CCCD của người nhận thay.
+• Tài xế nhập mã OTP, chụp ảnh CCCD của người nhận thay và ghi rõ quan hệ (ví dụ: "Vợ nhận hộ", "Bảo vệ nhận hộ").
+• Nghiêm cấm: Tuyệt đối không giao hàng nếu người nhận hộ không có mã OTP. Nếu tài xế cố tình giao hàng không có OTP, tài xế chịu 100% trách nhiệm bồi thường nếu phát sinh tranh chấp mất hàng.
+• Ngoại lệ 3: Điện thoại khách hàng hết pin hoặc mất sóng viễn thông:
+• Tài xế bấm nút "Hỗ trợ khách hàng gửi lại OTP" trên Driver App.
+• Hệ thống kích hoạt cơ chế gửi lại: (1) Gửi lại SMS qua đầu số mạng viễn thông phụ, (2) Kích hoạt cuộc gọi thoại tự động (Voice OTP Bot) đọc mã trực tiếp vào số điện thoại đăng ký, hoặc (3) Gửi mã về email phụ đã xác minh.
+• Ngoại lệ 4: Xử lý giao hàng thất bại & Lưu kho bưu cục (3 Delivery Attempts & Depot Hold):
+• Nếu sau 15 phút không liên lạc được hoặc khách không cung cấp được OTP:
+• Tài xế mang bưu kiện quay về bưu cục trung chuyển trong ngày (Delivery Station).
+• Chính sách 3 lần thử giao (3 Delivery Attempts Rule): Hệ thống tự động xếp lịch giao lại vào ngày làm việc tiếp theo (tối đa 3 lần thử giao trong 3 ngày liên tiếp).
+• Nếu sau 3 lần vẫn giao không thành công: Bưu kiện được chuyển vào kho lưu giữ bưu kiện chuyên dụng (DEX Depot). Bưu kiện được niêm phong trong két an toàn. Khách hàng có 05 ngày làm việc để mang CCCD trực tiếp ra bưu cục nhận máy hoặc liên hệ tổng đài hẹn lại ngày giao.
+• Quá 5 ngày tại DEX Depot mà khách không nhận: Bưu kiện tự động chuyển hoàn về kho tổng (Return to Sender - RTS), đơn hàng bị hủy và khách được hoàn trả 100% tiền mua máy.
+7.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-VRF-01 | Ngưỡng Bắt Buộc Kích Hoạt OTP An Ninh (High-Value Verification Threshold) | Áp dụng bắt buộc cho: (1) Mọi đơn hàng có tổng giá trị $\ge 5.000.000$ VNĐ, (2) Đơn hàng chứa sản phẩm thuộc nhóm Smartphone, Tablet, Laptop, Đồng hồ thông minh cao cấp, (3) Tài khoản người mua có điểm tín nhiệm rủi ro cao. Hệ thống cấm nhân viên tự ý gỡ bỏ cờ xác thực OTP đối với các đơn hàng này.
+BR-VRF-02 | Cơ Chế Chống Dò Mã & Khóa Cứng 24 Giờ (Anti-Brute-Force 3-Strike Lockout) | Hệ thống theo dõi số lần thử sai của mã OTP theo package_id. Nếu nhập sai liên tiếp 3 lần: Khóa đơn hàng trong 24 giờ (is_locked_for_delivery = TRUE). Để mở khóa, khách hàng bắt buộc phải gọi lên tổng đài CSKH và vượt qua bài kiểm tra xác minh danh tính 3 câu hỏi bảo mật.
+BR-VRF-03 | Khóa Tuyệt Đối Tính Năng "Để Hàng Trước Cửa" (Strict No-Unattended-Delivery Policy) | Đối với đơn hàng yêu cầu xác thực OTP, ứng dụng tài xế tuyệt đối không hiển thị tùy chọn "Để hàng trước cửa nhà" hoặc "Gửi hàng xóm không mã". Bưu tá vi phạm bàn giao hàng mà không có mã OTP sẽ bị trừ 100% tiền chuyến, khóa tài khoản giao vận và chịu trách nhiệm pháp lý nếu hàng bị báo mất.
+BR-VRF-04 | Lưu Trữ Bằng Chứng Chữ Ký Số & POD Tối Thiểu 180 Ngày (Evidence Retention Compliance) | Toàn bộ chữ ký số SVG, ảnh chụp POD có watermark tọa độ và con dấu thời gian UTC phải được lưu trữ bất biến trên hệ thống lưu trữ đám mây (WORM Storage - Write Once Read Many) trong thời gian tối thiểu 180 ngày, sẵn sàng trích xuất phục vụ giải quyết tranh chấp hoặc cung cấp chứng cứ cho cơ quan công an khi có yêu cầu.
+--- TABLE END ---
+7.7 Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Xác Thực Giao Hàng (`delivery_verifications`):
+--- TABLE START ---
+{  "verification_id": "VRF-20261105-00129",  "package_id": "PKG-20261105-0921-A",  "order_id": "ORD-20261105-88412",  "verification_method": "SMS_OTP_6_DIGITS",  "delivery_pin_hash": "$2b$12$K8xL2sU6WpY7qN.mZk9J7eQW1289abcdef0123456789abcdef",  "failed_attempts_count": 0,  "max_allowed_attempts": 3,  "is_locked_24h": false,  "recipient_type": "DESIGNATED_CONSIGNEE",  "consignee_id_card": "07919500**** ",  "consignee_relationship": "SISTER",  "digital_signature_url": "https://storage.platform.vn/signatures/2026/11/SIG-PKG-0921A.svg",  "photo_pod_url": "https://storage.platform.vn/pod/2026/11/POD-PKG-0921A.jpg",  "gps_telemetry_at_delivery": {    "latitude": 10.792415,    "longitude": 106.721822,    "distance_to_destination_meters": 12.5,    "captured_at": "2026-11-05T10:14:20Z"  },  "verification_status": "VERIFIED_DELIVERED"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Xác thực Giao Hàng An Ninh:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[OUT_FOR_DELIVERY] | OTP_GENERATED_DISPATCHED | Đơn hàng $\ge 5.000.000$ VNĐ | AWAITING_RECIPIENT_OTP | Khóa giao diện Driver App, gửi SMS mã 6 số
+AWAITING_RECIPIENT_OTP | DRIVER_SUBMIT_CORRECT_OTP | Khớp chuỗi băm bcrypt 100% | OTP_PASSED_AWAITING_POD | Mở khóa màn hình Chữ ký số và Camera POD
+OTP_PASSED_AWAITING_POD | POD_UPLOADED_SIGNATURE_OK | Ảnh rõ nét + Chữ ký hợp lệ | DELIVERED_SECURE_VERIFIED | Hoàn tất giao hàng, giải ngân tiền hàng
+AWAITING_RECIPIENT_OTP | DRIVER_SUBMIT_WRONG_OTP | Nhập sai lần 1 hoặc 2 | AWAITING_RECIPIENT_OTP | Báo số lần thử còn lại, ghi nhận log
+AWAITING_RECIPIENT_OTP | THIRD_CONSECUTIVE_WRONG_OTP | Nhập sai liên tiếp 3 lần | LOCKED_OUT_SECURITY | Khóa app 24h, yêu cầu quay đầu về bưu cục
+LOCKED_OUT_SECURITY | RETURNED_TO_DEPOT | Shipper bàn giao lại bưu cục | STORED_AT_DEX_DEPOT | Niêm phong két sắt DEX Depot, đếm lùi 5 ngày
+STORED_AT_DEX_DEPOT | CSKH_IDENTITY_VERIFIED | Khách xác minh qua tổng đài | SCHEDULED_REDELIVERY | Mở khóa, xếp lịch giao lại ngày hôm sau
+STORED_AT_DEX_DEPOT | DEX_DEPOT_5D_EXPIRED | Quá 5 ngày khách không nhận | RTS_RETURNING_TO_SENDER | Hoàn trả về kho người bán, hủy đơn hoàn tiền
+--- TABLE END ---
+7.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Xác Thực An Ninh Giao Nhận Đơn Hàng Giá Trị Cao (FUL-VERIF-05)  Scenario: Shipper giao đơn hàng điện thoại 25 triệu thành công nhờ xác thực đúng mã OTP 6 số và chữ ký    Given Đơn hàng mua iPhone trị giá 25.000.000 VNĐ đang được shipper đi giao    And Màn hình ứng dụng của shipper bị khóa nút "Hoàn tất", bắt buộc nhập mã PIN    And Khách hàng nhận được tin nhắn SMS chứa mã OTP 6 số ngẫu nhiên "619284"    When Shipper đến nơi, khách hàng kiểm tra kiện hàng còn nguyên tem seal và đọc mã "619284"    And Shipper nhập đúng mã "619284" vào ứng dụng    Then Ứng dụng shipper thông báo "Xác thực mã PIN thành công!" và mở khóa màn hình chữ ký    When Khách hàng ký tay lên màn hình và shipper chụp ảnh gói hàng trước cửa nhà có watermark GPS    Then Đơn hàng chuyển sang trạng thái "DELIVERED_SECURE_VERIFIED"    And Hệ thống ghi nhận hoàn tất giao hàng hợp lệ, bảo vệ shipper khỏi khiếu nại mất hàng.  Scenario: Tự động khóa tính năng giao hàng và chuyển hàng về Depot khi shipper nhập sai mã OTP quá 3 lần    Given Kiện hàng đang ở trạng thái yêu cầu nhập mã OTP giao hàng    When Shipper cố tình thử nhập các mã ngẫu nhiên sai liên tiếp 3 lần    Then Ứng dụng của shipper phát chuông báo động và hiển thị cảnh báo đỏ "ĐƠN HÀNG BỊ KHÓA DO NHẬP SAI QUÁ 3 LẦN"    And Nút giao hàng của đơn này bị khóa cứng trong vòng 24 giờ    And Shipper buộc phải mang gói hàng quay trở lại bưu cục phát    And Bưu cục phát quét nhận bưu kiện và chuyển vào trạng thái lưu kho an toàn "STORED_AT_DEX_DEPOT"    And Khách hàng nhận được email cảnh báo về sự cố nhập sai mã để liên hệ tổng đài xử lý.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+8. ĐẶC TẢ CHI TIẾT FUL-LOST-06: XỬ LÝ THẤT LẠC HÀNG HÓA TRONG VẬN CHUYỂN (LOST IN TRANSIT TRACER & GSMA BLACKLIST LOCK)
+8.1 Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: FUL-LOST-06
+• Tên nghiệp vụ: Xử Lý Bưu Kiện Mất Tích / Thất Lạc Trong Vận Chuyển, Mở Phiếu Điều Tra Bưu Chính SLA 48 Giờ, Lựa Chọn Khắc Phục 1-Chạm & Khóa Đen Thiết Bị Toàn Cầu GSMA Blacklist (Lost In Transit Claims, 48-Hour Carrier Investigation SLA, 1-Touch Customer Remedy & GSMA Global Blacklist Remote Lock)
+• Tương đương thực tế: Amazon Lost Package Refund & Priority Replacement Policy, Apple Device Enrollment Program (DEP) & GSMA Central Equipment Identity Register (CEIR) Stolen Device Lockdown.
+8.2 Mục tiêu & Tác nhân
+• Mục tiêu:
+• Tự động phát hiện các bưu kiện bị kẹt, mất dấu vết quét (Stalled Tracking) quá 48 đến 72 giờ trong mạng lưới bưu cục vận chuyển.
+• Tự động khởi tạo phiếu điều tra bưu chính điện tử (Carrier Investigation Tracer Ticket) với cam kết SLA xử lý nghiêm ngặt trong 48 giờ làm việc.
+• Đặt quyền lợi của khách hàng lên hàng đầu: Cung cấp giải pháp khắc phục 1-chạm (1-Touch Customer Remedy): Khách hàng được quyền chọn (1) Xuất ngay kiện hàng mới giao hỏa tốc ưu tiên HOẶC (2) Nhận hoàn tiền 100% ngay lập tức mà không cần chờ kết quả điều tra kéo dài giữa sàn và bưu điện.
+• Triệt tiêu 100% động cơ trộm cắp tuồn hàng ra chợ đen của nhân viên bưu chính: Đối với các thiết bị công nghệ có số Serial/IMEI, hệ thống tự động đẩy thông tin lên Cơ sở dữ liệu Quốc tế GSMA Blacklist Registry (CEIR) và kích hoạt khóa iCloud/MDM từ xa để biến thiết bị thành "cục gạch" vĩnh viễn không thể bắt sóng di động.
+• Tác nhân tham gia:
+• Hệ thống Giám sát Vận chuyển (TMS Tracking SLA Monitor): Quét liên tục dữ liệu Webhook tracking từ các đơn vị vận chuyển 3PL để phát hiện bưu kiện đứng yên.
+• Đơn vị Vận chuyển 3PL (Carrier Partner - Viettel Post, GHN, SPX): Nhận lệnh điều tra khẩn, cử thanh tra bưu cục kiểm tra vật lý trong 48h.
+• Khách hàng (Buyer): Nhận thông báo sự cố, ký bản cam kết thất lạc điện tử (Lost Package Affidavit) và bấm chọn phương án đền bù.
+• Cổng Kết nối An ninh Thiết bị Quốc tế (GSMA CEIR & Apple GSX Gateway): Gửi lệnh khóa thiết bị theo số IMEI/Serial lên hệ thống quản lý thiết bị toàn cầu.
+• Hệ thống Tài chính & Bảo hiểm Sàn (Escrow & Logistics Insurance): Bồi hoàn tiền cho người bán và đòi bồi thường bảo hiểm từ hãng vận chuyển.
+8.3 Điều kiện tiên quyết
+1. Kiện hàng đang ở trạng thái đang vận chuyển (IN_TRANSIT) nhưng không phát sinh bất kỳ sự kiện quét mã vạch (Scan Checkpoint) mới nào trong suốt quá 72 giờ liên tục tính từ ngày giao hàng dự kiến ban đầu (EDD).
+2. Hoặc đơn vị vận chuyển chủ động gửi bản tin Webhook xác nhận sự cố bất khả kháng: CARRIER_REPORTED_LOST hoặc DAMAGED_IN_TRANSIT_UNRECOVERABLE.
+8.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+--- TABLE START ---
+[BƯU KIỆN ĐANG VẬN CHUYỂN: MẤT DẤU QUÉT TRACKING QUÁ 72H LIÊN TỤC]                               │                               ▼        [HỆ THỐNG TỰ ĐỘNG BẬT CỜ BÁO ĐỘNG ĐỎ: STALLED_IN_TRANSIT]                               │                               ▼     [TỰ ĐỘNG MỞ PHIẾU ĐIỀU TRA BƯU CHÍNH (CARRIER TRACER TICKET)]     ├── Gửi API khẩn tới Đơn vị vận chuyển (Viettel Post / GHN / SPX)     ├── Kích hoạt ĐỒNG HỒ ĐẾM NGƯỢC SLA ĐIỀU TRA 48 GIỜ LÀM VIỆC     └── Đơn vị vận chuyển cử thanh tra lục soát tại Hub phân loại cuối cùng                               │                               ▼     [GỬI THÔNG BÁO MINH BẠCH & LỰA CHỌN 1-CHẠM CHO KHÁCH HÀNG]     ├── "Kiện hàng của bạn đang gặp sự cố gián đoạn tại bưu cục trung chuyển"     ├── Khách hàng ký bản Cam kết thất lạc điện tử (Digital Loss Affidavit)     └── KHÁCH HÀNG CHỌN 1 TRONG 2 PHƯƠNG ÁN KHẮC PHỤC NGAY LẬP TỨC:           │           ├──► LỰA CHỌN A: XUẤT NGAY MÁY MỚI GIAO HỎA TỐC ƯU TIÊN (PRIORITY RESHIP)           │      ├── OMS tạo Đơn hàng thay thế mới tinh 0đ (Replacement Order)           │      ├── Xuất từ kho gần nhất, đi tuyến hỏa tốc có mã PIN bảo mật           │      └── Khách nhận máy mới trong 24-48 giờ           │           └──► LỰA CHỌN B: HOÀN TIỀN 100% NGAY LẬP TỨC (IMMEDIATE FULL REFUND)                  ├── Cổng thanh toán chuyển trả 100% tiền về tài khoản ngân hàng của khách                  └── Khách nhận tiền trong vòng 2 giờ (Ví/ATM) hoặc 3 ngày (Thẻ Visa)                               │                               ▼     [KÍCH HOẠT QUY TRÌNH KHÓA ĐEN THIẾT BỊ TOÀN CẦU (GSMA CEIR BLACKLIST)]     ├── Đẩy số IMEI 1, IMEI 2 và Serial Number lên máy chủ GSMA Device Check     ├── Gắn cờ: `STOLEN_OR_LOST_IN_TRANSIT`     ├── Thiết bị bị chặn vĩnh viễn không thể kích hoạt sóng di động trên toàn cầu     └── Khóa MDM / Apple Activation Lock từ xa biến máy thành phế liệu                               │                               ▼     [ĐỐI SOÁT TÀI CHÍNH BẢO HIỂM 3 BÊN (FINANCIAL SETTLEMENT)]     ├── Sàn trích Quỹ bảo hiểm logistics bồi hoàn 100% doanh thu cho Người bán     └── Bưu điện thanh toán tiền bồi thường thiệt hại theo hợp đồng vận tải cho Sàn.
+--- TABLE END ---
+• Bước 1 (Giám sát tự động & Phát hiện bưu kiện mất tích):
+• Hệ thống TMS Tracking SLA Monitor chạy ngầm quét dữ liệu theo chu kỳ 30 phút/lần.
+• Phát hiện kiện hàng PKG-20261105-0921-A chứa iPhone 16 Pro có điểm quét cuối cùng tại Trạm Phân Loại Đà Nẵng lúc 14:00 ngày 02/11. Tính đến 14:00 ngày 05/11 (đã trôi qua đúng 72 giờ) hoàn toàn không có bất kỳ lượt quét mã vạch nào tiếp theo, và đã quá Ngày giao hàng dự kiến ban đầu (EDD).
+• Trạng thái kiện hàng được nâng cấp thành Nghi Vấn Thất Lạc (`STALLED_INVESTIGATING`).
+• Bước 2 (Khởi tạo Phiếu điều tra bưu cục với SLA 48 giờ):
+• Hệ thống OMS gọi tự động API tạo phiếu sự cố sang hệ thống đối soát của Hãng vận chuyển:
+POST /api/v1/carrier/investigations/tracer-ticket.
+• Thiết lập đồng hồ đếm ngược SLA cam kết phản hồi: Đúng 48 giờ làm việc (48:00:00).
+• Đội thanh tra của hãng vận chuyển bắt buộc phải kiểm tra camera giám sát (CCTV) tại băng chuyền phân loại Đà Nẵng và kiểm đếm vật lý thùng xe tải để xác định bưu kiện có bị rơi rớt hay thất thoát.
+• Bước 3 (Minh bạch thông tin & Bản cam kết thất lạc điện tử):
+• Thay vì để khách hàng chờ đợi mù mờ, hệ thống chủ động gửi email và thông báo đẩy:
+• "Kiện hàng của bạn đang bị chậm trễ bất thường tại trạm trung chuyển. Chúng tôi đã mở cuộc điều tra khẩn cấp với đơn vị vận chuyển."
+• Khách hàng bấm vào liên kết để ký xác nhận Bản Cam Đoan Thất Lạc Điện Tử (Lost Package Affidavit) xác nhận chưa nhận được hàng và cam kết sẽ từ chối nhận nếu gói hàng cũ bất ngờ xuất hiện sau này.
+• Bước 4 (Cung cấp Lựa chọn Khắc phục 1-Chạm cho Khách hàng):
+• Trên giao diện hiển thị 2 tùy chọn giải quyết ngay lập tức:
+• Tùy chọn A (Xuất ngay máy mới ưu tiên - Priority Replacement): Hệ thống OMS tạo ngay một Đơn hàng thay thế mới tinh trị giá 0đ (Replacement_Order_ID), tự động định tuyến xuất từ kho gần nhất và chuyển phát bằng gói dịch vụ ưu tiên cao nhất có chữ ký nhận tận tay.
+• Tùy chọn B (Hoàn tiền 100% tức thì - Immediate Full Refund): Cổng thanh toán hoàn trả lại 100% số tiền đơn hàng về đúng thẻ tín dụng/ví của khách hàng mà không cần đợi kết quả điều tra của bưu điện.
+• Bước 5 (Đóng lệnh điều tra & Khóa đen thiết bị trên GSMA Blacklist):
+• Hết 48 giờ, đơn vị vận chuyển phát hành văn bản xác nhận chính thức: Bưu kiện đã bị thất lạc không thể thu hồi (DECLARED_LOST_IN_TRANSIT).
+• Quy trình Khóa thiết bị từ xa (Remote Lockdown Protocol):
+1. Hệ thống ERP của sàn trích xuất bộ ba định danh của chiếc máy bị mất: Serial_Number, IMEI_1, IMEI_2.
+2. Gọi API đồng bộ với Cơ sở dữ liệu Thiết bị Toàn cầu GSMA Central Equipment Identity Register (CEIR):
+POST /api/v1/gsma/blacklist-registry gắn nhãn LOST_OR_STOLEN_IN_TRANSIT.
+3. Thiết bị này sẽ bị tất cả các nhà mạng viễn thông tại Việt Nam (Viettel, VinaPhone, MobiFone) và hơn 100 quốc gia trên thế giới từ chối cấp phát sóng di động (No Service / Blocked Network).
+4. Gửi tín hiệu khóa kích hoạt từ xa qua Apple GSX / Mobile Device Management (MDM Lock) hiển thị thông báo màn hình khóa: "Thiết bị này là tài sản bị thất lạc của Sàn TMĐT. Mọi hành vi tiêu thụ là vi phạm pháp luật".
+• Bước 6 (Quyết toán tài chính bảo hiểm 3 bên):
+• Sàn giải phóng tiền bán hàng từ Quỹ Ký Quỹ (Escrow) chi trả đầy đủ 100% doanh thu cho Người bán, đảm bảo Người bán hoàn toàn vô can và không bị thiệt hại tài chính.
+• Hãng vận chuyển bồi thường 100% giá trị khai giá của bưu kiện cho Sàn TMĐT theo hợp đồng bảo hiểm hàng hóa đã ký kết.
+8.5 Luồng phụ & Luồng ngoại lệ
+• Ngoại lệ 1: Bưu kiện cũ bất ngờ được tìm thấy sau khi đã xuất máy mới (Package Located After Remedy):
+• Tình huống: Sau khi sàn đã gửi chiếc iPhone mới khác cho khách, bưu điện tìm thấy chiếc iPhone cũ bị rơi sau góc băng chuyền và tiếp tục mang đi phát cho khách.
+• Xử lý an ninh:
+• Hệ thống bưu tá phát hiện mã vận đơn này đã bị gắn cờ INTERCEPT_CANCELLED_RTS.
+• Máy quét của bưu tá rung chuông báo động: "GÓI HÀNG BỊ THU HỒI - TUYỆT ĐỐI KHÔNG GIAO CHO KHÁCH".
+• Bưu kiện cũ được tự động niêm phong mang trả về kho tổng của Sàn.
+• Nếu bưu tá lỡ giao đến nhà khách: Do khách đã ký bản cam đoan Affidavit, khách hàng có nghĩa vụ từ chối nhận hoặc thông báo bưu tá mang về. Nếu khách cố tình giữ cả 2 máy: Chiếc máy cũ do đã bị khóa IMEI trên GSMA Blacklist nên cũng hoàn toàn không thể lắp SIM kích hoạt sử dụng được.
+• Ngoại lệ 2: Bưu kiện thất lạc là sản phẩm phiên bản giới hạn (Limited Edition / Out of Stock Everywhere):
+• Nếu món hàng bị mất là phiên bản giới hạn không còn bất kỳ chiếc nào trong toàn bộ mạng lưới kho để gửi thay thế:
+• Hệ thống tự động chuyển sang phương án Hoàn tiền 100% tiền mua hàng + Hoàn 100% các voucher đã sử dụng + Tặng thêm 01 Voucher đặc quyền trị giá 200.000 VNĐ để tạ lỗi với khách hàng.
+8.6 Quy tắc nghiệp vụ chi tiết & Ràng buộc logic
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-LST-01 | Ngưỡng Tự Động Kích Hoạt Nghi Vấn Thất Lạc (Automatic Stalled Threshold) | Hệ thống tự động chuyển trạng thái sang STALLED_INVESTIGATING khi một bưu kiện không có lượt quét mới trong hơn 72 giờ liên tục tính từ ngày EDD (hoặc quá 48 giờ đối với gói chuyển phát hỏa tốc). Không yêu cầu khách hàng phải gọi điện phản ánh thì hệ thống mới kích hoạt.
+BR-LST-02 | Khắc Phục Tức Thì Không Chờ Đợi Bưu Điện (Customer-First Remedy Mandate) | Sàn cam kết cung cấp giải pháp xuất máy mới hoặc hoàn tiền ngay lập tức cho khách hàng ngay khi khách ký bản cam kết Affidavit. Khách hàng tuyệt đối không phải chờ đợi quy trình bồi thường nội bộ kéo dài 15-30 ngày giữa Sàn và Đơn vị vận chuyển 3PL.
+BR-LST-03 | Khóa Cứng Số IMEI Trên Mạng Lưới Toàn Cầu (Mandatory GSMA Blacklist Enrollment) | 100% các thiết bị có khe SIM/eSIM bị xác nhận mất tích trong quá trình vận chuyển bắt buộc phải được đăng ký khóa đen trên cơ sở dữ liệu GSMA CEIR trong vòng 24 giờ kể từ khi đơn vị vận chuyển xác nhận mất hàng. Nghiêm cấm mọi hành vi bỏ qua bước khóa IMEI để ngăn chặn hàng trộm cắp tuồn ra thị trường chợ đen.
+BR-LST-04 | Bảo Vệ Doanh Thu Người Bán Tuyệt Đối (Seller Financial Immunity) | Nếu hàng bị thất lạc trong quá trình vận chuyển bởi đối tác 3PL do sàn chỉ định, Người bán được bảo vệ quyền lợi 100%: Người bán vẫn nhận đủ 100% tiền thanh toán của đơn hàng từ Quỹ Ký Quỹ Escrow của sàn và không bị trừ bất kỳ điểm đánh giá vận hành nào.
+--- TABLE END ---
+8.7 Dữ liệu vào/ra & Máy trạng thái
+A. Cấu trúc Thực thể Khiếu Nại Thất Lạc Hàng Hóa (`lost_in_transit_claims`):
+--- TABLE START ---
+{  "claim_id": "CLM-LOST-20261105-0081",  "package_id": "PKG-20261105-0921-A",  "order_id": "ORD-20261105-88412",  "carrier_code": "VIETTEL_POST",  "last_checkpoint_scanned": "HUB-DANANG-SORTING",  "last_scan_timestamp": "2026-11-02T14:00:00Z",  "stalled_hours_count": 72,  "tracer_ticket_id": "VTP-TRACER-8819204",  "investigation_deadline": "2026-11-07T14:00:00Z",  "customer_affidavit_signed": true,  "customer_remedy_choice": "PRIORITY_RESHIP_NEW",  "replacement_order_id": "ORD-REPLACE-20261105-001",  "blacklisted_hardware_devices": [    {      "serial_number": "F2LW9901Q882",      "imei_1": "358921109921448",      "imei_2": "358921109921455",      "gsma_blacklist_status": "BLOCKED_CONFIRMED",      "gsma_broadcast_timestamp": "2026-11-05T15:30:00Z"    }  ],  "claim_status": "CLOSED_REPLACED_AND_CARRIER_BILLED"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Xử lý Thất lạc Hàng hóa:
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[IN_TRANSIT] | TRACKING_STALLED_72H | Quá 72h không có lượt quét mới | STALLED_INVESTIGATING | Mở Ticket điều tra bưu điện SLA 48h
+STALLED_INVESTIGATING | AFFIDAVIT_SIGNED_RESHIP | Khách ký cam kết, chọn đổi máy | REMEDY_RESHIP_INITIATED | OMS tạo đơn xuất máy mới hỏa tốc 0đ
+STALLED_INVESTIGATING | AFFIDAVIT_SIGNED_REFUND | Khách ký cam kết, chọn hoàn tiền | REMEDY_REFUND_EXECUTED | Hoàn trả 100% tiền thanh toán về tài khoản
+REMEDY_RESHIP_INITIATED | CARRIER_CONFIRMED_LOST | Bưu điện xác nhận mất bưu kiện | LOST_CONFIRMED_GSMA_LOCKED | Đẩy IMEI lên GSMA Blacklist khóa máy
+LOST_CONFIRMED_GSMA_LOCKED | FINANCIAL_INDEMNIFIED | Bưu điện đền tiền, Sàn giải ngân shop | CLOSED_SETTLED | Đóng hồ sơ bồi thường, đối soát xong
+STALLED_INVESTIGATING | PARCEL_LOCATED_BEFORE_SLA | Tìm thấy gói hàng trước khi xử lý | IN_TRANSIT | Tiếp tục lộ trình phát, thông báo khách
+REMEDY_RESHIP_INITIATED | PARCEL_FOUND_POST_REMEDY | Gói cũ xuất hiện sau khi đã đền | INTERCEPT_RETURN_TO_SENDER | Khóa lệnh phát, thu hồi gói cũ về sàn
+--- TABLE END ---
+8.8 Tiêu chí nghiệm thu chức năng (Given-When-Then)
+--- TABLE START ---
+Feature: Xử Lý Thất Lạc Hàng Hóa Trong Vận Chuyển và Khóa Đen GSMA (FUL-LOST-06)  Scenario: Tự động phát hiện bưu kiện kẹt quá 72h và xử lý xuất ngay máy mới hỏa tốc cho khách hàng    Given Kiện hàng chứa iPhone 16 Pro đang vận chuyển có lượt quét cuối tại Bưu cục Đà Nẵng    When Đã trôi qua 72 giờ liên tục mà không có bất kỳ lượt quét mã vạch nào tiếp theo    Then Hệ thống OMS tự động chuyển trạng thái kiện hàng sang "STALLED_INVESTIGATING"    And Hệ thống tự động mở phiếu điều tra Tracer Ticket với Viettel Post có thời hạn SLA 48 giờ    And Hệ thống gửi thông báo mời khách hàng ký bản Cam kết thất lạc điện tử trên ứng dụng    When Khách hàng ký cam kết và bấm chọn "Xuất ngay máy mới hỏa tốc"    Then Hệ thống OMS tự động tạo ngay một Đơn hàng thay thế mới trị giá 0đ    And Kho gần nhất tiến hành đóng gói và giao chiếc máy mới đến tay khách hàng trong 24 giờ mà không bắt khách chờ bưu điện.  Scenario: Tự động khóa đen số IMEI trên mạng lưới viễn thông toàn cầu GSMA khi bưu kiện bị mất    Given Kiện hàng điện thoại iPhone đã được bưu điện xác nhận chính thức bị mất tích trong quá trình vận chuyển    When Hồ sơ bồi thường chuyển sang trạng thái "LOST_CONFIRMED_GSMA_LOCKED"    Then Hệ thống tự động gửi yêu cầu API chứa số Serial và 2 số IMEI lên máy chủ GSMA CEIR    And Trạng thái của thiết bị trên cơ sở dữ liệu GSMA chuyển thành "BLOCKED_STOLEN_LOST"    And Cả 3 nhà mạng viễn thông Viettel, VinaPhone, MobiFone lập tức từ chối nhận sóng đối với chiếc máy này    And Thiết bị bị khóa iCloud từ xa biến thành máy phế liệu, triệt tiêu động cơ trộm cắp tuồn hàng.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+9. MA TRẬN ĐIỀU PHỐI HOÀN TẤT ĐƠN HÀNG ĐA KÊNH, CHI PHÍ LOGISTICS & SLA CAM KẾT
+Bảng ma trận tổng hợp toàn diện các phương thức hoàn tất đơn hàng và cơ chế kiểm soát rủi ro trong hệ thống:
+--- TABLE START ---
+Mã Nghiệp Vụ | Phương Thức Hoàn Tất | Nguồn Xuất Hàng (Origin) | Thời Gian Xử Lý (SLA) | Chi Phí Vận Hành | Cơ Chế Bảo Mật & Xác Thực | Xử Lý Ngoại Lệ & Đền Bù
+FUL-EXPRESS-03 | Giao Hỏa Tốc 1-2 Giờ | Cửa hàng Bán lẻ / Kho vệ tinh nội thành | 15p soạn hàng; Giao trong 60-120p | Cao (Cước tài xế On-demand) | Live GPS 5s; Mã PIN 4 số; Ảnh Photo POD watermark | Giao trễ >30p: Tự động tặng Voucher 50k; Không gặp khách: Quay đầu shop
+FUL-PICKUP-02 | Nhận Tại Cửa Hàng | Cửa hàng Bán lẻ (Local Store Hub) | 1 đến 2 giờ lấy ngay | Thấp (Khách tự đến lấy máy) | Apple Wallet Pass; Mã QR động 60s; CCCD chính chủ/Ủy quyền | Lưu kho 14 ngày; Quá hạn tự động hủy và hoàn tiền 100%
+FUL-SUBSCR-01 | Subscribe & Save | Trung tâm Logistics Tổng (Fulfillment Center) | Gom chuyến định kỳ 1 ngày trong tháng | Rất thấp (Gom nhiều món vào 1 thùng lớn) | Token thanh toán tự động; Nhắc trước T-3 ngày | Thẻ lỗi: Thử lại 3 lần trong 24h; Giá tăng >20%: Tự động hoãn kỳ
+FUL-SUBSCR-OOS | S&S Out-of-Stock | Trung tâm Logistics Tổng (Fulfillment Center) | Xử lý tại ngày chốt đơn T-1 | Trung bình (Sàn bù trừ chênh lệch giá) | Bảo lưu chiết khấu 15% (Grandfathering); Lựa chọn 1-chạm | Đổi sang SKU tương đương không đổi giá; Backorder 7 ngày giao bù 0đ
+FUL-SPLIT-04 | Tách Kiện Đa Kho | Phối hợp nhiều Kho FC và Cửa hàng | Độc lập theo từng kiện hàng | Trung bình (Sàn trợ cấp phí tách kho) | In nhãn tracking riêng; Hóa đơn hợp nhất Master; Trừ tiền từng phần | 1 kiện thất lạc/hủy: Chỉ hủy kiện đó, các kiện khác vẫn giao và bảo hành
+FUL-VERIF-05 | Xác Thực Đơn Giá Trị Cao | Mọi kho bãi và đơn vị vận chuyển 3PL | Theo SLA tiêu chuẩn hoặc hỏa tốc | Tiêu chuẩn + Phí dịch vụ bảo mật | Mã OTP 6 số bảo mật; Chữ ký số SVG; Khóa Driver App | Nhập sai quá 3 lần: Khóa 24h, mang về DEX Depot; Lưu 5 ngày hoàn tiền
+FUL-LOST-06 | Xử Lý Thất Lạc Hàng | Mạng lưới vận chuyển bưu cục 3PL | Mở Tracer sau 72h; Xử lý trong 48h | Được bảo hiểm vận chuyển bù đắp | Ký cam đoan Affidavit; Khóa đen IMEI GSMA CEIR toàn cầu | Khách chọn 1-chạm: Xuất ngay máy mới hỏa tốc HOẶC hoàn tiền 100%
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+Tài liệu đặc tả nghiệp vụ hoàn tất đơn hàng SPEC-FUL-04 được biên soạn theo tiêu chuẩn phân tích kỹ thuật hệ thống sản xuất (Production-Grade Technical Business Specification), đồng bộ hóa hoàn toàn với kiến trúc CSDL PostgreSQL và các hợp đồng API RESTful trong File 07.

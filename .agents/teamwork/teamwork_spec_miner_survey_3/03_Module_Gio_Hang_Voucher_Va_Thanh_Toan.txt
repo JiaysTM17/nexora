@@ -1,0 +1,1180 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT MODULE GIỎ HÀNG: ĐỘNG CƠ XẾP CHỒNG 5 TẦNG VOUCHER, FLASH SALE & TRẢ GÓP BNPL
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-PAY-03 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT MODULE GIỎ HÀNG: ĐỘNG CƠ XẾP CHỒNG 5 TẦNG VOUCHER, FLASH SALE & TRẢ GÓP BNPL
+Phạm vi: Động cơ xếp chồng voucher độc lập, phân lập kho Flash Sale 15 phút, SPayLater eKYC & Split Tenders
+====================================================================
+TÀI LIỆU ĐẶC TẢ NGHIỆP VỤ KỸ THUẬT: GIỎ HÀNG, XẾP CHỒNG VOUCHER ĐA TẦNG, CHỐNG TRỤC LỢI SYBIL, FLASH SALE, PHÒNG CHỐNG GIAN LẬN THANH TOÁN (3DS2/AVS), TRẢ GÓP BNPL MID-FLOW & THANH TOÁN ĐA NGUỒN (SPLIT TENDERS)
+• Mã tài liệu: SPEC-CART-PAY-03
+• Phân hệ thuộc Milestone 3: Giỏ hàng & Khuyến mãi Đa tầng, Phòng chống Trục lợi Khuyến mãi, Cơ chế Flash Sale, Động cơ Đánh giá Rủi ro Gian lận Thanh toán (Fraud/3DS/AVS), Dịch vụ Tài chính Tiêu dùng BNPL Nâng cao & Thanh toán Đa nguồn (Split Tenders)
+• Phiên bản: 3.0 (Chuẩn Đo chuẩn Quốc tế & Nội địa Toàn diện - Deep Round 2 Integration)
+• Tác nhân thực hiện: Technical Business Analyst Worker (chuyên viên phân tích)
+• Ngày hoàn thành: 05/11/2026
+• Tài liệu căn cứ & Benchmark đối chiếu:
+• Nền tảng nội địa: Shopee Việt Nam (shopee.vn), TikTok Shop Việt Nam (tiktok.com/shop)
+• Nền tảng quốc tế: Apple Store (apple.com), Swiftronics USA (swiftronics.com), US Mobile Shop (usmobile.com/shop), Amazon USA (amazon.com), Stripe Radar (stripe.com/radar), CyberSource (cybersource.com)
+• Tài liệu đặc tả hiện có: phan-tich-nghiep-vu-website-ban-hang.md (Chương 12, 13, 14, 15, 16, 17, 27, 28, 30, 33, 38, 40, 41)
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN
+1. DANH MỤC CÁC ĐẶC TẢ NGHIỆP VỤ TRỌNG YẾU
+2. ĐẶC TẢ CART-STACK-01: ĐỘNG CƠ XẾP CHỒNG VOUCHER 5 TẦNG & THUẬT TOÁN PHÂN BỔ GIẢM GIÁ HAMILTON-HARE
+3. ĐẶC TẢ CART-ABUSE-02: ĐỘNG CƠ PHÒNG CHỐNG TRỤC LỢI VOUCHER & TẤN CÔNG SYBIL ĐA TÀI KHOẢN
+4. ĐẶC TẢ CART-FLASH-03: CƠ CHẾ FLASH SALE, PHÂN LẬP TỒN KHO & KHÓA GIÁ ĐỘNG CHỐNG RACE-CONDITION
+5. ĐẶC TẢ PAY-FRAUD-AVS-04: ĐỘNG CƠ CHẤM ĐIỂM GIAN LẬN THANH TOÁN, ĐỊNH TUYẾN 3DS 2.0 & HỆ THỐNG XÁC THỰC AVS
+6. ĐẶC TẢ PAY-BNPL-MIDFLOW-05: MUA TRƯỚC TRẢ SAU (BNPL), XỬ LÝ TỪ CHỐI HẠN MỨC GIỮA CHỪNG & QUẢN TRỊ TRẢ GÓP / QUÁ HẠN KỲ 2-3
+7. ĐẶC TẢ PAY-SPLIT-06: THANH TOÁN ĐA NGUỒN (SPLIT TENDERS), XẾP CHỒNG 8 GIFT CARDS & GIAO THỨC HOÀN TIỀN NGƯỢC ƯU TIÊN TIỀN MẶT
+8. MA TRẬN LIÊN THÔNG VÀ TÍCH HỢP HỆ THỐNG ĐẦU CUỐI
+————————————————————————————————————————————————————————————————————
+1. DANH MỤC CÁC ĐẶC TẢ NGHIỆP VỤ TRỌNG YẾU
+--- TABLE START ---
+Mã Nghiệp Vụ | Tên Nghiệp Vụ Kỹ Thuật | Nền Tảng Đối Chuẩn Cốt Lõi | Mức Độ Khoảng Trống So Với Tài Liệu Hiện Có
+CART-STACK-01 | Động cơ Xếp chồng Voucher 5 tầng & Thuật toán Phân bổ Giảm giá Hamilton-Hare (Proportional Largest Remainder Method) | Shopee, TikTok Shop | Thiếu sâu (Significant Gap): Tài liệu cũ chỉ có giảm giá đơn lẻ (KM-03, KM-09). Đã bổ sung ma trận xung đột, thứ tự ưu tiên 5 tầng, thuật toán Hamilton-Hare giải quyết triệt để sai số làm tròn 1-VND khi hoàn tiền một phần (Partial Return).
+CART-ABUSE-02 | Động cơ Phòng Chống Trục Lợi Voucher & Tấn Công Sybil Đa Tài Khoản (Voucher Abuse & Sybil Defense) | Shopee, TikTok Shop Anti-Fraud | Thiếu hoàn toàn (Massive Gap): Chưa có cơ chế nhận diện vân tay thiết bị đa biến, gom cụm IP Subnet /24, chuẩn hóa địa chỉ mờ Levenshtein/Geocoding, ràng buộc thẻ thanh toán tối đa 2 tài khoản/180 ngày và các mã lỗi F02, M01, M02.
+CART-FLASH-03 | Cơ chế Flash Sale, Phân lập Tồn kho & Khóa giá Động Chống Race-Condition | Shopee, TikTok Shop Flash Sale | Thiếu hoàn toàn (Massive Gap): Phân lập Reserved_Flash_Stock, khóa giá động 15 phút, đồng hồ đếm ngược thời gian thực và khóa nguyên tử Redis Lua Script chống bot tải cao.
+PAY-FRAUD-AVS-04 | Động cơ Chấm Điểm Gian Lận Thanh Toán, Định Tuyến 3DS 2.0 & Xác Thực Địa Chỉ Hóa Đơn AVS | Stripe Radar, CyberSource Decision Manager | Thiếu hoàn toàn (Massive Gap): Chưa từng có kiến trúc chấm điểm gian lận thẻ (thang điểm 0-100), định tuyến 3D-Secure 2.0 kép (Frictionless chuyển giao trách nhiệm bồi hoàn vs Challenge OTP), mã AVS đối soát địa chỉ, giới hạn thử CVV 3 lần khóa 24h và kiểm soát vận tốc giao dịch.
+PAY-BNPL-MIDFLOW-05 | Mua trước Trả sau (BNPL), Xử Lý Từ Chối Hạn Mức Giữa Chừng & Quản Trị Trả Góp / Quá Hạn Kỳ 2-3 | Shopee (SPayLater), Apple Card (ACMI), Affirm / Klarna | Thiếu hoàn toàn (Massive Gap): Chưa có luồng cứu vãn giỏ hàng khi bị từ chối hạn mức giữa chừng (Down Payment Split Recovery đóng băng giỏ hàng và voucher 15 phút), luồng trễ hạn kỳ 2-3 (ân hạn 7-10 ngày, lịch truy thu tự động, báo cáo CIC và khóa thiết bị từ xa qua MDM/Carrier Lock).
+PAY-SPLIT-06 | Thanh toán Đa nguồn (Split Tenders), Xếp chồng 8 Gift Cards & Giao thức Hoàn tiền Ngược Ưu tiên Tiền mặt | Apple Store (Split Payment) | Thiếu hoàn toàn (Massive Gap): Chưa hỗ trợ xếp chồng tối đa 8 thẻ quà tặng điện tử kết hợp thẻ ngân hàng/ví, giao dịch phân tán Two-Phase Commit và thuật toán hoàn tiền ngược LIFO ưu tiên nguồn thẻ ngân hàng trước.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+2. ĐẶC TẢ CART-STACK-01: ĐỘNG CƠ XẾP CHỒNG VOUCHER 5 TẦNG & THUẬT TOÁN PHÂN BỔ GIẢM GIÁ HAMILTON-HARE
+--- TABLE START ---
+[Tổng giá trị hàng hóa gốc (Original Subtotal)]       │       ▼  (Trừ Tầng 1)[TẦNG 1: Voucher Người Bán (Shop/Seller Voucher)]  ── Ngân sách: 100% Shop tài trợ       │       ▼  (Trừ Tầng 2)[TẦNG 2: Voucher Sàn TMĐT (Shopee Platform Voucher)] ── Ngân sách: 100% Sàn (hoặc Đồng tài trợ)       │       ├──► [Cộng Phí Vận Chuyển Thực Tế (Shipping Fee)]       │         │       │         ▼  (Trừ Tầng 3)       │    [TẦNG 3: Voucher Miễn Phí Vận Chuyển (Freeship Xtra)] ── Ngân sách: Quỹ Phí Dịch Vụ / Sàn       │       ▼  (Trừ Tầng 4)[TẦNG 4: Voucher Đối Tác Thanh Toán / Ví / Ngân Hàng] ── Ngân sách: Ngân hàng / Cổng TT tài trợ       │       ▼  (Trừ Tầng 5)[TẦNG 5: Khấu Trừ Shopee Xu / Điểm Thưởng Tích Lũy]  ── Ngân sách: Sàn TMĐT / Shop Xu (Trần 50%)       │       ▼[Số Tiền Khách Hàng Thực Trả Cuối Cùng (Final Payable Amount)]
+--- TABLE END ---
+2.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: CART-STACK-01
+• Tên nghiệp vụ: Động cơ Xếp chồng Voucher 5 tầng & Thuật toán Phân bổ Giảm giá Đa nguồn Ngân sách (5-Tier Voucher Stacking Engine & Proportional Multi-Budget Apportionment Algorithm).
+• Phân hệ: Quản lý Giỏ hàng, Đặt hàng & Khuyến mãi nâng cao (Cart, Checkout & Advanced Promotion Engine).
+2.2. Mục tiêu & Tác nhân
+• Mục tiêu nghiệp vụ:
+• Cung cấp cơ chế cho phép khách hàng áp dụng đồng thời tối đa 5 lớp ưu đãi độc lập trong một đơn hàng duy nhất hoặc giỏ hàng đa người bán (Multi-merchant cart).
+• Tự động hóa việc đề xuất tổ hợp voucher tối ưu nhất (Best-deal auto-combination) giúp tối đa hóa số tiền tiết kiệm cho người mua mà không vi phạm các ràng buộc tài chính.
+• Phân định rõ ràng nguồn ngân sách tài trợ (Budget Sponsor) phục vụ quyết toán và đối soát tài chính minh bạch giữa Nhà bán hàng (Seller), Sàn TMĐT (Platform), và Đối tác thanh toán (Bank/Fintech).
+• Triển khai thuật toán phân bổ tỷ trọng giảm giá (Proportional Apportionment) chi tiết đến từng sản phẩm con (OrderItem), giải quyết triệt để bài toán hoàn tiền chính xác từng đồng khi khách hàng đổi trả một phần đơn hàng (Partial Return).
+• Tác nhân tham gia (Actors):
+• Khách hàng mua sắm (Buyer): Thu thập, áp dụng voucher và trải nghiệm mức giảm giá tối ưu tại màn hình thanh toán.
+• Nhà bán hàng (Seller / Merchant): Cấu hình voucher shop, theo dõi chi phí khuyến mãi bị khấu trừ trong báo cáo doanh thu.
+• Quản trị viên sàn (Platform Admin): Cấu hình voucher toàn sàn, voucher ngành hàng, voucher trợ giá vận chuyển (Freeship Xtra).
+• Đối tác tài chính / Ngân hàng (Fintech / Payment Partner): Đồng tài trợ các voucher thanh toán qua thẻ đồng thương hiệu hoặc ví điện tử.
+• Hệ thống Động cơ Khuyến mãi (Promotion Engine): Kiểm tra điều kiện, giải quyết ma trận xung đột, tính toán phân bổ và thực hiện soft-lock voucher.
+2.3. Điều kiện tiên quyết
+• Khách hàng đã đăng nhập tài khoản hợp lệ trên hệ thống (bắt buộc đối với việc áp dụng voucher sàn, voucher ngân hàng và đổi Shopee Xu; khách vãng lai chỉ áp dụng được voucher công khai của shop nếu không ràng buộc User ID).
+• Giỏ hàng có ít nhất 01 sản phẩm vật lý chính (MainItem) có trạng thái sẵn sàng bán (Is_Active = True, ATP > 0).
+• Các voucher tham gia áp dụng phải thỏa mãn đồng thời:
+1. Trạng thái hoạt động (Status = ACTIVE).
+2. Thời gian hiệu lực: Start_Time <= Current_Timestamp <= End_Time.
+3. Còn hạn mức sử dụng toàn hệ thống: Total_Used_Count < Total_Budget_Quota.
+4. Còn hạn mức sử dụng của cá nhân người dùng: User_Used_Count < User_Usage_Limit.
+5. Đạt giá trị đơn hàng tối thiểu quy định sau các bước cấn trừ tương ứng (Subtotal_Eligible >= Min_Spend).
+2.4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+Bước 1: Khởi tạo trang Thanh toán và Nhóm Giỏ hàng (Cart Grouping)
+• Khách hàng bấm "Mua hàng" từ Giỏ hàng.
+• Hệ thống Giỏ hàng (Cart Service) tổng hợp danh sách SKU, số lượng, đơn giá niêm yết và gom nhóm theo từng Shop:
+$$\text{Cart} = \{ \text{Shop}_1: [P_{1,1}, P_{1,2}], \text{Shop}_2: [P_{2,1}] \}$$
+• Truy vấn dịch vụ Logistics để tính toán phí vận chuyển thực tế dự kiến cho từng kiện hàng: $\text{Shipping\_Fee}_k$.
+Bước 2: Tự động Đề xuất Tổ hợp Voucher Tối ưu (Best-Deal Auto-Optimizer)
+• Hệ thống Promotion Engine quét ví voucher của khách hàng (User_Voucher_Wallet) và các voucher toàn sàn công khai.
+• Chạy thuật toán nhánh cận (Branch and Bound) kết hợp Heuristic để tìm tổ hợp voucher $[V_1, V_2, V_3, V_4, V_5]$ sao cho:
+$$\text{Max} \left( \sum_{i=1}^5 \text{Discount}(V_i) \right) \quad \text{thỏa mãn Ma trận Không Xung đột và Điều kiện Giá trị tối thiểu.}$$
+• Tự động tick chọn sẵn bộ voucher tối ưu này trên giao diện Thanh toán và hiển thị số tiền tiết kiệm tạm tính.
+Bước 3: Tính toán Tầng 1 — Voucher Người Bán (Shop / Seller Voucher)
+• Áp dụng độc lập cho từng Shop trong giỏ hàng.
+• Kiểm tra điều kiện:
+$$\text{Shop\_Subtotal}_j = \sum_{i \in \text{Shop}_j} (\text{Price}_i \times \text{Qty}_i) \ge \text{Min\_Spend}(V_{1,j})$$
+• Tính mức giảm của Tầng 1 cho Shop $j$:
+• Nếu giảm theo phần trăm:
+$$D_{1,j} = \min \left( \text{Shop\_Subtotal}_j \times \text{Discount\_Rate}_{1,j}, \, \text{Max\_Cap}_{1,j} \right)$$
+• Nếu giảm số tiền cố định:
+$$D_{1,j} = \min \left( \text{Fixed\_Amount}_{1,j}, \, \text{Shop\_Subtotal}_j \right)$$
+• Giá trị còn lại của Shop $j$ sau Tầng 1:
+$$\text{Shop\_Subtotal\_After\_T1}_j = \text{Shop\_Subtotal}_j - D_{1,j}$$
+Bước 4: Tính toán Tầng 2 — Voucher Toàn Sàn / Ngành Hàng (Shopee Platform Voucher)
+• Tính tổng giá trị các sản phẩm đủ điều kiện tham gia chương trình voucher sàn trên toàn bộ các shop:
+$$\text{Platform\_Eligible\_Subtotal} = \sum_{j} \text{Shop\_Subtotal\_After\_T1}_{j, \text{eligible}}$$
+• Kiểm tra điều kiện: $\text{Platform\_Eligible\_Subtotal} \ge \text{Min\_Spend}(V_2)$.
+• Tính mức giảm của Tầng 2:
+$$D_2 = \min \left( \text{Platform\_Eligible\_Subtotal} \times \text{Discount\_Rate}_2, \, \text{Max\_Cap}_2 \right)$$
+• Tổng giá trị đơn hàng sau Tầng 2:
+$$\text{Subtotal\_After\_T2} = \sum_j \text{Shop\_Subtotal\_After\_T1}_j - D_2$$
+Bước 5: Tính toán Tầng 3 — Voucher Miễn Phí Vận Chuyển (Freeship Voucher)
+• Tổng phí vận chuyển thực tế của toàn bộ các kiện hàng:
+$$\text{Total\_Shipping\_Fee} = \sum_j \text{Shipping\_Fee}_j$$
+• Kiểm tra điều kiện áp dụng của mã Freeship (ví dụ: đạt giá trị đơn tối thiểu sau Tầng 1, thuộc tuyến vận chuyển áp dụng, shop có nhãn Freeship Xtra).
+• Tính mức giảm vận chuyển:
+$$D_3 = \min \left( \text{Total\_Shipping\_Fee}, \, \text{Max\_Freeship\_Cap} \right)$$
+• Phí vận chuyển người mua thực trả:
+$$\text{Final\_Shipping\_Fee} = \text{Total\_Shipping\_Fee} - D_3$$
+(Lưu ý: Nếu $D_3 > \text{Total\_Shipping\_Fee}$, phần chênh lệch bị triệt tiêu về 0, tuyệt đối không được cấn trừ sang giá trị hàng hóa).
+Bước 6: Tính toán Tầng 4 — Voucher Phương Thức Thanh Toán (Payment Partner / Bank Voucher)
+• Hệ thống ghi nhận phương thức thanh toán khách đang chọn (ví dụ: Ví ShopeePay, Thẻ tín dụng VPBank Shopee, SPayLater).
+• Kiểm tra điều kiện:
+$$\text{Subtotal\_After\_T2} \ge \text{Min\_Spend}(V_4) \quad \text{và} \quad \text{Payment\_Method} == V_4.\text{Required\_Method}$$
+• Tính mức giảm của Tầng 4:
+$$D_4 = \min \left( \text{Subtotal\_After\_T2} \times \text{Discount\_Rate}_4, \, \text{Max\_Cap}_4 \right)$$
+• Giá trị đơn hàng sau Tầng 4:
+$$\text{Subtotal\_After\_T4} = \text{Subtotal\_After\_T2} - D_4$$
+Bước 7: Tính toán Tầng 5 — Khấu trừ Đổi Shopee Xu / Điểm Thưởng (Coins Redemption)
+• Tỷ lệ quy đổi cố định: $1 \text{ Xu} = 1 \text{ VNĐ}$.
+• Hệ thống kiểm tra số dư xu trong ví của khách (User_Coin_Balance) và áp dụng các ngưỡng chặn an toàn (Risk Limit):
+$$C_{\text{max\_percent}} = \text{Subtotal\_After\_T4} \times 50\%$$
+$$C_{\text{max\_daily}} = \text{Daily\_Limit} - \text{Coins\_Used\_Today} \quad (\text{Hạn mức: 25.000 Xu/ngày với Shop thường, 500.000 Xu/ngày với Shopee Mall})$$
+$$\text{Max\_Usable\_Coins} = \min \left( \text{User\_Coin\_Balance}, \, \lfloor C_{\text{max\_percent}} \rfloor, \, C_{\text{max\_daily}} \right)$$
+• Nếu khách hàng gạt công tắc "Dùng Shopee Xu":
+$$D_5 = \text{Selected\_Coins} \quad (\text{với } \text{Selected\_Coins} \le \text{Max\_Usable\_Coins})$$
+• Giá trị đơn hàng sau Tầng 5:
+$$\text{Subtotal\_After\_T5} = \text{Subtotal\_After\_T4} - D_5$$
+Bước 8: Xác định Số Tiền Phải Thanh Toán Cuối Cùng (Final Payable Calculation)
+• Tổng số tiền thực thu của người mua:
+$$\text{Final\_Payable\_Amount} = \text{Subtotal\_After\_T5} + \text{Final\_Shipping\_Fee}$$
+Bước 9: Thực thi Thuật toán Phân bổ Giảm giá Tỷ trọng (Proportional Apportionment)
+• Hệ thống thực thi thuật toán phân bổ tỷ trọng (trình bày tại Mục 2.6) để chia nhỏ $D_1, D_2, D_4, D_5$ vào từng dòng sản phẩm (OrderItem_i).
+• Ghi nhận vào cơ sở dữ liệu bảng phân rã chiết khấu bất biến (OrderItem_Discount_Detail).
+Bước 10: Tạm Khóa Voucher và Xu (Soft-Lock Reservation)
+• Khách hàng nhấn "Đặt hàng":
+• Hệ thống tạo bản ghi Voucher_Reservation tạm giữ hạn mức của $V_1, V_2, V_3, V_4$ và đóng băng số Xu $D_5$ trong thời hạn 15 phút.
+• Đơn hàng chuyển sang trạng thái chờ thanh toán (PAYMENT_PENDING).
+2.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+--- TABLE START ---
+[Bắt đầu Áp dụng Voucher]       │       ├─► (Ngoại lệ 4.1: Khách đổi voucher thủ công) ────► Tái thẩm định ma trận xung đột & Tính lại       │       ├─► (Ngoại lệ 4.2: Voucher hết lượt khi bấm Đặt) ──► Báo lỗi VOUCHER_QUOTA_EXHAUSTED, loại bỏ mã, tính lại       │       ├─► (Ngoại lệ 4.3: Hủy đơn trước khi thanh toán) ──► Tự động giải phóng Reservation, hoàn trả 100% Xu       │       ├─► (Ngoại lệ 4.4: Đổi trả hàng 1 phần) ───────────► Hoàn tiền = Giá thực trả sau phân bổ dòng đó       │       └─► (Ngoại lệ 4.5: Đổi phương thức thanh toán) ────► Thu hồi Voucher Tầng 4, yêu cầu chọn lại
+--- TABLE END ---
+• Luồng phụ 4.1: Khách hàng tùy chỉnh chọn lại voucher thủ công (Manual Override):
+• Khách hàng không muốn dùng gợi ý tự động, bấm vào từng mục voucher để tự tick chọn mã mong muốn.
+• Hệ thống kiểm tra ma trận xung đột theo thời gian thực: Nếu mã khách vừa chọn xung đột với mã đã chọn trước đó, hệ thống tự động bỏ tick mã cũ và hiển thị tooltip giải thích nguyên nhân.
+• Luồng ngoại lệ 4.2: Voucher bị hết lượt sử dụng trong thời gian thực (Quota Exhausted Race-Condition):
+• Tại thời điểm khách mở trang thanh toán, voucher còn 5 lượt. Khách cân nhắc trong 2 phút; trong lúc đó 5 khách khác đã đặt hàng thành công.
+• Khi khách nhấn "Đặt hàng", lệnh soft-lock trả về lỗi: ERR_VOUCHER_QUOTA_DEPLETED.
+• Hệ thống không tạo đơn hỏng; giữ nguyên giỏ hàng, tự động gỡ bỏ voucher đã hết lượt, tính lại tổng tiền mới và hiển thị modal thông báo: "Mã giảm giá [MÃ] đã hết lượt sử dụng do số lượng có hạn. Tổng tiền đơn hàng đã được cập nhật lại. Quý khách có muốn tiếp tục đặt hàng?".
+• Luồng ngoại lệ 4.3: Đơn hàng bị hủy hoặc quá hạn thanh toán 15 phút (Auto-Revert):
+• Khách hàng chủ động bấm "Hủy đơn" hoặc quá 15 phút không thanh toán thành công.
+• Hệ thống tự động kích hoạt tiến trình hoàn nguyên (Voucher Rollback Job):
+• Giải phóng bản ghi Voucher_Reservation, hoàn trả lượt dùng cho tài khoản của khách (nếu voucher còn hạn sử dụng theo lịch).
+• Hoàn trả ngay lập tức 100% số Shopee Xu $D_5$ vào ví xu của khách hàng với mã giao dịch REFUND_COIN_CANCEL_ORDER.
+• Luồng ngoại lệ 4.4: Khách hàng yêu cầu Đổi trả / Hoàn tiền một phần (Partial Return & Refund):
+• Đơn hàng gồm Sản phẩm A (600k) và Sản phẩm B (400k), được giảm tổng cộng 100k voucher và 20k xu. Khách chỉ khiếu nại trả sản phẩm B do lỗi kỹ thuật.
+• Hệ thống từ chối hoàn tiền theo giá niêm yết (400k), cũng không thu hồi lại toàn bộ voucher của đơn.
+• Hệ thống truy xuất giá trị ròng của Sản phẩm B đã được ghi nhận tại Bước 9 (Net_Payable_B = 400.000 - 40.000 - 8.000 = 352.000đ).
+• Số tiền hoàn trả chính xác cho khách là 352.000 VNĐ.
+• Phần chiết khấu voucher sàn và shop tài trợ cho Sản phẩm B được đối soát hoàn trả về quỹ ngân sách tương ứng của Sàn và Shop.
+• Luồng ngoại lệ 4.5: Thay đổi phương thức thanh toán tại cổng thanh toán thứ ba:
+• Khách chọn voucher Tầng 4 áp dụng riêng cho thẻ tín dụng VPBank (giảm 50k). Khi chuyển sang cổng thanh toán, khách lại chọn quét mã QR VietQR.
+• Cổng thanh toán gửi Webhook báo phương thức thực tế không khớp với điều kiện voucher.
+• Hệ thống từ chối hoàn tất giao dịch với mã lỗi PAYMENT_METHOD_MISMATCH, yêu cầu khách hàng quay lại giỏ hàng để gỡ bỏ voucher Tầng 4 hoặc nhập đúng thẻ VPBank.
+2.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. Ma trận Xung đột Voucher (Voucher Conflict Matrix)
+Bảng xác lập tính tương thích giữa các loại ưu đãi trong cùng một phiên giao dịch:
+--- TABLE START ---
+Loại Ưu Đãi | T1: Shop Voucher | T2: Sàn Voucher | T3: Freeship | T4: Payment Partner | T5: Shopee Xu
+T1: Shop Voucher | Xung đột cùng loại (Chỉ 1 mã/Shop) | TƯƠNG THÍCH | TƯƠNG THÍCH | TƯƠNG THÍCH | TƯƠNG THÍCH
+T2: Sàn Voucher | TƯƠNG THÍCH | Xung đột cùng loại (Chỉ 1 mã Sàn) | TƯƠNG THÍCH | TƯƠNG THÍCH | TƯƠNG THÍCH
+T3: Freeship | TƯƠNG THÍCH | TƯƠNG THÍCH | Xung đột cùng loại (Chỉ 1 mã Ship) | TƯƠNG THÍCH | TƯƠNG THÍCH
+T4: Payment Partner | TƯƠNG THÍCH | TƯƠNG THÍCH | TƯƠNG THÍCH | Xung đột cùng loại (Chỉ 1 mã TT) | TƯƠNG THÍCH
+T5: Shopee Xu | TƯƠNG THÍCH | TƯƠNG THÍCH | TƯƠNG THÍCH | TƯƠNG THÍCH | Tối đa 50% đơn
+--- TABLE END ---
+Ghi chú ngoại lệ: Tại Tầng 1, nếu Shop kích hoạt cấu hình "Cho phép cộng dồn mã sản phẩm đặc thù" (Product_Specific_Voucher), khách hàng được dùng 01 voucher toàn shop + 01 voucher sản phẩm riêng biệt cho 2 sản phẩm khác nhau.
+2. Thứ tự Ưu tiên Cố định (Order of Precedence)
+Hệ thống bắt buộc tính toán theo thứ tự tuần tự nghiêm ngặt:
+$$\text{Tầng 1 (Shop)} \longrightarrow \text{Tầng 2 (Sàn)} \longrightarrow \text{Tầng 3 (Vận chuyển)} \longrightarrow \text{Tầng 4 (Thanh toán)} \longrightarrow \text{Tầng 5 (Xu thưởng)}$$
+Lý do kỹ thuật: Mức giảm của các tầng sau dựa trên giá trị đơn hàng sau khi đã chiết trừ các tầng trước đó. Đảo lộn thứ tự sẽ dẫn đến tính toán sai điều kiện giá trị tối thiểu (Min_Spend) và sai lệch ngân sách tài trợ.
+3. Thuật toán Phân bổ Giảm giá Tỷ trọng Hamilton-Hare & Xử lý Triệt để Sai số Làm tròn 1-VNĐ (Hamilton-Hare Largest Remainder Method)
+Để đảm bảo tính toàn vẹn tài chính, kiểm toán đối soát doanh thu của từng nhà bán hàng và tính toán số tiền hoàn trả chính xác đến từng 1 VNĐ khi khách hàng yêu cầu đổi trả một phần đơn hàng (Partial Return), mọi khoản giảm giá đa tầng $D$ áp dụng trên tập hợp sản phẩm con $S = \{P_1, P_2, \dots, P_m\}$ bắt buộc phải được phân rã theo Thuật toán Hamilton-Hare (Phương pháp Số dư Lớn nhất - Largest Remainder Method):
+• Bước 1: Tính Định mức Tỷ trọng Chính xác (Exact Quota Calculation):
+Cho mỗi sản phẩm $i \in S$, tính tỷ trọng giá trị $w_i$ và định mức giảm giá lý thuyết chính xác $q_i$ (giá trị thực số thực dấu phẩy động độ chính xác kép):
+$$w_i = \frac{V_i}{\sum_{k \in S} V_k} \quad (\text{với } V_i \text{ là giá trị hợp lệ của sản phẩm } i \text{ trước tầng giảm giá này})$$
+$$q_i = D \times w_i \quad (q_i \in \mathbb{R}^+)$$
+• Bước 2: Phân bổ Phần Nguyên Cơ sở (Base Integer Allocation / Floor Assignment):
+Lấy phần nguyên làm tròn xuống đến hàng đơn vị tiền tệ nhỏ nhất (1 VNĐ đối với VND, 1 cent đối với USD):
+$$d_i^{\text{base}} = \lfloor q_i \rfloor$$
+Tính phần dư thập phân còn lại chưa được phân bổ của từng sản phẩm:
+$$r_i = q_i - d_i^{\text{base}} \quad (0 \le r_i < 1)$$
+• Bước 3: Tính Tổng Số Tiền Thặng Dư Chưa Phân Bổ (Rounding Disparity Residual):
+Tổng số tiền chênh lệch $\Delta$ do làm tròn xuống toàn bộ danh sách sản phẩm:
+$$\Delta = D - \sum_{i=1}^m d_i^{\text{base}} \quad (\Delta \in \mathbb{Z}, \, 0 \le \Delta < m)$$
+• Bước 4: Phân Bổ Số Tiền Thặng Dư $\Delta$ Theo Thứ Tự Số Dư Lớn Nhất & Quy Tắc Phân Xử Hòa (Tie-Breaking Rule):
+Sắp xếp toàn bộ $m$ sản phẩm theo thứ tự ưu tiên giảm dần dựa trên bộ ba tiêu chuẩn bất biến:
+1. Tiêu chuẩn 1 (Chính): Phần dư $r_i$ lớn hơn được xếp trước ($r_i > r_j \implies P_i \succ P_j$).
+2. Tiêu chuẩn 2 (Phân xử hòa 1 - Price Tie-Break): Nếu $r_i == r_j$, sản phẩm có giá trị ban đầu $V_i$ lớn hơn được xếp trước ($V_i > V_j \implies P_i \succ P_j$).
+3. Tiêu chuẩn 3 (Phân xử hòa 2 - Deterministic Index Tie-Break): Nếu vẫn bằng nhau ($r_i == r_j$ và $V_i == V_j$), sản phẩm có chỉ số index hoặc SKU ID nhỏ hơn theo thứ tự từ điển được xếp trước ($\text{SKU}_i < \text{SKU}_j \implies P_i \succ P_j$).
+Thực hiện cộng thêm đúng $1 \text{ VNĐ}$ cho top $\Delta$ sản phẩm đứng đầu danh sách đã sắp xếp:
+$$d_i = \begin{cases} d_i^{\text{base}} + 1, & \text{nếu } \text{Rank}(P_i) \le \Delta \\ d_i^{\text{base}}, & \text{nếu } \text{Rank}(P_i) > \Delta \end{cases}$$
+Chứng minh tính toàn vẹn (Proof of Exact Conservation):
+$$\sum_{i=1}^m d_i = \sum_{i=1}^m d_i^{\text{base}} + \sum_{k=1}^\Delta 1 = (D - \Delta) + \Delta \equiv D \quad (\text{Không bao giờ lệch dù chỉ 1 VNĐ})$$
+• Bước 5: Xác lập Giá trị Hoàn tiền Tối đa (Max Refundable Net Value) khi Đổi Trả Một Phần:
+Sau khi hoàn tất cả 5 tầng chiết khấu, giá trị thực trả ròng bất biến của từng sản phẩm con được lưu vào bảng cơ sở dữ liệu order_item_discount_allocations:
+$$\text{Net\_Payable\_Item}_i = \text{Original\_Value}_i - d_{i, T1} - d_{i, T2} - d_{i, T4} - d_{i, T5}$$
+Khi khách hàng đổi trả sản phẩm $k$, hệ thống hoàn trả tối đa:
+$$\text{Max\_Refund}(k) = \text{Net\_Payable\_Item}_k$$
+Quy tắc loại trừ phí ship: Phí vận chuyển $D_3$ và tiền cước $\text{Final\_Shipping\_Fee}$ tuyệt đối không được phân bổ vào sản phẩm và không được hoàn lại khi trả một phần đơn hàng, do kiện hàng tổng thể đã được đơn vị vận chuyển hoàn tất giao tới nơi.
+• Minh họa Thực tế Xử lý Sai số 1-VNĐ Bằng Bảng Tính:
+• Đơn hàng gồm 3 sản phẩm: $P_1 = 1.000.000đ$, $P_2 = 1.000.000đ$, $P_3 = 1.000.000đ$. Áp dụng voucher Sàn giảm $100.000đ$.
+• Tỷ trọng: $w_1 = w_2 = w_3 = 1/3 \approx 0.333333$.
+• Định mức chính xác: $q_1 = q_2 = q_3 = 33.333,333đ$.
+• Phần nguyên: $d_1^{\text{base}} = d_2^{\text{base}} = d_3^{\text{base}} = 33.333đ$. Tổng $= 99.999đ$.
+• Thặng dư: $\Delta = 100.000 - 99.999 = 1đ$.
+• Phần dư: $r_1 = r_2 = r_3 = 0.333333đ$ (Hòa tiêu chuẩn 1 và 2).
+• Áp dụng Tie-break Tiêu chuẩn 3: $P_1$ có index nhỏ nhất nhận thêm $1đ \implies d_1 = 33.334đ, \, d_2 = 33.333đ, \, d_3 = 33.333đ$.
+• Tổng giảm giá phân bổ: $33.334 + 33.333 + 33.333 = 100.000đ$ (Khớp tuyệt đối 100%).
+4. Ma trận Phân định Nguồn Ngân sách Tài trợ (Budget Sponsorship Matrix)
+--- TABLE START ---
+Tầng Ưu Đãi | Đơn Vị Chịu Chi Phí Ngân Sách | Tài Khoản Hạch Toán Đối Soát | Tác Động Doanh Thu Người Bán
+Tầng 1 (Shop) | 100% Nhà Bán Hàng (Seller) | Seller_Marketing_Expense | Trừ trực tiếp vào tiền quyết toán chuyển về ví Shop (Seller_Escrow_Payout).
+Tầng 2 (Sàn) | 100% Sàn TMĐT (hoặc Đồng tài trợ theo tỷ lệ thỏa thuận Shop 30% - Sàn 70%) | Platform_Promotion_Budget | Shop nhận đủ 100% giá trị sau Tầng 1; Sàn bù tiền phần Tầng 2 cho Shop.
+Tầng 3 (Ship) | Quỹ Freeship Xtra (Phí dịch vụ 6-8% Shop nộp) HOẶC Sàn TMĐT | Shipping_Subsidy_Pool | Không ảnh hưởng đến doanh thu sản phẩm của Shop; thanh toán thẳng cho Đơn vị vận chuyển (3PL).
+Tầng 4 (Bank) | 100% Đối Tác Tài Chính / Ngân Hàng | Fintech_Partner_MDR_Subsidy | Cấn trừ vào phí giao dịch chiết khấu thương mại (MDR) giữa sàn và ngân hàng.
+Tầng 5 (Xu) | Sàn TMĐT (hoặc Shop nếu dùng Xu Shop tích lũy từ trước) | Platform_Loyalty_Reserve | Sàn quy đổi 1 Xu = 1 VNĐ bù trả vào số dư tiền quyết toán cho Shop.
+--- TABLE END ---
+5. Ràng buộc Sản phẩm Hỗn hợp trong Giỏ hàng (Composite Cart Items Constraint)
+Theo hợp đồng giao diện hệ thống:
+• Các voucher hàng hóa (Tầng 1, Tầng 2, Tầng 4, Tầng 5) CHỈ ÁP DỤNG trên tổng giá trị của các sản phẩm vật lý (MainItem).
+• TUYỆT ĐỐI KHÔNG ÁP DỤNG giảm giá voucher lên:
+1. Giá trị của các gói bảo hành mở rộng / AppleCare (Addon_Type = WARRANTY).
+2. Cước phí thuê bao dịch vụ viễn thông hàng tháng (Addon_Type = SIM_PLAN).
+3. Giá trị cấn trừ của chương trình Thu cũ Đổi mới (Addon_Type = TRADE_IN, giá trị âm $-X$).
+2.7. Dữ liệu vào/ra & Trạng thái đơn hàng/giao dịch
+Dữ liệu đầu vào (Input Payload - Checkout Calculation API)
+--- TABLE START ---
+{  "checkout_session_id": "CHK-SESSION-20261104-98421",  "buyer_id": "USR-882914",  "selected_items": [    {      "shop_id": "SHOP-HANOI-TECH",      "sku_id": "IPHONE-16PM-256GB-NAT",      "quantity": 1,      "unit_price": 34990000,      "category_id": "CAT-SMARTPHONE"    },    {      "shop_id": "SHOP-HANOI-TECH",      "sku_id": "CASE-TITAN-IP16PM",      "quantity": 2,      "unit_price": 450000,      "category_id": "CAT-ACCESSORY"    }  ],  "selected_vouchers": {    "shop_voucher_code": "TECH11_50K",    "platform_voucher_code": "DIENTU_GIAM1TR",    "shipping_voucher_code": "FREESHIP_XTRA_70K",    "payment_voucher_code": "VPBANK_SHOPEE_200K"  },  "use_coins": true,  "payment_method": "CREDIT_CARD_VPBANK",  "shipping_address_id": "ADDR-7712"}
+--- TABLE END ---
+Dữ liệu đầu ra (Output Response - Voucher Stacking Calculation Result)
+--- TABLE START ---
+{  "status": "SUCCESS",  "pricing_summary": {    "original_subtotal": 35890000,    "tier1_shop_discount": 50000,    "subtotal_after_t1": 35840000,    "tier2_platform_discount": 1000000,    "subtotal_after_t2": 34840000,    "original_shipping_fee": 65000,    "tier3_shipping_discount": 65000,    "final_shipping_fee": 0,    "tier4_payment_discount": 200000,    "subtotal_after_t4": 34640000,    "tier5_coins_redeemed": 50000,    "final_payable_amount": 34590000  },  "budget_attribution": {    "shop_funded": 50000,    "platform_funded": 1115000,    "payment_partner_funded": 200000  },  "item_apportionment": [    {      "sku_id": "IPHONE-16PM-256GB-NAT",      "original_price": 34990000,      "allocated_discounts": {        "t1_shop": 48746,        "t2_platform": 974923,        "t4_payment": 194985,        "t5_coins": 48746      },      "net_refundable_price": 33722600    },    {      "sku_id": "CASE-TITAN-IP16PM",      "original_price": 900000,      "allocated_discounts": {        "t1_shop": 1254,        "t2_platform": 25077,        "t4_payment": 5015,        "t5_coins": 1254      },      "net_refundable_price": 867400    }  ],  "reservation_lock": {    "lock_token": "RES-LOCK-991203",    "expires_at": "2026-11-04T02:51:32Z",    "ttl_seconds": 900  }}
+--- TABLE END ---
+Máy trạng thái Voucher Áp dụng (Voucher Lifecycle State Machine)
+--- TABLE START ---
+[DRAFT / AVAILABLE]        │ (Khách tick chọn tại Checkout)       ▼[VALIDATED]        │ (Khách nhấn "Đặt hàng")       ▼[RESERVED (Soft Lock 15 phút)]       │       ├─────────────────────────┬─────────────────────────┐       ▼ (Thanh toán thành công)  ▼ (Khách hủy / Quá hạn)    ▼ (Lỗi hệ thống)  [COMMITTED]               [RELEASED / REVERTED]      [FAILED_RELEASE]       │       ▼ (Đổi trả 1 phần)[PARTIALLY_REFUNDED]
+--- TABLE END ---
+2.8. Tiêu chí nghiệm thu chức năng (Tiêu chí nghiệm thu kỹ thuật dạng Given-When-Then)
+Kịch bản AC-STACK-01: Xếp chồng trọn vẹn 5 tầng ưu đãi hợp lệ
+• Given: Khách hàng có giỏ hàng trị giá 35.890.000 VNĐ gồm iPhone 16 Pro Max và Ốp lưng tại SHOP-HANOI-TECH. Phí ship là 65.000 VNĐ.
+• And: Khách hàng có đủ 5 voucher hợp lệ gồm: Shop 50k (đơn > 500k), Sàn 1.000k (đơn > 30tr), Freeship Xtra 70k, Thẻ VPBank 200k, và 50.000 Shopee Xu trong ví.
+• When: Khách hàng tiến hành thanh toán và áp dụng trọn vẹn cả 5 mã cùng tùy chọn dùng Xu.
+• Then: Hệ thống phải áp dụng đúng thứ tự: Tầng 1 giảm 50k $\rightarrow$ Tầng 2 giảm 1.000k $\rightarrow$ Tầng 3 giảm 65k phí ship (về 0đ) $\rightarrow$ Tầng 4 giảm 200k $\rightarrow$ Tầng 5 trừ 50.000 Xu.
+• And: Tổng số tiền thanh toán cuối cùng hiển thị đúng chính xác là 34.590.000 VNĐ.
+Kịch bản AC-STACK-02: Chặn xung đột khi cố tình chọn 2 voucher toàn sàn cùng tầng
+• Given: Khách hàng đang có voucher Sàn A (Giảm 10% tối đa 500k) đang được áp dụng trong đơn hàng.
+• When: Khách hàng mở danh sách voucher sàn và bấm tick chọn thêm voucher Sàn B (Giảm cố định 600k cho đơn từ 5tr).
+• Then: Hệ thống phải tự động gỡ bỏ tick chọn của voucher Sàn A.
+• And: Áp dụng voucher Sàn B, tính toán lại tổng tiền và không báo lỗi ngoại lệ hệ thống.
+Kịch bản AC-STACK-03: Kiểm toán phân bổ tỷ trọng và xử lý sai số làm tròn số dư
+• Given: Đơn hàng gồm Sản phẩm 1 (34.990.000 VNĐ) và Sản phẩm 2 (900.000 VNĐ) được giảm 50.000 VNĐ từ Voucher Shop.
+• When: Thuật toán phân bổ tỷ trọng chạy: Tỷ trọng P1 = 97.4923%, P2 = 2.5077%.
+• Then: Mức giảm sơ bộ: P1 = 48.746 VNĐ, P2 = 1.253 VNĐ. Tổng sơ bộ = 49.999 VNĐ (thiếu 1 VNĐ do làm tròn).
+• And: Hệ thống phải tự động cộng 1 VNĐ vào sản phẩm P1 có giá trị lớn nhất, đưa mức giảm P1 = 48.747 VNĐ.
+• And: Tổng phân bổ phải khớp tuyệt đối: $48.747 + 1.253 = 50.000 \text{ VNĐ}$.
+Kịch bản AC-STACK-04: Đổi trả hàng 1 phần và tính toán số tiền hoàn trả chính xác
+• Given: Đơn hàng trên đã thanh toán thành công và được giao hoàn tất.
+• When: Khách hàng khiếu nại trả Sản phẩm 2 (Ốp lưng trị giá gốc 900.000 VNĐ) do lỗi nhà sản xuất và được chấp thuận.
+• Then: Hệ thống truy vấn bảng OrderItem_Discount_Detail, xác định số tiền thực trả ròng của Sản phẩm 2 là 867.400 VNĐ.
+• And: Lệnh hoàn tiền chỉ hoàn đúng 867.400 VNĐ cho khách hàng, không hoàn lại 900.000 VNĐ giá gốc và không ảnh hưởng đến số tiền đã phân bổ cho Sản phẩm 1.
+Kịch bản AC-STACK-05: Tự động giải phóng Reservation và hoàn Xu khi quá hạn 15 phút
+• Given: Đơn hàng được tạo thành công với 50.000 Shopee Xu và 4 mã voucher được soft-lock trong 15 phút.
+• When: Quá 15 phút khách hàng không hoàn tất bước thanh toán trên cổng ngân hàng.
+• Then: Hệ thống tự động chuyển trạng thái đơn hàng sang CANCELLED_PAYMENT_TIMEOUT.
+• And: Lượt sử dụng của 4 voucher phải được hoàn lại cho người dùng ngay lập tức.
+• And: Số dư 50.000 Xu phải được cộng ngược lại vào ví Shopee Xu của khách hàng kèm lịch sử giao dịch hoàn xu.
+————————————————————————————————————————————————————————————————————
+3. ĐẶC TẢ CART-ABUSE-02: ĐỘNG CƠ PHÒNG CHỐNG TRỤC LỢI VOUCHER & TẤN CÔNG SYBIL ĐA TÀI KHOẢN
+--- TABLE START ---
+[YÊU CẦU ÁP DỤNG MÃ ƯU ĐÃI / ĐẶT HÀNG]                                                     │        ┌────────────────────────────────────────────┼────────────────────────────────────────────┐        ▼                                            ▼                                            ▼[1. DEVICE FINGERPRINT]                   [2. NETWORK & IP SUBNET]                  [3. ADDRESS NORMALIZATION]• Canvas & WebGL Renderer Hash            • Quét dải Subnet /24 IP Velocity         • Chuẩn hóa chuỗi ký tự Canonical• AudioContext Latency Entropy            • Chặn Proxy / Datacenter / Tor           • Tính khoảng cách Levenshtein <= 2• Hardware Concurrency & OS Touch         • Ngưỡng: Max 5 accs / subnet / 10 phút   • Geocoding định vị GPS radius < 15m        │                                            │                                            │        └────────────────────────────────────────────┼────────────────────────────────────────────┘                                                     │                                                     ▼                                      [4. PAYMENT & PHONE BINDING]                                      • Thẻ: SHA256(BIN + Last4 + Exp + Name)                                      • Ràng buộc: Max 2 tài khoản / thẻ / 180 ngày                                      • Phát hiện SIM ảo / Tổng đài VOIP                                                     │                                                     ▼                                    [ĐỘNG CƠ CHẤM ĐIỂM NGUY CƠ TRỤC LỢI]                                    • Điểm tổng hợp S_abuse thuộc thang điểm [0 - 100]                                                     │                        ┌────────────────────────────┼────────────────────────────┐                        ▼                            ▼                            ▼                 (Score < 40)                 (40 <= Score <= 75)              (Score > 75)                        │                            │                            │                        ▼                            ▼                            ▼                 [PASS - HỢP LỆ]             [STEP-UP CHALLENGE]          [CHẶN TỨC THÌ - REJECT]            Áp dụng mã thành công        Xoay CAPTCHA / OTP SMS        Mã lỗi F02, M01, M02 & Khóa
+--- TABLE END ---
+3.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: CART-ABUSE-02
+• Tên nghiệp vụ: Động cơ Phòng Chống Trục Lợi Voucher & Tấn Công Sybil Đa Tài Khoản (Voucher Abuse, Hoarding & Multi-Account Sybil Defense Engine).
+• Phân hệ: Quản lý Giỏ hàng, Động cơ Khuyến Mãi Nâng Cao & Kiểm Soát Rủi Ro Gian Lận (Advanced Promotion Engine & Abuse Risk Management).
+3.2. Mục tiêu & Tác nhân
+• Mục tiêu nghiệp vụ:
+• Nhận diện và ngăn chặn triệt để các hành vi gian lận săn voucher có tổ chức: Tấn công Sybil (tạo hàng trăm tài khoản ảo/clone để cướp voucher độc quyền, voucher người dùng mới), hành vi găm giữ mã khuyến mãi (Voucher Hoarding qua soft-lock ảo) làm cạn kiệt ngân sách tiếp thị của Nhà bán hàng và Sàn TMĐT.
+• Thiết lập kiến trúc phòng thủ 4 lớp theo thời gian thực (Real-time 4-Tier Defense Architecture): Nhận dạng Dấu vân tay thiết bị đa biến (Device Fingerprint), Gom cụm mạng & Tốc độ truy cập dải Subnet /24, Chuẩn hóa địa chỉ mờ (Fuzzy Address Normalization với Levenshtein & Geocoding), và Ràng buộc công cụ thanh toán (Payment Instrument Binding).
+• Áp dụng các chế tài trừng phạt tương ứng với chuẩn thương mại điện tử cấp độ cao (tương đương mã lỗi Shopee F02, M01, M02): Từ chối áp dụng voucher, tước quyền tham gia khuyến mãi 30-90 ngày, hoặc đóng băng vĩnh viễn tài khoản kèm khóa định danh phần cứng thiết bị (Device Ban).
+• Bảo vệ tối đa trải nghiệm người dùng thực, giảm thiểu tối đa tỷ lệ nhận diện nhầm (False Positive Rate < 0.1%) cho người dùng gia đình hoặc môi trường mạng dùng chung (ký túc xá, văn phòng).
+• Tác nhân tham gia (Actors):
+• Khách hàng chân chính (Legitimate Buyer): Mua sắm và áp dụng voucher bình thường, không bị gián đoạn.
+• Đối tượng trục lợi / Botfarm (Voucher Abuser / Sybil Bot): Cố tình tạo nhiều tài khoản, giả lập thiết bị, đổi IP để săn mã.
+• Động cơ Đánh giá Rủi ro Trục lợi (Anti-Abuse Risk Engine): Thu thập telemetry, tính toán điểm số rủi ro $S_{\text{abuse}}$ và ra quyết định can thiệp trong vòng $\le 50\text{ms}$.
+• Quản trị viên Phòng Chống Gian Lận (Fraud Ops Analyst): Xem xét các trường hợp khiếu nại, cấu hình danh sách đen (Blacklist) và tinh chỉnh trọng số rủi ro.
+3.3. Điều kiện tiên quyết
+• Khách hàng thực hiện một trong các hành vi liên quan đến mã ưu đãi: Lưu voucher vào ví (Claim/Collect), Tick chọn voucher tại màn hình Checkout, hoặc Nhấn nút "Đặt hàng" (Place Order).
+• Ứng dụng di động (iOS/Android App) hoặc trình duyệt Web đã nhúng bộ SDK thu thập telemetry an ninh (RiskCollector.js / RiskKit.framework).
+• Hệ thống Redis phân tán lưu trữ bộ đếm tần suất truy cập (Velocity Rate Counters) và bảng phân tán HyperLogLog hoạt động với độ trễ $< 5\text{ms}$.
+3.4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+Bước 1: Thu thập Dữ liệu Viễn trắc Thiết bị & Mạng (Telemetry Ingestion)
+• Khi khách hàng truy cập màn hình Thanh toán hoặc bấm áp dụng voucher:
+• Client SDK bí mật thu thập tổ hợp hơn 40 chỉ số viễn trắc phần cứng và môi trường:
+• Canvas Fingerprint: Vẽ hình học 2D/3D ngầm và tính mã băm hình ảnh.
+• WebGL Unmasked Renderer: Đọc thông số GPU và nhà sản xuất card đồ họa thật.
+• AudioContext Entropy: Đo độ trễ xử lý tín hiệu âm thanh tần số cao.
+• Hardware Concurrency, Device Memory, Múi giờ, Ngôn ngữ, Touch Event Coordinates.
+• Môi trường thực thi: Phát hiện công cụ tự động hóa (Headless Chrome, Puppeteer, Selenium, WebDriver) hoặc môi trường giả lập (BlueStacks, Nox, Genymotion, LDPlayer).
+• Mạng viễn thông: Địa chỉ IP thực tế, dải mạng CIDR, ASN (Autonomous System Number), độ trễ ping mạng.
+Bước 2: Nhận Dạng Dấu Vân Tay Thiết Bị (Device Fingerprint Deduplication)
+• Hệ thống tổng hợp dữ liệu viễn trắc để sinh mã định danh thiết bị duy nhất bất biến:
+$$\text{Device\_UUID} = \text{SHA256}(\text{Canvas\_Hash} + \text{WebGL\_Renderer} + \text{Audio\_Hash} + \text{Screen\_Res} + \text{OS\_Build})$$
+• Truy vấn cơ sở dữ liệu device_reputation_ledger:
+• Đếm số lượng tài khoản khác nhau đã đăng nhập hoặc đặt hàng trên Device_UUID này trong 30 ngày gần nhất: $N_{\text{acc\_dev}}$.
+• Nếu $N_{\text{acc\_dev}} \ge 3$: Đánh dấu cảnh báo nghiêm trọng về thiết bị dùng chung cho hành vi trục lợi đa tài khoản.
+Bước 3: Gom Cụm Mạng & Kiểm Tra Subnet /24 (Subnet Velocity Check)
+• Trích xuất dải mạng Subnet /24 của địa chỉ IP khách hàng (ví dụ: 113.161.42.0/24).
+• Kiểm tra số lượng giao dịch áp dụng voucher từ cùng dải Subnet /24 trong vòng 10 phút: $N_{\text{subnet\_10m}}$.
+• Truy vấn cơ sở dữ liệu IP Intelligence: Xác định xem địa chỉ IP có phải là Datacenter IP (AWS, DigitalOcean, OVH), Proxy ẩn danh, VPN hoặc Tor Exit Node hay không.
+Bước 4: Chuẩn Hóa Địa Chỉ Mờ & Gom Cụm Không Gian (Fuzzy Address & GPS Normalization)
+• Trích xuất địa chỉ nhận hàng do khách nhập:
+• Chuẩn hóa chuỗi văn bản (Canonical String Normalization): Chuyển về chữ thường, loại bỏ toàn bộ dấu câu, chuẩn hóa các từ viết tắt ("đ/c", "đường", "sn", "số nhà", "ngõ", "hẻm", "kđt", "p.", "q.", "tp.").
+• Tính khoảng cách Levenshtein Distance: So sánh chuỗi địa chỉ chuẩn hóa với danh sách địa chỉ của các tài khoản khác đã sử dụng voucher này trong vòng 7 ngày:
+$$\text{Sim}_{\text{addr}} = 1 - \frac{\text{Levenshtein}(A_1, A_2)}{\max(\text{len}(A_1), \text{len}(A_2))}$$
+• Geocoding & Không gian GPS: Hệ thống chuyển đổi địa chỉ thành tọa độ địa lý $(\text{Lat}, \text{Lng})$. Tính khoảng cách Haversine giữa địa chỉ đơn hiện tại với các đơn hàng khuyến mãi gần đây:
+$$D_{\text{gps}} = \text{Haversine}(\text{Coord}_1, \text{Coord}_2)$$
+• Quy tắc gom cụm (Clustering Rule): Nếu $D_{\text{gps}} < 15\text{ mét}$ (cùng một căn nhà hoặc phòng trọ) hoặc $\text{Sim}_{\text{addr}} \ge 0.85$, nhưng tên người nhận và số điện thoại hoàn toàn khác nhau (đặc biệt là các số điện thoại rác/đầu số ảo) $\rightarrow$ Đưa vào diện Cụm Trục Lợi Địa Chỉ (Address Fraud Cluster).
+Bước 5: Ràng Buộc Công Cụ Thanh Toán (Payment Instrument Binding Check)
+• Khách hàng chọn thanh toán qua thẻ tín dụng/ghi nợ hoặc ví điện tử:
+• Hệ thống tính toán mã băm thẻ:
+$$\text{Card\_Fingerprint} = \text{SHA256}(\text{BIN} + \text{Last4} + \text{Exp\_Month} + \text{Exp\_Year} + \text{Cardholder\_Name\_Normalized})$$
+• Truy vấn số lượng User_ID đã liên kết hoặc thanh toán bằng thẻ này trong vòng 180 ngày gần nhất: $N_{\text{card\_users}}$.
+• Nếu $N_{\text{card\_users}} \ge 2$: Kích hoạt cảnh báo vi phạm giới hạn liên kết thẻ.
+Bước 6: Chấm Điểm Nguy Cơ Trục Lợi Đa Biến (Abuse Risk Scoring Engine)
+• Động cơ chấm điểm tổng hợp các chỉ số rủi ro theo trọng số (Mục 3.6):
+$$S_{\text{abuse}} \in [0, 100]$$
+Bước 7: Phân Định Quyết Định Can Thiệp & Phản Hồi Mã Lỗi Chuẩn Hóa
+• Nhánh A ($S_{\text{abuse}} < 40$ - An Toàn / Low Risk):
+• Cho phép áp dụng voucher bình thường; ghi log kiểm toán ngầm.
+• Nhánh B ($40 \le S_{\text{abuse}} \le 75$ - Đáng Ngờ / Medium Risk):
+• Kích hoạt cơ chế Thử thách Bước Nâng Cấp (Step-Up Challenge): Bật popup yêu cầu khách hàng thực hiện xoay mảnh ghép CAPTCHA hình ảnh hoặc nhập mã OTP 6 số gửi về số điện thoại chính chủ đã đăng ký ngân hàng.
+• Nếu vượt qua thử thách: Cho phép tiếp tục đặt hàng. Nếu thất bại quá 3 lần: Chuyển sang Nhánh C.
+• Nhánh C ($S_{\text{abuse}} > 75$ - Trục Lợi Nghiêm Trọng / High Risk):
+• Chặn đứng dứt điểm việc áp dụng mã khuyến mãi; bảo toàn giỏ hàng của khách nhưng tự động loại bỏ voucher.
+• Phản hồi mã lỗi chuyên biệt:
+• Nếu vi phạm tài khoản clone / vân tay thiết bị: Trả về Mã lỗi F02 (Shopee Standard): "Thanh toán không thành công do tài khoản của bạn có dấu hiệu bất thường. Vui lòng gỡ bỏ mã giảm giá và thử lại".
+• Nếu vi phạm liên kết thẻ ngân hàng quá 2 tài khoản: Trả về Mã lỗi M01 / M02: "Phương thức thanh toán bị từ chối do thẻ này đã đạt giới hạn liên kết với các tài khoản khác trên hệ thống".
+• Nếu phát hiện bot cào mã: Trả về HTTP 403 Forbidden - BOT_DETECTED.
+3.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+--- TABLE START ---
+[Áp Dụng Mã Ưu Đãi / Đặt Hàng]              │              ├─► (Luồng phụ 4.1: Mạng trường học / WiFi KTX dùng chung) ─► Miễn trừ Subnet nếu Device & Card khác biệt              │              ├─► (Luồng phụ 4.2: Thẻ tín dụng gia đình dùng chung) ───────► Cho phép tối đa 2 tài khoản (vợ/chồng)              │              ├─► (Ngoại lệ 4.3: Phát hiện bot găm mã Soft-lock) ──────────► Rút ngắn TTL về 3 phút & Khóa tạm thời 24h              │              └─► (Ngoại lệ 4.4: Khách hàng khiếu nại báo oan) ───────────► Gửi hồ sơ eKYC xác minh mở khóa tài khoản
+--- TABLE END ---
+• Luồng phụ 4.1: Khách hàng mua sắm tại mạng tập thể dùng chung IP (Ký túc xá, Văn phòng lớn):
+• Dải Subnet /24 có thể có hàng chục nhân viên cùng mua sắm vào ngày Siêu Sale.
+• Cơ chế giải trừ thông minh (Whitelisting Mitigation): Nếu các yêu cầu có Device_UUID hoàn toàn phân biệt, lịch sử mua sắm cá nhân $> 60\text{ ngày}$, thẻ thanh toán khác nhau, và địa chỉ phòng ban cụ thể khác nhau: Hệ thống hạ tỷ trọng rủi ro mạng $w_{\text{ip}}$ xuống còn $0.05$, không chặn người dùng chân chính.
+• Luồng phụ 4.2: Thẻ thanh toán gia đình chia sẻ giữa 2 người (Family Sharing):
+• Chồng và vợ dùng chung 1 thẻ tín dụng phụ/chính.
+• Hệ thống cho phép thẻ được thanh toán trên tối đa 2 tài khoản mà không kích hoạt chặn. Chỉ khi xuất hiện tài khoản thứ 3 sử dụng cùng số thẻ đó để hưởng ưu đãi người dùng mới thì tài khoản thứ 3 mới bị kích hoạt Mã lỗi M01.
+• Luồng ngoại lệ 4.3: Phát hiện hành vi Găm giữ Mã Khuyến mại Ảo (Voucher Hoarding Bot Detection):
+• Đối tượng dùng bot liên tục nhấn "Đặt hàng" để kích hoạt cơ chế Soft-lock 15 phút của voucher toàn sàn rồi giữ nguyên không thanh toán nhằm làm hết lượt dùng của người khác; khi gần hết 15 phút thì hủy đơn rồi đặt lại ngay lập tức.
+• Chế tài phòng thủ: Nếu một tài khoản thực hiện hủy đơn chờ thanh toán có voucher quá 02 lần liên tiếp trong vòng 1 giờ: Hệ thống tự động tước quyền sử dụng voucher đó của tài khoản trong 24 giờ, đồng thời rút ngắn thời gian giữ chỗ Soft-lock của các đơn sau xuống còn 3 phút.
+• Luồng ngoại lệ 4.4: Khách hàng khiếu nại mở khóa do hệ thống nhận diện nhầm (False Positive Appeal):
+• Khách hàng bị khóa mã lỗi F02 có quyền bấm nút "Khiếu nại quyết định" trên ứng dụng.
+• Hệ thống yêu cầu tải lên hình ảnh CCCD gắn chip trùng khớp với tên trên thẻ ngân hàng thanh toán.
+• Đội ngũ Fraud Ops tiếp nhận hồ sơ, đối soát SLA trong 24 giờ. Nếu hợp lệ, hệ thống gỡ cờ gian lận và cấp bù một voucher ưu đãi tương đương như lời xin lỗi (Goodwill Compensation).
+3.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. Công Thức Chấm Điểm Rủi Ro Trục Lợi (Multi-Factor Abuse Risk Scoring Formula)
+Điểm số rủi ro tổng hợp $S_{\text{abuse}}$ được xác định theo mô hình tuyến tính có trọng số:
+$$S_{\text{abuse}} = w_{\text{dev}} \cdot S_{\text{dev}} + w_{\text{ip}} \cdot S_{\text{ip}} + w_{\text{addr}} \cdot S_{\text{addr}} + w_{\text{card}} \cdot S_{\text{card}} + w_{\text{beh}} \cdot S_{\text{beh}}$$
+Trong đó:
+• $w_{\text{dev}} = 0.30$: Trọng số vân tay thiết bị.
+• $w_{\text{ip}} = 0.20$: Trọng số mạng & Subnet velocity.
+• $w_{\text{addr}} = 0.20$: Trọng số khoảng cách địa chỉ mờ.
+• $w_{\text{card}} = 0.20$: Trọng số ràng buộc công cụ thanh toán.
+• $w_{\text{beh}} = 0.10$: Trọng số hành vi tương tác (Tốc độ bấm nút, thời gian lưu trang).
+Bảng Quy đổi Điểm Thành phần:
+--- TABLE START ---
+Thành Phần | Tiêu Chí Đo Lường | Giá Trị Đo Lường | Điểm Phạt Thành Phần ($S_x$)
+Thiết Bị ($S_{\text{dev}}$) | Môi trường giả lập / Headless Browser | Phát hiện emulator / Selenium / Puppeteer | 100
+ | Số tài khoản / thiết bị / 30 ngày | $= 1$ tài khoản<br>$= 2$ tài khoản<br>$\ge 3$ tài khoản | 0<br>30<br>90
+Mạng & IP ($S_{\text{ip}}$) | Bản chất địa chỉ IP | Residential IP sạch<br>Datacenter / Tor / Proxy công cộng | 0<br>100
+ | Tần suất Subnet /24 trong 10 phút | $< 5$ giao dịch<br>$5 - 15$ giao dịch<br>$> 15$ giao dịch | 0<br>40<br>85
+Địa Chỉ ($S_{\text{addr}}$) | Chuẩn hóa Levenshtein & Geocoding | Địa chỉ độc lập duy nhất<br>Trùng cụm GPS $< 15\text{m}$ khác tên/SĐT<br>Trùng chuỗi Levenshtein $\ge 0.85$ | 0<br>70<br>85
+Thẻ TT ($S_{\text{card}}$) | Số tài khoản liên kết / 180 ngày | $= 1$ tài khoản<br>$= 2$ tài khoản (Gia đình)<br>$\ge 3$ tài khoản | 0<br>20<br>100 (Chặn M01)
+Hành Vi ($S_{\text{beh}}$) | Tốc độ thao tác (Click velocity) | Thời gian từ mở trang đến đặt $< 2\text{ giây}$ (Script)<br>Thao tác tự nhiên $> 10\text{ giây}$ | 100<br>0
+--- TABLE END ---
+2. Ma Trận Ngưỡng Chặn và Quy Tắc Ràng Buộc Thẻ Ngân Hàng (Payment Binding Matrix)
+• Quy tắc trần thẻ thanh toán (Card-to-Account Strict Ceiling):
+$$\text{Count}(\text{Unique\_User\_ID} \mid \text{Card\_Fingerprint}, \, \Delta t \le 180 \text{ days}) \le 2$$
+• Nếu xuất hiện tài khoản thứ 3 cố gắng áp dụng voucher bằng thẻ này $\rightarrow$ Chặn cứng lập tức, gán cờ CARD_OVERBOUND_REJECT.
+• Ràng buộc số điện thoại đăng ký (Telecom Verification):
+• Kiểm tra đầu số qua HLR Lookup: Không chấp nhận số điện thoại ảo (VOIP, TextNow, Twilio) nhận mã xác thực voucher. Bắt buộc phải là SIM vật lý hoặc eSIM của nhà mạng viễn thông chính ngạch (Viettel, VNPT, Mobifone, FPT).
+3. Bảng Danh Mục Mã Lỗi Gian Lận Chuẩn Hóa (Standard Anti-Fraud Error Catalog)
+--- TABLE START ---
+Mã Lỗi | Tên Lỗi Hiển Thị Cho Khách Hàng | Điều Kiện Kích Hoạt Kỹ Thuật | Hành Động Hệ Thống
+F02 | "Thanh toán không thành công do tài khoản của bạn có dấu hiệu bất thường. Vui lòng gỡ bỏ mã giảm giá và thử lại." | $S_{\text{abuse}} > 75$ xuất phát từ vân tay thiết bị clone hoặc cụm địa chỉ ảo gom sale. | Gỡ bỏ voucher khỏi đơn hàng, giữ nguyên giá trị giỏ hàng gốc để khách tự trả tiền túi nếu muốn mua tiếp.
+M01 | "Phương thức thanh toán bị từ chối do thẻ này đã đạt giới hạn liên kết tài khoản." | $\text{Count}(\text{Users} \mid \text{Card}) > 2$ trong vòng 180 ngày. | Khóa phương thức thanh toán thẻ đó đối với tài khoản hiện tại, bắt buộc đổi thẻ khác hoặc thanh toán COD/VietQR.
+M02 | "Ví điện tử / Tài khoản thanh toán đã được liên kết với một tài khoản Shopee khác." | Ví ShopeePay / Momo liên kết tài khoản thứ 2 săn voucher tân thủ. | Chặn áp dụng voucher ví, yêu cầu gỡ liên kết ví cũ.
+U02 | "Mã giảm giá này chỉ áp dụng cho khách hàng chưa từng có đơn hàng trên hệ thống." | Tài khoản mới nhưng Device_UUID hoặc Card_Fingerprint đã có lịch sử đơn hàng hoàn tất. | Từ chối voucher New Customer (Tân thủ), hiển thị thông báo khách hàng cũ.
+D01 | "Rất tiếc, bạn đã đạt giới hạn sử dụng mã ưu đãi này trên thiết bị của mình." | $N_{\text{vouchers\_on\_device}} \ge \text{Max\_Limit\_Per\_Device}$. | Khóa áp dụng mã trên toàn bộ các tài khoản đăng nhập trên thiết bị đó.
+--- TABLE END ---
+4. Cơ Chế Chế Tài & Cấp Độ Khóa Tài Khoản (Sanction Escalation Hierarchy)
+• Cấp độ 1 (Warning & Detach): Gỡ voucher khỏi đơn hàng hiện tại; gửi cảnh báo nhẹ nhàng trong trung tâm thông báo.
+• Cấp độ 2 (Promotion Suspension - 30 đến 90 ngày): Vô hiệu hóa tính năng nhập mã voucher, thu thập xu và tham gia các trò chơi nhận thưởng trên sàn trong thời hạn 30 - 90 ngày. Khách hàng vẫn được mua hàng nguyên giá.
+• Cấp độ 3 (Permanent Blacklist & Device Ban): Đóng băng vĩnh viễn tài khoản; đưa số điện thoại, số CCCD, Card_Fingerprint và Device_UUID vào Sổ Đen Hệ Thống (fraud_permanent_blacklist). Mọi nỗ lực tạo tài khoản mới từ thiết bị này đều bị tự động gắn cờ vô hiệu hóa trong 60 giây.
+3.7. Dữ liệu vào/ra & Máy trạng thái
+Dữ liệu Yêu cầu Đánh giá Trục lợi (API Input Payload)
+--- TABLE START ---
+{  "screening_session_id": "ABUSE-SCR-20261105-88124",  "user_id": "USR-992144",  "cart_id": "CART-771203",  "applied_vouchers": ["DIENTU_GIAM1TR", "FREESHIP_XTRA"],  "device_telemetry": {    "canvas_hash": "a8fbc29104e8d891",    "webgl_renderer": "ANGLE (Apple, Apple M3 Pro, OpenGL 4.1)",    "audio_hash": "35.12498214",    "os_build": "macOS 15.1.0",    "screen_resolution": "1512x982",    "is_headless": false,    "has_touch_support": false  },  "network_context": {    "client_ip": "113.161.42.88",    "asn": "AS45899 VNPT Corp",    "is_datacenter": false,    "is_vpn_tor": false  },  "shipping_address": {    "recipient_name": "Nguyen Van B",    "phone_number": "0987654321",    "raw_address": "Số 10 ngõ 5 Đội Cấn, Phường Đội Cấn, Quận Ba Đình, Hà Nội",    "gps_coordinates": {      "latitude": 21.034120,      "longitude": 105.821450    }  },  "payment_instrument": {    "method_type": "CREDIT_CARD",    "card_bin": "411153",    "card_last4": "8829",    "card_expiry": "12/28",    "cardholder_name": "NGUYEN VAN B"  }}
+--- TABLE END ---
+Dữ liệu Kết quả Thẩm định Rủi ro (API Output Response)
+--- TABLE START ---
+{  "status": "EVALUATED",  "session_id": "ABUSE-SCR-20261105-88124",  "abuse_risk_score": 88.5,  "verdict": "REJECT_WITH_ERROR_CODE",  "enforced_error_code": "F02",  "enforced_message": "Thanh toán không thành công do tài khoản của bạn có dấu hiệu bất thường. Vui lòng gỡ bỏ mã giảm giá và thử lại.",  "factor_breakdown": {    "device_score": 90.0,    "ip_velocity_score": 85.0,    "address_clustering_score": 95.0,    "card_binding_score": 100.0,    "behavior_score": 60.0  },  "violation_details": {    "device_duplicate_accounts_count": 4,    "card_linked_accounts_count": 3,    "address_cluster_id": "ADDR-CLUS-HANOI-0912",    "is_sybil_farming_suspected": true  },  "permitted_actions": {    "allow_checkout_without_vouchers": true,    "freeze_vouchers": ["DIENTU_GIAM1TR"],    "cooldown_penalty_hours": 72  }}
+--- TABLE END ---
+Máy Trạng Thái Thẩm Định Rủi Ro Trục Lợi Voucher (Voucher Abuse Screening State Machine)
+--- TABLE START ---
+[GIAO DỊCH KHỞI TẠO] ──(Nạp Telemetry Thiết bị & Mạng)──► [TELEMETRY_INGESTED]                                                                  │                                                                  ▼                                                      [RISK_FACTORS_EVALUATED]                                                                  │                                ┌─────────────────────────────────┼─────────────────────────────────┐                                ▼ (Score < 40)                    ▼ (40 <= Score <= 75)             ▼ (Score > 75)                        [PASSED_CLEAN]                  [CHALLENGE_STEP_UP]                 [REJECTED_BLOCKED]                                │                                 │                                 │                                ▼                                 ├───────────┬───────────┐         ▼                        (Áp dụng voucher)                         ▼ (Đỗ OTP)  ▼ (Trượt)   │    (Trả mã F02 / M01)                                                           [PASSED_CLEAN]     [BLOCKED]   │         │                                                                                          ▼         ▼                                                                           [FLAGGED_FOR_FRAUD_AUDIT]
+--- TABLE END ---
+3.8. Tiêu chí nghiệm thu chức năng (Tiêu chí nghiệm thu kỹ thuật dạng Given-When-Then)
+Kịch bản AC-ABUSE-01: Chặn đứng tài khoản clone trên cùng một thiết bị cày voucher tân thủ (Lỗi F02)
+• Given: Một thiết bị di động có Device_UUID = DEV-IOS-99120 đã ghi nhận 2 tài khoản USR-01 và USR-02 đặt hàng thành công trước đó.
+• When: Người dùng đăng ký tài khoản mới USR-03 trên chính thiết bị đó và tiến hành thanh toán đơn hàng có áp dụng mã Voucher Tân thủ WELCOME_100K.
+• Then: Động cơ Anti-Abuse phát hiện số tài khoản trên thiết bị $N_{\text{acc\_dev}} = 3 \ge 3$, điểm rủi ro $S_{\text{abuse}} = 82 > 75$.
+• And: Hệ thống phải chặn áp dụng voucher WELCOME_100K, hiển thị popup thông báo đúng nội dung chuẩn Mã lỗi F02.
+• And: Đơn hàng được giữ nguyên giỏ hàng, cho phép khách chọn tiếp tục thanh toán không có voucher hoặc quay lại giỏ hàng.
+Kịch bản AC-ABUSE-02: Chặn thẻ ngân hàng vượt giới hạn liên kết tối đa 2 tài khoản (Lỗi M01)
+• Given: Thẻ tín dụng Card_Fingerprint = CARD-VPB-8829 đã được liên kết và thanh toán thành công bởi tài khoản của chồng (USR-HUSBAND) và tài khoản của vợ (USR-WIFE) trong vòng 90 ngày.
+• When: Tài khoản thứ ba USR-BROTHER cố gắng nhập số thẻ tín dụng này tại khâu Checkout để áp dụng mã giảm giá ngân hàng VPBANK_200K.
+• Then: Hệ thống kiểm tra số tài khoản liên kết $N_{\text{card\_users}} = 3 > 2$, gán cờ CARD_OVERBOUND_REJECT.
+• And: Từ chối giao dịch với Mã lỗi M01, hiển thị thông báo: "Phương thức thanh toán bị từ chối do thẻ này đã đạt giới hạn liên kết tài khoản trên hệ thống".
+• And: Voucher ngân hàng được giải phóng về trạng thái khả dụng cho khách hàng khác.
+Kịch bản AC-ABUSE-03: Nhận diện cụm gian lận địa chỉ mờ qua Levenshtein và định vị Geocoding
+• Given: Hội nhóm săn sale sử dụng 5 tài khoản khác nhau trên các thiết bị khác nhau, nhưng khai báo địa chỉ giao hàng lần lượt là: "Số 10 ngõ 5 Đội Cấn", "10 ngo 5 doi can hn", "so muoi ngo 5 doi can bd".
+• When: Thuật toán chuẩn hóa chuỗi và Geocoding tính toán khoảng cách Levenshtein tương đồng $\ge 0.88$ và khoảng cách GPS $< 5\text{ mét}$.
+• Then: Hệ thống tự động gộp 5 đơn hàng này vào cùng một Address_Fraud_Cluster.
+• And: Đánh tụt hạn mức voucher của cụm này về 0, áp dụng mã lỗi F02 từ tài khoản thứ 2 trở đi.
+Kịch bản AC-ABUSE-04: Thử thách Step-up CAPTCHA khi phát hiện cụm IP Subnet /24 có tần suất cao
+• Given: Dải mạng Subnet 113.161.42.0/24 phát sinh 12 giao dịch áp dụng mã Siêu Sale trong vòng 8 phút, điểm rủi ro tính toán được là $S_{\text{abuse}} = 65$ (nằm trong khoảng $40 - 75$).
+• When: Khách hàng tiếp theo trong cùng dải Subnet nhấn nút "Áp dụng voucher".
+• Then: Hệ thống không chặn dứt điểm mà kích hoạt cửa sổ Thử thách Nâng cấp (Step-Up Challenge): Bắt buộc khách giải mảnh ghép CAPTCHA xoay hình.
+• And: Nếu khách giải thành công trong vòng 15 giây, hệ thống phê duyệt áp dụng voucher bình thường.
+Kịch bản AC-ABUSE-05: Chặn hành vi găm giữ voucher lặp lại liên tục (Voucher Hoarding Lockout)
+• Given: Tài khoản USR-HOARDER thực hiện đặt hàng giữ chỗ Soft-lock 15 phút cho mã Flash Deal TECH_1TR rồi để quá hạn hủy 2 lần liên tiếp.
+• When: Đúng 2 phút sau khi đơn thứ hai bị hủy, tài khoản này bấm đặt lại lần thứ 3 cho chính mã giảm giá đó.
+• Then: Hệ thống nhận diện mẫu hành vi HOARDING_ATTEMPT_DETECTED, từ chối cấp token Soft-lock mới.
+• And: Khóa quyền áp dụng mã này của tài khoản trong vòng 24 giờ kèm thông báo: "Bạn đã vượt quá số lần giữ mã ưu đãi. Vui lòng thử lại sau 24 giờ".
+————————————————————————————————————————————————————————————————————
+4. ĐẶC TẢ CART-FLASH-03: CƠ CHẾ FLASH SALE, PHÂN LẬP TỒN KHO & KHÓA GIÁ ĐỘNG CHỐNG RACE-CONDITION
+--- TABLE START ---
+[Kho Hàng Vật Lý Của Người Bán (Physical Inventory)]                      │        ┌─────────────┴─────────────┐        ▼                           ▼[Tồn Kho Bán Thường]      [Phân Lập Tồn Kho Flash Sale](Standard_Stock)          (Reserved_Flash_Stock) ──► Nạp trước vào Redis In-Memory Cluster                                    │                                    ▼ (Khung giờ Flash Sale kích hoạt)                          [Luồng Mua Flash Sale TPS Cực Đại]                                    │                                    ▼ (Atomic Lua Script)                          [Trừ Tồn Nguyên Tử Trong Redis]                                    │                          ┌─────────┴─────────┐                          ▼                   ▼                      (Thành công)         (Hết kho)                          │                   │                          ▼                   ▼                 [Cấp Token Giữ Hàng]    [Báo Cháy Hàng Flash Sale]                 (TTL: 15 Phút Khóa Giá) (Chuyển về bán giá thường)                          │                          ▼                 [Khách Vào Checkout]                          │             ┌────────────┴────────────┐             ▼                         ▼    (Thanh toán trong 15p)    (Quá 15p chưa trả tiền)             │                         │             ▼                         ▼   [Trừ Kho DB Thật & Tạo Đơn]   [Tự Động Nhả Tồn Về Redis]
+--- TABLE END ---
+4.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: CART-FLASH-03
+• Tên nghiệp vụ: Cơ chế Quản lý Phiên Flash Sale, Phân lập Vùng Tồn kho và Khóa giá Động Chống Race-Condition (Flash Sale Campaign Management, Stock Segregation, Dynamic Price Lock & High-Concurrency Anti-Race Condition Engine).
+• Phân hệ: Quản lý Chiến dịch Khuyến mãi & Xử lý Tồn kho Tải cao (Campaign Management & High-Throughput Inventory Engine).
+4.2. Mục tiêu & Tác nhân
+• Mục tiêu nghiệp vụ:
+• Tổ chức các phiên bán hàng Flash Sale định kỳ hoặc ngày hội Siêu Sale với lưu lượng truy cập cực lớn (High Concurrency > 10,000 QPS) mà không gây sập hệ thống cơ sở dữ liệu cốt lõi.
+• Phân lập hoàn toàn vùng tồn kho cam kết bán giá sốc (Reserved_Flash_Stock) với tồn kho bán hàng thông thường (Standard_Stock), ngăn chặn việc xả kho vượt kiểm soát tài chính của nhà bán hàng.
+• Chống gian lận đầu cơ, bot tự động quét deal bằng cách giới hạn số lượng mua khắt khe trên từng cá nhân và thiết bị (Max_Qty_Per_User/Device).
+• Triển khai cơ chế Khóa giá động (Dynamic Price Lock) và Giữ chỗ hàng tồn trong 15 phút tại khâu Checkout; tự động hoàn trả tồn kho về kho đệm (Stock Release) nếu khách hàng không thanh toán đúng hạn.
+• Tác nhân tham gia (Actors):
+• Khách hàng săn sale (Flash Sale Shopper): Đặt mua sản phẩm giá sốc trong khung giờ giới hạn.
+• Nhà bán hàng (Seller): Đăng ký sản phẩm tham gia Flash Sale, cam kết số lượng tồn kho và mức giá chiết khấu.
+• Hệ thống Quản trị Chiến dịch (Campaign Service): Lập lịch, kiểm duyệt và kích hoạt các khung giờ Flash Sale.
+• Bộ đệm Tồn kho Phân tán (Distributed In-Memory Cache - Redis Cluster): Quản lý số lượng tồn kho nguyên tử bằng Lua Script.
+• Hệ thống Chống Gian lận (Anti-Fraud & Device Fingerprinting Service): Thẩm định và ngăn chặn các hành vi trục lợi đa tài khoản.
+4.3. Điều kiện tiên quyết
+• Phiên Flash Sale đã được phê duyệt trong hệ thống CMS và nạp sẵn cấu hình: Khung giờ bắt đầu (Start_Time), kết thúc (End_Time), danh sách SKU tham gia, giá Flash Sale (Flash_Price), số lượng đăng ký (Flash_Quota), giới hạn mua (Max_Qty_Per_User).
+• Trước thời điểm mở bán 30 phút (T - 30m), hệ thống đã thực hiện đóng băng tồn kho vật lý của shop và nạp toàn bộ dữ liệu tồn kho Flash Sale vào bộ nhớ đệm phân tán Redis (Pre-warming Cache).
+• Hệ thống Cổng API (API Gateway) đã kích hoạt cơ chế giới hạn tần suất yêu cầu (Rate Limiting: Token Bucket) và tường lửa WAF chặn bot độc hại.
+4.4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+Bước 1: Kích hoạt Khung Giờ Flash Sale (Slot Activation)
+• Đúng thời điểm Start_Time (ví dụ: 00:00:00, 12:00:00), hệ thống chuyển trạng thái phiên Flash Sale sang ACTIVE.
+• Trang chủ và trang danh mục Flash Sale hiển thị huy hiệu ngọn lửa "Flash Sale", đồng hồ đếm ngược thời gian thực (Countdown Timer) và mức giá ưu đãi sốc.
+Bước 2: Hiển thị Tiến độ và Trạng thái Tồn kho Thời gian thực
+• Khách hàng truy cập trang chi tiết sản phẩm (PDP):
+• Giá bán hiển thị: Flash_Price kèm nhãn % giảm giá so với giá gốc.
+• Thanh tiến độ trực quan: Hiển thị số lượng "Đã bán [X]%" và nhãn trạng thái động:
+• Đã bán $< 50\%$: Nhãn "Đang bán chạy".
+• Đã bán từ $50\% - 89\%$: Nhãn "Bán rất chạy".
+• Đã bán $\ge 90\%$: Nhãn "Sắp cháy hàng" (Thanh tiến độ chuyển sang màu đỏ cam nhấp nháy).
+• Ticker số lượng: Nếu số lượng còn lại $< 5$, hiển thị chữ số chính xác: "Chỉ còn [N] sản phẩm!".
+Bước 3: Khách hàng Chọn Mua & Kiểm tra Ràng buộc Chống Gian lận (Anti-Fraud Validation)
+• Khách hàng nhấn "Mua ngay" hoặc "Thêm vào giỏ hàng".
+• Hệ thống Anti-Fraud kích hoạt kiểm tra tổ hợp định danh:
+$$\text{Identity\_Hash} = \text{SHA256}(\text{User\_ID} + \text{Device\_Fingerprint} + \text{Phone\_Number} + \text{Card\_Hash})$$
+• Kiểm tra điều kiện:
+$$\text{Purchased\_Count}(\text{Identity\_Hash}) + \text{Request\_Qty} \le \text{Max\_Qty\_Per\_User} \quad (\text{Thường là 1 sản phẩm})$$
+• Nếu vi phạm: Chặn ngay tại tầng API Gateway với mã lỗi HTTP 403 - PURCHASE_LIMIT_EXCEEDED.
+Bước 4: Khấu trừ Tồn kho Nguyên tử trong Cache (Atomic Cache Deduction)
+• Yêu cầu mua được gửi thẳng đến cụm Redis Cluster quản lý tồn kho Flash Sale.
+• Thực thi đoạn mã Lua Script bất khả phân (Atomic Execution) để tránh race-condition:
+--- TABLE START ---
+local stock_key = KEYS[1]  local requested_qty = tonumber(ARGV[1])  local current_stock = tonumber(redis.call('get', stock_key) or "0")  if current_stock >= requested_qty then      redis.call('decrby', stock_key, requested_qty)      return 1  else      return 0  end
+--- TABLE END ---
+• Kết quả:
+• Nếu trả về 1 (Thành công): Cấp phát ngay một mã giữ chỗ duy nhất Flash_Reservation_Token có thời hạn sống TTL = 900 giây (15 phút).
+• Nếu trả về 0 (Hết tồn): Chuyển sang Luồng ngoại lệ 4.1.
+Bước 5: Chuyển hướng Thanh toán & Kích hoạt Bộ đếm Khóa Giá 15 Phút
+• Khách hàng được chuyển hướng ngay lập tức đến trang Thanh toán (Checkout Page).
+• Tại đây:
+• Giá sản phẩm được Khóa cố định ở mức `Flash_Price`.
+• Tồn kho 1 sản phẩm được bảo đảm giữ riêng cho khách trong 15 phút.
+• Trên giao diện hiển thị đồng hồ đếm ngược nổi bật: "Ưu đãi Flash Sale & sản phẩm trong giỏ được giữ trong [14:59] phút. Vui lòng thanh toán trước khi hết giờ!".
+Bước 6: Hoàn tất Giao dịch và Khấu trừ Tồn kho Cơ sở Dữ liệu Vĩnh viễn
+• Khách hàng chọn phương thức thanh toán và hoàn tất giao dịch trong vòng 15 phút.
+• Cổng thanh toán trả về Payment_Success.
+• Dịch vụ Đơn hàng thực hiện ghi nhận giao dịch:
+• Cập nhật trạng thái đơn hàng sang CONFIRMED.
+• Gửi bản tin bất đồng bộ (qua Kafka) xuống hệ thống Kho bãi để trừ số lượng thực tế trong bảng cơ sở dữ liệu RDBMS (Physical_Stock).
+• Hủy bỏ Flash_Reservation_Token (đánh dấu đã sử dụng thành công).
+4.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+--- TABLE START ---
+[Khách Nhấn Mua Flash Sale]             │             ├─► (Ngoại lệ 4.1: Hết hàng Flash Sale) ──────────► Báo cháy hàng, hỏi mua giá thường             │             ├─► (Ngoại lệ 4.2: Quá hạn 15 phút tại Checkout) ──► Nhả tồn về Redis, hủy giá ưu đãi             │             ├─► (Ngoại lệ 4.3: Phát hiện Botfarm/Cheat) ───────► Tường lửa WAF chặn IP/Device             │             ├─► (Ngoại lệ 4.4: Hủy đơn sau khi mua) ───────────► Hoàn tồn về Standard Stock             │             └─► (Ngoại lệ 4.5: Thanh toán lúc giao thời) ──────► Giữ giá ưu đãi theo Token hợp lệ
+--- TABLE END ---
+• Luồng ngoại lệ 4.1: Cháy hàng Flash Sale trong tích tắc (Flash Stock Depleted):
+• Lua script trả về 0.
+• Giao diện nút bấm trên màn hình của khách hàng chuyển sang trạng thái xám vô hiệu hóa: "Đã cháy hàng".
+• Nếu sản phẩm vẫn còn tồn kho thường (Standard_Stock > 0), hệ thống hiển thị tùy chọn: "Rất tiếc, suất mua Flash Sale đã hết! Bạn có muốn mua sản phẩm này với giá niêm yết thường: [Standard_Price] VNĐ?".
+• Luồng ngoại lệ 4.2: Hết thời gian giữ chỗ 15 phút tại Checkout (Timeout & Stock Release):
+• Khách hàng ở lại trang Checkout quá 15 phút mà không xác nhận thanh toán.
+• Flash_Reservation_Token tự động hết hạn trên Redis.
+• Hệ thống kích hoạt cơ chế Tự động Nhả Hàng (Automatic Stock Reversal):
+• Tăng lại số tồn kho Flash Sale trên Redis: redis.call('incrby', stock_key, 1).
+• Cập nhật lại giao diện người dùng: Nếu khách bấm thanh toán muộn, hệ thống chặn lại với thông báo: "Thời gian giữ giá ưu đãi Flash Sale (15 phút) đã kết thúc. Sản phẩm đã được cập nhật về giá thường".
+• Luồng ngoại lệ 4.3: Phát hiện tấn công Bot / Giả lập Thiết bị (Anti-Bot Action):
+• Hệ thống phát hiện một địa chỉ IP gửi hơn 20 request/giây hoặc sử dụng trình duyệt không đầu (Headless Browser / Selenium).
+• Tường lửa WAF tự động bật thử thách CAPTCHA xoay hình ảnh hoặc chặn dứt điểm kết nối, bảo vệ đường truyền cho người dùng thực.
+• Luồng ngoại lệ 4.4: Hủy đơn hàng Flash Sale đã thanh toán (Cancellation & Restock Logic):
+• Khách hàng đặt mua thành công nhưng sau đó hủy đơn trong vòng 30 phút.
+• Do phiên Flash Sale có thể đã kết thúc hoặc đã chốt sổ, số lượng tồn kho hủy này KHÔNG ĐƯỢC TRẢ LẠI VÀO PHIÊN FLASH SALE mà được hoàn trả trực tiếp về vùng tồn kho thường (Standard_Stock) để tránh làm sai lệch dữ liệu của phiên bán.
+• Luồng ngoại lệ 4.5: Giao dịch thanh toán hoàn tất cận biên thời gian kết thúc phiên:
+• Khách hàng vào Checkout lúc 11:58 (phiên Flash Sale 09:00 - 12:00 kết thúc lúc 12:00).
+• Token giữ giá của khách có hiệu lực đến 12:13.
+• Lúc 12:05 khách thanh toán thành công: Hệ thống vẫn tôn trọng và ghi nhận đơn hàng với mức giá Flash Sale vì khách đã giữ token hợp lệ trước khi phiên kết thúc.
+4.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. Kiến trúc Phân lập Vùng Tồn kho (Strict Inventory Segregation Formula)
+Tồn kho vật lý của sản phẩm được phân chia thành các vùng độc lập:
+$$\text{Total\_Physical\_Stock} = \text{Standard\_Stock} + \text{Reserved\_Flash\_Stock} + \text{Safety\_Stock} + \text{Quarantine\_Stock}$$
+• Quy tắc phân lập cứng:
+• Trong suốt thời gian diễn ra phiên Flash Sale, khách hàng mua qua kênh Flash Sale chỉ được phép trừ vào Reserved_Flash_Stock.
+• Khách hàng mua thông thường (nếu không vào từ link Flash Sale hoặc mua vượt hạn mức) chỉ được phép trừ vào Standard_Stock.
+• Khi Reserved_Flash_Stock == 0, hệ thống tuyệt đối không được tự ý trừ lấn sang Standard_Stock với giá Flash Sale.
+2. Khung Giờ Flash Sale Chuẩn hóa (Time-Slot Scheduling)
+• Khung giờ ngày thường: Cố định 6 khung giờ/ngày:
+Slot 1: 00:00 - 09:00 | Slot 2: 09:00 - 12:00 | Slot 3: 12:00 - 15:00 | Slot 4: 15:00 - 18:00 | Slot 5: 18:00 - 21:00 | Slot 6: 21:00 - 24:00.
+• Khung giờ Siêu Sale (Mega Campaign Days như 11.11, 12.12): Rút ngắn xuống chu kỳ 2 giờ/slot (00:00, 02:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00).
+3. Giới Hạn Số Lượng Mua & Xác Thực Chống Đầu Cơ (Purchase Quota Rules)
+• Mức trần định mức:
+• Deal trợ giá sốc (< 10.000 VNĐ): Tối đa 01 sản phẩm / khách hàng / thiết bị.
+• Thiết bị điện tử - công nghệ giá trị cao: Tối đa 01 - 02 sản phẩm / khách hàng.
+• Cơ chế nhận diện thiết bị (Device Fingerprinting):
+Hệ thống trích xuất thông tin thiết bị từ ứng dụng di động: IDFV (iOS) / Android_ID + Mã băm phần cứng (CPU/Board) + MAC hash. Một thiết bị đăng nhập nhiều tài khoản khác nhau vẫn bị tính chung vào một hạn mức thiết bị (Max_Qty_Per_Device).
+4. Kiểm soát Tranh chấp Đồng thời Tải cao (High-Concurrency Architecture)
+• Kiến trúc 3 Lớp Phòng Thủ (3-Tier Defense Architecture):
+1. Lớp 1 (Edge / Gateway): Rate Limiter chặn các request vượt ngưỡng 5 request/s từ cùng 1 IP.
+2. Lớp 2 (In-Memory Atomic Layer): Cụm Redis Enterprise triển khai cấu trúc Master-Replica Sharding. Toàn bộ thao tác kiểm tra tồn và trừ tồn diễn ra trong bộ nhớ RAM qua Lua Script (độ trễ $< 2\text{ms}$).
+3. Lớp 3 (Asynchronous DB Persistence): Lệnh tạo đơn và trừ tồn vật lý trong DB được xếp hàng vào Apache Kafka, ghi dần xuống cơ sở dữ liệu quan hệ RDBMS theo cơ chế Batch Processing, triệt tiêu hoàn toàn nguy cơ nghẽn DB Connection Pool.
+5. Thuật toán Khóa Giá Động (Dynamic Price Lock Specification)
+• Thời gian khóa: Cố định chính xác 900 giây (15 phút) tính từ thời điểm Lua Script trừ kho Redis thành công.
+• Giá trị khóa: Khóa đồng thời cả Unit_Price và Stock_Reservation.
+• Bất biến: Không bao giờ xảy ra trường hợp khách đã vào màn hình Checkout có đồng hồ đếm ngược mà khi bấm nút Thanh toán lại bị thông báo "Hết hàng".
+4.7. Dữ liệu vào/ra & Trạng thái đơn hàng/giao dịch
+Dữ liệu yêu cầu Mua Flash Sale (API Input)
+--- TABLE START ---
+{  "flash_slot_id": "FS-SLOT-20261104-1200",  "sku_id": "SONY-WH1000XM5-BLK",  "quantity": 1,  "client_timestamp": "2026-11-04T12:00:01.120Z",  "device_telemetry": {    "device_fingerprint": "DEV-A8829F-9921-IOS",    "ip_address": "113.161.42.18",    "app_version": "8.42.0"  }}
+--- TABLE END ---
+Dữ liệu phản hồi Cấp Giữ Chỗ (API Output)
+--- TABLE START ---
+{  "status": "RESERVED_SUCCESS",  "data": {    "reservation_token": "FSTOKEN-991284-8812",    "sku_id": "SONY-WH1000XM5-BLK",    "flash_price": 5990000,    "original_price": 8490000,    "quantity": 1,    "locked_at": "2026-11-04T12:00:01.250Z",    "expires_at": "2026-11-04T12:15:01.250Z",    "checkout_redirect_url": "/checkout?token=FSTOKEN-991284-8812"  }}
+--- TABLE END ---
+Bảng Ma trận Chuyển đổi Trạng thái Giữ chỗ Flash Sale
+--- TABLE START ---
+[KHỞI TẠO] ──(Lua Check & Decr > 0)──► [RESERVED] (TTL 15m)                                           │             ┌─────────────────────────────┴─────────────────────────────┐             ▼ (Thanh toán hoàn tất)                                     ▼ (Quá 15m hoặc Hủy)      [CONVERTED_TO_ORDER]                                          [EXPIRED_RELEASED]             │                                                           │             ▼                                                           ▼(Trừ DB vật lý & Hoàn tất)                                 (Tự động Incrby lại Redis Stock)
+--- TABLE END ---
+4.8. Tiêu chí nghiệm thu chức năng (Tiêu chí nghiệm thu kỹ thuật dạng Given-When-Then)
+Kịch bản AC-FLASH-01: Trừ tồn kho nguyên tử chính xác tuyệt đối dưới tải cao
+• Given: Sản phẩm Sony WH-1000XM5 có Reserved_Flash_Stock = 50 sản phẩm trong khung giờ 12:00 - 15:00.
+• When: Đúng 12:00:00, có đồng thời 500 yêu cầu mua gửi đến hệ thống cùng một tích tắc.
+• Then: Hệ thống chỉ được cấp phát thành công đúng 50 Flash_Reservation_Token cho 50 yêu cầu đầu tiên.
+• And: 450 yêu cầu đến sau phải nhận phản hồi "Đã hết hàng Flash Sale".
+• And: Số lượng tồn kho trên Redis tuyệt đối không được âm (Redis_Stock == 0).
+Kịch bản AC-FLASH-02: Chặn tài khoản mua vượt hạn mức cho phép
+• Given: Chiến dịch Flash Sale cấu hình Max_Qty_Per_User = 1.
+• When: Tài khoản USR-001 đã đặt mua thành công 1 sản phẩm, sau đó dùng chính tài khoản đó (hoặc cùng thiết bị đó) gửi tiếp yêu cầu mua thứ 2.
+• Then: Hệ thống phải chặn yêu cầu thứ 2 ngay tại tầng xác thực, trả về mã lỗi PURCHASE_LIMIT_EXCEEDED.
+• And: Không được trừ thêm bất kỳ tồn kho nào trong Redis.
+Kịch bản AC-FLASH-03: Khóa giá Flash Sale chính xác 15 phút tại trang Checkout
+• Given: Khách hàng nhận được Flash_Reservation_Token thành công lúc 12:00:00.
+• When: Khách hàng chuyển sang trang Checkout.
+• Then: Giá sản phẩm phải hiển thị cố định ở mức 5.990.000 VNĐ (thay vì giá gốc 8.490.000 VNĐ).
+• And: Giao diện hiển thị đồng hồ đếm ngược đếm lùi từ 15:00 về 00:00 đồng bộ với thời hạn hết hạn của Token trên máy chủ.
+Kịch bản AC-FLASH-04: Tự động nhả tồn kho về kho đệm khi hết hạn 15 phút
+• Given: Khách hàng giữ 1 suất mua trong giỏ hàng lúc 12:00:00. Số tồn Redis lúc này là 0.
+• When: Đến 12:15:01, khách hàng vẫn chưa thực hiện thanh toán.
+• Then: Tiến trình nền phải giải phóng Flash_Reservation_Token và tăng lại số tồn kho trên Redis thành 1 (Redis_Stock = 1).
+• And: Sản phẩm trên trang chi tiết chuyển trạng thái từ "Đã cháy hàng" sang "Còn 1 sản phẩm" cho khách khác săn tiếp.
+————————————————————————————————————————————————————————————————————
+5. ĐẶC TẢ PAY-FRAUD-AVS-04: ĐỘNG CƠ CHẤM ĐIỂM GIAN LẬN THANH TOÁN, ĐỊNH TUYẾN 3DS 2.0 & HỆ THỐNG XÁC THỰC AVS
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│               KIẾN TRÚC PHÒNG CHỐNG GIAN LẬN THANH TOÁN (STRIPE RADAR / CYBERSOURCE)   │├────────────────────────────────────────────────────────────────────────────────────────┤│  [YÊU CẦU THANH TOÁN TỪ CLIENT CHECKOUT]                                               ││    ├── Device Telemetry (Canvas Hash, WebGL Unmasked, AudioContext, Múi giờ, Màn hình) ││    ├── IP Geolocation vs Quốc Gia Thẻ (BIN Country) vs Địa Chỉ Giao Hàng               ││    └── Velocity Counters (Số lần đặt hàng / thẻ / IP trong 1 giờ)                      ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 1: KIỂM SOÁT VẬN TỐC GIAO DỊCH (VELOCITY CHECKS)]                               ││    ├── Tối đa 3 đơn / thẻ / giờ | Tối đa 5 lần thử / IP / giờ                          ││    └── Vượt ngưỡng ──> HTTP 429 FRAUD_VELOCITY_EXCEEDED (Chặn tức thì)                 ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 2: KIỂM SOÁT TỶ LỆ LỖI MÃ BẢO MẬT (CVV 3-STRIKE RULE)]                         ││    ├── Sai CVV lần 1, lần 2 ──> Báo lỗi, cho phép nhập lại                             ││    └── Sai CVV lần 3 liên tiếp ──> KHÓA THẺ 24 GIỜ + GẮN CỜ CARDING ATTEMPT            ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 3: XÁC THỰC ĐỊA CHỈ HÓA ĐƠN AVS (ADDRESS VERIFICATION SYSTEM)]                  ││    ├── Match Code Y (Khớp cả Số nhà và Mã Zip Code) ──> Điểm rủi ro = 0                ││    ├── Match Code A/Z (Khớp 1 trong 2) ──> Điểm rủi ro trung bình (+25đ)               ││    └── Match Code N (Không khớp cả hai) ──> RỦI RO CAO (+80đ) ──> BẮT BUỘC 3DS2 OTP    ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 4: TÍNH TOÁN ĐIỂM SỐ RỦI RO GIAN LẬN S_fraud THUỘC THANG ĐIỂM 0 - 100]          ││                                │                                                       ││                ┌───────────────┴───────────────┐                                       ││                ▼                               ▼                                       ││        (S_fraud < 30)                 (S_fraud >= 30 HOẶC Đơn >= 5Tr)                  ││                │                               │                                       ││                ▼                               ▼                                       ││   [3DS2 FRICTIONLESS FLOW]            [3DS2 CHALLENGE OTP FLOW]                        ││   - Không cần nhập mã OTP             - iFrame an toàn của Ngân hàng                   ││   - Trừ tiền tức thì < 2s             - Bắt buộc nhập OTP SMS / FaceID                 ││   - CHUYỂN GIAO TRÁCH NHIỆM PHÁP LÝ   - Xác thực đúng ──> Trừ tiền & Liability Shift   ││     (LIABILITY SHIFT VỀ BANK)         - Xác thực sai ──> Từ chối giao dịch             │└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+5.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: PAY-FRAUD-AVS-04
+• Tên nghiệp vụ: Động cơ Chấm Điểm Gian Lận Thanh Toán, Định Tuyến 3D-Secure 2.0 Kép & Hệ Thống Xác Thực Địa Chỉ Hóa Đơn AVS (Payment Fraud Scoring Engine, 3DS 2.0 Dual Routing & Address Verification System).
+• Phân hệ: Cổng Thanh Toán Trực Tuyến & Quản Trị Rủi Ro Gian Lận Giao Dịch (Payment Gateway & Transaction Risk Management Engine).
+5.2. Mục tiêu & Tác nhân
+• Mục tiêu nghiệp vụ:
+• Bảo vệ nền tảng thương mại điện tử trước các cuộc tấn công gian lận thẻ tín dụng đánh cắp (Card-Not-Present Fraud), tấn công dò số thẻ tự động (BIN Attack / Carding Brute-Force) và rủi ro bồi hoàn gian lận (Fraudulent Chargebacks) vốn gây tổn thất nặng nề cho biên lợi nhuận của các sản phẩm công nghệ giá trị cao (iPhone, MacBook).
+• Triển khai động cơ chấm điểm rủi ro gian lận thời gian thực (Fraud Scoring Engine) trên thang điểm 0 - 100 theo chuẩn kiến trúc quốc tế của Stripe Radar và CyberSource Decision Manager.
+• Tối ưu hóa trải nghiệm khách hàng thông qua Định tuyến kép 3D-Secure 2.0 (Dual 3DS2 Routing): Cấp quyền Miễn trừ Xác thực Mạnh (SCA Exemption) cho các giao dịch rủi ro thấp ($S_{\text{fraud}} < 30$) bằng Luồng Không Ma Sát (Frictionless Flow) không cần OTP nhằm tối đa hóa tỷ lệ chuyển đổi, đồng thời vẫn bảo đảm tính năng Chuyển giao trách nhiệm bồi hoàn (Liability Shift) từ Sàn TMĐT sang Ngân hàng phát hành; Kích hoạt Luồng Thách thức (Challenge Flow) bắt buộc OTP/sinh trắc học đối với các đơn hàng giá trị cao ($\ge 5.000.000$ VNĐ hoặc $\ge \$200$) hoặc có dấu hiệu bất thường.
+• Tích hợp hệ thống So khớp Địa chỉ Hóa đơn (AVS - Address Verification System) chuẩn hóa với các mã phản hồi quốc tế (Match Codes: Y, A, Z, N, U).
+• Thực thi quy tắc khóa tỷ lệ lỗi mã bảo mật thẻ nghiêm ngặt (CVV Failure Rate-Limiting / 3-Strike Rule): Khóa thanh toán thẻ trong 24 giờ sau 3 lần nhập sai liên tiếp.
+• Áp dụng các quy tắc kiểm soát vận tốc giao dịch (Velocity Rules) đa chiều (theo thẻ, theo IP, theo địa chỉ nhận hàng).
+• Tác nhân tham gia (Actors):
+• Khách hàng mua sắm (Shopper / Cardholder): Nhập thông tin thẻ thanh toán tại Checkout và thực hiện xác thực OTP khi có yêu cầu.
+• Động cơ Chống Gian Lận (Fraud Scoring Engine): Thu thập viễn trắc thiết bị, kiểm tra vận tốc, tính điểm $S_{\text{fraud}}$ và chỉ định luồng 3DS2 trong vòng $< 100\text{ms}$.
+• Máy Chủ Quản Lý Rủi Ro Ngân Hàng Phát Hành (Card Issuer ACS - Access Control Server): Tiếp nhận dữ liệu EMVCo 3DS2, quyết định chấp thuận miễn trừ Frictionless hoặc hiển thị Challenge Screen.
+• Cổng Thanh Toán / Ngân Hàng Đối Tác (Payment Gateway / Acquirer): Chuyển tiếp bản tin ủy quyền thanh toán và ghi nhận mã cấp phép (Bank_Auth_Code).
+• Chuyên viên Giám sát Gian lận (Fraud Operations Specialist): Đối soát các đơn hàng bị gắn cờ cảnh báo (Manual Review Queue) và thụ lý hồ sơ tranh chấp bồi hoàn.
+5.3. Điều kiện tiên quyết
+• Khách hàng đã chọn phương thức thanh toán bằng thẻ thanh toán quốc tế: Visa, Mastercard, JCB, American Express, hoặc UnionPay.
+• Đơn hàng đã xác định số tiền thanh toán cuối cùng: $\text{Final\_Payable\_Amount} > 0$.
+• Client SDK an ninh (FraudDetector.js hoặc Native iOS/Android Risk SDK) đã được nạp thành công và thu thập đầy đủ chữ ký thiết bị (Device Telemetry).
+• Cổng thanh toán tích hợp hỗ trợ giao thức EMVCo 3-D Secure phiên bản 2.2.0 trở lên và giao thức truy vấn AVS qua mạng lưới tổ chức thẻ quốc tế (Visa Resolve Online, Mastercard Match).
+5.4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+Bước 1: Thu thập Dữ liệu Viễn trắc Thiết bị & Bối cảnh Giao dịch (Context Ingestion)
+• Khi khách hàng truy cập giao diện nhập thẻ:
+• Client SDK bí mật thu thập các chỉ số viễn trắc phần cứng:
+• Canvas Fingerprint Hash: Tạo hình ảnh ẩn trên canvas và tính mã băm chuỗi Base64.
+• WebGL Unmasked Renderer: Đọc thông số GPU thực tế nhằm phát hiện máy ảo/giả lập.
+• AudioContext Latency Entropy: Đo độ trễ micro-giây trong xử lý sóng âm.
+• Múi giờ hệ thống (Timezone Offset), Ngôn ngữ trình duyệt, Độ phân giải màn hình, Danh sách Font chữ.
+• Bối cảnh mạng & Giao dịch:
+• Địa chỉ IP của khách hàng, vị trí địa lý IP (IP Geolocation: Quốc gia, Tỉnh/Thành phố).
+• Thông tin thẻ: 6 số đầu (BIN - Bank Identification Number) để tra cứu quốc gia phát hành thẻ (BIN_Country) và tên ngân hàng (Issuer_Bank).
+• Địa chỉ thanh toán (Billing_Address) và địa chỉ giao hàng (Shipping_Address).
+Bước 2: Kiểm Tra Bộ Quy Tắc Vận Tốc Giao Dịch (Velocity Rules Check)
+• Động cơ kiểm tra tức thì các bộ đếm tần suất trên cụm Redis Cluster:
+1. Số đơn hàng trên cùng một số thẻ (Card Hash) trong 1 giờ: $N_{\text{orders\_card\_1h}} \le 3$.
+2. Số lần thử thanh toán từ cùng một địa chỉ IP trong 1 giờ: $N_{\text{attempts\_ip\_1h}} \le 5$.
+3. Số lượng địa chỉ giao hàng khác nhau gắn với cùng một thẻ trong 24 giờ: $N_{\text{shipping\_card\_24h}} \le 2$.
+• Quyết định: Nếu bất kỳ chỉ số nào vượt ngưỡng trần cho phép $\rightarrow$ Hệ thống lập tức từ chối giao dịch với mã lỗi HTTP 429 - FRAUD_VELOCITY_EXCEEDED, gán cờ SUSPECTED_CARDING_ATTACK.
+Bước 3: Kiểm Tra Tỷ Lệ Lỗi Mã Bảo Mật CVV (CVV Rate-Limiting Check)
+• Hệ thống kiểm tra số lần nhập sai mã CVV/CVC liên tiếp của thẻ này trên Redis:
+• Nếu thẻ đang có trạng thái CVV_LOCKED_24H (đã nhập sai 3 lần liên tiếp trong vòng 24 giờ qua):
+• Lập tức từ chối giao dịch mà không gửi yêu cầu sang ngân hàng, thông báo lỗi: "Thẻ thanh toán này đã bị tạm khóa chức năng giao dịch trực tuyến trong 24 giờ do nhập sai mã bảo mật nhiều lần. Vui lòng sử dụng thẻ khác".
+• Nếu thẻ chưa bị khóa: Cho phép tiến hành xác thực mã CVV với ngân hàng phát hành.
+Bước 4: So Khớp Địa Chỉ Hóa Đơn AVS (Address Verification System Match)
+• Cổng thanh toán gửi thông tin địa chỉ thanh toán sang ngân hàng phát hành qua mạng lưới thẻ:
+• Dữ liệu gửi đi: Chuỗi số nhà trên đường (Billing_Street_Number) và Mã bưu chính (Billing_Zip_Code).
+• Ngân hàng phát hành đối soát với hồ sơ chủ thẻ và trả về Mã Kết Quả AVS (AVS_Result_Code):
+• Code Y (Full Match): Khớp 100% cả số nhà và mã bưu điện $\rightarrow$ Điểm tin cậy tối đa.
+• Code A (Street Match Only): Khớp số nhà nhưng sai mã Zip $\rightarrow$ Tăng nguy cơ rủi ro.
+• Code Z (Zip Match Only): Khớp mã Zip nhưng sai số nhà $\rightarrow$ Tăng nguy cơ rủi ro.
+• Code N (No Match): Hoàn toàn không khớp cả hai $\rightarrow$ Dấu hiệu sử dụng thẻ đánh cắp nghiêm trọng.
+• Code U / G (Unavailable / Non-US): Ngân hàng nước ngoài không hỗ trợ dịch vụ AVS.
+Bước 5: Tính Toán Điểm Số Rủi Ro Gian Lận (Fraud Risk Scoring 0-100)
+• Động cơ Machine Learning kết hợp Rule Engine tính toán điểm rủi ro $S_{\text{fraud}} \in [0, 100]$:
+$$S_{\text{fraud}} = \sum_{k=1}^m w_k \cdot f_k(\text{Telemetry}, \text{AVS}, \text{Velocity}, \text{Geolocation})$$
+• Các yếu tố gia tăng điểm phạt:
+• Địa chỉ IP cách xa Địa chỉ giao hàng $> 200\text{km}$: $+25\text{ điểm}$.
+• Quốc gia IP khác Quốc gia phát hành thẻ (IP_Country != BIN_Country): $+30\text{ điểm}$.
+• Kết quả AVS là Code N: $+40\text{ điểm}$.
+• Đơn hàng chứa sản phẩm công nghệ giá trị cao (iPhone, MacBook) có địa chỉ giao hàng là điểm chuyển phát trung gian (Freight Forwarder): $+35\text{ điểm}$.
+Bước 6: Định Tuyến Xác Thực 3D-Secure 2.0 Kép (Dual 3DS2 Routing)
+Hệ thống phân luồng xử lý giao dịch dựa trên điểm số $S_{\text{fraud}}$ và giá trị đơn hàng:
+• Nhánh 1: Luồng Không Ma Sát (3DS2 Frictionless Flow - Risk Score < 30):
+• Điều kiện: $S_{\text{fraud}} < 30$ VÀ Đơn hàng có giá trị $< 5.000.000\text{ VNĐ}$ (hoặc $<\$200$).
+• Hệ thống đóng gói hơn 100 thuộc tính viễn trắc vào bản tin AReq (Authentication Request) gửi sang máy chủ ACS của Ngân hàng phát hành, kèm theo yêu cầu Miễn trừ Rủi ro Thấp (Low-Risk Transaction Risk Analysis Exemption).
+• Máy chủ ACS ngân hàng xác nhận giao dịch an toàn và phản hồi bản tin ARes với kết quả: transStatus = "Y" (Approved) mà hoàn toàn không hiển thị màn hình nhập OTP cho người mua.
+• Chuyển giao trách nhiệm bồi hoàn (Liability Shift Guarantee): Trách nhiệm tài chính nếu xảy ra gian lận thẻ đánh cắp chính thức được chuyển giao sang Ngân hàng phát hành theo quy định của Visa/Mastercard.
+• Nhánh 2: Luồng Thách Thức (3DS2 Challenge Flow - Risk Score $\ge 30$ hoặc Đơn hàng $\ge 5.000.000$ VNĐ):
+• Kích hoạt khi: $S_{\text{fraud}} \ge 30$, hoặc giá trị đơn hàng $\ge 5.000.000\text{ VNĐ}$, hoặc AVS trả về Code A/Z/N, hoặc phát hiện đăng nhập từ thiết bị lạ.
+• Cổng thanh toán nhúng màn hình xác thực iFrame an toàn của ngân hàng phát hành trên giao diện Checkout:
+• Yêu cầu khách hàng nhập mã OTP 6 số gửi qua tin nhắn SMS ngân hàng, HOẶC
+• Mở ứng dụng ngân hàng di động trên điện thoại để xác thực sinh trắc học FaceID/TouchID.
+• Thời gian chờ khách hàng xác thực: Tối đa 300 giây (5 phút).
+• Kết quả:
+• Nếu xác thực OTP thành công: Ngân hàng cấp mã chứng thực số CAVV / ECI = 05 (Visa) hoặc 02 (Mastercard) $\rightarrow$ Đạt chứng nhận Liability Shift, tiến hành trừ tiền.
+• Nếu nhập sai OTP quá 3 lần hoặc hết 5 phút: Hủy giao dịch với mã lỗi 3DS_AUTHENTICATION_FAILED.
+Bước 7: Bắt Giữ Dòng Tiền & Cập Nhật Trạng Thái Giao Dịch
+• Sau khi hoàn tất thẩm định 3DS2 hợp lệ:
+• Hệ thống phát lệnh CAPTURE_PAYMENT tới cổng thanh toán.
+• Nhận mã cấp phép ủy quyền ngân hàng Bank_Auth_Code (ví dụ: AUTH-991244).
+• Chuyển trạng thái đơn hàng sang PAID và lưu toàn bộ hồ sơ kiểm toán gian lận vào bảng payment_fraud_assessments.
+5.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+--- TABLE START ---
+[Khách Hàng Nhập Thẻ Thanh Toán]              │              ├─► (Ngoại lệ 4.1: Nhập sai CVV) ────────────────► Sai lần 1,2: Báo lỗi; Sai lần 3: Khóa thẻ 24h              │              ├─► (Ngoại lệ 4.2: Thất bại 3DS Challenge) ──────► Hết hạn 5p / Sai OTP -> Hủy, mở lại giỏ hàng              │              ├─► (Luồng phụ 4.3: Thẻ quốc tế Non-AVS) ────────► Không có AVS -> Ép buộc đi luồng 3DS2 Challenge OTP              │              ├─► (Ngoại lệ 4.4: Ngân hàng từ chối Frictionless)─► Soft Decline -> Tự động chuyển Challenge mà không hủy đơn              │              └─► (Ngoại lệ 4.5: Khách khiếu nại Chargeback) ──► Trích xuất bằng chứng 3DS2 CAVV thắng kiện 100%
+--- TABLE END ---
+• Luồng ngoại lệ 4.1: Nhập sai mã bảo mật CVV liên tiếp (CVV 3-Strike Escalation):
+• Lần 1: Khách nhập sai CVV $\rightarrow$ Hệ thống tăng bộ đếm lỗi cvv_fail_count = 1, phản hồi: "Mã bảo mật CVV không chính xác. Quý khách còn 2 lần thử".
+• Lần 2: Tiếp tục nhập sai $\rightarrow$ cvv_fail_count = 2, phản hồi: "Mã bảo mật CVV không chính xác. Quý khách còn 1 lần thử cuối cùng trước khi thẻ bị tạm khóa".
+• Lần 3 liên tiếp: Hệ thống kích hoạt chốt chặn an ninh:
+• Cập nhật Redis Key cvv_lock:{card_hash} với TTL = 86400 giây (24 giờ).
+• Báo lỗi: "Thẻ thanh toán của quý khách đã bị khóa chức năng thanh toán trực tuyến trong 24 giờ do nhập sai CVV 3 lần liên tiếp. Vui lòng đổi thẻ khác hoặc liên hệ ngân hàng".
+• Gửi cảnh báo tự động về địa chỉ email của chủ tài khoản để cảnh báo hành vi thử thẻ trái phép.
+• Luồng ngoại lệ 4.2: Khách hàng thất bại khi thực hiện xác thực 3DS Challenge:
+• Khách hàng không nhận được OTP, nhập sai OTP quá số lần quy định của ngân hàng, hoặc đóng trình duyệt trước khi xác nhận.
+• Cổng ngân hàng trả về transStatus = "N" (Authentication Failed) hoặc transStatus = "R" (Rejected).
+• Hệ thống hủy giao dịch thanh toán hiện tại, giữ nguyên giỏ hàng và các voucher khuyến mãi đã chọn, hiển thị thông báo: "Xác thực bảo mật 3D-Secure không thành công. Giao dịch chưa bị trừ tiền. Quý khách vui lòng thử lại hoặc chọn phương thức thanh toán khác".
+• Luồng phụ 4.3: Thẻ phát hành ngoài lãnh thổ không hỗ trợ dịch vụ AVS (Non-AVS Issuer Cards):
+• Ngân hàng phát hành tại một số quốc gia Châu Á/Châu Âu trả về AVS_Result_Code = U (Issuer Unavailable).
+• Quy tắc ứng xử rủi ro: Do thiếu vắng chỉ báo xác thực địa chỉ AVS, hệ thống không cấp phép miễn trừ Frictionless. 100% các giao dịch AVS Code U/G đều bị ép buộc chuyển sang luồng 3DS2 Challenge OTP để đảm bảo an toàn tuyệt đối.
+• Luồng ngoại lệ 4.4: Ngân hàng phát hành từ chối yêu cầu miễn trừ Frictionless (Soft Decline Fallback):
+• Hệ thống gửi yêu cầu Frictionless Flow nhưng máy chủ ACS của ngân hàng đánh giá chưa đủ tin cậy và phản hồi mã lỗi Soft Decline (Yêu cầu xác thực mạnh bắt buộc).
+• Cổng thanh toán tự động kích hoạt luồng fallback: Mở ngay cửa sổ Challenge iFrame cho khách hàng nhập OTP mà không làm vỡ phiên giao dịch (Seamless Step-Up Authentication).
+• Luồng ngoại lệ 4.5: Xử lý Khiếu nại Gian lận & Phân xử Bồi hoàn (Chargeback Dispute Resolution):
+• Chủ thẻ thật gửi đơn khiếu nại lên ngân hàng phát hành khẳng định mình không thực hiện giao dịch (Fraudulent Chargeback / Card Stolen).
+• Ngân hàng gửi điện đòi tiền (Chargeback Notice) tới sàn TMĐT.
+• Hệ thống tự động trích xuất Hồ sơ Bằng chứng Bất biến (Immutable Evidence Dossier) từ bảng payment_fraud_assessments:
+• Mã xác thực 3DS2 CAVV / AAV và chỉ số ECI = 05 (Chứng minh giao dịch đã hoàn tất xác thực 3D-Secure thành công).
+• Địa chỉ IP, Device Fingerprint, chữ ký số và tọa độ giao hàng POD.
+• Sàn nộp hồ sơ bằng chứng điện tử cho cổng thanh toán trong vòng 24 giờ $\rightarrow$ Ngân hàng phát hành thẻ buộc phải chấp nhận phán quyết Liability Shift, sàn được bảo toàn 100% doanh thu đơn hàng, không bị trừ tiền bồi hoàn.
+5.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. Bảng Mã Phản Hồi Xác Thực Địa Chỉ AVS Chuẩn Quốc Tế (AVS Match Codes)
+--- TABLE START ---
+Mã AVS | Ý Nghĩa Nghiệp Vụ Kỹ Thuật | Đánh Giá Mức Độ Rủi Ro | Hành Động Điều Phối Hệ Thống
+Y | Khớp 100% cả Số nhà trên đường (Street) và Mã bưu chính (Zip Code). | Rủi ro cực thấp (Thẻ chính chủ) | Cho phép đi luồng 3DS2 Frictionless nếu $S_{\text{fraud}} < 30$.
+A | Chỉ khớp Số nhà trên đường (Street Match), Sai mã bưu chính (Zip Mismatch). | Rủi ro trung bình | Cộng $+25$ điểm rủi ro gian lận. Yêu cầu thẩm định bổ sung.
+Z | Chỉ khớp Mã bưu chính (Zip Match), Sai số nhà trên đường (Street Mismatch). | Rủi ro trung bình | Cộng $+25$ điểm rủi ro gian lận. Yêu cầu thẩm định bổ sung.
+N | KHÔNG KHỚP CẢ HAI (Sai cả Số nhà và Mã bưu chính). | RỦI RO GIAN LẬN CỰC CAO | Cộng $+80$ điểm rủi ro; Ép buộc 3DS2 Challenge hoặc Từ chối ngay.
+U | Ngân hàng phát hành không hỗ trợ AVS (Thẻ nội địa/nước ngoài ngoài mạng AVS). | Không xác định được địa chỉ | Ép buộc 100% giao dịch qua luồng 3DS2 Challenge OTP.
+--- TABLE END ---
+2. Ma Trận Thang Điểm Rủi Ro Gian Lận & Định Tuyến Giao Dịch (Fraud Scoring Matrix)
+--- TABLE START ---
+Khoảng Điểm Rủi Ro ($S_{\text{fraud}}$) | Phân Cấp Mức Độ Rủi Ro | Hành Động Xử Lý Của Hệ Thống | Cơ Chế Bảo Vệ Pháp Lý (Liability)
+0 - 29 Điểm | Rủi Ro Thấp (Low Risk) | Phê duyệt đi 3DS2 Frictionless Flow (Không OTP). Trừ tiền ngay tức thì. | Liability Shift chuyển sang Ngân hàng phát hành. Sàn miễn nhiễm rủi ro chargeback.
+30 - 74 Điểm | Rủi Ro Trung Bình (Medium Risk) | Kích hoạt 3DS2 Challenge Flow (Bắt buộc xác thực OTP SMS hoặc sinh trắc học Mobile App). | Nếu khách nhập đúng OTP: Chuyển giao Liability Shift sang Ngân hàng.
+75 - 100 Điểm | Rủi Ro Cao (High Risk / Fraud) | TỪ CHỐI GIAO DỊCH TỨC THÌ (Hard Decline). Đóng băng thẻ, chặn tạo đơn hàng. | Chặn đứng trước khi phát sinh rủi ro tài chính.
+--- TABLE END ---
+3. Bảng Quy Tắc Kiểm Soát Vận Tốc Giao Dịch Bắt Buộc (Transaction Velocity Rules)
+--- TABLE START ---
+Tên Quy Tắc Vận Tốc | Tham Số Đo Lường | Ngưỡng Giới Hạn Tối Đa | Hành Động Khi Vi Phạm
+VEL_CARD_ORDERS_1H | Số đơn hàng hoàn tất trên 1 số thẻ tín dụng | $\le 3$ đơn / 60 phút | Chặn giao dịch tiếp theo, mã lỗi CARD_VELOCITY_EXCEEDED.
+VEL_IP_ATTEMPTS_1H | Số lần thử thanh toán thẻ từ cùng 1 địa chỉ IP | $\le 5$ lần / 60 phút | Khóa tạm thời địa chỉ IP trên cổng thanh toán trong 2 giờ.
+VEL_SHIPPING_ADDR_24H | Số địa chỉ nhận hàng khác nhau cho 1 thẻ tín dụng | $\le 2$ địa chỉ / 24 giờ | Kích hoạt cảnh báo Đổi địa chỉ bất thường, ép buộc 3DS2 Challenge.
+VEL_CVV_FAILURES_24H | Số lần nhập sai mã bảo mật CVV liên tiếp | $< 3$ lần thử | Sai lần 3: Khóa thẻ 24 giờ (CVV 3-Strike Rule).
+--- TABLE END ---
+4. Cơ Chế Chuyển Giao Trách Nhiệm Bồi Hoàn (Liability Shift Guarantee Logic)
+Theo quy tắc toàn cầu của Visa và Mastercard đối với EMVCo 3-D Secure:
+• Khi giao dịch được gửi đi kèm dữ liệu 3DS2 hợp lệ và nhận được phản hồi chứng thực:
+• Trường hợp Frictionless được ACS chấp thuận (transStatus = "Y"): Sàn thương mại điện tử nhận được mã ECI = 05 (Visa) hoặc ECI = 02 (Mastercard).
+• Trường hợp Challenge được khách xác thực thành công: Nhận mã ECI = 05 hoặc 02 kèm chữ ký số xác thực giao dịch CAVV (Cardholder Authentication Verification Value).
+• Quy tắc pháp lý bất biến: Trong cả 2 trường hợp trên, nếu sau đó chủ thẻ nộp đơn khiếu nại "Giao dịch gian lận do bị đánh cắp thông tin thẻ", tổ chức thẻ quốc tế bắt buộc ngân hàng phát hành thẻ phải chịu toàn bộ tổn thất tài chính. Sàn TMĐT tuyệt đối không bị thu hồi tiền (No Chargeback Deducted).
+5.7. Dữ liệu vào/ra & Máy trạng thái
+Dữ liệu Yêu cầu Thẩm định Gian lận & 3DS2 (API Input Payload)
+--- TABLE START ---
+{  "order_id": "ORD-20261105-99218",  "payable_amount": 34990000,  "currency": "VND",  "card_details": {    "card_bin": "411153",    "card_last4": "8829",    "card_expiry_month": "12",    "card_expiry_year": "2028",    "cvv_code": "882",    "cardholder_name": "NGUYEN VAN A"  },  "billing_address": {    "street_address": "72 Le Thanh Ton",    "postal_code": "700000",    "city": "Ho Chi Minh City",    "country_code": "VN"  },  "device_telemetry": {    "device_fingerprint": "DEV-FP-A8829-M3MAX",    "canvas_hash": "b8812af09c8211",    "webgl_vendor": "Apple Inc.",    "webgl_renderer": "Apple M3 Max",    "audio_fingerprint": "44.10098214",    "client_ip": "113.161.42.18",    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...",    "screen_resolution": "1728x1117"  }}
+--- TABLE END ---
+Dữ liệu Kết quả Thẩm định Rủi ro & Định tuyến 3DS2 (API Output Response)
+--- TABLE START ---
+{  "status": "APPROVED_FRICTIONLESS",  "transaction_id": "TXN-FRAUD-20261105-00129",  "fraud_score": 14.5,  "risk_tier": "LOW_RISK",  "avs_evaluation": {    "avs_code": "Y",    "avs_message": "Street Address and 5-digit Postal Code matched 100%"  },  "cvv_evaluation": {    "cvv_match": true,    "cvv_failures_count": 0  },  "three_ds_routing": {    "flow_type": "FRICTIONLESS",    "eci_indicator": "05",    "cavv_token": "AAABBCb1209AFBAACF881249==",    "liability_shift_secured": true,    "challenge_iframe_url": null  },  "velocity_evaluation": {    "orders_card_1h": 1,    "attempts_ip_1h": 1,    "velocity_passed": true  },  "authorization_result": {    "auth_code": "AUTH-VISA-991244",    "captured_amount": 34990000,    "captured_at": "2026-11-05T06:20:12.150Z"  }}
+--- TABLE END ---
+Máy Trạng Thái Thẩm Định Gian Lận & Xác Thực 3DS 2.0 (Payment Fraud & 3DS2 State Machine)
+--- TABLE START ---
+[GIAO DỊCH KHỞI TẠO] ──► [VELOCITY_CHECKING]                                  │                 ┌────────────────┴────────────────┐                 ▼ (Vi phạm vận tốc)               ▼ (Vận tốc hợp lệ)        [VELOCITY_BLOCKED]                 [CVV_CHECKING]                 │                                 │                 │                ┌────────────────┴────────────────┐                 │                ▼ (Sai CVV 3 lần)                 ▼ (CVV hợp lệ)                 │         [CVV_LOCKED_24H]                 [AVS_AND_FRAUD_SCORED]                 │                                                  │                 │                 ┌────────────────────────────────┴────────────────────────────────┐                 │                 ▼ (Score < 30 & Đơn < 5Tr)                                        ▼ (Score >= 30 hoặc Đơn >= 5Tr)                 │        [3DS2_FRICTIONLESS_REQ]                                           [3DS2_CHALLENGE_REQUIRED]                 │                 │                                                                 │                 │                 ▼                                                ┌────────────────┴────────────────┐                 │        [FRICTIONLESS_APPROVED]                                   ▼ (Nhập đúng OTP)                 ▼ (Sai OTP / Hết hạn 5p)                 │                 │                                       [CHALLENGE_OTP_PASSED]            [CHALLENGE_FAILED_BLOCKED]                 │                 └───────────────────────┬────────────────────────┘                                 │                 │                                         │                                                          ▼                 ▼                                         ▼                                              [TRANSACTION_ABORTED]        [TRANSACTION_REJECTED]                 [PAYMENT_CAPTURED]                                               (Liability Shift Đạt Chuẩn)
+--- TABLE END ---
+5.8. Tiêu chí nghiệm thu chức năng (Tiêu chí nghiệm thu kỹ thuật dạng Given-When-Then)
+Kịch bản AC-FRAUD-01: Định tuyến không ma sát (Frictionless Flow) thành công với điểm rủi ro thấp
+• Given: Khách hàng thanh toán đơn hàng iPhone trị giá 4.500.000 VNĐ bằng thẻ Visa chính chủ.
+• When: Động cơ kiểm tra đạt AVS Code Y, vân tay thiết bị quen thuộc, điểm rủi ro $S_{\text{fraud}} = 12 < 30$.
+• Then: Hệ thống gửi yêu cầu Frictionless sang ACS ngân hàng và được phê duyệt ngay tức thì.
+• And: Khách hàng không phải nhập mã OTP; màn hình chuyển sang trạng thái "Thanh toán thành công" trong vòng dưới 2 giây.
+• And: Bản ghi giao dịch ghi nhận đầy đủ mã ECI = 05 bảo đảm tính năng Chuyển giao trách nhiệm bồi hoàn (Liability Shift).
+Kịch bản AC-FRAUD-02: Kích hoạt Challenge OTP khi phát hiện điểm rủi ro trung bình hoặc đơn hàng giá trị cao
+• Given: Khách hàng mua đơn hàng trị giá 34.990.000 VNĐ ($\ge 5.000.000$ VNĐ) hoặc từ một địa chỉ IP có vị trí địa lý cách địa chỉ thanh toán $350\text{km}$ ($S_{\text{fraud}} = 45$).
+• When: Khách hàng bấm nút "Thanh toán".
+• Then: Hệ thống kích hoạt Luồng Thách thức (3DS2 Challenge Flow), nhúng giao diện iFrame của ngân hàng phát hành thẻ.
+• And: Bắt buộc khách hàng nhập đúng mã OTP gửi về tin nhắn SMS điện thoại trong thời hạn 300 giây.
+• And: Chỉ khi nhập đúng OTP thì lệnh trừ tiền mới được phát đi.
+Kịch bản AC-FRAUD-03: Khóa thẻ 24 giờ sau 3 lần liên tiếp nhập sai mã CVV (CVV 3-Strike Rule)
+• Given: Thẻ tín dụng Card_Hash = TOK-CARD-9912 chưa từng bị khóa trước đó.
+• When: Người dùng lần lượt nhập sai mã CVV 3 lần liên tiếp tại các phiên thanh toán trong vòng 10 phút.
+• Then: Tại lần nhập sai thứ 3, hệ thống lập tức khóa thẻ thanh toán này trên toàn bộ hệ thống sàn trong vòng 24 giờ.
+• And: Trả về thông báo lỗi: "Thẻ thanh toán của quý khách đã bị tạm khóa trong 24 giờ do nhập sai mã CVV 3 lần liên tiếp".
+• And: Mọi nỗ lực thanh toán lại bằng thẻ này trong 24 giờ tiếp theo đều bị chặn ngay tại API Gateway mà không gửi lệnh sang ngân hàng.
+Kịch bản AC-FRAUD-04: Từ chối giao dịch do không khớp địa chỉ AVS (Code N) và vượt ngưỡng điểm rủi ro
+• Given: Kẻ gian sử dụng thẻ tín dụng đánh cắp để mua hàng, khai báo địa chỉ thanh toán hoàn toàn không trùng khớp với hồ sơ chủ thẻ tại ngân hàng.
+• When: Ngân hàng phát hành phản hồi mã xác thực AVS là Code N (No Match) và điểm rủi ro tổng hợp $S_{\text{fraud}} = 85 > 75$.
+• Then: Hệ thống tự động từ chối giao dịch ngay lập tức với mã lỗi FRAUD_AVS_REJECT.
+• And: Không thực hiện trừ tiền và đưa thẻ này vào danh sách theo dõi đặc biệt (Suspicious Watchlist).
+Kịch bản AC-FRAUD-05: Chặn tự động do vi phạm quy tắc vận tốc giao dịch (Velocity Rule Exceeded)
+• Given: Cùng một số thẻ tín dụng đã thực hiện thành công 3 đơn hàng trong vòng 40 phút qua.
+• When: Người dùng tiếp tục bấm tạo đơn hàng thứ 4 trong cùng 1 giờ bằng chính thẻ đó.
+• Then: Hệ thống kiểm tra quy tắc VEL_CARD_ORDERS_1H phát hiện vi phạm ($4 > 3$).
+• And: Chặn giao dịch ngay tại Bước 2 với mã lỗi HTTP 429 - FRAUD_VELOCITY_EXCEEDED, yêu cầu khách hàng chờ sang khung giờ tiếp theo để tiếp tục giao dịch.
+————————————————————————————————————————————————————————————————————
+6. ĐẶC TẢ PAY-BNPL-MIDFLOW-05: MUA TRƯỚC TRẢ SAU (BNPL), XỬ LÝ TỪ CHỐI HẠN MỨC GIỮA CHỪNG & QUẢN TRỊ TRẢ GÓP / QUÁ HẠN KỲ 2-3
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│             HỆ THỐNG TRẢ GÓP BNPL, MID-FLOW DOWN PAYMENT & QUẢN TRỊ NỢ ĐA KỲ HẠN       │├────────────────────────────────────────────────────────────────────────────────────────┤│  [QUY TRÌNH 1: ĐỊNH DANH ĐIỆN TỬ EKYC & PHÊ DUYỆT HẠN MỨC TRẢ GÓP TỰ ĐỘNG]             ││    Chụp CCCD gắn chip ──> Quét sinh trắc Liveness Check ──> AI chấm điểm ──> Cấp hạn mức││                                │                                                       ││                                ▼                                                       ││  [QUY TRÌNH 2: THANH TOÁN CHECKOUT & XỬ LÝ TỪ CHỐI HẠN MỨC GIỮA CHỪNG (MID-FLOW)]       ││    Giỏ hàng: 28.000.000đ | Hạn mức được duyệt: 24.000.000đ (Thiếu hụt 4.000.000đ)      ││                                │                                                       ││        ┌───────────────────────┴───────────────────────┐                               ││        ▼ (Cách xử lý truyền thống - Sai)               ▼ (Cơ Chế Down Payment Recovery)││    HỦY ĐƠN HÀNG & MẤT VOUCHER                  ĐÓNG BĂNG TỒN KHO & VOUCHER 15 PHÚT     ││    (Khách hàng bỏ rơi giỏ hàng)                - Thu tiền Trả trước (Down Payment): 4Tr││                                                - Trả góp BNPL phần còn lại: 24Tr       ││                                                - Two-Phase Commit nguyên tử an toàn    ││                                │                                                       ││                                ▼                                                       ││  [QUY TRÌNH 3: QUẢN TRỊ KỲ TRẢ GÓP THÁNG 2/THÁNG 3 & XỬ LÝ LỖI TRỪ THẺ (DEFAULT FLOW)] ││    Đến ngày chốt kỳ hạn: Thẻ ngân hàng bị từ chối / Không đủ số dư                     ││                                │                                                       ││                                ▼                                                       ││  [LỊCH TRÌNH THỬ LẠI THÔNG MINH (SMART RETRY CADENCE TRONG THỜI GIAN ÂN HẠN 7-10 NGÀY)]││    - Ngày 1: Báo lỗi trừ thẻ ──> SMS/Push khẩn + Link cập nhật thẻ mới                 ││    - Ngày 3: Tự động trừ lại vào 06:00 sáng (Khung giờ nhận lương tài khoản)           ││    - Ngày 7: Cảnh báo sắp hết hạn ân hạn + Phí phạt chậm trả                           ││    - Ngày 10: Lần thử cuối cùng của thời gian ân hạn                                   ││                                │                                                       ││                ┌───────────────┴───────────────┐                                       ││                ▼ (Thanh toán thành công)       ▼ (Quá hạn 10 ngày chưa thanh toán)     ││        [KHÔI PHỤC HẠN MỨC]             [CHẾ TÀI PHẠT TRỄ HẠN & KHÓA BNPL]              ││                                                │                                       ││                                                ▼ (Quá hạn 60 - 90 ngày)                ││                                        [BÁO CÁO NỢ XẤU CIC NGÂN HÀNG NHÓM 3-5]         ││                                        [KÍCH HOẠT KHÓA MÁY TỪ XA QUA MDM/CARRIER LOCK] │└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+6.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: PAY-BNPL-MIDFLOW-05
+• Tên nghiệp vụ: Hệ Thống Dịch Vụ Tài Chính Mua Trước Trả Sau (BNPL), Cơ Chế Phục Hồi Từ Chối Hạn Mức Giữa Chừng (Mid-Flow Down Payment Recovery) & Quản Trị Trễ Hạn Đa Kỳ Hạn (Buy Now Pay Later, Mid-Flow Credit Limit Rejection Handling, Subsequent Installment Default & Remote Asset Lock Engine).
+• Phân hệ: Dịch vụ Tài chính Tiêu dùng & Cổng Thanh toán Trả góp Hiện đại (Consumer Fintech, Credit Risk & Loan Lifecycle Engine).
+6.2. Mục tiêu & Tác nhân
+• Mục tiêu nghiệp vụ:
+• Tích hợp toàn diện giải pháp tài chính tiêu dùng Mua Trước Trả Sau hiện đại tương đương SPayLater (Shopee), Apple Card Monthly Installments (ACMI), Affirm và Klarna, hỗ trợ chia nhỏ các đơn hàng công nghệ giá trị cao (iPhone, MacBook) thành 1, 3, 6, 12 kỳ thanh toán.
+• Xử lý triệt để bài toán Từ chối hạn mức tín dụng giữa chừng (Mid-Flow Credit Limit Rejection): Khi giỏ hàng vượt quá hạn mức tín dụng được duyệt (ví dụ: Giỏ hàng 28.000.000 VNĐ nhưng ngân hàng chỉ duyệt cấp 24.000.000 VNĐ), hệ thống tuyệt đối không hủy đơn hàng, không để khách hàng mất các voucher Flash Sale đã săn được. Hệ thống tự động kích hoạt luồng Thanh toán Kết hợp Trả trước (Down Payment Split Recovery), đóng băng tồn kho và voucher trong 15 phút, cho phép khách hàng thanh toán khoản chênh lệch 4.000.000 VNĐ bằng thẻ ATM/Visa/Ví và chuyển phần còn lại thành khoản vay trả góp.
+• Chuẩn hóa quy trình xử lý lỗi trừ nợ tự động ở các kỳ hạn tiếp theo (Subsequent Installment Default ở Tháng 2 / Tháng 3): Cung cấp thời gian ân hạn từ 7 đến 10 ngày (Grace Period) (3 ngày đầu miễn phí phạt), lập lịch thử lại thông minh (Smart Retry Cadence: Ngày 1, Ngày 3 lúc 06:00 sáng, Ngày 7, Ngày 10).
+• Thiết lập nấc thang chế tài nghiêm ngặt: Phạt phí chậm trả, khóa quyền mua hàng BNPL, báo cáo lịch sử nợ xấu lên Trung tâm Thông tin Tín dụng Quốc gia (CIC Nhóm 3-5) / Experian, và kích hoạt tính năng Khóa thiết bị từ xa qua MDM / Carrier IMEI Lock đối với các thiết bị công nghệ mua theo gói trợ giá/trả góp.
+• Tác nhân tham gia (Actors):
+• Người mua sắm (Borrower / Buyer): Kích hoạt định danh eKYC, chọn trả góp và quản lý lịch trả nợ hàng tháng.
+• Tổ chức Tài chính / Ngân hàng Cấp tín dụng (Financing Bank / Lending Partner - TPBank, Shinhan): Thẩm định rủi ro, cấp vốn giải ngân và ghi nhận dư nợ.
+• Động cơ Điều phối Thanh toán Trả trước (Down Payment Recovery Coordinator): Giữ chỗ giỏ hàng 15 phút và điều phối giao dịch nguyên tử 2 pha.
+• Hệ thống Nhắc nợ & Thu hồi nợ Tự động (Automated Dunning & Recovery Worker): Quản lý vòng đời sao kê, lịch Smart Retry và tính phí phạt quá hạn.
+• Hệ thống Quản lý Thiết bị Di động Doanh nghiệp (MDM / Apple Business Manager / Knox): Thực thi lệnh khóa máy từ xa khi người dùng bùng nợ.
+• Trung tâm Thông tin Tín dụng Quốc gia (CIC): Tiếp nhận hồ sơ phân loại nợ xấu.
+6.3. Điều kiện tiên quyết
+• Khách hàng là công dân Việt Nam đủ 18 tuổi trở lên, có CCCD gắn chip hợp lệ và không nằm trong danh sách đen nợ xấu CIC (Nhóm 3 trở lên).
+• Tài khoản sàn TMĐT có lịch sử hoạt động tin cậy (Trust Score $\ge 60$).
+• Giỏ hàng có ít nhất 01 sản phẩm vật lý đủ điều kiện tài trợ trả góp; không chứa hàng hóa thuộc danh mục cấm cấp tín dụng (vàng bạc tích trữ, thẻ cào điện thoại, tiền tệ).
+• Giá trị đơn hàng tài trợ thỏa mãn: $\text{Min\_Financed\_Amount} \ge 100.000\text{ VNĐ}$.
+6.4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+PHÂN HỆ A: Quy trình Đăng ký & Kích hoạt Hạn mức eKYC (Onboarding Flow)
+Bước 1: Khởi động Đăng ký Dịch vụ
+• Khách hàng bấm "Kích hoạt Dịch vụ BNPL / SPayLater" trên ứng dụng.
+• Khách hàng chấp thuận Điều khoản dịch vụ tín dụng tiêu dùng và Ủy quyền cho phép sàn truy vấn thông tin tín dụng theo Nghị định 13/2023/NĐ-CP.
+Bước 2: Chụp ảnh Căn cước Công dân gắn chip (CCCD OCR)
+• Khách hàng chụp mặt trước và mặt sau thẻ CCCD 12 số:
+• Động cơ OCR AI tự động nhận diện và trích xuất: Số CCCD, Họ tên, Ngày sinh, Giới tính, Quê quán, Nơi thường trú, Ngày hết hạn.
+• Kiểm tra độ sắc nét, chống chói lóa đèn flash và xác minh tính toàn vẹn của mã vạch / chip QR.
+Bước 3: Quét Sinh trắc học Khuôn mặt Kiểm tra Thực thể Sống (Liveness Detection)
+• Camera trước kích hoạt thử thách cử động động: Chớp mắt $\rightarrow$ Mỉm cười $\rightarrow$ Quay mặt sang trái $\rightarrow$ Quay mặt sang phải.
+• Động cơ AI phân tích dòng video để loại trừ mặt nạ silicon hoặc video deepfake. So khớp vector khuôn mặt với ảnh chân dung trên chip CCCD (yêu cầu độ tin cậy $\ge 96\%$).
+Bước 4: Chấm điểm Tín dụng Động & Phê duyệt Hạn mức Ban đầu
+• Hệ thống tổng hợp điểm hành vi chi tiêu nội bộ kết hợp điểm tín dụng CIC trả về từ API ngân hàng đối tác:
+• Phê duyệt cấp hạn mức khả dụng ban đầu: Approved_Credit_Limit (từ 2.000.000 VNĐ đến 25.000.000 VNĐ).
+• Khách hàng ký Hợp đồng Hạn mức Tín dụng Điện tử bằng mã OTP SMS gửi về số điện thoại chính chủ.
+————————————————————————————————————————————————————————————————————
+PHÂN HỆ B: Đặt hàng BNPL & Cơ Chế Cứu Vãn Giỏ Hàng Giữa Chừng (Mid-Flow Down Payment Recovery)
+Bước 5: Chọn Phương thức BNPL tại Checkout & Thẩm định Hạn mức
+• Tại màn hình Checkout, khách hàng chọn phương thức "Mua trước Trả sau / SPayLater".
+• Hệ thống gửi yêu cầu thẩm định khoản vay cho đơn hàng trị giá $V_{\text{order}} = 28.000.000\text{ VNĐ}$ sang ngân hàng đối tác.
+• Ngân hàng chạy mô hình rủi ro thời gian thực và phản hồi:
+• Hạn mức tín dụng tối đa được phê duyệt cho đơn này chỉ đạt: $L_{\text{approved}} = 24.000.000\text{ VNĐ}$.
+• Khoản tiền thiếu hụt: $\Delta_{\text{downpayment}} = V_{\text{order}} - L_{\text{approved}} = 4.000.000\text{ VNĐ}$.
+Bước 6: Kích Hoạt Luồng Cứu Vãn Giỏ Hàng & Khóa Giữ Chỗ 15 Phút (Down Payment Recovery Flow)
+• Hệ thống KHÔNG HỦY ĐƠN HÀNG, KHÔNG GIẢI PHÓNG GIỎ HÀNG.
+• Lập tức kích hoạt cơ chế Đóng Băng Khẩn Cấp (Emergency Cart Freeze):
+• Tồn kho sản phẩm được giữ nguyên.
+• Toàn bộ các mã voucher (Voucher Shop, Sàn, Freeship) được gia hạn giữ chỗ Soft-lock thêm 15 phút (900 giây).
+• Trên màn hình bật cửa sổ chuyên biệt: "Hạn Mức Trả Góp Được Duyệt Một Phần":
+• Hiển thị minh bạch: Tổng đơn: 28.000.000đ | Hạn mức BNPL được duyệt: 24.000.000đ | Khoản cần trả trước: 4.000.000đ.
+• Đồng hồ đếm ngược 15:00 phút đếm lùi thời gian giữ ưu đãi.
+• Danh sách phương thức thanh toán cho khoản trả trước: Thẻ tín dụng / Ghi nợ, Thẻ ATM nội địa, Cổng VietQR, hoặc Ví ShopeePay.
+• Bộ chọn kỳ hạn trả góp cho khoản vay 24.000.000 VNĐ (3, 6, hoặc 12 tháng).
+Bước 7: Thực Thi Giao Dịch Nguyên Tử Hai Pha (Two-Phase Atomic Commit)
+• Khách hàng chọn thanh toán 4.000.000 VNĐ qua thẻ ATM/VietQR và chọn kỳ hạn 6 tháng cho 24.000.000 VNĐ còn lại:
+• Pha 1 (Capture Down Payment):
+• Hệ thống thu khoản trả trước 4.000.000 VNĐ qua cổng thanh toán tức thời.
+• Đợi xác nhận thành công (Downpayment_Captured = True).
+• Pha 2 (Commit BNPL Loan Contract):
+• Gửi bản tin xác nhận giải ngân khoản vay 24.000.000 VNĐ sang ngân hàng đối tác.
+• Tạo Hợp đồng vay con (Sub_Loan_Contract), khóa 24.000.000 VNĐ hạn mức khả dụng của khách.
+• Cập nhật trạng thái đơn hàng sang PAID_VIA_SPLIT_BNPL và chuyển sang khâu đóng gói xuất kho.
+• Xử lý lỗi pha 1: Nếu quẹt thẻ trả trước 4.000.000 VNĐ thất bại, khách hàng được chọn lại phương thức thanh toán khác trong thời gian 15 phút còn lại. Hợp đồng vay BNPL chưa bị kích hoạt.
+————————————————————————————————————————————————————————————————————
+PHÂN HỆ C: Quản Trị Kỳ Hạn, Lịch Nhắc Nợ & Xử Lý Trễ Hạn Kỳ 2/Kỳ 3 (Subsequent Default Management)
+Bước 8: Chu Kỳ Sao Kê & Lập Lịch Tự Động
+• Ngày chốt sao kê: Ngày 24 hàng tháng (Billing_Date).
+• Ngày đến hạn thanh toán: Ngày 10 của tháng kế tiếp (Due_Date).
+• Khách hàng đăng ký trừ nợ tự động (Auto-Debit) qua thẻ tín dụng/ghi nợ hoặc tài khoản ngân hàng liên kết.
+Bước 9: Xử Lý Lỗi Trừ Tiền Tự Động ở Kỳ 2 / Kỳ 3 (Subsequent Default Handling)
+• Đến ngày 10 của kỳ hạn trả góp thứ 2 (hoặc thứ 3), lệnh trừ nợ tự động thất bại do thẻ hết tiền, thẻ hết hạn hoặc tài khoản bị phong tỏa:
+• Hệ thống chuyển trạng thái kỳ thanh toán sang AUTO_DEBIT_FAILED.
+• Kích hoạt Thời Gian Ân Hạn 7 Đến 10 Ngày (Grace Period).
+• Trong 3 ngày đầu tiên ($T+1$ đến $T+3$): Khách hàng được miễn phí phạt chậm trả để có thời gian nạp tiền hoặc đổi thẻ mới.
+Bước 10: Thực Thi Lịch Trình Thử Lại Thông Minh (Smart Retry Cadence)
+• Hệ thống kích hoạt Worker tự động chạy theo lịch trình khoa học:
+• Lần 1 (Ngày 11 - T+1): Gửi thông báo Push Notification khẩn cấp kèm SMS: "Lệnh thanh toán tự động kỳ 2 SPayLater không thành công do số dư không đủ. Vui lòng nạp tiền hoặc bấm vào đây để đổi thẻ thanh toán trong thời gian ân hạn".
+• Lần 2 (Ngày 13 - T+3): Hệ thống tự động thực hiện lệnh trừ tiền lần 2 vào 06:00 sáng (khung giờ sau khi hệ thống ngân hàng thường ghi có các giao dịch lương/chuyển tiền đêm).
+• Lần 3 (Ngày 17 - T+7): Gửi tin nhắn cảnh báo cấp độ cao: "Hóa đơn SPayLater đã quá hạn 7 ngày. Quý khách còn 3 ngày ân hạn trước khi bị tính phí phạt 150.000đ và tạm khóa tài khoản".
+• Lần 4 (Ngày 20 - T+10): Lần thử trừ nợ tự động cuối cùng trong thời gian ân hạn vào 18:00 chiều.
+Bước 11: Kích Hoạt Chế Tài Quá Hạn Nghiêm Trọng & Khóa Thiết Bị Từ Xa (Remote Device Lock)
+• Nếu sau 10 ngày ân hạn khách hàng vẫn chưa thanh toán đủ:
+• Từ ngày T+11: Phạt phí chậm trả cố định 150.000 VNĐ + Lãi quá hạn $150\%$ lãi suất cơ bản; khóa tức thì quyền mua sắm BNPL cho mọi đơn hàng mới trên sàn.
+• Quá hạn 30 ngày: Ghi nhận Nợ Cần Chú Ý (Nhóm 2) trên hệ thống tín dụng nội bộ.
+• Quá hạn 60 - 90 ngày:
+• Gửi dữ liệu vi phạm sang Trung tâm Thông tin Tín dụng Quốc gia (CIC). Toàn bộ hồ sơ cá nhân bị xếp vào Nợ Xấu Nhóm 3 - 5 (Nợ dưới tiêu chuẩn / Nợ có khả năng mất vốn), làm mất hoàn toàn khả năng vay vốn hoặc mở thẻ tại tất cả các ngân hàng tại Việt Nam.
+• Đối với sản phẩm là thiết bị điện thoại / máy tính bảng được mua theo hình thức trợ giá hoặc trả góp: Hệ thống kết nối máy chủ quản lý thiết bị MDM (Mobile Device Management) / Apple Business Manager / Samsung Knox gửi lệnh Khóa máy từ xa (Remote Device Lock). Thân máy bị khóa cứng màn hình hiển thị thông báo: "Thiết bị này đã bị tạm khóa do hợp đồng trả góp quá hạn thanh toán 90 ngày. Vui lòng thanh toán hóa đơn để mở khóa sử dụng".
+6.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+--- TABLE START ---
+[Khách Hàng Thanh Toán BNPL]              │              ├─► (Ngoại lệ 4.1: Quá 15p không trả tiền Down Payment) ──► Nhả tồn kho & voucher về kho, hủy phiên              │              ├─► (Ngoại lệ 4.2: eKYC thất bại quá 3 lần) ──────────────► Tạm khóa tính năng eKYC của CCCD trong 24h              │              ├─► (Ngoại lệ 4.3: Hủy đơn / Đổi trả đơn Down Payment) ───► Hoàn tiền mặt trả trước trước, hủy hợp đồng vay              │              ├─► (Luồng phụ 4.4: Khách chủ động đổi thẻ trừ nợ) ────────► Xác thực 1.000đ và lưu thẻ mới vào Auto-debit              │              └─► (Ngoại lệ 4.5: Mở khóa thiết bị sau khi trả nợ) ──────► Thanh toán thành công -> Tự động nhả MDM trong 60s
+--- TABLE END ---
+• Luồng ngoại lệ 4.1: Khách hàng không thanh toán khoản tiền Trả trước trong 15 phút:
+• Khách hàng không đủ tiền trên thẻ hoặc đóng ứng dụng quá 15 phút.
+• Downpayment_Timer đếm về 00:00:
+• Hệ thống kích hoạt cơ chế Rollback: Giải phóng toàn bộ các suất giữ chỗ voucher và số lượng tồn kho sản phẩm về lại kho chung cho khách hàng khác mua.
+• Hủy bỏ yêu cầu giải ngân hạn mức BNPL tạm giữ tại ngân hàng.
+• Đơn hàng chuyển sang trạng thái CANCELLED_DOWNPAYMENT_TIMEOUT.
+• Luồng ngoại lệ 4.2: eKYC thất bại liên tiếp (Liveness hoặc OCR lỗi):
+• Khách hàng quét khuôn mặt không khớp với ảnh CCCD hoặc ảnh chụp bị mờ/mất góc.
+• Hệ thống cho phép thực hiện tối đa 3 lần thử. Nếu thất bại cả 3 lần: Khóa luồng eKYC của số CCCD này trong vòng 24 giờ để phòng chống tấn công dò tìm sinh trắc học.
+• Luồng ngoại lệ 4.3: Đơn hàng thanh toán kết hợp Down Payment bị Hủy hoặc Đổi trả hoàn tiền:
+• Đơn hàng 28tr (đã trả trước 4tr qua thẻ Visa + vay BNPL 24tr) bị hủy khi chưa giao.
+• Quy trình hoàn tiền:
+1. Hủy bỏ hợp đồng vay BNPL 24tr, khôi phục lại 24tr hạn mức khả dụng cho khách hàng ngay lập tức mà không thu phí dịch vụ.
+2. Hoàn trả đúng 4.000.000 VNĐ tiền mặt về thẻ Visa ban đầu của khách trong vòng 3-5 ngày làm việc.
+• Luồng phụ 4.4: Khách hàng chủ động thay đổi thẻ trừ nợ tự động giữa các kỳ:
+• Khách hàng có thể vào mục "Quản lý Hợp đồng BNPL", chọn "Đổi thẻ thanh toán tự động".
+• Cổng thanh toán thực hiện lệnh trừ thử nghiệm 1.000 VNĐ (Zero-Dollar / Micro-Auth Verification) và hoàn trả ngay để xác thực thẻ mới còn hoạt động, sau đó cập nhật thẻ này làm phương thức thanh toán mặc định cho các kỳ tiếp theo.
+• Luồng ngoại lệ 4.5: Khôi phục thiết bị sau khi tất toán nợ quá hạn (MDM Instant Unlock):
+• Thiết bị đang bị khóa màn hình từ xa do quá hạn 90 ngày. Khách hàng thực hiện thanh toán toàn bộ dư nợ gốc, phí phạt và lãi quá hạn qua cổng thanh toán trực tuyến.
+• Ngay khi nhận được Webhook thanh toán thành công: Máy chủ tài chính phát lệnh API bất đồng bộ sang hệ thống MDM (POST /api/v1/mdm/devices/{device_id}/unlock).
+• Thiết bị tự động mở khóa màn hình trở lại trạng thái hoạt động bình thường trong vòng dưới 60 giây mà không làm mất bất kỳ dữ liệu cá nhân nào của khách hàng.
+6.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. Bảng Biểu Phí Dịch Vụ & Lãi Suất Chuẩn Hóa
+Tuân thủ quy định trần lãi suất tài chính tiêu dùng của Ngân hàng Nhà nước Việt Nam:
+--- TABLE START ---
+Kỳ Hạn Trả Góp | Phí Dịch Vụ Chuyển Đổi / Tháng | Lãi Suất Tháng | Tỷ Lệ Chiết Khấu Toàn Kỳ | Ghi Chú Nghiệp Vụ
+01 Tháng (Trả sau 30 ngày) | 2.50% / giao dịch | 0.00% | 2.50% | Miễn lãi; chỉ thu phí dịch vụ xử lý giao dịch ban đầu.
+03 Tháng | 3.50% / tháng | 0.00% | 10.50% | Phù hợp giỏ hàng thiết bị gia dụng / phụ kiện cao cấp.
+06 Tháng | 3.50% / tháng | 0.00% | 21.00% | Kỳ hạn phổ biến nhất cho smartphone tầm trung / laptop.
+12 Tháng | 3.50% / tháng | 0.00% | 42.00% | Dành riêng cho thiết bị điện tử cao cấp (iPhone 16 Pro, MacBook Pro).
+--- TABLE END ---
+2. Công Thức Tính Toán Trả Góp Khi Có Down Payment Split
+Với đơn hàng có tổng giá trị thanh toán $V_{\text{order}}$, trong đó khách thanh toán khoản trả trước $D_{\text{downpayment}}$ và vay BNPL số tiền còn lại $V_{\text{financed}} = V_{\text{order}} - D_{\text{downpayment}}$ với kỳ hạn $N \in \{1, 3, 6, 12\}$ tháng:
+• Số tiền gốc trả mỗi tháng:
+$$A_{\text{principal}} = \left\lfloor \frac{V_{\text{financed}}}{N} \right\rfloor$$
+• Sai số làm tròn số dư gốc cộng vào kỳ 1:
+$$\Delta_{\text{principal}} = V_{\text{financed}} - (A_{\text{principal}} \times N)$$
+• Phí chuyển đổi mỗi tháng:
+$$F_{\text{monthly}} = \text{round}(V_{\text{financed}} \times \text{Fee\_Rate})$$
+• Số tiền khách hàng thanh toán tại kỳ thứ $k$:
+$$\text{Payment}_k = \begin{cases} A_{\text{principal}} + \Delta_{\text{principal}} + F_{\text{monthly}}, & \text{với } k = 1 \\ A_{\text{principal}} + F_{\text{monthly}}, & \text{với } k \in [2, N] \end{cases}$$
+3. Bảng Lịch Trình Thử Lại Thông Minh Trong Thời Gian Ân Hạn (Smart Retry Cadence Matrix)
+--- TABLE START ---
+Mốc Thời Gian | Hành Động Hệ Thống | Kênh Liên Lạc / Thao Tác | Phí Phạt Áp Dụng
+Ngày T (Đến hạn) | Trừ nợ tự động lần đầu qua thẻ lưu trữ | Ghi nhận lỗi nếu thẻ không đủ tiền | 0 VNĐ
+Ngày T+1 | Kích hoạt thời gian ân hạn (Grace Period 7-10 ngày) | Gửi Push + SMS khẩn kèm link đổi thẻ | 0 VNĐ (Miễn phí ân hạn)
+Ngày T+3 | Thử trừ nợ tự động lần 2 lúc 06:00 sáng | Tự động quét tiền lương đầu ngày | 0 VNĐ (Miễn phí ân hạn)
+Ngày T+7 | Gửi cảnh báo sắp hết hạn ân hạn | Cuộc gọi nhắc nợ tự động (IVR) + Zalo ZNS | 0 VNĐ (Miễn phí ân hạn)
+Ngày T+10 | Thử trừ nợ tự động lần 4 (Lần cuối ân hạn) | Đẩy thông báo Push ưu tiên cao | 0 VNĐ (Hạn chót)
+Ngày T+11 | Chính thức Quá Hạn (Delinquent Status) | Khóa tính năng BNPL; gửi thông báo phạt | Phạt cố định 150.000 VNĐ + Lãi ngày 150%
+Ngày T+30 | Đóng băng tài khoản thành viên | Gửi văn bản đôn đốc về nơi thường trú | Ghi nhận Nợ Nhóm 2
+Ngày T+90 | Báo cáo nợ xấu CIC & Khóa máy MDM | Chuyển cơ quan pháp lý thu hồi nợ | NỢ XẤU CIC NHÓM 3-5 + REMOTE DEVICE LOCK
+--- TABLE END ---
+4. Giao Thức Khóa Thiết Bị Từ Xa (Remote Device Lock Protocol via MDM/Carrier)
+• Cơ chế triển khai: Khi khách hàng mua thiết bị có tham gia chương trình trả góp trợ giá, số IMEI/Serial của thiết bị được đăng ký trước vào hệ thống Apple Device Enrollment Program (DEP) hoặc Samsung Knox Enrollment liên kết với máy chủ MDM của Sàn.
+• Khi quá hạn 90 ngày: Hệ thống tự động kích hoạt Payload:
+--- TABLE START ---
+{    "command": "DeviceLock",    "lock_message": "Thiết bị bị tạm khóa do vi phạm hợp đồng trả góp quá hạn 90 ngày. Vui lòng thanh toán tại shopee.vn/bnpl để mở khóa.",    "phone_number_to_call": "19001221"  }
+--- TABLE END ---
+• Thân máy bị vô hiệu hóa toàn bộ tính năng sử dụng, chỉ cho phép thực hiện cuộc gọi khẩn cấp tới số tổng đài hỗ trợ thu hồi nợ.
+6.7. Dữ liệu vào/ra & Máy trạng thái
+Dữ liệu Yêu cầu Cứu vãn Giỏ hàng Trả trước (API Input Payload - Mid-flow Fallback)
+--- TABLE START ---
+{  "order_id": "ORD-20261105-11029",  "cart_subtotal": 28000000,  "approved_bnpl_limit": 24000000,  "selected_tenure_months": 6,  "downpayment_selection": {    "downpayment_amount": 4000000,    "payment_method": "VIETQR",    "currency": "VND"  },  "lock_token": "RES-LOCK-991203"}
+--- TABLE END ---
+Dữ liệu Phản hồi Khóa Giỏ hàng & Hóa đơn Trả trước (API Output Response)
+--- TABLE START ---
+{  "status": "DOWNPAYMENT_REQUIRED",  "downpayment_details": {    "downpayment_invoice_id": "INV-DP-20261105-881",    "amount_due": 4000000,    "qr_payment_url": "https://img.vietqr.io/image/970422-001294812-compact2.png?amount=4000000&addInfo=ORD11029",    "expires_at": "2026-11-05T06:35:00.000Z",    "freeze_ttl_seconds": 900  },  "financed_schedule_preview": {    "total_financed_amount": 24000000,    "tenure_months": 6,    "monthly_principal": 4000000,    "monthly_fee": 840000,    "monthly_total_payment": 4840000  }}
+--- TABLE END ---
+Máy Trạng Thái Hợp Đồng Vay BNPL & Quá Hạn Đa Kỳ (BNPL Loan Lifecycle State Machine)
+--- TABLE START ---
+[EKYC_APPROVED] ──► [LOAN_APPLICATION_PENDING]                              │              ┌───────────────┴───────────────┐              ▼ (Hạn mức đủ)                  ▼ (Hạn mức thiếu một phần)      [LOAN_DISBURSED]                [DOWNPAYMENT_PENDING (Freeze 15m)]              │                               │              │               ┌───────────────┴───────────────┐              │               ▼ (Trả trước thành công trong 15p)▼ (Quá 15p chưa trả)              │       [LOAN_DISBURSED]                [ORDER_CANCELLED_RELEASED]              │              ▼      [ACTIVE_REPAYMENT] ──(Đến ngày 24 hàng tháng)──► [STATEMENT_GENERATED]                                                              │                              ┌───────────────────────────────┴───────────────────────────────┐                              ▼ (Auto-debit trừ thành công)                                   ▼ (Auto-debit thất bại kỳ 2/kỳ 3)                     [ACTIVE_REPAYMENT]                                             [GRACE_PERIOD_ACTIVE (7-10 Ngày)]                              │                                                               │                              ▼ (Trả hết các kỳ)                              ┌───────────────┴───────────────┐                     [CLOSED_COMPLETED]                                       ▼ (Smart Retry trừ được)        ▼ (Quá 10 ngày chưa trả)                                                                     [ACTIVE_REPAYMENT]              [DELINQUENT_OVERDUE]                                                                                                              │                                                                                                              ▼ (Quá 90 ngày)                                                                                                    [CIC_GROUP_5_DEFAULT]                                                                                                    (Remote MDM Device Lock)
+--- TABLE END ---
+6.8. Tiêu chí nghiệm thu chức năng (Tiêu chí nghiệm thu kỹ thuật dạng Given-When-Then)
+Kịch bản AC-BNPL-01: Định danh eKYC và phê duyệt hạn mức tự động trong 3 phút
+• Given: Khách hàng mới gửi thông tin CCCD gắn chip hợp lệ và thực hiện quét liveness video đạt điểm tin cậy $98.2\%$.
+• When: Hệ thống thẩm định tín dụng tự động kiểm tra CIC sạch nợ xấu và điểm hành vi nội bộ tốt.
+• Then: Hệ thống phải phê duyệt và cấp hạn mức khả dụng 20.000.000 VNĐ trong vòng tối đa 3 phút.
+• And: Hiển thị hợp đồng điện tử để khách hàng ký OTP SMS và chuyển trạng thái sang EKYC_APPROVED.
+Kịch bản AC-BNPL-02: Phục hồi giỏ hàng bị từ chối một phần bằng Thanh toán Kết hợp Trả trước (Down Payment Split Recovery) trong 15 phút
+• Given: Khách hàng có giỏ hàng trị giá 28.000.000 VNĐ kèm voucher Flash Sale giảm 1.000.000 VNĐ (tổng thanh toán 27.000.000 VNĐ).
+• When: Khách chọn BNPL nhưng ngân hàng chỉ duyệt hạn mức tối đa là 24.000.000 VNĐ (thiếu 3.000.000 VNĐ).
+• Then: Hệ thống không được hủy đơn hàng; giữ nguyên giỏ hàng, giữ nguyên voucher Flash Sale và đóng băng tồn kho trong 15 phút.
+• And: Hiển thị màn hình Down Payment Split yêu cầu khách thanh toán 3.000.000 VNĐ trả trước kèm đồng hồ đếm ngược 15:00 phút.
+• And: Khi khách quét mã VietQR thanh toán thành công 3.000.000 VNĐ, hệ thống tự động kích hoạt khoản vay 24.000.000 VNĐ chia 6 kỳ và chuyển đơn sang PAID_VIA_SPLIT_BNPL.
+Kịch bản AC-BNPL-03: Tự động giải phóng giỏ hàng và voucher khi quá 15 phút không thanh toán khoản Trả trước
+• Given: Cửa sổ Down Payment Split đang đếm ngược 15 phút cho khoản trả trước 3.000.000 VNĐ.
+• When: Đến phút 15:01 khách hàng vẫn chưa thực hiện thanh toán.
+• Then: Hệ thống tự động hủy phiên giao dịch, chuyển trạng thái sang CANCELLED_DOWNPAYMENT_TIMEOUT.
+• And: Giải phóng toàn bộ số lượng tồn kho và hoàn trả lượt dùng của voucher Flash Sale về kho chung cho người khác mua.
+Kịch bản AC-BNPL-04: Kích hoạt lịch trình Smart Retry Cadence cho kỳ thanh toán thứ 2 bị lỗi thẻ
+• Given: Khách hàng có hóa đơn kỳ 2 đến hạn ngày 10/12/2026 trị giá 4.840.000 VNĐ. Lệnh trừ nợ tự động lúc 00:01 ngày 10/12 thất bại do thẻ không đủ số dư.
+• When: Hệ thống kích hoạt trạng thái GRACE_PERIOD_ACTIVE (ân hạn 10 ngày).
+• Then: Đúng ngày 11/12 (T+1) hệ thống gửi Push + SMS khẩn thông báo; không tính bất kỳ khoản phí phạt nào trong 3 ngày đầu.
+• And: Đến đúng 06:00:00 sáng ngày 13/12 (T+3), hệ thống tự động chạy lệnh thử trừ nợ lần 2 và ghi nhận trừ tiền thành công khi tài khoản đã có lương.
+Kịch bản AC-BNPL-05: Áp dụng phí phạt quá hạn ngày thứ 10 và khóa quyền mua hàng BNPL
+• Given: Khách hàng trễ hạn thanh toán kỳ 2 và toàn bộ 4 lần thử trong thời gian ân hạn 10 ngày đều thất bại.
+• When: Đến 00:01:00 ngày thứ 11 (sau khi hết 10 ngày ân hạn).
+• Then: Trạng thái tài khoản chuyển sang DELINQUENT_OVERDUE.
+• And: Cộng khoản phí phạt chậm trả 150.000 VNĐ vào hóa đơn sao kê.
+• And: Khóa tức thì quyền chọn phương thức thanh toán BNPL cho mọi đơn hàng mới trên sàn.
+Kịch bản AC-BNPL-06: Báo cáo nợ xấu CIC và kích hoạt Khóa máy từ xa (Remote Device Lock) sau 90 ngày
+• Given: Khách hàng mua điện thoại iPhone 16 Pro Max theo hợp đồng BNPL trợ giá và trễ hạn thanh toán quá 90 ngày liên tục.
+• When: Tiến trình Cron Job kiểm toán nợ xấu chạy lúc 00:00:00 ngày thứ 91.
+• Then: Hệ thống đẩy hồ sơ sang CIC ghi nhận nợ xấu Nhóm 3.
+• And: Phát lệnh qua API máy chủ MDM kích hoạt DeviceLock lên thân máy iPhone dựa trên mã IMEI.
+• And: Thân máy iPhone lập tức bị khóa màn hình hiển thị thông báo yêu cầu thanh toán nợ để mở khóa.
+————————————————————————————————————————————————————————————————————
+7. ĐẶC TẢ PAY-SPLIT-06: THANH TOÁN ĐA NGUỒN (SPLIT TENDERS), XẾP CHỒNG 8 GIFT CARDS & GIAO THỨC HOÀN TIỀN NGƯỢC ƯU TIÊN TIỀN MẶT
+--- TABLE START ---
+[Tổng Số Tiền Cần Thanh Toán (Amount Due: 45.000.000 VNĐ)]                           │                           ▼[KHÂU 1: Cấn Trừ Thẻ Quà Tặng / Gift Cards (Xếp Chồng Tối Đa 8 Thẻ)]    Thẻ 1 (5.000.000đ) ──► Trừ hết (Dư nợ còn: 40.000.000đ)    Thẻ 2 (10.000.000đ) ──► Trừ hết (Dư nợ còn: 30.000.000đ)    ... Thẻ 3 đến Thẻ 8 (nếu có, cấn trừ lũy kế)                           │                           ▼[KHÂU 2: Cấn Trừ Số Dư Tài Khoản / Ví Sàn (Nếu có: 2.000.000đ)]    Số dư ví ────────────► Trừ hết (Dư nợ còn: 28.000.000đ)                           │                           ▼[KHÂU 3: Thanh Toán Phần Còn Lại Bằng Thẻ Tín Dụng / Ngân Hàng]    Thẻ Visa / Mastercard ──► Quẹt thanh toán: 28.000.000đ                           │                           ▼         [XÁC THỰC 2 PHA (TWO-PHASE COMMIT - 2PC)]  Pha 1: Trừ thẻ tín dụng thành công (External Tender Captured)  Pha 2: Khóa vĩnh viễn số dư Gift Cards (Internal Tender Settled)                           │                           ▼           [GIAO THỨC HOÀN TIỀN NGƯỢC (REVERSE REFUND LIFO)]   (Ưu tiên 1) ──► Hoàn tiền mặt về Thẻ Tín Dụng trước (Tối đa 28.000.000đ)   (Ưu tiên 2) ──► Hoàn về Số dư ví (Tối đa 2.000.000đ)   (Ưu tiên 3) ──► Tái cấp mã Thẻ Quà Tặng điện tử mới (Phần còn lại)
+--- TABLE END ---
+7.1. Mã & Tên nghiệp vụ
+• Mã nghiệp vụ: PAY-SPLIT-06
+• Tên nghiệp vụ: Động cơ Thanh toán Đa nguồn, Xếp chồng Tối đa 8 Thẻ Quà tặng & Giao thức Hoàn tiền Ngược Ưu tiên Nguồn Tiền mặt (Split Tender Engine, Up-to-8 Gift Card Stacking & Priority-based Reverse Multi-Method Refund Protocol).
+• Phân hệ: Cổng Thanh toán Đa phương thức & Kế toán Đối soát Đa nguồn (Omni-Payment & Multi-Tender Settlement Engine).
+7.2. Mục tiêu & Tác nhân
+• Mục tiêu nghiệp vụ:
+• Cho phép khách hàng kết hợp linh hoạt nhiều nguồn tiền khác nhau để chi trả cho một đơn hàng duy nhất theo tiêu chuẩn của Apple Store quốc tế: Xếp chồng tối đa 8 thẻ quà tặng (Gift Cards) + Số dư tài khoản/ví sàn + Thẻ thanh toán quốc tế (Visa/Mastercard) hoặc Thẻ nội địa (NAPAS/VietQR).
+• Đảm bảo tính toàn vẹn giao dịch phân tán (Distributed Transaction Integrity) theo mô hình Two-Phase Commit (2PC) / Saga Pattern: Nếu thẻ ngân hàng quẹt lỗi hoặc bị từ chối, toàn bộ số dư Gift Cards đã tạm giữ (HELD) phải được giải phóng 100% ngay lập tức trong vòng $\le 3$ giây.
+• Chuẩn hóa thuật toán Hoàn tiền ngược ưu tiên (Reverse Refund Priority Protocol - LIFO): Khi hủy đơn hoặc đổi trả một phần đơn hàng, hệ thống bắt buộc hoàn tiền về thẻ tín dụng/ngân hàng trước để giảm dư nợ tài chính thực tế cho khách và triệt tiêu nguy cơ tranh chấp chargeback, phần còn lại mới hoàn vào Ví sàn và tái cấp Gift Card.
+• Tác nhân tham gia (Actors):
+• Khách hàng mua sắm (Shopper): Nhập nhiều mã quà tặng và kết hợp thẻ thanh toán để mua hàng.
+• Dịch vụ Thẻ Quà tặng (Gift Card Ledger Service): Quản lý mã PIN, số dư, đóng băng tạm giữ và trừ tiền thẻ quà tặng.
+• Cổng Thanh toán Ngoại vi (Bank / Payment Gateway): Xử lý giao dịch thanh toán thẻ quốc tế hoặc nội địa.
+• Bộ Điều phối Giao dịch Phân tán (Transaction Coordinator / Saga Hệ thống điều phối trung tâm): Điều phối pha ủy quyền và hoàn tiền giữa các nguồn tiền.
+7.3. Điều kiện tiên quyết
+• Đơn hàng đã hoàn tất việc áp dụng voucher và tính cước vận chuyển, xác định được số tiền cuối cùng cần thanh toán: $\text{Amount\_Due} > 0$.
+• Các thẻ quà tặng (Gift Card) được nhập phải có mã PIN hợp lệ, chưa hết hạn sử dụng, trạng thái sẵn sàng (ACTIVE) và số dư khả dụng $\text{Balance} > 0$.
+• Phần giá trị còn lại (nếu có) phải thỏa mãn ngưỡng thanh toán tối thiểu của cổng ngân hàng: $\ge 10.000 \text{ VNĐ}$ (hoặc $\$0.50 \text{ USD}$).
+7.4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+Bước 1: Khởi tạo Phương thức Thanh toán Đa nguồn
+• Tại màn hình Thanh toán, khách hàng tick chọn tùy chọn: "Thanh toán kết hợp: Thẻ Quà tặng / Gift Card & Thẻ Ngân hàng".
+• Hệ thống hiển thị giao diện nhập danh sách mã thẻ quà tặng kèm mã bảo mật PIN (hỗ trợ lưu danh sách thẻ đã cào trong tài khoản).
+Bước 2: Xếp chồng Thẻ Quà tặng (Gift Card Stacking - Tối đa 8 Thẻ)
+• Khách hàng nhập lần lượt các thẻ Gift Card (hệ thống cho phép gắn tối đa 8 thẻ quà tặng trên một đơn hàng theo chuẩn Apple Store).
+• Với mỗi thẻ được nhập, hệ thống gọi dịch vụ Gift Card Ledger để xác thực số dư:
+• Kiểm tra trạng thái thẻ: Hợp lệ, còn số dư, không bị khóa tranh chấp.
+• Sắp xếp thứ tự cấn trừ theo nguyên tắc thẻ có hạn sử dụng gần nhất được ưu tiên trừ trước (Earliest Expiry First).
+• Cập nhật danh sách thẻ áp dụng và tính lũy kế số tiền chi trả theo nguyên tắc Cấn trừ cạn kiệt (Exhaustion Precedence):
+• Thẻ $k$ có số dư $B_k$.
+• Số tiền cấn trừ từ Thẻ $k$:
+$$D_k = \min(B_k, \, \text{Remaining\_Due}_{k-1})$$
+• Dư nợ còn lại sau Thẻ $k$:
+$$\text{Remaining\_Due}_k = \text{Remaining\_Due}_{k-1} - D_k$$
+• Tạm thời tạo bản ghi đóng băng (Hold / Freeze) số tiền $D_k$ trên từng thẻ tương ứng để tránh bị tiêu dùng song song ở phiên khác (Status = HELD).
+Bước 3: Đánh giá Trạng thái Dư nợ Còn lại
+• Kịch bản A (Tổng thẻ Gift Cards $\ge$ Số tiền đơn hàng):
+• $\text{Remaining\_Due} == 0$.
+• Số dư thừa của thẻ cuối cùng được giữ nguyên trên tài khoản thẻ quà tặng của khách.
+• Đơn hàng được thanh toán $100\%$ bằng Gift Card; khách hàng bấm "Hoàn tất đơn hàng" mà không cần liên kết thẻ ngân hàng.
+• Kịch bản B (Tổng thẻ Gift Cards $<$ Số tiền đơn hàng):
+• $\text{Remaining\_Due} > 0$.
+• Hệ thống kiểm tra số dư ví sàn khả dụng của khách: Nếu khách chọn cấn trừ ví, khấu trừ tiếp:
+$$D_{\text{wallet}} = \min(\text{Wallet\_Balance}, \, \text{Remaining\_Due})$$
+• Nếu vẫn còn dư nợ, hệ thống hiển thị số tiền còn thiếu và mở danh sách các phương thức thanh toán bổ sung: Thẻ tín dụng / Ghi nợ quốc tế (Visa/Mastercard), Thẻ ATM nội địa, hoặc Quét mã VietQR.
+Bước 4: Thực thi Giao dịch Phân tán Hai Pha (Two-Phase Multi-Tender Commit)
+• Khách hàng chọn thanh toán thẻ Visa cho khoản tiền còn thiếu $\text{Remaining\_Due}$ và bấm "Thanh toán":
+• Pha 1 (Capture External Tender):
+• Hệ thống gửi yêu cầu thanh toán số tiền $\text{Remaining\_Due}$ sang Cổng thanh toán Ngân hàng / CyberSource.
+• Đợi phản hồi Webhook/Callback xác thực 3D-Secure từ ngân hàng.
+• Pha 2 (Commit Internal Tender):
+• Nếu Pha 1 Thành công: Transaction Coordinator phát lệnh chuyển toàn bộ các khoản đã tạm giữ trên các thẻ Gift Card từ trạng thái HELD sang trạng thái trừ vĩnh viễn SETTLED.
+• Đơn hàng chính thức chuyển trạng thái sang PAID_COMPLETED.
+• Nếu Pha 1 Thất bại: Chuyển sang Luồng ngoại lệ 7.1.
+Bước 5: Lưu trữ Cấu trúc Giao dịch Đa nguồn Phục vụ Đối soát
+• Hệ thống tạo bản ghi thanh toán đa nguồn chi tiết (Order_Payment_Split_Header) lưu trữ từng thành phần:
+--- TABLE START ---
+Tender 1: Gift Card #GC-01 (Trừ 5.000.000đ - Settle Token: SET-001)  Tender 2: Gift Card #GC-02 (Trừ 10.000.000đ - Settle Token: SET-002)  Tender 3: Số dư Ví sàn (Trừ 2.000.000đ - Settle Token: SET-003)  Tender 4: Thẻ Visa đuôi *8829 (Trừ 28.000.000đ - Gateway Trans ID: CYB-882914)  Tổng thanh toán: 45.000.000đ
+--- TABLE END ---
+7.5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+--- TABLE START ---
+[Khách Hàng Thực Hiện Thanh Toán Đa Nguồn]                     │                     ├─► (Ngoại lệ 7.1: Thẻ ngân hàng bị từ chối) ──► Giải phóng 100% tiền giữ trên Gift Cards                     │                     ├─► (Ngoại lệ 7.2: Nhập thẻ thứ 9) ─────────────► Chặn lỗi MAX_GIFT_CARDS_EXCEEDED (Max 8)                     │                     ├─► (Ngoại lệ 7.3: Hủy đơn toàn bộ) ────────────► Hoàn thẻ tín dụng trước, hoàn Gift Card sau                     │                     ├─► (Ngoại lệ 7.4: Đổi trả 1 phần) ─────────────► Hoàn tiền mặt tối đa đến hạn mức đã thu                     │                     └─► (Ngoại lệ 7.5: Gift Card hết hạn khi hoàn) ─► Tự động phát hành Gift Card mới (Hạn 12 tháng)
+--- TABLE END ---
+• Luồng ngoại lệ 7.1: Thẻ ngân hàng thanh toán thất bại tại Pha 1 (External Tender Failure):
+• Khách hàng nhập sai OTP, thẻ hết hạn, hoặc tài khoản ngân hàng không đủ số dư để trả phần chênh lệch.
+• Cổng ngân hàng trả về mã lỗi PAYMENT_DECLINED.
+• Cơ chế Rollback tự động kích hoạt: Toàn bộ số tiền đang tạm giữ trên các thẻ Gift Card lập tức được mở khóa (RELEASE_HOLD) trong vòng $\le 3$ giây. Số dư thẻ quà tặng của khách được phục hồi nguyên vẹn 100%, không bị kẹt tiền.
+• Luồng ngoại lệ 7.2: Khách hàng cố tình nhập vượt quá 8 thẻ quà tặng:
+• Khách hàng nhập đến thẻ thứ 9: Hệ thống từ chối tiếp nhận và hiển thị thông báo lỗi: "Quy định thanh toán chỉ cho phép áp dụng tối đa 8 thẻ quà tặng trong một đơn hàng. Quý khách vui lòng nạp các thẻ còn lại vào Số dư Tài khoản để tiếp tục". Mã lỗi: MAX_GIFT_CARDS_EXCEEDED.
+• Luồng ngoại lệ 7.3: Hủy toàn bộ đơn hàng sau khi thanh toán thành công (Full Order Cancellation):
+• Đơn hàng gồm 15tr Gift Card + 2tr Ví + 28tr Thẻ Visa bị hủy khi chưa giao hàng.
+• Giao thức Hoàn tiền Ngược Ưu tiên Tiền mặt (Reverse Refund Protocol - LIFO):
+1. Hoàn trả đúng $28.000.000 \text{ VNĐ}$ về thẻ tín dụng Visa của khách (thời gian tiền về: 3-5 ngày làm việc).
+2. Hoàn trả $2.000.000 \text{ VNĐ}$ về Số dư Ví sàn của khách hàng ngay lập tức.
+3. Hoàn trả $15.000.000 \text{ VNĐ}$ về số dư Gift Card gốc (nếu thẻ còn hạn), hoặc tự động phát hành 01 mã Gift Card điện tử mới trị giá 15.000.000 VNĐ gửi thẳng về email của khách hàng.
+• Luồng ngoại lệ 7.4: Đổi trả hàng một phần trong đơn thanh toán đa nguồn (Partial Return Split Refund):
+• Đơn hàng trên mua 2 sản phẩm: Laptop (35tr) và Màn hình (10tr). Tổng tiền 45tr (15tr Gift Card + 2tr Ví + 28tr Thẻ Visa).
+• Khách hàng yêu cầu trả Màn hình (giá trị thực hoàn sau phân bổ: $10.000.000 \text{ VNĐ}$).
+• Áp dụng nguyên tắc hoàn tiền mặt trước: Khoản tiền 10.000.000 VNĐ này nhỏ hơn tổng số tiền đã quẹt thẻ Visa ($28.000.000 \text{ VNĐ}$).
+• Do đó, toàn bộ $10.000.000 \text{ VNĐ}$ được hoàn trả $100\%$ về thẻ tín dụng Visa của khách hàng. Thẻ Gift Card và Ví sàn giữ nguyên không cần hoàn.
+• Nếu khách tiếp tục trả tiếp Laptop (35tr):
+• Hoàn nốt số tiền thẻ Visa còn lại: $28\text{tr} - 10\text{tr} = 18.000.000 \text{ VNĐ}$ về thẻ Visa.
+• Hoàn $2.000.000 \text{ VNĐ}$ về Số dư Ví sàn.
+• Số tiền còn lại $35\text{tr} - 18\text{tr} - 2\text{tr} = 15.000.000 \text{ VNĐ}$ được hoàn bằng Thẻ Quà Tặng điện tử mới.
+• Luồng ngoại lệ 7.5: Gift Card gốc đã hết hạn tại thời điểm duyệt hoàn tiền:
+• Nếu thẻ Gift Card ban đầu đã hết hạn trong thời gian khách hàng khiếu nại đổi trả, hệ thống cấm khôi phục số dư vào thẻ cũ để tránh lỗi hết hạn tức thì.
+• Hệ thống tự động tạo một bản ghi Gift Card điện tử mới toanh với mệnh giá đúng bằng số tiền cần hoàn, mã PIN mới, thời hạn hiệu lực 12 tháng kể từ ngày hoàn tiền, và tự động gửi email/SMS thông báo cho khách.
+7.6. Quy tắc nghiệp vụ chi tiết & Ràng buộc logic (Business Rules & Validation Logic)
+1. Quy tắc Xếp chồng Thẻ Quà tặng (Apple Gift Card Stacking Standard)
+• Giới hạn số lượng thẻ: Tối đa 8 thẻ quà tặng / đơn hàng.
+• Ràng buộc chống rửa tiền (Anti-Money Laundering - AML Policy): Thẻ quà tặng không thể được sử dụng để mua một thẻ quà tặng khác hoặc quy đổi ngược ra tiền mặt rút về ngân hàng.
+• Thứ tự cấn trừ giữa các thẻ quà tặng: Ưu tiên cấn trừ thẻ có thời hạn sử dụng gần nhất trước (Earliest Expiry Date First) để bảo vệ tối đa quyền lợi tài chính của người mua.
+2. Ma trận Thứ tự Cấn trừ Thanh toán (Tender Depletion Precedence)
+Hệ thống cấn trừ dòng tiền theo thứ tự ưu tiên thanh toán:
+$$\text{Tender 1: Gift Cards (Thẻ 1 } \rightarrow \text{ Thẻ 8)} \longrightarrow \text{Tender 2: Số dư Ví/Tài khoản Sàn} \longrightarrow \text{Tender 3: Thẻ Tín dụng / Ngân hàng}$$
+3. Thuật toán Hoàn tiền Ngược Ưu tiên Nguồn Tiền Mặt (Reverse Refund Priority Protocol - LIFO)
+Khi có sự kiện hoàn tiền (toàn bộ hoặc một phần), thứ tự hoàn trả tiền được thực hiện theo nguyên tắc Ngược lại hoàn toàn với thứ tự cấn trừ (LIFO - Last In First Out):
+$$\text{Ưu tiên 1: Thẻ Tín dụng / Thẻ Ngân hàng} \longrightarrow \text{Ưu tiên 2: Số dư Ví sàn} \longrightarrow \text{Ưu tiên 3: Tái cấp Thẻ Quà tặng (Gift Card)}$$
+• Công thức tính toán phân bổ hoàn tiền cho đơn đa nguồn:
+• Cho đơn hàng có tổng giá trị đã thanh toán gồm:
+• Tiền thực thu qua thẻ ngân hàng: $P_{\text{bank}}$
+• Tiền thực thu qua ví sàn: $P_{\text{wallet}}$
+• Tiền thực thu qua Gift Card: $P_{\text{giftcard}}$
+• Khi có yêu cầu hoàn tiền trị giá $R$:
+1. Số tiền hoàn về Thẻ Ngân hàng:
+$$R_{\text{bank}} = \min(R, \, P_{\text{bank}} - \text{Previously\_Refunded}_{\text{bank}})$$
+2. Số tiền dư cần hoàn tiếp:
+$$R_1 = R - R_{\text{bank}}$$
+3. Số tiền hoàn về Ví Sàn:
+$$R_{\text{wallet}} = \min(R_1, \, P_{\text{wallet}} - \text{Previously\_Refunded}_{\text{wallet}})$$
+4. Số tiền dư cần hoàn tiếp:
+$$R_2 = R_1 - R_{\text{wallet}}$$
+5. Số tiền hoàn bằng phát hành Gift Card mới:
+$$R_{\text{giftcard}} = R_2$$
+• Ràng buộc bất biến:
+$$R_{\text{bank}} + R_{\text{wallet}} + R_{\text{giftcard}} == R$$
+và tuyệt đối không bao giờ hoàn tiền mặt về ngân hàng vượt quá số tiền $P_{\text{bank}}$ đã thu thực tế.
+4. Cơ chế Idempotency & Bảo toàn Giao dịch Đa nguồn (Two-Phase Distributed Commit)
+• Mỗi giao dịch thanh toán đa nguồn được cấp một mã Distributed_Transaction_ID và Idempotency_Key.
+• Sử dụng bảng nhật ký giao dịch phân tán (Distributed Transaction Log) để theo dõi trạng thái độc lập của từng tender.
+• Nếu xảy ra sự cố sập mạng giữa chừng (Network Partition): Tiến trình nền Reconciliation Worker sẽ quét các giao dịch ở trạng thái lơ lửng (HELD) quá 15 phút để tự động kích hoạt lệnh Hủy Tạm Giữ (Compensating Transaction) giải phóng thẻ.
+7.7. Dữ liệu vào/ra & Trạng thái đơn hàng/giao dịch
+Dữ liệu Yêu cầu Thanh toán Đa nguồn (API Input)
+--- TABLE START ---
+{  "order_id": "ORD-20261104-9912",  "total_amount_due": 45000000,  "split_tenders": [    {      "tender_seq": 1,      "tender_type": "GIFT_CARD",      "card_number": "APL-GC-8812-9901-2214",      "pin_code": "9821",      "amount_to_deduct": 5000000    },    {      "tender_seq": 2,      "tender_type": "GIFT_CARD",      "card_number": "APL-GC-3312-4412-8871",      "pin_code": "4412",      "amount_to_deduct": 10000000    },    {      "tender_seq": 3,      "tender_type": "WALLET_BALANCE",      "wallet_id": "WAL-USER-88192",      "amount_to_deduct": 2000000    },    {      "tender_seq": 4,      "tender_type": "CREDIT_CARD",      "gateway_provider": "CYBERSOURCE",      "card_token": "TOK-CARD-VISA-991284",      "amount_to_deduct": 28000000    }  ],  "idempotency_key": "IDEMP-SPLIT-99214-AA"}
+--- TABLE END ---
+Dữ liệu Kết quả Thanh toán Đa nguồn (API Output)
+--- TABLE START ---
+{  "status": "TRANSACTION_SUCCESS",  "transaction_id": "TXN-SPLIT-20261104-001",  "order_id": "ORD-20261104-9912",  "total_captured": 45000000,  "tender_breakdown": [    {      "tender_id": "TND-01",      "type": "GIFT_CARD",      "card_masked": "****-****-****-2214",      "captured_amount": 5000000,      "status": "SETTLED"    },    {      "tender_id": "TND-02",      "type": "GIFT_CARD",      "card_masked": "****-****-****-8871",      "captured_amount": 10000000,      "status": "SETTLED"    },    {      "tender_id": "TND-03",      "type": "WALLET_BALANCE",      "wallet_id": "WAL-USER-88192",      "captured_amount": 2000000,      "status": "SETTLED"    },    {      "tender_id": "TND-04",      "type": "CREDIT_CARD",      "card_masked": "VISA-****-8829",      "bank_auth_code": "AUTH-991244",      "captured_amount": 28000000,      "status": "CAPTURED"    }  ],  "order_status": "PAID"}
+--- TABLE END ---
+Bảng Trạng thái Vòng đời Giao dịch Đa nguồn
+--- TABLE START ---
+[TENDERS_INITIATED] ──(Tạm giữ Gift Cards)──► [INTERNAL_TENDERS_HELD]                                                      │                       ┌──────────────────────────────┴──────────────────────────────┐                       ▼ (Quẹt thẻ ngân hàng thành công)                             ▼ (Thẻ ngân hàng lỗi)              [EXTERNAL_CAPTURED]                                            [ROLLBACK_TRIGGERED]                       │                                                             │                       ▼                                                             ▼            [ALL_TENDERS_SETTLED]                                          [INTERNAL_TENDERS_RELEASED]
+--- TABLE END ---
+7.8. Tiêu chí nghiệm thu chức năng (Tiêu chí nghiệm thu kỹ thuật dạng Given-When-Then)
+Kịch bản AC-SPLIT-01: Xếp chồng 2 thẻ quà tặng và thanh toán phần còn lại bằng thẻ Visa
+• Given: Khách hàng có đơn hàng cần thanh toán 43.000.000 VNĐ.
+• And: Khách hàng nhập Thẻ Gift Card 1 (số dư 5.000.000 VNĐ) và Thẻ Gift Card 2 (số dư 10.000.000 VNĐ).
+• When: Hệ thống cấn trừ hết 15.000.000 VNĐ từ 2 thẻ quà tặng và khách hàng quẹt thẻ Visa thành công cho số tiền 28.000.000 VNĐ còn lại.
+• Then: Hệ thống phải xác nhận đơn hàng đã thanh toán đủ 43.000.000 VNĐ.
+• And: Số dư trên Thẻ 1 và Thẻ 2 phải cập nhật về 0 VNĐ. Thẻ Visa bị trừ đúng 28.000.000 VNĐ.
+Kịch bản AC-SPLIT-02: Tự động hoàn trả tiền tạm giữ trên Gift Cards khi thẻ ngân hàng bị từ chối
+• Given: Thẻ Gift Card đã được tạm giữ thành công số tiền 15.000.000 VNĐ cho đơn hàng.
+• When: Cổng thanh toán thẻ tín dụng trả về lỗi "Giao dịch bị từ chối do thẻ hết hạn".
+• Then: Hệ thống phải lập tức giải phóng khoản tạm giữ 15.000.000 VNĐ trên thẻ Gift Card.
+• And: Số dư khả dụng trên thẻ Gift Card của khách hàng phải hiển thị lại nguyên vẹn 15.000.000 VNĐ trong vòng tối đa 3 giây.
+Kịch bản AC-SPLIT-03: Hoàn tiền đơn hủy toàn bộ theo đúng thứ tự ưu tiên LIFO
+• Given: Đơn hàng 45.000.000 VNĐ (đã trả 15tr Gift Card + 2tr Ví + 28tr Thẻ Visa) bị hủy bỏ trước khi giao.
+• When: Hệ thống xử lý hoàn tiền tự động.
+• Then: Phải tạo lệnh hoàn đúng 28.000.000 VNĐ về thẻ tín dụng Visa của khách.
+• And: Hoàn trả 2.000.000 VNĐ về Ví sàn của khách.
+• And: Phát hành mã Gift Card mới trị giá 15.000.000 VNĐ gửi về email của khách hàng. Tuyệt đối không được hoàn toàn bộ 45tr bằng tiền mặt ngân hàng.
+Kịch bản AC-SPLIT-04: Đổi trả hàng một phần với giá trị hoàn nhỏ hơn số tiền thẻ tín dụng
+• Given: Đơn hàng trên có yêu cầu đổi trả một sản phẩm có giá trị thực trả sau phân bổ là 10.000.000 VNĐ.
+• When: Quản trị viên duyệt lệnh hoàn tiền một phần.
+• Then: Do 10.000.000 VNĐ $\le$ 28.000.000 VNĐ (số tiền đã thu qua thẻ Visa), hệ thống phải hoàn trả toàn bộ 10.000.000 VNĐ về thẻ Visa.
+• And: Không hoàn bất kỳ khoản nào vào Ví sàn hay thẻ Gift Card. Số tiền thẻ Visa còn có thể hoàn trong tương lai giảm xuống còn 18.000.000 VNĐ.
+Kịch bản AC-SPLIT-05: Chặn lỗi nhập thẻ quà tặng thứ 9 theo giới hạn kiến trúc
+• Given: Khách hàng đã nhập thành công 8 thẻ quà tặng liên tiếp vào một đơn hàng.
+• When: Khách hàng cố tình nhấn "Thêm thẻ quà tặng" và nhập mã thẻ thứ 9.
+• Then: Giao diện lập tức vô hiệu hóa nút thêm thẻ và hiển thị thông báo lỗi MAX_GIFT_CARDS_EXCEEDED.
+• And: Hướng dẫn khách hàng nạp thẻ thứ 9 vào Số dư Ví tài khoản cá nhân để tiếp tục thanh toán.
+————————————————————————————————————————————————————————————————————
+8. MA TRẬN LIÊN THÔNG VÀ TÍCH HỢP HỆ THỐNG ĐẦU CUỐI
+Để đảm bảo toàn bộ bộ 6 đặc tả phân tích nghiệp vụ trong Milestone 3 vận hành ăn khớp tuyệt đối với các phân hệ khác trong toàn bộ kiến trúc giải pháp sàn TMĐT (Milestone 1, 2, 4, 5), dưới đây là ma trận ánh xạ hợp đồng giao diện dữ liệu (Interface Contract Matrix):
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│                        HỆ THỐNG DANH MỤC & DỊCH VỤ (M1 & M2)                           ││  - Biến thể sản phẩm (VariantID) & Tình trạng máy (Condition Grade: Mới/Cũ/Đổi trả)   ││  - Dịch vụ kèm theo: AppleCare/Bảo hành mở rộng, Thu cũ Đổi mới (Trade-In Credit)      │└────────────────────────────────────────┬───────────────────────────────────────────────┘                                         │                                         ▼ (Composite Cart Item Payload)┌────────────────────────────────────────────────────────────────────────────────────────┐│                        PHÂN HỆ MILESTONE 3 (BẢN ĐẶC TẢ NÀY)                           ││  - CART-STACK-01: Xếp chồng 5 tầng Voucher & Phân bổ Hamilton-Hare chống lệch 1 VNĐ    ││  - CART-ABUSE-02: Phòng thủ Đơn ảo & Đầu cơ Voucher (Sybil, Fingerprint, IP, Address)  ││  - CART-FLASH-03: Phân lập tồn kho Flash Sale & Khóa giá động 15 phút tại Checkout     ││  - PAY-FRAUD-AVS-04: Đánh giá Gian lận (0-100), Định tuyến kép 3DS2 & Xác thực AVS     ││  - PAY-BNPL-MIDFLOW-05: Trả góp BNPL, Xử lý từ chối hạn mức giữa luồng & Vỡ nợ kỳ 2/3  ││  - PAY-SPLIT-06: Thanh toán đa nguồn (Tối đa 8 Gift Cards + Thẻ tín dụng) & LIFO Refund│└────────────────────────────────────────┬───────────────────────────────────────────────┘                                         │                                         ▼ (Order Confirmed & Payment Captured State)┌────────────────────────────────────────────────────────────────────────────────────────┐│                   PHÂN HỆ VẬN CHUYỂN, HẬU MÃI & ĐỔI TRẢ (M4 & M5)                      ││  - Vận chuyển Hỏa tốc 1-2h & POD ảnh giao hàng chụp thực tế                            ││  - Đổi trả 1 phần: Truy xuất giá trị ròng từ CART-STACK-01                             ││  - Hoàn tiền đa nguồn: Áp dụng thuật toán LIFO từ PAY-SPLIT-06                         ││  - Thu hồi nợ / Khóa máy: Nhận tín hiệu nợ xấu từ PAY-BNPL-MIDFLOW-05                  ││  - Giám sát gian lận / Blacklist: Cập nhật chỉ số từ CART-ABUSE-02 & PAY-FRAUD-AVS-04   │└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+8.1. Bảng Đối Chiếu Hợp Đồng Dữ Liệu Liên Phân Hệ
+--- TABLE START ---
+Phân Hệ Nguồn | Phân Hệ Nhận | Tên Hợp Đồng / Dữ Liệu Truyền | Ràng Buộc & Logic Nghiệp Vụ Tích Hợp
+Catalog & VAS (M1, M2) | Cart & Checkout (M3) | Composite_Cart_Item | { MainItem, Addons: [Warranty, TradeIn, SimPlan] }. Vouchers chỉ giảm giá trên MainItem vật lý, không bao giờ chiết khấu trên AppleCare hay cấn trừ Trade-In credit.
+Flash Sale (M3) | Inventory Service (M5) | Redis_Reservation_Token | Khi Flash Sale khóa hàng, tạo token 15 phút; nếu thanh toán thành công chuyển sang trừ DB vật lý; nếu timeout nhả lại Redis.
+Voucher Stacking (M3) | Reverse Logistics (M4) | OrderItem_Discount_Detail | Khi đổi trả hàng 1 phần, hệ thống M4 lấy trực tiếp net_refundable_price đã phân bổ theo thuật toán Hamilton-Hare từ M3 để hoàn tiền, không tính lại voucher đơn hàng.
+Voucher Abuse (M3) | User & Risk Service (M5) | Sybil_Detection_Signal | Đẩy dữ liệu vân tay thiết bị, IP Subnet /24, địa chỉ mờ và liên kết thẻ ngân hàng sang phân hệ quản trị rủi ro để cập nhật điểm tín nhiệm và danh sách đen (Blacklist).
+Fraud Engine (M3) | Payment Gateway (External/M3) | Fraud_Score_3DS2_Payload | Đánh giá điểm rủi ro thẻ $S_{\text{fraud}}$, gửi yêu cầu miễn trừ Frictionless cho rủi ro thấp ($< 30$) hoặc kích hoạt Thách thức OTP Challenge cho rủi ro cao ($\ge 30$).
+BNPL Engine (M3) | Financial Ledger & MDM (M5) | BNPL_Installment_Schedule & Lock_Payload | Bảng lịch trả nợ phân kỳ được đồng bộ sang sổ cái tài chính để chạy tiến trình nhắc nợ tự động, tính phí phạt trễ hạn và kích hoạt Remote Device Lock qua MDM sau 90 ngày.
+Split Tenders (M3) | Refund & Settlement (M4, M5) | Order_Payment_Tenders | Khi thực hiện hoàn tiền (Refund), M4 bắt buộc áp dụng thuật toán hoàn tiền ngược LIFO: Hoàn tiền mặt thẻ tín dụng trước, hoàn Ví sàn sau, và phần còn lại cấp Gift Card mới.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+Tài liệu đặc tả nghiệp vụ kỹ thuật này được xây dựng theo tiêu chuẩn phân tích nghiệp vụ phần mềm thương mại điện tử chuyên nghiệp, bao hàm đầy đủ 8 cấu phần kỹ thuật bắt buộc cho toàn bộ 6 chức năng cốt lõi thuộc Milestone 3, sẵn sàng bàn giao cho Đội ngũ Kiến trúc sư Hệ thống (Solution Architect), Kỹ sư Lập trình (Backend/Frontend Developers) và Kỹ sư Kiểm thử (QA/QC Engineers) triển khai thực tế.

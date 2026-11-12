@@ -1,0 +1,571 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT: CSDL POSTGRESQL DDL, 4 MÁY TRẠNG THÁI TÁCH RỜI & HỢP ĐỒNG OPENAPI 3.0
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-ARCH-07 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT: CSDL POSTGRESQL DDL, 4 MÁY TRẠNG THÁI TÁCH RỜI & HỢP ĐỒNG OPENAPI 3.0
+Phạm vi: 22 bảng thực thể quan hệ, kiểm soát kế toán kép bất biến, CloudEvents Kafka schemas & 20 kịch bản E2E
+====================================================================
+ĐẶC TẢ KIẾN TRÚC KỸ THUẬT: CSDL HỢP NHẤT, MÁY TRẠNG THÁI TÁCH RỜI, HỢP ĐỒNG API VÀ BỘ 20 KỊCH BẢN NGHIỆM THU E2E MỞ RỘNG
+BẢN THIẾT KẾ KIẾN TRÚC HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ THẾ HỆ MỚI
+Mã tài liệu: ARCH-SPEC-07-2026
+Thuộc bộ đặc tả: p.tich.1 (Chương 07 - Unified Technical Architecture & E2E Verification)
+Tác giả: Technical Business Analyst & Solutions Architect (Milestone 5)
+Ngày phát hành: 04 tháng 11 năm 2026
+Chuẩn tham chiếu: PostgreSQL 16+, OpenAPI 3.0.3, CloudEvents 1.0, RFC 7807 (Problem Details for HTTP APIs)
+Nền tảng đo chuẩn tích hợp: Apple Store, Swiftronics USA, US Mobile Shop, Amazon USA, Shopee, TikTok Shop.
+————————————————————————————————————————————————————————————————————
+MA TRẬN 4 PHÂN HỆ KIẾN TRÚC & MÃ TÍNH NĂNG HỆ THỐNG (FEATURE INVENTORY)
+Tài liệu Chương 07 hợp nhất 4 phân hệ kiến trúc nền tảng theo chuẩn ISO/IEC/IEEE 29119 và tiêu chuẩn phân tích nghiệp vụ kỹ thuật BA:
+--- TABLE START ---
+Phân Hệ | Mã Nghiệp Vụ & Tính Năng | Tên Nghiệp Vụ Kiến Trúc | Trọng Tâm Thiết Kế | Nền Tảng Tham Chiếu
+1 | ARCH-SCHEMA | Thiết kế Cơ sở Dữ liệu Quan hệ & Mô hình Thực thể Hợp nhất | 22 Bảng PostgreSQL 16+, Composite Order Item Pattern, Sổ cái kế toán kép bất biến | Apple Store, Amazon USA, Shopee
+2 | ARCH-STATEMACH | Hệ thống Máy Trạng thái Tách rời & Điều phối Saga Phân tán | 4 Decoupled State Machines (Order, Clawback, Reverse Logistics, Affiliate), Concurrency Guard | Amazon USA, Apple Store, TikTok Shop
+3 | ARCH-API | Hợp đồng Giao diện API RESTful & Event-Driven CloudEvents | 9 Endpoints OpenAPI 3.0, Idempotency-Key UUIDv4, RFC 7807 Problem Details | Stripe, Apple GSX, Shopee Open Platform
+4 | VERIF-E2E | Bộ 20 Kịch bản Nghiệm thu Tích hợp Đầu cuối Toàn diện | 20 Extended E2E Scenarios (Given-When-Then), xác thực trạng thái bản ghi CSDL và số dư sổ cái | Toàn bộ 6 sàn chuẩn đo lường
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN
+1. TỔNG QUAN KIẾN TRÚC & NGUYÊN TẮC THIẾT KẾ HỆ THỐNG
+• 1.1 Mục tiêu kiến trúc & Bounded Contexts (DDD)
+• 1.2 Nguyên tắc thiết kế dữ liệu & Bất biến tài chính (Financial Immutability)
+• 1.3 Khung Đặc Tả Kỹ Thuật Chuẩn BA cho Toàn Bộ Phân Hệ Kiến Trúc (ISO/IEC/IEEE 29119 Compliance)
+2. MÔ HÌNH DỮ LIỆU QUAN HỆ & THỰC THỂ CSDL HỢP NHẤT (ARCH-SCHEMA: POSTGRESQL 16+ DDL)
+• 2.1 Bảng sản phẩm & biến thể phức hợp: products, product_variants, variant_condition_grades, device_hardware_profiles
+• 2.2 Bảng giỏ hàng & đơn hàng phức hợp (Composite Order Item Pattern): orders, order_items, order_item_addons
+• 2.3 Bảng khuyến mãi & voucher đa tầng: vouchers, voucher_stacking_rules, order_voucher_attributions, order_voucher_reservations
+• 2.4 Bảng dịch vụ tài chính & trả góp: bnpl_accounts, bnpl_credit_assessments, bnpl_installment_plans, bnpl_repayment_schedules
+• 2.5 Bảng logistics ngược & đổi trả: return_requests, return_dropoff_tokens, returnless_refund_evaluations, dispute_cases, trade_in_transactions
+• 2.6 Bảng Social Commerce & Tiếp thị liên kết: live_sessions, live_pinned_products, creator_profiles, free_sample_requests, affiliate_commissions
+• 2.7 Sơ đồ Quan hệ Thực thể Tổng thể (Mermaid Entity-Relationship Diagram)
+3. HỆ THỐNG MÁY TRẠNG THÁI TÁCH RỜI (ARCH-STATEMACH: DECOUPLED STATE MACHINES)
+• 3.1 Máy trạng thái Đơn hàng cốt lõi (Order_State_Machine)
+• 3.2 Máy trạng thái Thu cũ đổi mới & Truy thu (Trade_In_Clawback_State_Machine)
+• 3.3 Máy trạng thái Logistics ngược & Hoàn tiền tự động (Reverse_Logistics_State_Machine)
+• 3.4 Máy trạng thái Hoa hồng Tiếp thị liên kết (Creator_Affiliate_Commission_State_Machine)
+• 3.5 Bảng ma trận chuyển trạng thái & Phân tích Deadlock / Saga Rollback
+4. ĐẶC TẢ HỢP ĐỒNG GIAO DIỆN API (ARCH-API: RESTFUL & EVENT-DRIVEN CONTRACTS)
+• 4.1 Quy chuẩn thiết kế API, Idempotency-Key & Xử lý lỗi RFC 7807
+• 4.2 Chi tiết 9 Endpoint API cốt lõi (OpenAPI 3.0 Specs)
+• 4.3 Đặc tả Sự kiện Bất đồng bộ (Event-driven CloudEvents Schemas)
+5. BỘ 20 KỊCH BẢN NGHIỆM THU TÍCH HỢP ĐẦU CUỐI MỞ RỘNG (VERIF-E2E: E2E-EXT-01 ĐẾN E2E-EXT-20)
+• Chi tiết 20 ca kiểm thử Gherkin với điều kiện biên, quy tắc nghiệp vụ và xác thực bản ghi cơ sở dữ liệu / sổ cái.
+————————————————————————————————————————————————————————————————————
+1. TỔNG QUAN KIẾN TRÚC & NGUYÊN TẮC THIẾT KẾ HỆ THỐNG
+1.1 Mục tiêu kiến trúc & Bounded Contexts (DDD)
+Hệ thống thương mại điện tử thế hệ mới được thiết kế nhằm hợp nhất các chuẩn mực vận hành tiên tiến nhất từ 6 sàn đo chuẩn hàng đầu:
+• Apple Store: Quản trị cấu hình biến thể đa tầng, dịch vụ giá trị gia tăng (AppleCare+, Trade-in), thanh toán hỗn hợp (Split Tenders) và nhận hàng đa kênh (In-Store Pickup QR).
+• Swiftronics USA: Quản lý phân cấp tình trạng phần cứng (Condition Grading: New, Open Box, Refurbished Grade A/B/C), kiểm soát tương thích băng tần RF vô tuyến và chính sách phí lưu kho (Restocking Fee).
+• US Mobile Shop: Đóng gói phần cứng kèm gói cước dịch vụ viễn thông di động (Hardware + Cellular Plan Bundling), cấp phát eSIM tức thì và kiểm tra số IMEI phần cứng trước mua.
+• Amazon USA: Động cơ mua sắm định kỳ Subscribe & Save (S&S), phân hệ logistics ngược tự động không cần thùng nhãn (No Box, No Label PUDO) và thuật toán hoàn tiền không cần trả hàng (Returnless Refund).
+• Shopee: Động cơ xếp chồng 5 tầng voucher độc lập (Shop, Sàn, Freeship Xtra, Phương thức thanh toán, Shopee Xu), phân lập tồn kho Flash Sale và quy trình "Shopee Đồng Kiểm" tại cửa.
+• TikTok Shop: Trải nghiệm mua sắm trong luồng Livestream (In-stream Pinning & 1-Tap Bottom Sheet Checkout), quản lý chu kỳ mẫu thử miễn phí (Free Sample SLA) và mạng lưới tiếp thị liên kết (Creator Affiliate) với cơ chế đóng băng hoa hồng 14 ngày.
+Hệ thống được tổ chức thành 7 Miền nghiệp vụ độc lập (Bounded Contexts):
+1. Catalog & Hardware Domain: Quản lý danh mục, biến thể, tình trạng máy và cá thể hóa số Serial/IMEI.
+2. Value-Added Services (VAS) Domain: Quản lý bảo hiểm thiết bị, gói cước di động và thu cũ đổi mới.
+3. Pricing & Promotion Domain: Động cơ tính giá đa tầng, xếp chồng voucher và quản lý phân lập tồn kho Flash Sale.
+4. Order & Checkout Domain: Quản lý giỏ hàng phức hợp (Composite Order Item), luồng đặt hàng và điều phối thanh toán.
+5. Fintech & Payment Domain: Cổng thanh toán đa nguồn, quản lý trả góp mua trước trả sau (BNPL), eKYC và sổ nợ định kỳ.
+6. Fulfillment & Reverse Logistics Domain: Điều phối giao vận hỏa tốc, nhận tại cửa hàng, đồng kiểm, trả hàng không thùng nhãn và đánh giá hoàn tiền không cần trả hàng.
+7. Social Commerce & Creator Affiliate Domain: Phiên live stream, ghim sản phẩm thời gian thực, quản lý mẫu thử và sổ cái hoa hồng tiếp thị liên kết.
+1.2 Nguyên tắc thiết kế dữ liệu & Bất biến tài chính (Financial Immutability)
+1. Tính bất biến của dữ liệu tài chính (Financial Immutability): Mọi giao dịch tiền tệ, phân bổ voucher, giải ngân trả góp, hoa hồng tiếp thị liên kết và truy thu (clawback) đều được ghi nhận theo nguyên tắc kế toán kép (Double-entry Ledger). Không cập nhật đè (UPDATE) số dư mà chỉ ghi thêm (INSERT APPEND-ONLY) các bút toán ghi nợ/ghi có.
+2. Snapshotting tại thời điểm chốt đơn: Mọi thông tin về giá bán, mô tả biến thể, điều kiện tình trạng, chính sách bảo hành, tỷ lệ chiết khấu voucher và thông tin địa chỉ giao nhận đều được chụp lại nguyên trạng (JSONB Snapshot) tại thời điểm tạo đơn hàng. Mọi thay đổi về giá hoặc voucher sau đó tuyệt đối không làm sai lệch đơn hàng đã chốt.
+3. Idempotency & Concurrency Guard: Tất cả các thao tác đặt hàng, trừ tiền, giải ngân, hoàn tiền, giữ voucher và khóa tồn kho đều bắt buộc mang khóa định danh yêu cầu Idempotency-Key (UUIDv4) để chống trùng lặp dữ liệu khi mạng chập chờn hoặc người dùng nhấn nhiều lần.
+4. Phân lập trạng thái (Decoupled State Machines): Tách biệt rạch ròi giữa Trạng thái Đơn hàng (order_status), Trạng thái Thanh toán (payment_status), Trạng thái Vận chuyển (fulfillment_status) và Trạng thái Đổi trả (return_status). Đơn hàng chỉ hoàn tất khi tất cả các máy trạng thái con đạt điểm hội tụ thành công.
+1.3 Khung Đặc Tả Kỹ Thuật Chuẩn BA cho Toàn Bộ Phân Hệ Kiến Trúc (ISO/IEC/IEEE 29119 Compliance)
+Nhằm bảo đảm tính tuân thủ 100% tiêu chuẩn phân tích nghiệp vụ kỹ thuật BA, toàn bộ 4 phân hệ kiến trúc hệ thống (ARCH-SCHEMA, ARCH-STATEMACH, ARCH-API, VERIF-E2E) được đặc tả và quản trị theo 8 thành phần kỹ thuật cốt lõi:
+1. Mã nghiệp vụ & Tên nghiệp vụ (Business Function Codes)
+• `ARCH-SCHEMA`: Thiết kế Cơ sở Dữ liệu Quan hệ & Mô hình Thực thể Hợp nhất (Unified Relational Database Schema & Entity Design).
+• `ARCH-STATEMACH`: Hệ thống Máy Trạng thái Tách rời & Điều phối Saga Phân tán (Decoupled State Machines & Distributed Saga Coordinator).
+• `ARCH-API`: Đặc tả Hợp đồng Giao diện API RESTful & Event-Driven CloudEvents (RESTful Interface Contracts & Event Schemas).
+• `VERIF-E2E`: Bộ Tiêu chuẩn Nghiệm thu & 20 Kịch bản Kiểm thử Tích hợp Đầu cuối (Integrated End-to-End Acceptance Test Suite).
+2. Mục tiêu & Tác nhân (Objectives & Participating Actors)
+• Mục tiêu: Thiết lập nền tảng kiến trúc dữ liệu bất biến tài chính, máy trạng thái không deadlock, giao diện API chuẩn hóa quốc tế và bộ kịch bản kiểm thử tự động hóa để làm căn cứ triển khai trực tiếp cho đội ngũ Kỹ sư Phần mềm (Backend), Quản trị CSDL (DBA) và Kiểm thử Tự động (QA Automation).
+• Tác nhân tham gia (Actors): Solutions Architect, Database Administrator (DBA), Backend Microservices Developer, QA Automation Engineer, Cổng thanh toán (Payment Gateway), Đối tác 3PL Logistics, Sàn TMĐT đối tác.
+3. Điều kiện tiên quyết (Preconditions)
+• Môi trường cơ sở dữ liệu PostgreSQL phiên bản 16 trở lên, đã kích hoạt các tiện ích mở rộng uuid-ossp, pgcrypto và hỗ trợ lập chỉ mục GIN trên kiểu dữ liệu JSONB.
+• Hạ tầng Message Broker phân tán (Apache Kafka / RabbitMQ) hỗ trợ định dạng sự kiện chuẩn CloudEvents 1.0 với cơ chế At-least-once Delivery.
+• Cụm nhớ đệm Redis Cluster 7.0+ phục vụ Distributed Locking (Redlock) và lưu trữ Idempotency Cache trong 24 giờ.
+• Toàn bộ các đặc tả nghiệp vụ phân hệ từ Chương 01 đến Chương 06 (PROD-VAR đến SOC-AFFIL) đã hoàn tất phê duyệt kỹ thuật.
+4. Luồng xử lý chính từng bước (Step-by-Step Main Flow)
+• Bước 1 (Khởi tạo Schema): Thực thi kịch bản DDL tạo 22 bảng thực thể quan hệ, thiết lập khóa ngoại, chỉ mục hiệu năng cao và phân vùng dữ liệu theo thời gian (ARCH-SCHEMA).
+• Bước 2 (Thiết lập Máy trạng thái): Đăng ký 4 máy trạng thái độc lập (Order, Clawback, Reverse Logistics, Affiliate Commission) vào State Machine Engine, kích hoạt bộ lắng nghe sự kiện chuyển đổi trạng thái (ARCH-STATEMACH).
+• Bước 3 (Triển khai Hợp đồng API): Khởi tạo API Gateway kiểm tra Idempotency-Key, xác thực JWT OAuth2, ánh xạ 9 RESTful endpoints cốt lõi và xuất bản/tiêu thụ các sự kiện CloudEvents (ARCH-API).
+• Bước 4 (Vận hành Giao dịch Tích hợp): Tiếp nhận luồng đặt hàng đa kênh, phân bổ voucher 5 tầng, khóa hạn mức Pre-auth Trade-in, kích hoạt giao hàng hỏa tốc và hạch toán hoa hồng tiếp thị liên kết.
+• Bước 5 (Kiểm thử Nghiệm thu Đầu cuối): Thực thi tuần tự 20 kịch bản kiểm thử E2E Gherkin để xác thực tính toàn vẹn dữ liệu, chống deadlock và bảo toàn bất biến tài chính sổ cái (VERIF-E2E).
+5. Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+• Ngoại lệ 1 (Xử lý lỗi Trùng lặp Khóa Yêu cầu - Idempotency Conflict): Khi client gửi lại cùng một Idempotency-Key nhưng nội dung request payload bị thay đổi -> API Gateway chặn đứng và trả về mã lỗi RFC 7807 409 Conflict.
+• Ngoại lệ 2 (Bồi hoàn Giao dịch Phân tán - Saga Compensating Rollback): Khi một bước trong chuỗi giao dịch đa phân hệ thất bại (ví dụ: trừ tiền thành công nhưng khóa kho Flash Sale thất bại) -> State Machine tự động kích hoạt chuỗi tác vụ bồi hoàn (Compensating Transactions) hoàn tiền 100% và giải phóng voucher.
+• Ngoại lệ 3 (Sự cố Ngắt kết nối Cơ sở Dữ liệu): API Gateway trả về mã lỗi 503 Service Unavailable kèm tiêu đề Retry-After: 30 để client thực hiện thuật toán Exponential Backoff.
+6. Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+• BR-ARCH-01 (Tính bất biến tài chính - Financial Immutability): Bảng order_voucher_attributions và affiliate_commissions chỉ cho phép INSERT, cấm tuyệt đối lệnh UPDATE/DELETE.
+• BR-ARCH-02 (Snapshotting Immutability): Chi tiết cấu hình sản phẩm và giá trị chiết khấu lưu tại order_items.product_snapshot là bất biến.
+• BR-ARCH-03 (Idempotency Time-to-Live): Mọi request POST/PUT mang Idempotency-Key có hiệu lực cache trong 24 giờ.
+7. Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machines)
+• Dữ liệu vào/ra: 22 bảng thực thể DDL quan hệ (Chương 2) và 9 hợp đồng API RESTful/CloudEvents (Chương 4).
+• Mô hình trạng thái: 4 máy trạng thái tách rời có bảng ma trận chuyển đổi và bộ điều phối Saga (Chương 3).
+8. Tiêu chí nghiệm thu (Given-When-Then Tiêu chí nghiệm thu kỹ thuật)
+• Toàn bộ 20 kịch bản kiểm thử tích hợp E2E tại Chương 5 thỏa mãn 100% cú pháp Given-When-Then và xác thực trạng thái bản ghi cơ sở dữ liệu.
+————————————————————————————————————————————————————————————————————
+2. MÔ HÌNH DỮ LIỆU QUAN HỆ & THỰC THỂ CSDL HỢP NHẤT (ARCH-SCHEMA: POSTGRESQL 16+ DDL)
+Toàn bộ hệ thống cơ sở dữ liệu được định nghĩa bằng chuẩn DDL PostgreSQL 16+ với các ràng buộc khóa ngoại, chỉ mục hiệu năng cao (B-Tree, GIN trên cột JSONB) và cờ kiểm tra logic nghiệp vụ chặt chẽ.
+--- TABLE START ---
+-- KÍCH HOẠT EXTENSION HỖ TRỢ UUID VÀ TÌM KIẾM JSONCREATE EXTENSION IF NOT EXISTS "uuid-ossp";CREATE EXTENSION IF NOT EXISTS "pgcrypto";-- ============================================================================-- PHÂN HỆ 1: SẢN PHẨM, BIẾN THỂ PHỨC HỢP & HỒ SƠ PHẦN CỨNG CÁ THỂ HÓA-- ============================================================================-- Bảng Danh mục Sản phẩm Cơ sởCREATE TABLE products (    product_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    product_code VARCHAR(50) UNIQUE NOT NULL,    brand_name VARCHAR(100) NOT NULL,    model_name VARCHAR(150) NOT NULL,    category_id VARCHAR(50) NOT NULL,    is_serialized_tracking BOOLEAN DEFAULT TRUE, -- Yêu cầu quản lý theo IMEI/Serial    has_cellular_connectivity BOOLEAN DEFAULT FALSE, -- Thiết bị có sóng di động    is_trade_in_eligible BOOLEAN DEFAULT TRUE,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Biến thể Sản phẩm Đa thuộc tínhCREATE TABLE product_variants (    variant_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    product_id UUID NOT NULL REFERENCES products(product_id) ON DELETE RESTRICT,    sku VARCHAR(100) UNIQUE NOT NULL,    variant_name VARCHAR(255) NOT NULL,    attributes JSONB NOT NULL, -- {"color": "Natural Titanium", "storage": "256GB", "connectivity": "5G"}    base_price NUMERIC(15, 2) NOT NULL CHECK (base_price >= 0),    weight_grams INTEGER NOT NULL DEFAULT 200 CHECK (weight_grams > 0),    package_dimensions JSONB NOT NULL, -- {"length": 18, "width": 10, "height": 4, "unit": "cm"}    is_active BOOLEAN DEFAULT TRUE,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_product_variants_attributes ON product_variants USING GIN (attributes);-- Bảng Phân cấp Tình trạng Thiết bị (Condition Grading)CREATE TABLE variant_condition_grades (    condition_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    variant_id UUID NOT NULL REFERENCES product_variants(variant_id) ON DELETE RESTRICT,    condition_grade VARCHAR(30) NOT NULL CHECK (condition_grade IN (        'BRAND_NEW', 'OPEN_BOX', 'REFURBISHED_EXCELLENT', 'REFURBISHED_GOOD', 'REFURBISHED_FAIR'    )),    battery_health_guarantee VARCHAR(50) NOT NULL DEFAULT '>= 80%', -- '>= 90% (Amazon Renewed Premium)' hoặc '>= 80%'    cosmetic_description TEXT NOT NULL,    warranty_months INTEGER NOT NULL DEFAULT 12 CHECK (warranty_months >= 0),    restocking_fee_rate NUMERIC(5, 4) NOT NULL DEFAULT 0.0000, -- Ví dụ: 0.2000 là 20%    price_override NUMERIC(15, 2) NOT NULL CHECK (price_override >= 0),    stock_quantity INTEGER NOT NULL DEFAULT 0 CHECK (stock_quantity >= 0),    reserved_flash_stock INTEGER NOT NULL DEFAULT 0 CHECK (reserved_flash_stock >= 0),    CONSTRAINT uk_variant_condition UNIQUE (variant_id, condition_grade));CREATE INDEX idx_variant_condition_grade ON variant_condition_grades (variant_id, condition_grade);-- Bảng Quản lý Định danh Cá thể hóa Phần cứng (Serial/IMEI Tracking & RF Profile)CREATE TABLE device_hardware_profiles (    hardware_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    variant_id UUID NOT NULL REFERENCES product_variants(variant_id) ON DELETE RESTRICT,    condition_id UUID NOT NULL REFERENCES variant_condition_grades(condition_id) ON DELETE RESTRICT,    serial_number VARCHAR(100) UNIQUE NOT NULL,    imei_primary VARCHAR(15) UNIQUE CHECK (imei_primary ~ '^[0-9]{15}$'),    imei_secondary VARCHAR(15) CHECK (imei_secondary ~ '^[0-9]{15}$'),    eid_number VARCHAR(32) CHECK (eid_number ~ '^[0-9]{32}$'),    carrier_lock_status VARCHAR(30) NOT NULL CHECK (carrier_lock_status IN (        'FACTORY_UNLOCKED', 'CARRIER_LOCKED_ATT', 'CARRIER_LOCKED_VERIZON', 'CARRIER_LOCKED_TMOBILE'    )),    rf_supported_bands JSONB NOT NULL, -- {"5g_sub6": ["n1", "n3", "n77", "n78"], "5g_mmwave": ["n258", "n260"], "lte": ["B1", "B3", "B7"]}    activation_lock_status VARCHAR(30) NOT NULL DEFAULT 'OFF' CHECK (activation_lock_status IN ('OFF', 'ICLOUD_LOCKED', 'GOOGLE_FRP_LOCKED')),    hardware_lifecycle_state VARCHAR(30) NOT NULL DEFAULT 'IN_WAREHOUSE' CHECK (hardware_lifecycle_state IN (        'IN_WAREHOUSE', 'RESERVED_FOR_ORDER', 'PICKED_PACKED', 'DISPATCHED', 'ACTIVATED_CUSTOMER', 'RETURNED_INSPECTING', 'QUARANTINED'    )),    current_warehouse_location VARCHAR(50) NOT NULL DEFAULT 'MAIN_WH_BIN_A1',    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_device_imei_primary ON device_hardware_profiles (imei_primary);CREATE INDEX idx_device_serial ON device_hardware_profiles (serial_number);CREATE INDEX idx_device_rf_bands ON device_hardware_profiles USING GIN (rf_supported_bands);-- ============================================================================-- PHÂN HỆ 2: GIỎ HÀNG & ĐƠN HÀNG PHỨC HỢP (COMPOSITE ORDER ITEM PATTERN)-- ============================================================================-- Bảng Đơn hàng Tổng quátCREATE TABLE orders (    order_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    order_code VARCHAR(32) UNIQUE NOT NULL,    customer_id UUID NOT NULL,    order_status VARCHAR(30) NOT NULL DEFAULT 'DRAFT' CHECK (order_status IN (        'DRAFT', 'PENDING_PAYMENT', 'PAYMENT_AUTHORIZED', 'PROCESSING', 'DISPATCHED', 'IN_TRANSIT', 'DELIVERED', 'CO_INSPECTED', 'COMPLETED', 'CANCELLED'    )),    currency VARCHAR(3) NOT NULL DEFAULT 'VND',    subtotal_amount NUMERIC(15, 2) NOT NULL CHECK (subtotal_amount >= 0),    total_shop_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (total_shop_discount >= 0),    total_platform_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (total_platform_discount >= 0),    actual_shipping_fee NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (actual_shipping_fee >= 0),    shipping_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (shipping_discount >= 0),    payment_method_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (payment_method_discount >= 0),    coin_redeemed_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (coin_redeemed_amount >= 0),    final_payable_amount NUMERIC(15, 2) NOT NULL CHECK (final_payable_amount >= 0),    payment_channel VARCHAR(50) NOT NULL CHECK (payment_channel IN (        'COD', 'CREDIT_CARD_FULL', 'SPLIT_TENDERS', 'SPAYLATER_BNPL', 'SHOPEEPAY_WALLET', 'BANK_TRANSFER'    )),    fulfillment_type VARCHAR(50) NOT NULL CHECK (fulfillment_type IN (        'STANDARD_DELIVERY', 'EXPRESS_2H_COURIER', 'IN_STORE_PICKUP', 'SUBSCRIBE_AND_SAVE'    )),    fulfillment_metadata JSONB NOT NULL DEFAULT '{}', -- Lưu thông tin nhận tại store / tài xế GPS / chu kỳ Subscribe    shipping_address_snapshot JSONB NOT NULL,    idempotency_key VARCHAR(64) UNIQUE NOT NULL,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_orders_customer ON orders (customer_id);CREATE INDEX idx_orders_status ON orders (order_status);-- Bảng Dòng Sản phẩm Chính trong Đơn (Order Items)CREATE TABLE order_items (    order_item_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,    seller_id UUID NOT NULL,    variant_id UUID NOT NULL REFERENCES product_variants(variant_id) ON DELETE RESTRICT,    condition_id UUID NOT NULL REFERENCES variant_condition_grades(condition_id) ON DELETE RESTRICT,    assigned_hardware_id UUID REFERENCES device_hardware_profiles(hardware_id) ON DELETE SET NULL,    quantity INTEGER NOT NULL CHECK (quantity > 0),    unit_price NUMERIC(15, 2) NOT NULL CHECK (unit_price >= 0),    line_subtotal NUMERIC(15, 2) NOT NULL CHECK (line_subtotal >= 0),    allocated_shop_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (allocated_shop_discount >= 0),    allocated_platform_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (allocated_platform_discount >= 0),    allocated_coin_discount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (allocated_coin_discount >= 0),    final_line_amount NUMERIC(15, 2) NOT NULL CHECK (final_line_amount >= 0),    item_fulfillment_status VARCHAR(30) NOT NULL DEFAULT 'PENDING' CHECK (item_fulfillment_status IN (        'PENDING', 'ALLOCATED_STOCK', 'PACKED', 'SHIPPED', 'DELIVERED', 'RETURN_REQUESTED', 'RETURNED', 'REFUNDED'    )),    snapshot_variant_data JSONB NOT NULL, -- Lưu cứng thông số máy, RAM, bộ nhớ, tình trạng tại lúc mua    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_order_items_order ON order_items (order_id);CREATE INDEX idx_order_items_hardware ON order_items (assigned_hardware_id);-- Bảng Dịch Vụ Đi Kèm Gắn Chặt với Từng Dòng Sản Phẩm (Composite Addons)CREATE TABLE order_item_addons (    addon_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    order_item_id UUID NOT NULL REFERENCES order_items(order_item_id) ON DELETE CASCADE,    addon_type VARCHAR(30) NOT NULL CHECK (addon_type IN (        'TRADE_IN', 'EXTENDED_WARRANTY', 'CELLULAR_SIM_PLAN'    )),    addon_title VARCHAR(255) NOT NULL,    price_impact NUMERIC(15, 2) NOT NULL, -- Âm nếu là Trade-In Credit (ví dụ: -5000000), Dương nếu là Bảo hành (ví dụ: +2000000)    billing_mode VARCHAR(30) NOT NULL CHECK (billing_mode IN (        'ONE_TIME_UPFRONT', 'MONTHLY_RECURRING', 'TRADE_IN_INSTANT_CREDIT'    )),    recurring_monthly_amount NUMERIC(15, 2) DEFAULT 0 CHECK (recurring_monthly_amount >= 0),    service_plan_code VARCHAR(50) NOT NULL, -- Ví dụ: 'APPLECARE_PLUS_2Y', 'ASURION_DROP_SPILL', 'USM_WARP_UNLIMITED'    addon_details JSONB NOT NULL,     -- Nếu TRADE_IN: {"evaluated_imei": "35829...", "brand": "Apple", "model": "iPhone 14 Pro", "deduction": 5000000, "clawback_card_token": "tok_visa_4242"}    -- Nếu WARRANTY: {"provider": "Apple", "coverage_months": 24, "accidental_damage_deductible": 790000}    -- Nếu SIM_PLAN: {"sim_type": "ESIM", "carrier_network": "WARP_5G", "monthly_data_gb": 100}    addon_status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE' CHECK (addon_status IN (        'PENDING_EVALUATION', 'ACTIVE', 'CANCELLED', 'CLAWED_BACK'    )),    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_order_item_addons_item ON order_item_addons (order_item_id);-- ============================================================================-- PHÂN HỆ 3: KHUYẾN MÃI & VOUCHER ĐA TẦNG (MULTI-TIER VOUCHER STACKING)-- ============================================================================-- Bảng Định nghĩa VoucherCREATE TABLE vouchers (    voucher_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    voucher_code VARCHAR(50) UNIQUE NOT NULL,    voucher_tier VARCHAR(30) NOT NULL CHECK (voucher_tier IN (        'TIER_1_SHOP', 'TIER_2_PLATFORM', 'TIER_3_FREESHIP', 'TIER_4_PAYMENT', 'TIER_5_COIN'    )),    sponsor_type VARCHAR(30) NOT NULL CHECK (sponsor_type IN (        'MERCHANT_SPONSORED', 'PLATFORM_SPONSORED', 'CO_FUNDED_50_50', 'BANK_SPONSORED'    )),    seller_id UUID, -- Bắt buộc nếu là TIER_1_SHOP    discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('PERCENTAGE', 'FIXED_AMOUNT')),    discount_value NUMERIC(15, 2) NOT NULL CHECK (discount_value > 0),    max_discount_cap NUMERIC(15, 2) CHECK (max_discount_cap > 0),    min_spend_requirement NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (min_spend_requirement >= 0),    total_usage_limit INTEGER NOT NULL CHECK (total_usage_limit >= 0),    remaining_usage_limit INTEGER NOT NULL CHECK (remaining_usage_limit >= 0),    limit_per_user INTEGER NOT NULL DEFAULT 1 CHECK (limit_per_user > 0),    valid_from TIMESTAMPTZ NOT NULL,    valid_to TIMESTAMPTZ NOT NULL,    payment_method_constraint VARCHAR(50), -- 'SPAYLATER', 'SHOPEEPAY', 'VPBANK_CREDIT'    is_active BOOLEAN DEFAULT TRUE,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_vouchers_tier ON vouchers (voucher_tier);CREATE INDEX idx_vouchers_code ON vouchers (voucher_code);-- Bảng Khóa Tạm Thời Voucher Chống Đua Tranh (Voucher Soft Lock / Reservation)CREATE TABLE order_voucher_reservations (    reservation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    voucher_id UUID NOT NULL REFERENCES vouchers(voucher_id) ON DELETE CASCADE,    customer_id UUID NOT NULL,    order_id UUID,    reserved_discount_amount NUMERIC(15, 2) NOT NULL,    reservation_status VARCHAR(20) NOT NULL DEFAULT 'HOLD' CHECK (reservation_status IN ('HOLD', 'COMMITTED', 'RELEASED')),    hold_expires_at TIMESTAMPTZ NOT NULL, -- Thời hạn giữ voucher (thường 15 phút)    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_voucher_res_customer ON order_voucher_reservations (customer_id, voucher_id);CREATE INDEX idx_voucher_res_expiry ON order_voucher_reservations (hold_expires_at) WHERE reservation_status = 'HOLD';-- Bảng Ghi Nhận Phân Bổ Voucher & Đối Soát Tài Trợ (Voucher Attributions Ledger)CREATE TABLE order_voucher_attributions (    attribution_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,    voucher_id UUID NOT NULL REFERENCES vouchers(voucher_id) ON DELETE RESTRICT,    voucher_tier VARCHAR(30) NOT NULL,    discount_applied NUMERIC(15, 2) NOT NULL CHECK (discount_applied > 0),    platform_funded_share NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (platform_funded_share >= 0),    merchant_funded_share NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (merchant_funded_share >= 0),    bank_funded_share NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (bank_funded_share >= 0),    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    CONSTRAINT chk_funded_sum CHECK (discount_applied = platform_funded_share + merchant_funded_share + bank_funded_share));CREATE INDEX idx_voucher_attribution_order ON order_voucher_attributions (order_id);-- ============================================================================-- PHÂN HỆ 4: DỊCH VỤ TÀI CHÍNH & MUA TRƯỚC TRẢ SAU (BNPL / SPAYLATER)-- ============================================================================-- Bảng Tài khoản Người dùng Dịch vụ Tài chính (BNPL Accounts)CREATE TABLE bnpl_accounts (    account_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    customer_id UUID UNIQUE NOT NULL,    ekyc_status VARCHAR(30) NOT NULL DEFAULT 'UNVERIFIED' CHECK (ekyc_status IN (        'UNVERIFIED', 'PENDING_OCR_LIVENESS', 'APPROVED', 'REJECTED'    )),    id_card_number VARCHAR(20) UNIQUE, -- Số CCCD gắn chip    total_credit_limit NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (total_credit_limit >= 0),    available_credit_limit NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (available_credit_limit >= 0),    utilized_credit_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (utilized_credit_amount >= 0),    account_status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE' CHECK (account_status IN (        'ACTIVE', 'SUSPENDED_OVERDUE', 'BLOCKED_FRAUD', 'CLOSED'    )),    partner_bank VARCHAR(50) NOT NULL DEFAULT 'TPBANK_PARTNER', -- TPBank / Shinhan Bank    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    CONSTRAINT chk_credit_balance CHECK (total_credit_limit = available_credit_limit + utilized_credit_amount));-- Bảng Lịch sử Thẩm định Chấm điểm Tín dụng (Credit Assessments)CREATE TABLE bnpl_credit_assessments (    assessment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    account_id UUID NOT NULL REFERENCES bnpl_accounts(account_id) ON DELETE CASCADE,    cic_credit_score INTEGER CHECK (cic_credit_score BETWEEN 300 AND 850),    internal_ai_score NUMERIC(5, 2) NOT NULL, -- Chấm điểm hành vi mua sắm nội bộ    fraud_risk_level VARCHAR(20) NOT NULL CHECK (fraud_risk_level IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),    approved_limit NUMERIC(15, 2) NOT NULL,    assessment_raw_data JSONB NOT NULL,    assessed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Hợp đồng Kế hoạch Trả góp cho Từng Đơn hàng (Installment Plans)CREATE TABLE bnpl_installment_plans (    plan_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    account_id UUID NOT NULL REFERENCES bnpl_accounts(account_id) ON DELETE RESTRICT,    order_id UUID UNIQUE NOT NULL REFERENCES orders(order_id) ON DELETE RESTRICT,    tenure_months INTEGER NOT NULL CHECK (tenure_months IN (1, 3, 6, 12)),    principal_amount NUMERIC(15, 2) NOT NULL CHECK (principal_amount > 0),    total_interest_fee NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (total_interest_fee >= 0),    processing_fee NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (processing_fee >= 0),    total_repayable_amount NUMERIC(15, 2) NOT NULL CHECK (total_repayable_amount >= principal_amount),    monthly_installment_amount NUMERIC(15, 2) NOT NULL CHECK (monthly_installment_amount > 0),    plan_status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE' CHECK (plan_status IN (        'ACTIVE', 'PAID_OFF', 'DEFAULTED', 'CANCELLED_REFUNDED'    )),    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Sổ Lịch Trả Nợ & Kỳ Sao Kê Từng Tháng (Repayment Schedules)CREATE TABLE bnpl_repayment_schedules (    schedule_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    plan_id UUID NOT NULL REFERENCES bnpl_installment_plans(plan_id) ON DELETE CASCADE,    period_number INTEGER NOT NULL CHECK (period_number > 0),    statement_date DATE NOT NULL,    due_date DATE NOT NULL,    monthly_principal NUMERIC(15, 2) NOT NULL,    monthly_fee NUMERIC(15, 2) NOT NULL,    penalty_late_fee NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (penalty_late_fee >= 0),    total_due_amount NUMERIC(15, 2) NOT NULL,    paid_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (paid_amount >= 0),    payment_status VARCHAR(30) NOT NULL DEFAULT 'UNPAID' CHECK (payment_status IN (        'UNPAID', 'PARTIALLY_PAID', 'PAID_ON_TIME', 'PAID_LATE', 'OVERDUE'    )),    settled_at TIMESTAMPTZ,    CONSTRAINT uk_plan_period UNIQUE (plan_id, period_number));CREATE INDEX idx_bnpl_due_date ON bnpl_repayment_schedules (due_date) WHERE payment_status = 'UNPAID';-- ============================================================================-- PHÂN HỆ 5: LOGISTICS NGƯỢC, THU CŨ ĐỔI MỚI & TRỌNG TÀI TRANH CHẤP-- ============================================================================-- Bảng Quản lý Giao dịch Thu Cũ Đổi Mới (Trade-In Transactions & Clawback)CREATE TABLE trade_in_transactions (    trade_in_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE RESTRICT,    customer_id UUID NOT NULL,    device_model_declared VARCHAR(150) NOT NULL,    imei_declared VARCHAR(15) NOT NULL,    estimated_credit_amount NUMERIC(15, 2) NOT NULL CHECK (estimated_credit_amount > 0),    hold_authorization_id VARCHAR(100) NOT NULL, -- Mã giao dịch tạm khóa bảo lãnh trên thẻ tín dụng    hold_status VARCHAR(30) NOT NULL DEFAULT 'HELD' CHECK (hold_status IN (        'HELD', 'RELEASED_MATCHED', 'PARTIAL_CLAWBACK_CAPTURED', 'FULL_CLAWBACK_CAPTURED'    )),    return_kit_waybill VARCHAR(100),    device_shipped_date TIMESTAMPTZ,    device_received_date TIMESTAMPTZ,    inspection_result VARCHAR(30) CHECK (inspection_result IN ('MATCHED_PERFECT', 'DEGRADED_DEFECTIVE', 'REJECTED_STOLEN')),    revised_offer_amount NUMERIC(15, 2),    customer_revised_decision VARCHAR(20) CHECK (customer_revised_decision IN ('ACCEPTED', 'REJECTED_RETURN_DEVICE')),    clawback_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (clawback_amount >= 0),    card_token_id VARCHAR(100),    hold_authorization_code VARCHAR(50),    hold_expires_at TIMESTAMPTZ,    re_auth_count INTEGER DEFAULT 0,    last_re_auth_at TIMESTAMPTZ,    fallback_debt_status VARCHAR(30) DEFAULT 'NONE' CHECK (fallback_debt_status IN ('NONE', 'PENDING_CARD_UPDATE', 'TRADE_IN_BAD_DEBT', 'OFFSET_COLLECTED')),    trade_in_state VARCHAR(30) NOT NULL DEFAULT 'ESTIMATED' CHECK (trade_in_state IN (        'ESTIMATED', 'HOLD_AUTHORIZED', 'KIT_SHIPPED', 'DEVICE_RECEIVED', 'INSPECTED_MATCHED', 'INSPECTED_DEGRADED', 'CLAWBACK_PENDING', 'CLAWBACK_DEBITED', 'EXPIRED_UNSENT', 'COMPLETED', 'DEVICE_RETURNED_TO_CUSTOMER'    )),    deadline_14d TIMESTAMPTZ NOT NULL,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_trade_in_order ON trade_in_transactions (order_id);CREATE INDEX idx_trade_in_state ON trade_in_transactions (trade_in_state);-- Bảng Yêu cầu Đổi trả Hàng Hóa (Return Requests)CREATE TABLE return_requests (    return_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    return_code VARCHAR(32) UNIQUE NOT NULL,    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE RESTRICT,    order_item_id UUID NOT NULL REFERENCES order_items(order_item_id) ON DELETE RESTRICT,    customer_id UUID NOT NULL,    seller_id UUID NOT NULL,    return_reason VARCHAR(50) NOT NULL CHECK (return_reason IN (        'ITEM_DEFECTIVE_DOA', 'WRONG_ITEM_SENT', 'TRANSIT_DAMAGE', 'NOT_AS_DESCRIBED', 'BUYERS_REMORSE'    )),    customer_notes TEXT,    proof_media_urls JSONB NOT NULL DEFAULT '[]', -- Danh sách video unboxing, ảnh lỗi    requested_refund_amount NUMERIC(15, 2) NOT NULL CHECK (requested_refund_amount > 0),    approved_refund_amount NUMERIC(15, 2) DEFAULT 0 CHECK (approved_refund_amount >= 0),    restocking_fee_deducted NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (restocking_fee_deducted >= 0),    return_method VARCHAR(30) NOT NULL CHECK (return_method IN (        'RETURNLESS_REFUND', 'PUDO_DROP_OFF_QR', 'DOORSTEP_PICKUP', 'SELF_ARRANGED_SHIPPING'    )),    return_state VARCHAR(30) NOT NULL DEFAULT 'REQUESTED' CHECK (return_state IN (        'REQUESTED', 'EVALUATING_RETURNLESS', 'RETURNLESS_REFUNDED', 'QR_ISSUED', 'DROPPED_OFF', 'IN_TRANSIT', 'WAREHOUSE_INSPECTED', 'REFUND_ISSUED', 'DISPUTED', 'REJECTED'    )),    seller_auto_approve_deadline TIMESTAMPTZ NOT NULL, -- Đồng hồ đếm ngược 48h    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_return_requests_order ON return_requests (order_id);CREATE INDEX idx_return_requests_state ON return_requests (return_state);-- Bảng Quyết định Hoàn Tiền Không Cần Trả Hàng (Returnless Refund Evaluations)CREATE TABLE returnless_refund_evaluations (    evaluation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    return_id UUID UNIQUE NOT NULL REFERENCES return_requests(return_id) ON DELETE CASCADE,    item_original_value NUMERIC(15, 2) NOT NULL,    estimated_reverse_shipping_fee NUMERIC(15, 2) NOT NULL,    warehouse_inspection_cost NUMERIC(15, 2) NOT NULL,    estimated_salvage_value NUMERIC(15, 2) NOT NULL,    customer_trust_score NUMERIC(5, 2) NOT NULL CHECK (customer_trust_score BETWEEN 0 AND 100),    is_hygiene_or_hazardous BOOLEAN NOT NULL DEFAULT FALSE,    device_fingerprint_hash VARCHAR(128),    ip_subnet VARCHAR(45),    is_fraud_cluster_flagged BOOLEAN DEFAULT FALSE,    is_random_physical_audit_selected BOOLEAN DEFAULT FALSE,    lifetime_returnless_count_at_eval INTEGER DEFAULT 0,    lifetime_returnless_amount_at_eval NUMERIC(15, 2) DEFAULT 0,    returnless_decision BOOLEAN NOT NULL,    evaluation_rationale TEXT NOT NULL,    evaluated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Mã Phiếu Gửi Trả Tự Phục Vụ Tại Điểm Đối Tác (Return Drop-off Tokens)CREATE TABLE return_dropoff_tokens (    token_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    return_id UUID UNIQUE NOT NULL REFERENCES return_requests(return_id) ON DELETE CASCADE,    qr_token_string VARCHAR(128) UNIQUE NOT NULL,    pudo_network VARCHAR(50) NOT NULL, -- 'SPX_POINT', 'VNPOST_PUDO', 'KOHLS_PARTNER'    dropoff_store_id VARCHAR(50),    token_status VARCHAR(20) NOT NULL DEFAULT 'ISSUED' CHECK (token_status IN ('ISSUED', 'SCANNED_RECEIVED', 'EXPIRED')),    expires_at TIMESTAMPTZ NOT NULL,    scanned_at TIMESTAMPTZ);-- Bảng Trọng tài Xử lý Tranh chấp Đa bên (Dispute Mediation Cases)CREATE TABLE dispute_cases (    dispute_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    return_id UUID UNIQUE NOT NULL REFERENCES return_requests(return_id) ON DELETE RESTRICT,    plaintiff_type VARCHAR(20) NOT NULL CHECK (plaintiff_type IN ('CUSTOMER', 'SELLER')),    dispute_reason TEXT NOT NULL,    seller_rebuttal_proof_urls JSONB DEFAULT '[]', -- Video đóng gói hàng trước khi gửi    arbitration_status VARCHAR(30) NOT NULL DEFAULT 'OPEN_UNDER_REVIEW' CHECK (arbitration_status IN (        'OPEN_UNDER_REVIEW', 'ESCALATED_LEGAL_TEAM', 'SETTLED_BUYER_FAVOR', 'SETTLED_SELLER_FAVOR', 'SPLIT_SETTLEMENT'    )),    platform_arbitrator_id UUID,    resolution_notes TEXT,    settlement_amount NUMERIC(15, 2) DEFAULT 0,    settled_at TIMESTAMPTZ,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- ============================================================================-- PHÂN HỆ 6: SOCIAL COMMERCE & TIẾP THỊ LIÊN KẾT (CREATOR AFFILIATE)-- ============================================================================-- Bảng Hồ sơ Nhà Sáng Tạo (Creator Profiles)CREATE TABLE creator_profiles (    creator_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    customer_id UUID UNIQUE NOT NULL,    channel_handle VARCHAR(100) UNIQUE NOT NULL,    follower_count INTEGER NOT NULL DEFAULT 0,    creator_tier VARCHAR(30) NOT NULL DEFAULT 'NANO' CHECK (creator_tier IN ('NANO', 'MICRO', 'MACRO', 'CELEBRITY')),    affiliate_commission_rate NUMERIC(5, 4) NOT NULL DEFAULT 0.0500, -- 5%    compliance_score INTEGER NOT NULL DEFAULT 100 CHECK (compliance_score BETWEEN 0 AND 100),    is_live_commerce_eligible BOOLEAN DEFAULT TRUE,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Phiên Livestream Bán Hàng (Live Sessions)CREATE TABLE live_sessions (    session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    creator_id UUID NOT NULL REFERENCES creator_profiles(creator_id) ON DELETE RESTRICT,    seller_id UUID NOT NULL,    title VARCHAR(255) NOT NULL,    stream_url VARCHAR(500) NOT NULL,    session_status VARCHAR(20) NOT NULL DEFAULT 'SCHEDULED' CHECK (session_status IN ('SCHEDULED', 'LIVE_STREAMING', 'ENDED')),    concurrent_viewers INTEGER DEFAULT 0,    total_gmv_generated NUMERIC(15, 2) DEFAULT 0,    started_at TIMESTAMPTZ,    ended_at TIMESTAMPTZ,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Sản phẩm Ghim trong Livestream (Live Pinned Products)CREATE TABLE live_pinned_products (    pin_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    session_id UUID NOT NULL REFERENCES live_sessions(session_id) ON DELETE CASCADE,    variant_id UUID NOT NULL REFERENCES product_variants(variant_id) ON DELETE RESTRICT,    exclusive_live_price NUMERIC(15, 2) NOT NULL,    exclusive_voucher_id UUID REFERENCES vouchers(voucher_id) ON DELETE SET NULL,    is_currently_pinned BOOLEAN DEFAULT FALSE,    pinned_at TIMESTAMPTZ,    unpinned_at TIMESTAMPTZ);CREATE INDEX idx_live_pinned_session ON live_pinned_products (session_id) WHERE is_currently_pinned = TRUE;-- Bảng Quản lý Mẫu Thử Miễn Phí (Free Sample Requests)CREATE TABLE free_sample_requests (    sample_request_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    creator_id UUID NOT NULL REFERENCES creator_profiles(creator_id) ON DELETE RESTRICT,    variant_id UUID NOT NULL REFERENCES product_variants(variant_id) ON DELETE RESTRICT,    seller_id UUID NOT NULL,    shipping_address JSONB NOT NULL,    sample_status VARCHAR(30) NOT NULL DEFAULT 'REQUESTED' CHECK (sample_status IN (        'REQUESTED', 'APPROVED', 'DISPATCHED', 'DELIVERED', 'VIDEO_PUBLISHED', 'OVERDUE_PENALTY', 'REJECTED'    )),    sample_retail_value NUMERIC(15, 2) NOT NULL DEFAULT 0,    deposit_hold_type VARCHAR(30) DEFAULT 'NONE' CHECK (deposit_hold_type IN ('NONE', 'CREDIT_CARD_PREAUTH', 'CASH_DEPOSIT')),    deposit_amount NUMERIC(15, 2) DEFAULT 0,    deposit_hold_id VARCHAR(100),    deposit_status VARCHAR(30) DEFAULT 'NONE' CHECK (deposit_status IN ('NONE', 'HELD', 'RELEASED_COMPLIED', 'FORFEITED_OFFSET')),    commission_offset_debt_amount NUMERIC(15, 2) DEFAULT 0,    seller_approval_deadline TIMESTAMPTZ NOT NULL,    video_submission_deadline TIMESTAMPTZ, -- Trong vòng 14 ngày kể từ khi nhận mẫu    published_video_url VARCHAR(500),    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);-- Bảng Sổ Cái Hoa Hồng Tiếp Thị Liên Kết (Affiliate Commissions Ledger)CREATE TABLE affiliate_commissions (    commission_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),    creator_id UUID NOT NULL REFERENCES creator_profiles(creator_id) ON DELETE RESTRICT,    order_id UUID NOT NULL REFERENCES orders(order_id) ON DELETE RESTRICT,    order_item_id UUID NOT NULL REFERENCES order_items(order_item_id) ON DELETE RESTRICT,    click_attribution_tracking_id VARCHAR(100) NOT NULL,    commission_rate NUMERIC(5, 4) NOT NULL,    gross_order_item_amount NUMERIC(15, 2) NOT NULL,    commission_amount NUMERIC(15, 2) NOT NULL CHECK (commission_amount >= 0),    commission_state VARCHAR(30) NOT NULL DEFAULT 'TRACKED' CHECK (commission_state IN (        'TRACKED', 'PENDING_DELIVERY', 'FROZEN_14D_HOLD', 'SETTLED_PAYABLE', 'CLAWED_BACK_ON_RETURN'    )),    delivery_completed_at TIMESTAMPTZ,    hold_released_at TIMESTAMPTZ,    settled_at TIMESTAMPTZ,    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP);CREATE INDEX idx_affiliate_creator ON affiliate_commissions (creator_id);CREATE INDEX idx_affiliate_order ON affiliate_commissions (order_id);CREATE INDEX idx_affiliate_frozen_release ON affiliate_commissions (hold_released_at) WHERE commission_state = 'FROZEN_14D_HOLD';
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+2.7 Sơ đồ Quan hệ Thực thể Tổng thể (Mermaid Entity-Relationship Diagram)
+--- TABLE START ---
+erDiagram    products ||--o{ product_variants : "has variants"    product_variants ||--o{ variant_condition_grades : "graded by"    variant_condition_grades ||--o{ device_hardware_profiles : "physical units"        orders ||--|{ order_items : "contains"    product_variants ||--o{ order_items : "purchased as"    variant_condition_grades ||--o{ order_items : "with condition"    device_hardware_profiles ||--o| order_items : "assigned hardware"    order_items ||--o{ order_item_addons : "attached VAS (Trade-In / Warranty / SIM)"        orders ||--o{ order_voucher_attributions : "discounts attributed"    vouchers ||--o{ order_voucher_attributions : "funded by"    vouchers ||--o{ order_voucher_reservations : "held by"        bnpl_accounts ||--o{ bnpl_credit_assessments : "evaluated"    bnpl_accounts ||--o{ bnpl_installment_plans : "finances"    orders ||--o| bnpl_installment_plans : "paid via BNPL"    bnpl_installment_plans ||--|{ bnpl_repayment_schedules : "monthly bills"        orders ||--o{ trade_in_transactions : "linked trade-in"    orders ||--o{ return_requests : "initiates return"    order_items ||--o{ return_requests : "returns item"    return_requests ||--o| returnless_refund_evaluations : "algorithm result"    return_requests ||--o| return_dropoff_tokens : "PUDO QR"    return_requests ||--o| dispute_cases : "arbitrated by"        creator_profiles ||--o{ live_sessions : "hosts"    live_sessions ||--o{ live_pinned_products : "pins"    product_variants ||--o{ live_pinned_products : "discounted deal"    creator_profiles ||--o{ free_sample_requests : "requests"    creator_profiles ||--o{ affiliate_commissions : "earns"    orders ||--o{ affiliate_commissions : "generated from"
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+3. HỆ THỐNG MÁY TRẠNG THÁI TÁCH RỜI (ARCH-STATEMACH: DECOUPLED STATE MACHINES)
+3.1 Máy trạng thái Đơn hàng Cốt lõi (`Order_State_Machine`)
+Máy trạng thái đơn hàng quản lý vòng đời từ giỏ hàng đến khi hoàn tất đơn, đồng bộ hóa song song các phân hệ thanh toán, kho vận và đồng kiểm giao hàng.
+--- TABLE START ---
+stateDiagram-v2    [*] --> DRAFT : Khách tạo giỏ hàng    DRAFT --> PENDING_PAYMENT : Bấm chốt đơn (Hold tồn kho & Voucher 15m)    PENDING_PAYMENT --> CANCELLED : Hết hạn 15m / Khách hủy (Rollback tồn & Voucher)    PENDING_PAYMENT --> PAYMENT_AUTHORIZED : Thanh toán thành công (Thẻ / Ví / Cấp tín dụng BNPL)    PAYMENT_AUTHORIZED --> PROCESSING : Kho tiếp nhận lệnh đóng gói (In nhãn & Gán Serial/IMEI)    PROCESSING --> DISPATCHED : Bàn giao ĐVVC / Sẵn sàng nhận tại Apple Store    DISPATCHED --> IN_TRANSIT : ĐVVC quét quét xuất kho bưu cục (Bật GPS Tracking)    IN_TRANSIT --> DELIVERED : Bưu tá giao tới cửa khách    DELIVERED --> CO_INSPECTED : Tiến hành "Shopee Đồng Kiểm" ngoại quan cùng shipper    CO_INSPECTED --> COMPLETED : Đồng kiểm OK / Khách ký nhận (Escrow chuyển tiền sau 7-15 ngày)    CO_INSPECTED --> CANCELLED : Đồng kiểm Thất Bại (Hàng vỡ nát / Sai mẫu) -> Thu hồi ngay    COMPLETED --> [*]    CANCELLED --> [*]
+--- TABLE END ---
+3.2 Máy trạng thái Thu cũ đổi mới & Truy thu (`Trade_In_Clawback_State_Machine`)
+Điều khiển nghiệp vụ định giá trực tuyến, tạm giữ hạn mức bảo lãnh trên thẻ tín dụng và kích hoạt cơ chế truy thu tự động khi khách hàng không gửi thiết bị cũ hoặc tình trạng thẩm định bị sai lệch.
+--- TABLE START ---
+stateDiagram-v2    [*] --> ESTIMATED : Khảo sát trực tuyến & Kiểm tra IMEI hợp lệ    ESTIMATED --> HOLD_AUTHORIZED : Tạm khóa bảo lãnh thẻ tín dụng (Hold tương đương giá Trade-In)    HOLD_AUTHORIZED --> KIT_SHIPPED : Giao máy mới kèm Bộ kit thu cũ (Bắt đầu đếm ngược 14 ngày)        KIT_SHIPPED --> EXPIRED_UNSENT : Quá 14 ngày khách không gửi máy về bưu điện    EXPIRED_UNSENT --> CLAWBACK_DEBITED : Trừ thẻ tự động 100% tiền tạm giữ (Full Clawback)        KIT_SHIPPED --> DEVICE_RECEIVED : Trung tâm kiểm định nhận máy cũ    DEVICE_RECEIVED --> INSPECTED_MATCHED : Giám định trùng khớp 100% tình trạng khai báo    INSPECTED_MATCHED --> COMPLETED : Giải phóng hạn mức bảo lãnh thẻ tín dụng (Release Hold)        DEVICE_RECEIVED --> INSPECTED_DEGRADED : Phát hiện lỗi màn hình / Chai pin / Vỏ móp    INSPECTED_DEGRADED --> CLAWBACK_PENDING : Gửi báo cáo ảnh giám định & Chào giá mới (Hạn 14 ngày)        CLAWBACK_PENDING --> CLAWBACK_DEBITED : Khách chấp nhận giá mới -> Trừ thẻ số tiền chênh lệch    CLAWBACK_PENDING --> DEVICE_RETURNED : Khách từ chối giá mới -> Hoàn trả máy cũ + Trừ 100% tiền tạm giữ        COMPLETED --> [*]    CLAWBACK_DEBITED --> [*]    DEVICE_RETURNED --> [*]
+--- TABLE END ---
+3.3 Máy trạng thái Logistics ngược & Hoàn tiền tự động (`Reverse_Logistics_State_Machine`)
+Tích hợp thuật toán hoàn tiền không cần trả hàng (Returnless Refund) của Amazon và quy trình đổi trả tự phục vụ không cần thùng/nhãn tại điểm bưu cục đối tác Shopee/PUDO.
+--- TABLE START ---
+stateDiagram-v2    [*] --> REQUESTED : Khách bấm yêu cầu Đổi trả / Hoàn tiền    REQUESTED --> EVALUATING_RETURNLESS : Kích hoạt thuật toán so sánh Chi phí vận chuyển vs Giá trị thu hồi        EVALUATING_RETURNLESS --> RETURNLESS_REFUNDED : Chi phí trả > Giá trị còn lại + Điểm uy tín cao -> Hoàn tiền 100% ngay        EVALUATING_RETURNLESS --> QR_ISSUED : Bắt buộc thu hồi vật lý -> Cấp mã No Box No Label QR    QR_ISSUED --> DROPPED_OFF : Khách mang máy trần ra bưu cục PUDO quét QR    DROPPED_OFF --> IN_TRANSIT : ĐVVC vận chuyển kiện gom về kho kiểm định    IN_TRANSIT --> WAREHOUSE_INSPECTED : Kỹ thuật viên kho test chức năng & Kiểm tra Activation Lock        WAREHOUSE_INSPECTED --> REFUND_ISSUED : Giám định đạt chuẩn -> Hoàn tiền (Đã trừ Restocking Fee nếu có)    WAREHOUSE_INSPECTED --> DISPUTED : Phát hiện tráo hàng / Bị khóa iCloud -> Chuyển Trọng tài phân xử        DISPUTED --> REFUND_ISSUED : Trọng tài phán quyết có lợi cho Người mua    DISPUTED --> REJECTED : Trọng tài phán quyết có lợi cho Người bán -> Trả hàng lại cho khách        RETURNLESS_REFUNDED --> [*]    REFUND_ISSUED --> [*]    REJECTED --> [*]
+--- TABLE END ---
+3.4 Máy trạng thái Hoa hồng Tiếp thị Liên kết (`Creator_Affiliate_Commission_State_Machine`)
+Điều khiển ghi nhận doanh số tiếp thị theo mô hình Last-Click Attribution 7 ngày, quy tắc đóng băng hoa hồng an toàn 14 ngày chống bùng hủy/đổi trả theo chuẩn TikTok Shop Creator Center.
+--- TABLE START ---
+stateDiagram-v2    [*] --> TRACKED : Khách đặt đơn thành công qua Link/Livestream của Creator    TRACKED --> PENDING_DELIVERY : Đơn hàng đang được kho xử lý và vận chuyển    TRACKED --> CANCELLED_VOID : Khách hủy đơn trước khi giao -> Hủy bút toán hoa hồng        PENDING_DELIVERY --> FROZEN_14D_HOLD : Giao hàng thành công -> Bắt đầu đóng băng 14 ngày an toàn        FROZEN_14D_HOLD --> CLAWED_BACK_ON_RETURN : Khách khiếu nại trả hàng / Hoàn tiền trong 14 ngày -> Thu hồi hoa hồng    FROZEN_14D_HOLD --> SETTLED_PAYABLE : Hết 14 ngày không có khiếu nại -> Mở khóa tiền vào số dư rút được        SETTLED_PAYABLE --> [*]    CANCELLED_VOID --> [*]    CLAWED_BACK_ON_RETURN --> [*]
+--- TABLE END ---
+3.5 Bảng Ma trận Chuyển trạng thái & Xử lý Deadlock / Saga Rollback
+--- TABLE START ---
+Máy Trạng Thái | Trạng Thái Hiện Tại | Sự Kiện Kích Hoạt (Event/Trigger) | Điều Kiện Ràng Buộc (Guard Condition) | Trạng Thái Kế Tiếp | Hành Động Kèm Theo (Action / Side Effect)
+Order SM | DRAFT | CHECKOUT_SUBMITTED | Tồn kho khả dụng ATP đủ & Giữ được voucher 5 tầng | PENDING_PAYMENT | Tạo bản ghi Voucher_Reservation, đặt timer đếm ngược 15 phút.
+Order SM | PENDING_PAYMENT | PAYMENT_WEBHOOK_RECEIVED | Chữ ký số IPN hợp lệ & Số tiền khớp đúng 100% | PAYMENT_AUTHORIZED | Chuyển voucher sang COMMITTED, tạo lệnh đóng gói xuất kho.
+Order SM | PENDING_PAYMENT | TIMER_EXPIRED_15M | Chưa nhận được callback thanh toán | CANCELLED | Rollback tồn kho ATP, giải phóng voucher và hoàn lại Shopee Xu.
+Order SM | IN_TRANSIT | CO_INSPECTION_FAILED | Biên bản Shipper xác nhận hàng vỡ nát / Sai mẫu | CANCELLED | Tạo vận đơn chuyển hoàn lập tức; hoàn tiền tự động về ví khách.
+Trade-In SM | KIT_SHIPPED | CRON_14D_EXPIRED | Kho chưa nhận được kiện máy cũ từ bưu điện | EXPIRED_UNSENT | Kích hoạt FULL_CLAWBACK_CHARGE trừ trực tiếp thẻ tín dụng lưu sẵn.
+Trade-In SM | DEVICE_RECEIVED | INSPECTION_FAILED | Màn hình sọc / Vỏ móp méo / Chai pin nặng | INSPECTED_DEGRADED | Sinh hóa đơn chênh lệch, gửi email cảnh báo kèm ảnh chụp kiểm định.
+Reverse SM | REQUESTED | EVALUATION_TRIGGERED | Giá trị hàng < $20 AND Chi phí ship > Giá trị thu hồi | RETURNLESS_REFUNDED | Hủy yêu cầu trả hàng vật lý; giải ngân hoàn tiền 100% cấp tốc.
+Reverse SM | IN_TRANSIT | ACTIVATION_LOCK_DETECTED | Máy gửi về bị khóa iCloud / Google FRP | DISPUTED | Đình chỉ hoàn tiền, khóa hồ sơ, gửi thông báo gỡ khóa từ xa cho khách.
+Affiliate SM | PENDING_DELIVERY | DELIVERY_CONFIRMED | Khách nhận hàng thành công kèm ảnh POD | FROZEN_14D_HOLD | Đặt lịch giải phóng sau 14 ngày (336 giờ) trên hệ thống hàng đợi.
+Affiliate SM | FROZEN_14D_HOLD | RETURN_REFUND_APPROVED | Đơn hàng phát sinh trả hàng hoàn tiền hợp lệ | CLAWED_BACK_ON_RETURN | Khấu trừ toàn bộ số hoa hồng dự kiến khỏi số dư tạm tính của Creator.
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4. ĐẶC TẢ HỢP ĐỒNG GIAO DIỆN API (ARCH-API: RESTFUL & EVENT-DRIVEN CONTRACTS)
+4.1 Quy chuẩn Thiết kế API & Chuẩn RFC 7807
+1. Kiến trúc RESTful OpenAPI 3.0.3: Sử dụng định dạng JSON, xác thực qua Bearer JWT Token trong Header Authorization: Bearer <token>.
+2. Bắt buộc Idempotency-Key: Tất cả các lệnh POST có thay đổi trạng thái giao dịch hoặc tài chính bắt buộc mang Header Idempotency-Key: <UUIDv4>. Nếu gửi lại cùng một key trong vòng 24 giờ, máy chủ trả về kết quả đã lưu trữ từ cache mà không xử lý lại logic.
+3. Định dạng lỗi chuẩn hóa (RFC 7807 Problem Details):
+--- TABLE START ---
+{     "type": "https://api.ecomsystem.vn/errors/voucher-stacking-conflict",     "title": "Xung đột quy tắc xếp chồng voucher",     "status": 422,     "detail": "Voucher TIER_4_PAYMENT 'SPAYLATER30K' không tương thích với phương thức thanh toán 'COD'.",     "instance": "/api/v1/orders/checkout",     "error_code": "ERR_VOUCHER_PAYMENT_MISMATCH",     "timestamp": "2026-11-04T02:37:18Z"   }
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4.2 Chi tiết 9 Endpoint API Cốt lõi
+1. `POST /api/v1/orders/checkout` — Chốt Đơn Hàng Phức Hợp Đa Dịch Vụ
+• Mô tả: Khởi tạo đơn hàng phức hợp bao gồm sản phẩm chính, tình trạng máy, số IMEI/Serial chỉ định, dịch vụ đính kèm (Trade-In, AppleCare+, eSIM), áp dụng bộ xếp chồng 5 tầng voucher và kiểm tra tạm khóa hạn mức.
+• Headers: Idempotency-Key: <UUIDv4>, Content-Type: application/json.
+• Request Body (JSON Schema):
+--- TABLE START ---
+{  "customer_id": "c1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",  "items": [    {      "variant_id": "v101-ip16promax-256-nat",      "condition_grade": "BRAND_NEW",      "quantity": 1,      "addons": [        {          "addon_type": "EXTENDED_WARRANTY",          "service_plan_code": "APPLECARE_PLUS_THEFT_2Y",          "billing_mode": "ONE_TIME_UPFRONT",          "price_impact": 5299000        },        {          "addon_type": "TRADE_IN",          "service_plan_code": "APPLE_TRADE_IN",          "billing_mode": "TRADE_IN_INSTANT_CREDIT",          "price_impact": -8500000,          "addon_details": {            "declared_imei": "358921098234123",            "model": "iPhone 14 Pro Max 256GB",            "hold_card_token": "tok_visa_backup_4242"          }        },        {          "addon_type": "CELLULAR_SIM_PLAN",          "service_plan_code": "USM_WARP_5G_UNLIMITED",          "billing_mode": "MONTHLY_RECURRING",          "price_impact": 0,          "addon_details": {            "sim_type": "ESIM",            "network_profile": "WARP_5G"          }        }      ]    }  ],  "voucher_codes": [    "SHOP_APPLE_500K",    "PLATFORM_1111_1M",    "FREESHIP_XTRA_70K",    "SPAYLATER_DISCOUNT_300K"  ],  "redeem_coins": 100000,  "payment_channel": "SPAYLATER_BNPL",  "bnpl_tenure_months": 6,  "fulfillment_type": "EXPRESS_2H_COURIER",  "shipping_address": {    "recipient_name": "Nguyễn Văn A",    "phone_number": "0912345678",    "address_line": "Tòa nhà Landmark 81, 720A Điện Biên Phủ",    "ward": "Phường 22",    "district": "Quận Bình Thạnh",    "city": "TP Hồ Chí Minh"  }}
+--- TABLE END ---
+• Response 201 Created:
+--- TABLE START ---
+{  "order_id": "ord-88392-vn",  "order_code": "OD20261104-9821",  "order_status": "PAYMENT_AUTHORIZED",  "pricing_summary": {    "original_subtotal": 34999000,    "addons_subtotal": -3201000,    "shop_discount": 500000,    "platform_discount": 1000000,    "actual_shipping_fee": 70000,    "freeship_discount": 70000,    "payment_discount": 300000,    "coin_discount": 100000,    "final_payable_amount": 29898000  },  "trade_in_hold": {    "hold_authorization_id": "hold_tx_992182",    "hold_amount": 8500000,    "status": "HELD_AUTHORIZED",    "kit_tracking_code": "KIT-SPX-998231"  },  "bnpl_installment": {    "plan_id": "plan-77218-spay",    "tenure_months": 6,    "monthly_installment": 5182320,    "first_due_date": "2026-12-10"  },  "created_at": "2026-11-04T02:37:18Z"}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+2. `POST /api/v1/trade-in/appraise` — Thẩm Định Định Giá Thu Cũ & Kiểm Tra IMEI
+• Mô tả: Đánh giá giá trị thu đổi trực tuyến dựa trên hãng, dòng máy, trả lời bộ câu hỏi chức năng và xác thực danh sách đen GSMA Device Check.
+• Request Body:
+--- TABLE START ---
+{  "imei": "358921098234123",  "brand": "Apple",  "model_code": "IPHONE_14_PRO_MAX_256",  "survey_responses": {    "powers_on": true,    "screen_damaged": false,    "body_scratched": true,    "biometrics_working": true,    "battery_health_percentage": 86  }}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "appraisal_id": "appr-992184-vn",  "imei": "358921098234123",  "gsma_blacklist_status": "CLEAN",  "activation_lock_check": "OFF",  "estimated_credit_value": 8500000,  "currency": "VND",  "valuation_valid_hours": 48,  "kit_delivery_eligible": true}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+3. `POST /api/v1/trade-in/clawback` — Xử Lý Truy Thu Khi Sai Lệch Giám Định Kho
+• Mô tả: Kích hoạt tự động khi trung tâm giám định phát hiện màn hình xước nặng hoặc quá 14 ngày khách không gửi thiết bị.
+• Request Body:
+--- TABLE START ---
+{  "trade_in_id": "tin-88219-apple",  "clawback_reason": "INSPECTION_DEGRADED_DEFECTIVE",  "original_credit": 8500000,  "revised_credit": 5200000,  "clawback_amount_to_debit": 3300000,  "backup_card_token": "tok_visa_backup_4242"}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "clawback_transaction_id": "clw-77129-debit",  "trade_in_id": "tin-88219-apple",  "debited_amount": 3300000,  "currency": "VND",  "debit_status": "SUCCESSFUL",  "hold_remaining_released": 5200000,  "customer_notified": true}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4. `POST /api/v1/returns/requests` — Khởi Tạo Đổi Trả & Đánh Giá Returnless Refund
+• Mô tả: Khách hàng yêu cầu trả hàng, hệ thống tự động chạy thuật toán Returnless Refund để ra quyết định hoàn tiền ngay hoặc yêu cầu gửi hàng về kho.
+• Request Body:
+--- TABLE START ---
+{  "order_id": "ord-88392-vn",  "order_item_id": "item-9912-cable",  "return_reason": "TRANSIT_DAMAGE",  "customer_note": "Cáp sạc bị đứt đầu Type-C khi bóc hộp",  "proof_media_urls": [    "https://storage.ecom.vn/proofs/20261104/vid_unboxing.mp4",    "https://storage.ecom.vn/proofs/20261104/img_broken_cable.jpg"  ]}
+--- TABLE END ---
+• Response 201 Created (Kịch bản Returnless Refund được kích hoạt):
+--- TABLE START ---
+{  "return_id": "ret-44912-vn",  "return_state": "RETURNLESS_REFUNDED",  "decision_type": "RETURNLESS_REFUND_APPROVED",  "evaluation_metrics": {    "item_value": 290000,    "reverse_shipping_fee": 35000,    "inspection_fee": 20000,    "salvage_value": 0,    "customer_trust_score": 96.5  },  "refund_amount": 290000,  "refund_destination": "SHOPEEPAY_WALLET",  "instruction_message": "Bạn không cần gửi lại sản phẩm này. Khoản tiền 290.000đ đã được hoàn tức thì vào ví ShopeePay."}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+5. `POST /api/v1/returns/dropoff/generate-qr` — Cấp Mã Trả Hàng "No Box, No Label"
+• Mô tả: Tạo mã token QR tự phục vụ để khách mang máy trần ra điểm bưu cục đối tác PUDO (SPX Point, VNPost) mà không cần đóng hộp hay in nhãn.
+• Request Body:
+--- TABLE START ---
+{  "return_id": "ret-88124-ipad",  "preferred_pudo_network": "SPX_POINT"}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "token_id": "tok-pudo-7712",  "return_id": "ret-88124-ipad",  "qr_payload": "ECOM_RET_QR_v1$ret-88124-ipad$expires=1793798400",  "expires_at": "2026-11-09T02:37:18Z",  "nearby_dropoff_locations": [    {      "store_id": "SPX_PUDO_Q1_01",      "store_name": "SPX Point 120 Hai Bà Trưng, Phường Bến Nghé, Quận 1",      "distance_km": 0.8    }  ]}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+6. `POST /api/v1/bnpl/apply-credit` — Đăng Ký eKYC & Cấp Hạn Mức Tín Dụng SPayLater
+• Mô tả: Tiếp nhận ảnh chụp 2 mặt CCCD gắn chip và vector quét khuôn mặt sinh trắc học để chấm điểm AI và cấp hạn mức trong 3 phút.
+• Request Body:
+--- TABLE START ---
+{  "customer_id": "c1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",  "id_card_front_url": "https://secure.ecom.vn/ekyc/id_front.jpg",  "id_card_back_url": "https://secure.ecom.vn/ekyc/id_back.jpg",  "liveness_video_token": "live_tok_9918237_blink_nod",  "monthly_declared_income": 25000000}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "account_id": "bnpl-acc-88219",  "ekyc_status": "APPROVED",  "id_card_verified": "079098001234",  "full_name": "NGUYỄN VĂN A",  "approved_credit_limit": 15000000,  "available_limit": 15000000,  "partner_bank": "TPBank Financial Service",  "account_status": "ACTIVE"}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+7. `POST /api/v1/bnpl/orders/disburse` — Kích Hoạt Giải Ngân Trả Góp Đơn Hàng
+• Mô tả: Trích trừ hạn mức khả dụng và lập lịch trả nợ sao kê hàng tháng cho đơn hàng đã chọn BNPL.
+• Request Body:
+--- TABLE START ---
+{  "account_id": "bnpl-acc-88219",  "order_id": "ord-88392-vn",  "tenure_months": 6,  "principal_amount": 29898000}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "plan_id": "plan-77218-spay",  "status": "DISBURSED",  "principal": 29898000,  "interest_rate_percent": 0.0,  "monthly_installment": 5182320,  "repayment_schedule_preview": [    { "period": 1, "due_date": "2026-12-10", "amount": 5182320 },    { "period": 2, "due_date": "2027-01-10", "amount": 5182320 },    { "period": 3, "due_date": "2027-02-10", "amount": 5182320 },    { "period": 4, "due_date": "2027-03-10", "amount": 5182320 },    { "period": 5, "due_date": "2027-04-10", "amount": 5182320 },    { "period": 6, "due_date": "2027-05-10", "amount": 5182320 }  ]}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+8. `POST /api/v1/social/live/pin-product` — Ghim Sản Phẩm Độc Quyền Trong Phiên Live
+• Mô tả: Ghim một SKU lên góc màn hình phiên livestream kèm giá sốc và voucher giới hạn, đồng bộ tức thì đến hàng triệu người xem qua WebSocket/Server-Sent Events.
+• Request Body:
+--- TABLE START ---
+{  "session_id": "live-sess-88192",  "variant_id": "v101-ip16promax-256-nat",  "exclusive_live_price": 31990000,  "exclusive_voucher_id": "vch-live-flash-500k",  "duration_seconds": 180}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "pin_id": "pin-99128",  "session_id": "live-sess-88192",  "is_currently_pinned": true,  "pinned_sku": "IPHONE-16PM-256-NAT",  "exclusive_price": 31990000,  "active_viewers_broadcasted": 45200,  "unpin_countdown_seconds": 180}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+9. `POST /api/v1/affiliate/commissions/track` — Ghi Nhận Chuyển Đổi Tiếp Thị Liên Kết
+• Mô tả: Tiếp nhận sự kiện mua hàng hoàn tất qua cookie tracking 7 ngày của Creator, tính toán hoa hồng và đưa vào trạng thái đóng băng 14 ngày.
+• Request Body:
+--- TABLE START ---
+{  "click_tracking_id": "aff_clk_99812739812",  "creator_id": "cr-88219-techreview",  "order_id": "ord-88392-vn",  "order_item_id": "item-9821-main",  "item_net_amount": 29898000,  "commission_rate": 0.05}
+--- TABLE END ---
+• Response 200 OK:
+--- TABLE START ---
+{  "commission_id": "comm-991283",  "creator_id": "cr-88219-techreview",  "calculated_commission": 1494900,  "currency": "VND",  "commission_state": "FROZEN_14D_HOLD",  "estimated_settlement_date": "2026-11-18T02:37:18Z"}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4.3 Đặc tả Sự kiện Bất đồng bộ (Event-driven CloudEvents Schemas)
+Hệ thống điều phối các dịch vụ thông qua Message Broker (Apache Kafka) tuân thủ định dạng CloudEvents v1.0.
+1. Sự kiện `order.created` (Topic: `ecom.order.events.v1`)
+--- TABLE START ---
+{  "specversion": "1.0",  "type": "vn.ecom.order.created",  "source": "/order-service/checkout",  "id": "evt-ord-00129",  "time": "2026-11-04T02:37:18Z",  "datacontenttype": "application/json",  "data": {    "order_id": "ord-88392-vn",    "customer_id": "c1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c",    "final_payable_amount": 29898000,    "payment_channel": "SPAYLATER_BNPL",    "items": [      {        "order_item_id": "item-9821-main",        "variant_id": "v101-ip16promax-256-nat",        "quantity": 1,        "requires_hardware_allocation": true      }    ]  }}
+--- TABLE END ---
+2. Sự kiện `tradein.clawback_triggered` (Topic: `ecom.tradein.events.v1`)
+--- TABLE START ---
+{  "specversion": "1.0",  "type": "vn.ecom.tradein.clawback_triggered",  "source": "/tradein-service/inspection",  "id": "evt-clw-99812",  "time": "2026-11-04T02:37:18Z",  "datacontenttype": "application/json",  "data": {    "trade_in_id": "tin-88219-apple",    "order_id": "ord-88392-vn",    "clawback_reason": "CUSTOMER_REJECTED_REVISED_OFFER",    "clawback_debit_amount": 8500000,    "card_token": "tok_visa_backup_4242",    "action_required": "RETURN_DEFECTIVE_DEVICE_TO_CUSTOMER"  }}
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+5. BỘ 20 KỊCH BẢN NGHIỆM THU TÍCH HỢP ĐẦU CUỐI MỞ RỘNG (VERIF-E2E: E2E-EXT-01 ĐẾN E2E-EXT-20)
+Toàn bộ 20 kịch bản kiểm thử tích hợp đầu cuối dưới đây được chuẩn hóa theo cú pháp Gherkin, mô tả trọn vẹn luồng tương tác thực tế giữa người dùng, hệ thống thương mại điện tử, các đơn vị vận chuyển (SPX/FedEx), ngân hàng đối tác (TPBank), nhà mạng viễn thông (US Mobile/eSIM) và trung tâm kiểm định phần cứng.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-01: Mua Điện Thoại Flagship Kèm Trade-In Máy Cũ & Cấp Phát eSIM Nhà Mạng Tức Thì
+• Mã kịch bản: E2E-EXT-01
+• Tác nhân: Khách hàng (User A), Hệ thống TMĐT, Cổng thanh toán thẻ (Stripe/CyberSource), Hệ sinh thái viễn thông (US Mobile MVNO Core).
+• Điều kiện tiên quyết:
+1. Sản phẩm iPhone 16 Pro Max 256GB tình trạng Brand New còn tồn kho ATP >= 1.
+2. Thẻ tín dụng của User A có hạn mức khả dụng >= 40.000.000 VND.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User A đang tại trang cấu hình sản phẩm, chọn iPhone 16 Pro Max màu Natural Titanium, bộ nhớ 256GB.
+• And User A chọn tùy chọn Trade-in máy cũ, nhập IMEI 358921098234123 của iPhone 14 Pro Max và trả lời khảo sát tình trạng hoàn hảo.
+• And Hệ thống thẩm định và cấp mức định giá tạm thời 8.500.000 VND.
+• And User A chọn đính kèm gói cước di động US Mobile Warp 5G không giới hạn qua hình thức kích hoạt eSIM tức thì.
+• When User A tiến hành thanh toán, nhập thẻ tín dụng quốc tế để thanh toán số tiền còn lại và ủy quyền bảo lãnh Trade-in.
+• Then Hệ thống thực hiện trừ tiền thực tế (Charge) 26.499.000 VND trên thẻ tín dụng.
+• And Hệ thống đồng thời thực hiện tạm giữ hạn mức bảo lãnh (Hold Authorization) 8.500.000 VND trên thẻ tín dụng mang mã giao dịch hold_tx_992182.
+• And Hệ thống gọi API nhà mạng cấp phát hồ sơ eSIM Profile (LPA:1$smdp.usmobile.com$QR_CODE_STRING) và hiển thị trực tiếp mã QR trên trang xác nhận đơn.
+• And Bản ghi đơn hàng orders chuyển sang trạng thái PAYMENT_AUTHORIZED.
+• And Bảng trade_in_transactions tạo bản ghi mới với trạng thái HOLD_AUTHORIZED và hạn chót gửi máy cũ là 14 ngày làm việc.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-02: Giám Định Trade-In Phát Hiện Màn Hình Xước Nặng -> Khách Từ Chối Giá Mới -> Hoàn Trả Máy & Full Clawback
+• Mã kịch bản: E2E-EXT-02
+• Tác nhân: Khách hàng (User B), Kỹ thuật viên Trung tâm Giám định Kho (Inspector), Hệ sinh thái thanh toán.
+• Điều kiện tiên quyết: Đơn hàng đã giao máy mới thành công; User B đã gửi máy cũ về trung tâm kiểm định trong vòng 14 ngày; Giao dịch tạm giữ bảo lãnh thẻ tín dụng 8.500.000 VND đang ở trạng thái HELD.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Kỹ thuật viên kho nhận kiện máy cũ của User B, thực hiện quét IMEI và chạy bài test màn hình chuyên dụng.
+• When Kỹ thuật viên phát hiện màn hình có vết xước sâu qua lớp phản quang và cập nhật tình trạng INSPECTED_DEGRADED kèm 3 ảnh chụp bằng chứng.
+• And Hệ thống tính toán lại giá trị máy cũ giảm từ 8.500.000 VND xuống 5.000.000 VND và gửi thông báo đề xuất giá mới qua Email/App cho User B với thời hạn phản hồi 14 ngày.
+• And User B truy cập cổng Trade-in Portal và nhấn nút "Từ chối giá mới và nhận lại máy" (Reject & Return Device).
+• Then Hệ thống cập nhật bảng trade_in_transactions sang trạng thái CLAWBACK_PENDING.
+• And Cổng thanh toán tự động chuyển đổi lệnh tạm giữ 8.500.000 VND thành lệnh thu nợ thực tế (Full Clawback Capture), trừ 8.500.000 VND vào thẻ tín dụng của User B.
+• And Hệ thống tự động tạo mã vận đơn gửi trả lại thiết bị cũ về địa chỉ nhà của User B hoàn toàn miễn phí.
+• And Bảng trade_in_transactions chuyển sang trạng thái cuối cùng DEVICE_RETURNED_TO_CUSTOMER.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-03: Khách Hàng Không Gửi Thiết Bị Cũ Quá Thời Hạn 14 Ngày -> Tự Động Kích Hoạt Full Clawback
+• Mã kịch bản: E2E-EXT-03
+• Tác nhân: Hệ thống TMĐT (Scheduled Cron Worker), Cổng thanh toán thẻ.
+• Điều kiện tiên quyết: User C đã nhận máy mới 14 ngày trước; Khoản tạm giữ bảo lãnh 6.000.000 VND đang ở trạng thái HELD; Quá hạn chót deadline_14d mà mã vận đơn kit thu hồi chưa có sự kiện bưu điện nhận hàng.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Hệ thống Cron Job định kỳ 01:00 AM quét bảng trade_in_transactions.
+• When Phát hiện bản ghi TIN-88219 có trade_in_state = 'KIT_SHIPPED' và deadline_14d < CURRENT_TIMESTAMP.
+• Then Cron Job kích hoạt chuyển trạng thái giao dịch sang EXPIRED_UNSENT.
+• And Hệ thống gửi lệnh API sang cổng thanh toán bắt buộc thu nợ 100% số tiền bảo lãnh 6.000.000 VND từ thẻ tín dụng của User C.
+• And Cổng thanh toán phản hồi giao dịch thu tiền thành công với mã CAP_AUTO_99812.
+• And Bảng trade_in_transactions cập nhật hold_status = 'FULL_CLAWBACK_CAPTURED' và trade_in_state = 'CLAWBACK_DEBITED'.
+• And Hệ thống phát thông báo qua SMS và Push Notification thông báo cho User C về việc truy thu đầy đủ do quá hạn gửi thiết bị.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-04: Xếp Chồng Đồng Thời 5 Tầng Voucher Trên Đơn Hàng Điện Tử Giá Trị Cao
+• Mã kịch bản: E2E-EXT-04
+• Tác nhân: Khách hàng (User D), Động cơ Tính giá & Voucher Stacking Engine (Shopee Pattern).
+• Điều kiện tiên quyết: User D có 50.000 Shopee Xu; Giỏ hàng chứa laptop gaming 25.000.000 VND từ Shop Mall; User D lưu đủ 4 mã voucher hợp lệ trên ví voucher.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User D vào trang thanh toán đơn hàng.
+• When User D tick chọn áp dụng lần lượt:
+1. Voucher Shop: Giảm 500.000 VND cho đơn từ 20.000.000 VND.
+2. Voucher Toàn sàn: Giảm 1.000.000 VND cho ngành hàng Công nghệ.
+3. Voucher Vận chuyển: Freeship Xtra giảm tối đa 70.000 VND (phí ship thực tế là 65.000 VND).
+4. Voucher Phương thức thanh toán: Giảm 200.000 VND khi thanh toán bằng SPayLater.
+5. Đổi 50.000 Shopee Xu (tương đương 50.000 VND).
+• Then Voucher Stacking Engine tính toán theo thứ tự ưu tiên chuẩn xác:
+• Giá sau Tầng 1: 25.000.000 - 500.000 = 24.500.000 VND.
+• Giá sau Tầng 2: 24.500.000 - 1.000.000 = 23.500.000 VND.
+• Phí vận chuyển sau Tầng 3: max(0, 65.000 - 70.000) = 0 VND (không hoàn lại 5.000 VND chênh lệch).
+• Giảm trừ Tầng 4: 200.000 VND.
+• Giảm trừ Tầng 5: 50.000 VND (thỏa mãn điều kiện < 50% giá trị đơn).
+• And Tổng số tiền User D thực tế phải thanh toán cuối cùng hiển thị đúng: 23.250.000 VND.
+• And Bảng order_voucher_attributions ghi nhận đủ 4 dòng phân bổ chiết khấu tương ứng với nguồn tài trợ của từng bên.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-05: Khách Hủy Đơn Hàng Có Áp Dụng 5 Tầng Voucher -> Hoàn Trả Tự Động Theo Tầng Tài Trợ
+• Mã kịch bản: E2E-EXT-05
+• Tác nhân: Khách hàng (User E), Hệ thống Quản trị Đơn hàng & Kho vận.
+• Điều kiện tiên quyết: Đơn hàng từ kịch bản E2E-EXT-04 đang ở trạng thái PROCESSING, kho chưa xuất hàng; User E nhấn nút "Hủy đơn hàng".
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User E gửi yêu cầu hủy đơn hàng OD20261104-9821 với lý do "Đổi ý muốn mua model khác".
+• When Hệ thống kiểm tra nguyên tử thấy đơn chưa bàn giao vận chuyển, chấp thuận hủy đơn và chuyển trạng thái sang CANCELLED.
+• Then Hệ thống giải phóng toàn bộ số tồn kho đã giữ (Reserved Stock) về tồn kho khả dụng (ATP).
+• And Hệ thống hoàn trả ngay lập tức 50.000 Shopee Xu về ví tài khoản của User E với ngày hết hạn giữ nguyên hạn cũ.
+• And Hệ thống giải phóng các bản ghi order_voucher_reservations:
+• Voucher Shop, Voucher Sàn và Voucher Freeship được trả lại ví của User E nếu mã còn hạn sử dụng theo lịch.
+• Nếu mã là mã săn Flash Sale đã hết giờ hiệu lực, hệ thống đánh dấu hết hạn và không gia hạn thêm.
+• And Toàn bộ hạn mức trả góp SPayLater 23.250.000 VND được khôi phục về hạn mức khả dụng của User E trong vòng 10 giây.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-06: Săn Flash Sale Khung Giờ Cố Định -> Phân Lập Tồn Kho (Reserved Flash Stock) & Khóa Giá Động 15 Phút
+• Mã kịch bản: E2E-EXT-06
+• Tác nhân: 1000 Khách hàng đồng thời (User Flash Crowd), Phân hệ Flash Sale & Redis Stock Lock.
+• Điều kiện tiên quyết: Khung giờ Flash Sale 12:00 mở bán tai nghe AirPods Pro với giá sốc 3.990.000 VND (giá gốc 5.990.000 VND); Số lượng phân lập trong kho reserved_flash_stock là 50 chiếc.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Đúng 12:00:00, cổng Flash Sale mở trạng thái kích hoạt.
+• When 500 khách hàng đầu tiên nhấn nút "Mua ngay" tại cùng một giây.
+• Then Redis thực hiện lệnh DECR nguyên tử trên key stock:flash:airpods_pro.
+• And 50 khách hàng đầu tiên giữ chỗ thành công được chuyển vào màn hình thanh toán với mức giá khóa động 3.990.000 VND kèm đồng hồ đếm ngược 15:00 phút.
+• And Khách hàng thứ 51 trở đi ngay lập tức nhận thông báo "Sản phẩm Flash Sale đã hết suất ưu đãi", hệ thống tự động chuyển giá về giá bán lẻ thông thường.
+• And Nếu 1 khách hàng trong nhóm 50 người không hoàn tất thanh toán sau 15:00 phút, Cron Job nhả 1 suất tồn kho trở lại kho Flash Sale để người khác tiếp tục mua.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-07: Đăng Ký eKYC Mua Trước Trả Sau (SPayLater) Phê Duyệt Hạn Mức Tự Động Trong 3 Phút
+• Mã kịch bản: E2E-EXT-07
+• Tác nhân: Khách hàng mới (User F), Phân hệ AI eKYC, Hệ thống Chấm điểm Tín dụng Ngân hàng đối tác (TPBank).
+• Điều kiện tiên quyết: User F có tài khoản mua sắm hoạt động trên 6 tháng, chưa từng mở tài khoản SPayLater.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User F nhấn chọn "Kích hoạt SPayLater" trên màn hình thanh toán.
+• When User F thực hiện chụp mặt trước và mặt sau CCCD gắn chip, sau đó thực hiện quét nhận diện khuôn mặt động (chớp mắt, mỉm cười theo hướng dẫn).
+• Then AI OCR bóc tách chính xác 100% Họ tên, Số định danh cá nhân và Địa chỉ thường trú.
+• And Module Liveness Check xác thực khuôn mặt khớp với ảnh chân dung trên CCCD đạt độ tin cậy 99.4%.
+• And Hệ thống gọi API kiểm tra lịch sử CIC ngân hàng đối tác không có nợ xấu (Nhóm 2 trở lên).
+• And Trong vòng 120 giây, hệ thống trả kết quả phê duyệt thành công, cấp hạn mức tín dụng 15.000.000 VND.
+• And Bảng bnpl_accounts tạo bản ghi mới với account_status = 'ACTIVE', available_credit_limit = 15000000.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-08: Thanh Toán Trễ Hạn Kỳ Sao Kê SPayLater -> Phạt Quá Hạn, Khóa Tài Khoản Mua Hàng & Báo Cáo CIC
+• Mã kịch bản: E2E-EXT-08
+• Tác nhân: Khách hàng (User G), Hệ thống Quản trị Thu nợ & Sổ cái Tín dụng.
+• Điều kiện tiên quyết: User G có kỳ sao kê đến hạn ngày 10/11 với số tiền nợ gốc + phí là 2.500.000 VND; Quá 23:59 ngày 10/11 User G chưa thanh toán.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Đồng hồ hệ thống bước sang 00:01 ngày 11/11 (Quá hạn 1 ngày).
+• When Hệ thống quét sổ nợ bnpl_repayment_schedules phát hiện kỳ nợ chưa thanh toán.
+• Then Bảng bnpl_repayment_schedules cập nhật payment_status = 'OVERDUE' và cộng dồn phí phạt trả chậm cố định 150.000 VND.
+• And Bảng bnpl_accounts tự động chuyển trạng thái account_status = 'SUSPENDED_OVERDUE', hạ hạn mức khả dụng về 0 VND.
+• And Trên ứng dụng của User G, phương thức thanh toán SPayLater bị vô hiệu hóa toàn bộ, hiển thị cảnh báo đỏ yêu cầu tất toán nợ.
+• And Nếu sau 30 ngày tiếp tục không thanh toán, hệ thống xuất file điện tử chuyển dữ liệu sang phân hệ thu hồi nợ xấu và đồng bộ hồ sơ nợ xấu lên Trung tâm Thông tin Tín dụng Quốc gia (CIC).
+————————————————————————————————————————————————————————————————————
+E2E-EXT-09: Thanh Toán Đa Nguồn (Split Tenders): Xếp Chồng 2 Apple Gift Card + Thẻ Tín Dụng
+• Mã kịch bản: E2E-EXT-09
+• Tác nhân: Khách hàng (User H), Phân hệ Thanh toán Đa nguồn (Apple Store Pattern).
+• Điều kiện tiên quyết: Đơn hàng mua MacBook Pro trị giá 45.000.000 VND; User H có 2 thẻ quà tặng Apple Gift Card (Thẻ 1 trị giá 5.000.000 VND, Thẻ 2 trị giá 10.000.000 VND); Thẻ tín dụng cá nhân có đủ hạn mức.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User H tại bước thanh toán đơn hàng 45.000.000 VND.
+• When User H nhập mã PIN của Gift Card thứ 1 (hệ thống khấu trừ 5.000.000 VND, số dư cần thanh toán còn 40.000.000 VND).
+• And User H tiếp tục nhập mã PIN của Gift Card thứ 2 (hệ thống khấu trừ 10.000.000 VND, số dư còn lại là 30.000.000 VND).
+• And User H chọn thanh toán số dư còn lại 30.000.000 VND qua thẻ tín dụng Visa.
+• Then Hệ thống thực thi giao dịch thanh toán hỗn hợp nguyên tử:
+• Trừ sạch số dư thẻ quà tặng 1 về 0 VND.
+• Trừ sạch số dư thẻ quà tặng 2 về 0 VND.
+• Gửi yêu cầu trừ 30.000.000 VND sang cổng thanh toán Visa.
+• And Cả 3 giao dịch con đều thành công, đơn hàng ghi nhận payment_channel = 'SPLIT_TENDERS' và chuyển trạng thái PAYMENT_AUTHORIZED.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-10: Giao Hàng Hỏa Tốc 2 Giờ (Courier 2-Hour) -> Live GPS Driver Tracking & Bằng Chứng Giao Hàng (POD)
+• Mã kịch bản: E2E-EXT-10
+• Tác nhân: Khách hàng (User I), Tài xế Đối tác Giao vận Hỏa tốc (Courier Driver), Ứng dụng Driver App.
+• Điều kiện tiên quyết: Đơn hàng linh kiện máy tính chọn hình thức giao hỏa tốc 2 giờ; Kho bãi đã đóng gói và dán mã vận đơn hỏa tốc.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Tài xế đến kho nhận kiện hàng, quét mã QR trên thùng hàng.
+• When Tài xế bấm "Bắt đầu giao hàng" trên ứng dụng Driver App.
+• Then Đơn hàng chuyển trạng thái sang IN_TRANSIT.
+• And Trên giao diện đơn hàng của User I, bản đồ vệ tinh thời gian thực hiển thị tọa độ GPS của tài xế di chuyển kèm thời gian dự kiến đến (ETA đếm ngược theo phút).
+• When Tài xế tới địa chỉ giao hàng, nhấn "Đã đến nơi" (hệ thống kiểm tra định vị GPS của tài xế nằm trong bán kính 30m so với địa chỉ nhà khách).
+• And Tài xế trao gói hàng cho User I và sử dụng ứng dụng chụp ảnh hiện trường gói hàng trên tay khách hàng.
+• Then Ảnh chụp bằng chứng giao hàng (POD) được tải lên S3 và hiển thị công khai trên ứng dụng của User I.
+• And Đơn hàng cập nhật order_status = 'DELIVERED' trong vòng đúng 68 phút kể từ lúc đặt hàng.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-11: Nhận Hàng Tại Apple Store (In-Store Pickup) -> Ủy Quyền Người Nhận Thay & Quét Apple Wallet Pass QR Trong 60s
+• Mã kịch bản: E2E-EXT-11
+• Tác nhân: Khách hàng mua (User K), Người được ủy quyền (User K-Friend), Nhân viên Apple Store (Specialist).
+• Điều kiện tiên quyết: User K đặt mua iPhone 16 Pro tại Apple Store R102; Chọn hình thức "In-Store Pickup"; Đã thêm họ tên và CCCD của User K-Friend vào danh sách "Người nhận thay được ủy quyền".
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Kho Apple Store hoàn tất chuẩn bị máy, hệ thống gửi email kèm nút "Add to Apple Wallet" cho User K và User K-Friend.
+• When User K-Friend mang điện thoại có thẻ Apple Wallet Pass và CCCD vật lý đến quầy Express Window tại cửa hàng.
+• And Nhân viên cửa hàng dùng máy quét chuyên dụng (EasyPay) quét mã QR trên Apple Wallet Pass của User K-Friend.
+• Then Màn hình EasyPay hiển thị chính xác họ tên người nhận thay, mã đơn hàng và vị trí ngăn kệ chứa hàng trong kho (Kệ B-04).
+• And Nhân viên đối chiếu CCCD khớp thông tin và bàn giao hộp máy mới cho User K-Friend trong vòng chưa đầy 60 giây.
+• And Nhân viên bấm xác nhận trên máy EasyPay, đơn hàng trên hệ thống ngay lập tức chuyển trạng thái COMPLETED.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-12: Mua Hàng Định Kỳ Subscribe & Save (S&S) -> Chiết Khấu Bậc Thang 15% & Tự Phục Vụ Lùi Ngày Giao
+• Mã kịch bản: E2E-EXT-12
+• Tác nhân: Khách hàng (User L), Động cơ Amazon Subscribe & Save Scheduler.
+• Điều kiện tiên quyết: User L đang có 4 sản phẩm tiêu dùng định kỳ thiết lập giao vào ngày mùng 5 hàng tháng (chiết khấu đang ở mức 5%).
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User L tìm kiếm sản phẩm hộp viên rửa bát và chọn tùy chọn "Subscribe & Save chu kỳ 1 tháng".
+• When User L thêm sản phẩm thứ 5 này vào cùng ngày giao mùng 5 hàng tháng.
+• Then Hệ thống tự động nâng bậc chiết khấu (Tier Upgrade) của toàn bộ 5 sản phẩm từ 5% lên mức tối đa 15%.
+• And Vào ngày mùng 2 (trước 3 ngày so với ngày giao), hệ thống gửi thông báo nhắc lịch: "Đơn hàng định kỳ của bạn sắp được đóng gói".
+• When User L kiểm tra thấy nhà vẫn còn đồ, nhấn nút "Bỏ qua kỳ này" (Skip this delivery) trên Cổng tự phục vụ.
+• Then Hệ thống lùi lịch giao của sản phẩm đó sang ngày mùng 5 của tháng kế tiếp mà không trừ bất kỳ khoản phí nào của User L.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-13: Quy Trình "Shopee Đồng Kiểm" Khi Nhận Máy Tính Bảng -> Kiểm Ngoại Quan An Toàn & Ký Nhận
+• Mã kịch bản: E2E-EXT-13
+• Tác nhân: Khách hàng (User M), Bưu tá SPX Express.
+• Điều kiện tiên quyết: Đơn hàng iPad Air trị giá 16.000.000 VND có nhãn "Được đồng kiểm"; Shipper mang gói hàng đến nhà User M.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Shipper giao kiện hàng, User M yêu cầu thực hiện quyền đồng kiểm trước khi nhận.
+• When Shipper và User M cùng mở thùng các-tông bên ngoài của sàn thương mại điện tử.
+• Then Hai bên cùng xác nhận:
+• Đúng hộp sản phẩm iPad Air màu Xanh dương.
+• Tem niêm phong (Seal nilon chính hãng Apple) còn nguyên vẹn 100%, không bị rách hay can thiệp.
+• Hộp không bị móp góc, không có dấu hiệu bị va đập biến dạng.
+• And Shipper nhắc nhở User M: "Quy định đồng kiểm không được bóc seal nilon của hãng và không được bật nguồn máy".
+• And User M đồng ý, ký nhận vào phiếu biên nhận điện tử trên điện thoại shipper.
+• And Shipper chụp ảnh gói hàng đã bóc thùng ngoài và bấm hoàn tất đơn hàng với trạng thái CO_INSPECTED_SUCCESSFUL.
+• And Đơn hàng chuyển trạng thái COMPLETED, tiền được chuyển vào tài khoản trung gian ký quỹ (Escrow) để bảo vệ quyền lợi 15 ngày đổi trả tiếp theo.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-14: Đồng Kiểm Phát Hiện Hàng Vỡ Nát Ngoại Quan -> Từ Chối Nhận Hàng & Hoàn Tiền Cấp Tốc 100%
+• Mã kịch bản: E2E-EXT-14
+• Tác nhân: Khách hàng (User N), Bưu tá SPX Express, Cổng thanh toán Ví ShopeePay.
+• Điều kiện tiên quyết: User N đã thanh toán trước đơn hàng màn hình máy tính 8.000.000 VND qua Ví ShopeePay; Đơn hàng có áp dụng đồng kiểm.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Bưu tá giao kiện hàng, User N tiến hành đồng kiểm mở hộp bọc ngoài.
+• When Mở hộp các-tông phát hiện khung màn hình bên trong bị nứt vỡ và góc hộp móp nặng do va đập trong quá trình vận chuyển.
+• Then User N lập tức tuyên bố từ chối nhận hàng.
+• And Bưu tá chụp 3 ảnh chụp cận cảnh chỗ nứt vỡ, mở ứng dụng Driver App chọn lý do "Đồng kiểm không thành công: Hàng hóa hư hỏng ngoại quan".
+• And Bưu tá niêm phong lại gói hàng bằng băng keo thu hồi và mang kiện hàng quay trở lại bưu cục trung chuyển.
+• And Hệ thống TMĐT tiếp nhận sự kiện Webhook từ bưu tá, tự động chuyển trạng thái đơn hàng sang CANCELLED.
+• And Cổng thanh toán ngay lập tức thực hiện lệnh hoàn tiền 8.000.000 VND vào Ví ShopeePay của User N trong vòng 120 giây mà không bắt khách hàng phải chờ đối soát kho.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-15: Đổi Trả Tự Động "No Box, No Label" Tại Bưu Cục Đối Tác Quét Mã QR -> Hoàn Tiền Trong 2 Giờ
+• Mã kịch bản: E2E-EXT-15
+• Tác nhân: Khách hàng (User O), Nhân viên Điểm tiếp nhận đối tác PUDO (Kohl's / SPX Point).
+• Điều kiện tiên quyết: User O yêu cầu đổi trả một chiếc áo khoác hàng hiệu do không vừa size; Hệ thống cấp mã QR đổi trả tự phục vụ tok-pudo-7712.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User O cầm sản phẩm trần (không cần đóng thùng các-tông, không cần in nhãn giấy) đến quầy dịch vụ SPX Point gần nhất.
+• When Nhân viên quầy dùng máy quét quét mã QR trên màn hình điện thoại của User O.
+• Then Hệ thống PUDO tự động in ra một túi niêm phong chống rách trong suốt kèm mã vạch định danh bưu kiện thu hồi.
+• And Nhân viên bỏ áo vào túi niêm phong, bấm xác nhận tiếp nhận kiện hàng trên hệ thống.
+• And Ngay tại thời điểm máy quét xác nhận nhận hàng, Webhook bắn sự kiện RETURN_ITEM_DROPPED_OFF về sàn TMĐT.
+• And Hệ thống kích hoạt cơ chế hoàn tiền sớm (Advanced Early Refund), hoàn toàn bộ số tiền đơn hàng về thẻ của User O trong vòng 2 giờ mà không cần chờ kiện hàng được vận chuyển về tổng kho.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-16: Thuật Toán Returnless Refund Tự Động Hoàn Tiền Không Thu Hồi Cho Phụ Kiện Giá Trị Thấp
+• Mã kịch bản: E2E-EXT-16
+• Tác nhân: Khách hàng thân thiết (User P), Động cơ Amazon Returnless Refund Algorithm.
+• Điều kiện tiên quyết: User P có điểm uy tín tài khoản (Trust Score) là 98.5/100; Đơn hàng mua ốp lưng điện thoại trị giá 120.000 VND bị lỗi ố vàng.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User P vào mục đơn hàng, bấm yêu cầu trả hàng và chọn lý do "Hàng ố vàng không đúng mô tả", kèm ảnh chụp sản phẩm.
+• When Hệ thống kích hoạt module đánh giá chi phí returnless_refund_evaluations:
+• Chi phí vận chuyển bưu tá đến thu hồi: 30.000 VND.
+• Chi phí nhân công kho mở bưu kiện kiểm tra: 15.000 VND.
+• Giá trị thanh lý thu hồi (Salvage Value): 0 VND (hàng ốp cũ không thể tái bán).
+• Tổng chi phí thu hồi (45.000 VND) > Giá trị thu hồi ròng.
+• Then Thuật toán quyết định returnless_decision = TRUE.
+• And Giao diện của User P hiển thị thông báo: "Chúng tôi đã hoàn tiền 120.000 VND về tài khoản của bạn. Bạn không cần gửi lại sản phẩm này, vui lòng giữ lại hoặc tái chế tùy ý".
+• And Bảng return_requests chuyển thẳng từ REQUESTED sang RETURNLESS_REFUNDED trong vòng 3 giây.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-17: Trọng Tài Khiếu Nại Sàn: Seller Không Phản Hồi Trong 48 Giờ -> Tự Động Duyệt Hoàn Tiền (Auto-Approve SLA)
+• Mã kịch bản: E2E-EXT-17
+• Tác nhân: Khách hàng (User Q), Người bán (Seller R - thiếu trách nhiệm), Bộ đếm tự động sàn (TikTok Shop Auto-Approve Engine).
+• Điều kiện tiên quyết: User Q nhận đôi giày bị bung keo nặng, tạo yêu cầu trả hàng hoàn tiền vào lúc 10:00 AM ngày 01/11.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given Yêu cầu trả hàng được tạo thành công, hệ thống gửi thông báo và kích hoạt đồng hồ đếm ngược 48:00:00 giờ trên bảng điều khiển của Seller R.
+• When Seller R bỏ qua không phản hồi, không bấm "Chấp thuận" cũng không bấm "Từ chối" kèm bằng chứng.
+• Then Đúng 10:00:01 AM ngày 03/11 (chạm mốc 48 giờ), hệ thống kích hoạt quy tắc AUTO_APPROVE_REFUND_RULE.
+• And Hệ thống tự động chuyển yêu cầu đổi trả sang trạng thái đã phê duyệt.
+• And Hệ thống tự động trích tiền trực tiếp từ Quỹ số dư ký quỹ của Seller R để hoàn trả 100% tiền đơn hàng cho User Q.
+• And Seller R bị cộng 2 điểm vi phạm cửa hàng (Shop Violation Points) do vi phạm cam kết SLA xử lý khiếu nại khách hàng.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-18: Khách Khiếu Nại Hàng Giả Trên Shopee Mall -> Giám Định Độc Lập Đền Bù Gấp Đôi (200%) & Khóa Shop
+• Mã kịch bản: E2E-EXT-18
+• Tác nhân: Khách hàng (User S), Đội ngũ Pháp chế & Chuyên gia Giám định Hàng hiệu Sàn TMĐT.
+• Điều kiện tiên quyết: User S mua chai nước hoa cao cấp 4.000.000 VND tại một shop gắn nhãn Mall; User S nghi ngờ hàng giả và gửi khiếu nại tố cáo hàng giả.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User S gửi sản phẩm về phòng giám định chất lượng của sàn và cung cấp video bóc kiện hàng.
+• When Chuyên gia giám định của sàn phối hợp với đại diện hãng kiểm tra số Batch Code, nắp xịt và độ lưu hương, kết luận sản phẩm là hàng giả tinh vi (Counterfeit Grade 1).
+• Then Đội ngũ Trọng tài sàn ban hành phán quyết vi phạm nghiêm trọng cam kết Shopee Mall.
+• And Hệ thống kích hoạt chính sách bảo vệ "Cam kết chính hãng 100% - Đền bù 200%":
+• Hoàn lại 4.000.000 VND tiền mua hàng gốc cho User S.
+• Trích từ tiền ký quỹ pháp lý của Shop đền bù thêm 4.000.000 VND tiền bồi thường vào ví của User S (Tổng nhận: 8.000.000 VND).
+• And Hệ thống khóa vĩnh viễn tài khoản bán hàng của Shop vi phạm, tịch thu toàn bộ số tiền bảo lãnh ký quỹ và chuyển hồ sơ sang cơ quan Quản lý thị trường xử lý hình sự.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-19: Mua Hàng Trong Livestream: Ghim Sản Phẩm (In-Stream Pinning) -> Bottom-Sheet Checkout 1 Chạm Không Ngắt Live
+• Mã kịch bản: E2E-EXT-19
+• Tác nhân: Khách hàng xem live (User T), Nhà sáng tạo phát live (Creator Live Streamer), Phân hệ TikTok Shop Live Commerce.
+• Điều kiện tiên quyết: Creator đang phát phiên livestream có 20.000 người xem đồng thời; Sản phẩm thỏi son môi được trợ giá độc quyền phiên live 199.000 VND.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User T đang xem livestream toàn màn hình trên điện thoại di động.
+• When Creator bấm nút ghim sản phẩm thỏi son lên màn hình.
+• Then Khung giới thiệu sản phẩm lập tức trượt từ góc trái màn hình với nhãn "Deal độc quyền phiên live" và ticker đếm ngược còn 100 suất.
+• When User T chạm vào nút "Mua ngay" trên khung ghim.
+• Then Một màn hình phụ Bottom-Sheet trượt lên từ nửa dưới màn hình điện thoại:
+• Luồng phát video và âm thanh của phiên livestream vẫn tiếp tục chạy mượt mà ở nửa trên màn hình (không bị ngắt quãng âm thanh).
+• Hệ thống tự động chọn địa chỉ mặc định, phương thức thanh toán ShopeePay/Ví liên kết và tự động áp mã Voucher Live độc quyền giảm thêm 30.000 VND.
+• When User T chạm xác thực sinh trắc học vân tay / Face ID trên điện thoại để xác nhận mua.
+• Then Đơn hàng được tạo và thanh toán thành công chỉ trong 1 chạm (mất 2.5 giây).
+• And Bottom-Sheet tự động đóng lại, User T tiếp tục tương tác và bình luận trên phiên livestream như bình thường.
+————————————————————————————————————————————————————————————————————
+E2E-EXT-20: Mạng Lưới Tiếp Thị Liên Kết (Creator Affiliate): Cookie 7 Ngày -> Đóng Băng Hoa Hồng 14 Ngày -> Quyết Toán
+• Mã kịch bản: E2E-EXT-20
+• Tác nhân: KOC Reviewer (Creator U), Người mua hàng (User V), Hệ sinh thái TikTok Creator Center.
+• Điều kiện tiên quyết: Creator U đăng video ngắn review bàn phím cơ công thái học có gắn thẻ sản phẩm (Product Anchor Tag); Tỷ lệ hoa hồng thỏa thuận là 10%.
+• Luồng xử lý chính & Kịch bản thực thi (Given-When-Then):
+• Given User V lướt video của Creator U, bấm vào giỏ hàng xem sản phẩm vào ngày 01/11 nhưng chưa mua ngay (Hệ thống ghi nhận click_tracking_id lưu cookie 7 ngày theo mô hình Last-Click).
+• When Vào ngày 05/11 (ngày thứ 4, vẫn trong thời hạn cookie 7 ngày), User V tự mở ứng dụng và chốt đơn mua chiếc bàn phím đó với giá 2.000.000 VND.
+• Then Thuật toán phân bổ chuyển đổi Last-Click quy nhận doanh số thành công cho Creator U.
+• And Bảng affiliate_commissions tạo bản ghi hoa hồng 200.000 VND (10% của 2.000.000 VND) với trạng thái PENDING_DELIVERY.
+• When Ngày 07/11 bưu tá giao hàng thành công cho User V kèm ảnh chụp POD.
+• Then Trạng thái hoa hồng chuyển sang FROZEN_14D_HOLD và bắt đầu chu kỳ đếm ngược 14 ngày an toàn (chống rủi ro khách trả hàng).
+• When Hết 14 ngày (ngày 21/11), User V không có bất kỳ khiếu nại đổi trả nào.
+• Then Hệ thống tự động chuyển trạng thái hoa hồng sang SETTLED_PAYABLE và cộng 200.000 VND vào số dư khả dụng trên ví Creator Center của Creator U để có thể rút về tài khoản ngân hàng.
+————————————————————————————————————————————————————————————————————
+6. KẾT LUẬN & ĐÁNH GIÁ MỨC ĐỘ SẴN SÀNG TRIỂN KHAI
+Tài liệu Đặc tả Kiến trúc Kỹ thuật 07_KIEN_TRUC_CSDL_API_VA_MOHINH_TRANG_THAI.md đã hoàn tất trọn vẹn 4 trụ cột kỹ thuật cốt lõi:
+1. Mô hình CSDL Quan hệ PostgreSQL 16+ Chuẩn hóa: Bao phủ đầy đủ 22 bảng thực thể từ phân cấp tình trạng máy, định danh phần cứng IMEI/RF Bands, Composite Order Item, động cơ 5 tầng voucher, sổ cái SPayLater BNPL, đến mạng lưới tiếp thị liên kết và logistics ngược tự động.
+2. 4 Máy trạng thái Độc lập Tách rời (Decoupled State Machines): Xác lập rõ ràng điều kiện guards, sự kiện kích hoạt, cơ chế bù trừ giao dịch (Saga compensating transactions) và xử lý bế tắc cho Đơn hàng, Thu cũ đổi mới Clawback, Logistics ngược và Hoa hồng Affiliate.
+3. Bộ Hợp đồng Giao diện API OpenAPI 3.0 & CloudEvents: Đặc tả chi tiết 9 API endpoints có cấu trúc JSON Schema chuẩn hóa, kiểm soát tính lũy thừa qua Idempotency-Key và mô tả chuẩn lỗi RFC 7807.
+4. Bộ 20 Kịch bản Nghiệm thu Tích hợp Đầu cuối Mở rộng (`E2E-EXT-01` đến `E2E-EXT-20`): Kiểm thử thấu đáo mọi tình huống vận hành khắc nghiệt nhất trong thực tế từ góc nhìn khách hàng và phản hồi hệ thống.
+Bản thiết kế này là cơ sở kỹ thuật trực tiếp, đầy đủ và bất khả xâm phạm để đội ngũ kỹ sư hệ thống tiến hành tạo migration database, dựng khung API gateway và triển khai kiểm thử tự động hóa (Automated E2E Testing).

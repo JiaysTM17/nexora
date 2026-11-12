@@ -1,0 +1,579 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT MODULE CATALOG: CẤU HÌNH BIẾN THỂ, BẢNG SIZE & TÌNH TRẠNG THIẾT BỊ
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-CAT-01 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT MODULE CATALOG: CẤU HÌNH BIẾN THỂ, BẢNG SIZE & TÌNH TRẠNG THIẾT BỊ
+Phạm vi: Wizard 8 bước, phân cấp 5 bậc tình trạng (New đến Grade C), kiểm định IMEI, RF và bảng size
+====================================================================
+ĐẶC TẢ KỸ THUẬT DANH MỤC SẢN PHẨM, BIẾN THỂ ĐA TẦNG & TÌNH TRẠNG THIẾT BỊ
+(TECHNICAL SPECIFICATION: PRODUCT CATALOG, MULTI-TIER VARIANTS & DEVICE CONDITION MATRIX)
+• Mã tài liệu: SPEC-PROD-M1-01
+• Bộ tài liệu: Đặc tả Phân tích Nghiệp vụ Thương mại Điện tử Nâng cao (p.tich.1)
+• Tài liệu tham chiếu:
+• phan-tich-nghiep-vu-website-ban-hang.md (Chương 08, 10, 26, 27, 28, 40)
+• 00_MA_TRAN_DOI_CHIEU_KHOANG_TRONG_NGHIEP_VU.md
+• handoff.md (Teamwork Specification Miner Deep R2 & Teamwork Explorer Intl R2)
+• Nền tảng đo chuẩn tích hợp (Benchmark Integration):
+• Apple Store USA / Global (`apple.com`): Quy trình cấu hình Wizard 8 bước, Apple GSX Hardware Diagnostics API, kiểm tra tình trạng kích hoạt iCloud/Find My, AppleCare+ Pre-purchase Binding, iPhone Upgrade Program.
+• Swiftronics USA (`swiftronics.com`): Tiêu chuẩn phân cấp thiết bị Swift Certified Open-Box, ma trận băng tần vô tuyến RF 4G/5G toàn cầu, phân định máy phiên bản Quốc tế (Factory Unlocked) vs Khóa mạng (Carrier Locked).
+• US Mobile Shop (`usmobile.com/shop`): Công cụ kiểm tra độ tương thích IMEI thời gian thực, bóc tách TAC 8 số chuẩn GSMA, kiểm định VoLTE/HD Voice Whitelist, phân định thiết bị thuần eSIM (eSIM-only No-SIM-Tray).
+• Amazon USA (`amazon.com`): Tiêu chuẩn kiểm định Amazon Renewed (Renewed Premium vs Renewed Standard), dung sai thẩm mỹ 30cm dưới nguồn sáng 1000 lux, cam kết pin tối thiểu (>80% / >90%), chứng chỉ tẩy xóa dữ liệu Blancco / PhoneCheck.
+• TikTok Shop (`tiktok.com`): Tích hợp hiển thị tình trạng hàng hóa minh bạch trên luồng Social Commerce, cảnh báo khuyết tật ngoại quan trực tiếp trên Live Showcase và Bottom-sheet giỏ hàng.
+• Shopee (`shopee.vn`): Cơ chế phản ánh tồn kho ATP thời gian thực, khóa mềm giỏ hàng (Soft-lock Inventory 15 phút), phân tầng giá mua đứt vs trả góp SPayLater/BNPL.
+• Ngày hoàn thành cập nhật: 05 tháng 11 năm 2026 (Round 2 Deep Upgrade)
+• Trạng thái: Hoàn tất nghiệm thu (Milestone 1 Deliverable - Benchmark Grade)
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN CÁC NGHIỆP VỤ ĐẶC TẢ
+1. `PROD-VAR-01` / `CAT-SPEC`: Cấu hình Biến thể Đa tầng theo Luồng Wizard Tuần tự, Triệt tiêu Biến thể Bất khả thi, Tính Giá Delta Động & Kiểm tra Tồn kho ATP Thời gian thực (Sequential Multi-Tier Variant Configuration Wizard, Impossible Variant Elimination, Dynamic Pricing Delta & Real-Time ATP Inventory Checking).
+2. `PROD-COND-02` / `CAT-GRADE`: Ma trận Phân cấp Tình trạng Thiết bị Chuẩn hóa (Swiftronics & Amazon Renewed), Dung sai Thẩm mỹ Ngoại quan, Cam kết Sức khỏe Pin, Loại trừ Linh kiện Lô & Ràng buộc Mã băm Chứng chỉ Blancco (Granular Device Condition Grading Matrix, Cosmetic Tolerance Protocols, Tiered Battery Guarantees, Non-OEM Part Detection Rejection & Blancco Cryptographic Certificate Hash Binding).
+3. `PROD-COMPAT-03` / `CAT-CARRIER`: Công cụ Kiểm tra Tương thích Băng tần RF (5G n77/n41), Ánh xạ GSMA TAC, Chuẩn VoLTE, Phân định Khóa mạng, Kiểm soát Phiên bản US No-SIM-Tray & Thuật toán Kiểm tra IMEI Luhn (RF Band Compatibility Engine, GSMA TAC Registry Mapping, VoLTE Compliance, Carrier Lock Classification, US No-SIM-Tray Enforcement & Luhn Checksum Algorithm).
+4. `PROD-IMEI-04` / `CAT-IMEI-LOCK`: Quản trị Vòng đời Bộ Tứ Định danh Phần cứng (Serial, IMEI 1/2, EID), Kiểm tra GSMA Blacklist, Xác thực Khóa Kích hoạt Apple GSX/iCloud/FRP & Chuông Báo động Bất khớp Bàn Đóng gói (Quad-Identifier Hardware Lifecycle Management, GSMA Blacklist Audit, Apple GSX / iCloud / FRP Activation Lock Verification & Packaging Station Barcode Mismatch Alarm).
+————————————————————————————————————————————————————————————————————
+NGHIỆP VỤ 1: PROD-VAR-01 / CAT-SPEC
+CẤU HÌNH BIẾN THỂ ĐA TẦNG THEO LUỒNG WIZARD TUẦN TỰ, TRIỆT TIÊU BIẾN THỂ BẤT KHẢ THI, TÍNH GIÁ DELTA ĐỘNG & KIỂM TRA TỒN KHO ATP THỜI GIAN THỰC
+(SEQUENTIAL MULTI-TIER VARIANT CONFIGURATION WIZARD, IMPOSSIBLE VARIANT ELIMINATION, DYNAMIC PRICING DELTA & REAL-TIME ATP INVENTORY CHECKING)
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│             HÀNH TRÌNH CẤU HÌNH BIẾN THỂ WIZARD BẬC THANG 8 BƯỚC (APPLE STORE BENCHMARK)│├────────────────────────────────────────────────────────────────────────────────────────┤│  [BƯỚC 1: DÒNG MÁY / FORM FACTOR] ──> iPhone 16 Pro (6.3") vs iPhone 16 Pro Max (6.9") ││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 2: MÀU SẮC & VẬT LIỆU]    ──> Titan Sa Mạc / Tự Nhiên / Trắng / Đen (Titanium G5)││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 3: DUNG LƯỢNG LƯU TRỮ]    ──> 128GB (Triệt tiêu nếu Pro Max) / 256GB / 512GB /1TB││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 4: KẾT NỐI & KHÓA MẠNG]   ──> Factory Unlocked vs Carrier Locked / US eSIM-Only ││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 5: TÌNH TRẠNG NGOẠI QUAN] ──> Mới 100% / Open-Box / Renewed Premium A / B / C   ││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 6: HÌNH THỨC THANH TOÁN]  ──> Trả thẳng (One-time) vs Trả góp 0% APR / SPayLater││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 7: DỊCH VỤ GIA TĂNG (VAS)]──> AppleCare+ / Thu cũ Đổi mới (Trade-In Valuation)  ││         │                                                                              ││         ▼                                                                              ││  [BƯỚC 8: CHỐT CẤU HÌNH SKU LÁ]  ──> Sinh Leaf SKU + Tính Price Delta + Khóa Tồn kho ATP│└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+1. Mã & Tên Nghiệp Vụ
+• Mã nghiệp vụ: PROD-VAR-01 (Tương đương mã định danh danh mục: CAT-SPEC).
+• Tên nghiệp vụ: Cấu hình Biến thể Đa tầng theo Luồng Wizard Tuần tự, Triệt tiêu Biến thể Bất khả thi, Tính Giá Delta Động & Kiểm tra Tồn kho ATP Thời gian thực (Sequential Multi-Tier Variant Configuration Wizard, Impossible Variant Elimination, Dynamic Pricing Delta & Real-Time ATP Inventory Checking).
+• Phân hệ quản lý: Quản trị Danh mục & Trang Chi tiết Sản phẩm Nâng cao (Advanced Catalog & PDP Configuration Engine).
+2. Mục Tiêu & Tác Nhân
+• Mục tiêu:
+• Hướng dẫn người dùng qua hành trình cấu hình sản phẩm công nghệ cao phức tạp theo trình tự bậc thang 8 bước trực quan, mô phỏng hoàn hảo trải nghiệm mua sắm trên Apple Store trực tuyến.
+• Loại bỏ hoàn toàn tình trạng quá tải nhận thức (Cognitive Overload) do hiển thị hàng chục nút bấm biến thể dạng ma trận phẳng truyền thống.
+• Ngăn chặn triệt để tình trạng khách hàng lựa chọn các tổ hợp biến thể không tồn tại trong danh mục nhà sản xuất (Impossible SKU Combinations) bằng thuật toán cắt tỉa cây biến thể (Tree Pruning & Dynamic Step-Stepping).
+• Tự động tính toán và hiển thị chênh lệch giá tương đối (Price Delta) tại từng nút bấm lựa chọn, hỗ trợ chuyển đổi linh hoạt giữa giá mua đứt và giá trả góp hàng tháng theo ngữ cảnh.
+• Kiểm tra và phản ánh trạng thái tồn kho khả dụng bán lẻ thực tế (Available-to-Promise - ATP) tại thời gian thực, bảo toàn trạng thái cấu hình qua URL phân tán.
+• Tác nhân tham gia:
+• Khách hàng (Buyer / End-User): Tương tác với các nút bấm cấu hình, xem bộ ảnh render 3D/360 độ và chọn thông số.
+• Bộ điều phối Giao diện Frontend (PDP Client Engine): Quản lý trạng thái giao diện người dùng, điều phối hoạt họa chuyển cảnh, xử lý sự kiện chọn và đồng bộ URL Query Parameters.
+• Dịch vụ Catalog & Ma trận Biến thể (Catalog Variant Engine): Cung cấp cây cấu hình sản phẩm, thực thi thuật toán triệt tiêu biến thể bất khả thi và tính toán giá Delta.
+• Dịch vụ Tồn kho Thời gian thực (Real-time Inventory & ATP Service): Tính toán số lượng tồn kho khả dụng vật lý trừ đi lượng giữ hàng tạm thời (Soft-lock Reservations).
+3. Điều Kiện Tiên Quyết (Preconditions)
+• Sản phẩm gốc (Parent Product / Model Line) đang ở trạng thái ACTIVE, được cấu hình is_wizard_enabled = TRUE và liên kết với một Cây Biến thể Đa tầng (Variant Tree Schema).
+• Cây biến thể trong cơ sở dữ liệu đã định nghĩa đầy đủ 5 cấp thuộc tính cốt lõi:
+$$\text{Model} \longrightarrow \text{Color/Finish} \longrightarrow \text{Storage} \longrightarrow \text{Carrier/Connectivity} \longrightarrow \text{ConditionGrade}$$
+• Bảng ánh xạ giá gốc (Base Price Matrix) và bảng phụ phí chênh lệch (Delta Pricing Table) đã được nạp dữ liệu hợp lệ.
+• Hệ thống Tồn kho (Warehouse Inventory Service) cung cấp kết nối API/WebSocket với độ trễ phản hồi $< 100\text{ms}$ để truy vấn chỉ số ATP.
+4. Luồng Xử Lý Chính Từng Bước (Step-by-Step Main Flow)
+1. Bước 1 - Khởi tạo Giao diện & Tải Cây Biến Thể:
+• Khách hàng truy cập trang sản phẩm (ví dụ: /iphone-16-pro).
+• Hệ thống tải dữ liệu Parent Product kèm Cây Biến Thể (Hierarchical Variant Tree) dạng JSON.
+• Hệ thống tự động chọn Cấu hình Mặc định Khuyến nghị (Default Recommended SKU): Cấu hình bán chạy nhất hoặc cấu hình có giá khởi điểm thấp nhất (ví dụ: iPhone 16 Pro, Titan Tự Nhiên, 128GB, Factory Unlocked, Brand New).
+• Bộ ảnh Gallery hiển thị 6 ảnh chụp siêu nét hoặc trình xem 3D Interactive Viewer tương ứng với màu sắc mặc định.
+2. Bước 2 - Lựa chọn Dòng máy & Kích thước Màn hình (Model & Form Factor Selection):
+• Khách hàng bấm chọn giữa các kích thước thân máy: iPhone 16 Pro (Màn hình 6.3-inch, Super Retina XDR) hoặc iPhone 16 Pro Max (Màn hình 6.9-inch, Super Retina XDR).
+• Giao diện cập nhật khung ảnh so sánh tỷ lệ kích thước thực tế, cập nhật tiêu đề sản phẩm và kích hoạt bộ lọc kiểm tra tính khả dụng của dung lượng bộ nhớ.
+3. Bước 3 - Lựa chọn Màu sắc & Vật liệu Hoàn thiện (Finish & Material Selection):
+• Khách hàng bấm chọn màu sắc: Titan Sa Mạc (Desert Titanium), Titan Tự Nhiên (Natural Titanium), Titan Trắng (White Titanium) hoặc Titan Đen (Black Titanium) hoàn thiện từ Hợp kim Titan Chuẩn Hàng Không Vũ Trụ Cấp 5 (Grade 5 Titanium).
+• Hệ thống kích hoạt hiệu ứng chuyển cảnh mượt mà, đổi toàn bộ bộ ảnh thư viện (Gallery Carousel) sang góc chụp chi tiết của màu tương ứng.
+4. Bước 4 - Lựa chọn Dung lượng Lưu trữ (Storage Selection):
+• Khách hàng chọn dung lượng: 128GB, 256GB, 512GB hoặc 1TB.
+• Trên mỗi nút bấm dung lượng, hệ thống hiển thị mức chênh lệch giá tương đối (Price Delta so với dung lượng cơ sở thấp nhất, ví dụ: +$3,000,000đ hoặc +$12.50/tháng).
+• Nếu khách hàng đang chọn dòng Pro Max: Nút 128GB bị ẩn hoàn toàn hoặc vô hiệu hóa với nhãn gạch ngang (áp dụng cơ chế Triệt tiêu Biến thể Bất khả thi ở Mục 5).
+5. Bước 5 - Lựa chọn Kết nối Mạng & Khóa Mạng (Connectivity & Carrier Variant Selection):
+• Khách hàng chọn giữa:
+• Bản Quốc tế Tự Do (Factory Unlocked): Sử dụng với mọi nhà mạng trên toàn cầu, hỗ trợ cả thẻ SIM vật lý và eSIM.
+• Bản Khóa Mạng (Carrier Locked / Contract Bundle): Liên kết với nhà mạng đối tác (Viettel, Vinaphone, US Mobile), hưởng trợ giá thiết bị tức thì $30 - $150 khi cam kết gói cước 12 tháng.
+• Bản Thuần eSIM Nội Địa Mỹ (US No-SIM-Tray): Giá ưu đãi hơn, nhưng bắt buộc hiển thị hộp kiểm xác nhận cam kết sử dụng công nghệ eSIM (chi tiết tại PROD-COMPAT-03).
+6. Bước 6 - Lựa chọn Cấp độ Tình trạng Ngoại quan (Condition Grading Selection):
+• Khách hàng chọn tình trạng máy: Mới 100% Nguyên Seal (Brand New), Hàng Mở Hộp Trưng Bày (Swift Certified Open-Box), Tân Trang Cao Cấp (Renewed Premium / Grade A), Tân Trang Rất Tốt (Renewed Standard / Grade B) hoặc Tân Trang Tiết Kiệm (Refurbished Fair / Grade C).
+• Khi chọn tình trạng cũ/tân trang: Giao diện hiển thị huy hiệu cam kết sức khỏe pin tối thiểu ($\ge 80\%$ hoặc $\ge 90\%$), thời hạn bảo hành tương ứng (90 ngày hoặc 365 ngày) và đường dẫn xem trước Chứng chỉ Kiểm định Blancco.
+7. Bước 7 - Lựa chọn Mô hình Thanh toán & Dịch vụ Giá trị Gia tăng (Payment & VAS Integration):
+• Khách hàng chuyển đổi giữa phương thức Mua Trả Thẳng (One-time Payment) hoặc Trả Góp 0% Lãi Suất (0% APR Installment qua Thẻ Tín Dụng / BNPL SPayLater).
+• Khách hàng chọn tích hợp Dịch vụ Thu cũ Đổi mới (Trade-In Valuation) để cấn trừ giá trị máy cũ tức thì hoặc chọn thêm gói Bảo hiểm Rơi vỡ Nguồn & Màn hình (AppleCare+ / Bảo Hành Mở Rộng).
+8. Bước 8 - Chốt Cấu hình SKU Lá, Tính Giá Cuối Cùng & Khóa Tồn Kho ATP:
+• Hệ thống giải mã cây biến thể đến đúng nút lá duy nhất (Leaf Node SKU Resolution), ví dụ: IP16PM-256-DESERT-UNL-NEW.
+• Tính toán Giá Thanh Toán Cuối Cùng (Final Landed Price).
+• Truy vấn tồn kho ATP thời gian thực: Nếu $\text{ATP} > 0$, kích hoạt nút "Thêm vào giỏ hàng" và nút "Mua ngay"; nếu $\text{ATP} \le 0$, kích hoạt nút "Nhận thông báo khi có hàng".
+• Cập nhật chuỗi URL Query Parameters trên thanh địa chỉ trình duyệt để bảo toàn trạng thái phiên duyệt web.
+5. Luồng Phụ & Luồng Ngoại Lệ (Alternative & Exception Flows)
+• Luồng ngoại lệ 5a - Triệt tiêu Biến thể Bất khả thi (Impossible Variant Elimination Logic):
+• Tình huống: Khách hàng đang ở cấu hình hợp lệ: iPhone 16 Pro + 128GB. Sau đó khách hàng quay lại Bước 1 bấm đổi sang dòng máy iPhone 16 Pro Max. Vì nhà sản xuất Apple không sản xuất phiên bản 128GB cho dòng Pro Max (dòng Pro Max bắt đầu từ mức tối thiểu 256GB):
+• Cơ chế xử lý hệ thống:
+1. Bộ điều phối nhận diện xung đột ràng buộc cấu hình: Tổ hợp (IPHONE_16_PRO_MAX, 128GB) không có Leaf SKU tương ứng trong cơ sở dữ liệu.
+2. Hệ thống không làm mới lại trang web (Không reload trang), không trả về lỗi 404 hoặc thông báo lỗi đỏ làm gián đoạn trải nghiệm người dùng.
+3. Hệ thống kích hoạt Thuật toán Nhảy bước Dung lượng Tối thiểu (Auto-Step Forward): Tự động nâng lựa chọn dung lượng lên mức hợp lệ kế tiếp gần nhất là 256GB.
+4. Tự động tính toán lại mức giá Delta của bản 256GB Pro Max.
+5. Hiển thị thông báo nhẹ dạng Toast (Toast Notification) ở góc màn hình trong 3 giây: "Dòng iPhone 16 Pro Max có dung lượng khởi điểm từ 256GB. Hệ thống đã tự động nâng cấp cấu hình cho bạn."
+• Tình huống đảo ngược (Auto-Step Backward): Nếu khách hàng đang chọn phiên bản dung lượng cực đại 1TB trên dòng Pro, sau đó chuyển sang dòng cơ bản (iPhone 16 thường - vốn chỉ có tối đa 512GB): Hệ thống tự động lùi bước chọn về 512GB kèm thông báo tương tự.
+• Luồng phụ 5b - Tái tính toán Giá Delta Động theo Ngữ cảnh Trả góp (Contextual Installment Delta Toggle):
+• Khi khách hàng gạt công tắc chuyển đổi từ "Thanh toán một lần" sang "Trả góp 24 tháng":
+• Tất cả nhãn hiển thị mức giá Delta trên từng nút bấm cấu hình lập tức chuyển từ số tiền tuyệt đối sang số tiền phụ thu hàng tháng:
+$$\Delta P_{\text{monthly}} = \frac{\Delta P_{\text{upfront}}}{24}$$
+(Ví dụ: Nút 512GB đổi từ `+$8,500,000đ` sang `+$354,166đ/tháng`).
+• Luồng ngoại lệ 5c - Xử lý Hết Tồn kho Khả dụng (Out-of-Stock ATP Graceful Degradation):
+• Khi một biến thể lá có $\text{ATP} \le 0$ nhưng các biến thể khác của cùng dòng máy vẫn còn hàng:
+• Nút bấm cấu hình bị làm mờ (Grayed out), hiển thị nhãn phụ "Tạm hết hàng".
+• Nếu khách hàng bấm vào nút này: Giao diện hiển thị hộp thoại mở (Modal) cho phép người dùng đăng ký số điện thoại/email để nhận thông báo tự động (Back-in-stock Webhook/SMS Notification) ngay khi kho nhập thêm hàng.
+• Hệ thống tự động đề xuất 2 biến thể thay thế gần nhất có sẵn hàng (ví dụ: gợi ý màu Titan Sa Mạc nếu màu Titan Tự Nhiên hết hàng).
+6. Quy Tắc Nghiệp Vụ & Validation Logic (Business Rules & Validation Logic)
+1. Công thức Tính Giá Cuối Cùng & Chênh Lệch Delta (Dynamic Pricing Formula):
+$$\text{FinalUnitPrice} = \text{BasePrice}(\text{Model}) + \Delta P_{\text{Storage}} + \Delta P_{\text{Finish}} + \Delta P_{\text{Carrier}} - \text{Discount}_{\text{Condition}}(\text{Grade})$$
+Trong đó:
+• $\text{BasePrice}(\text{Model})$: Giá khởi điểm của dòng máy (ví dụ: iPhone 16 Pro Base = 28.990.000đ, Pro Max Base = 34.990.000đ).
+• $\Delta P_{\text{Storage}}$: Mức chênh lệch cố định theo từng bậc dung lượng:
+• $128\text{GB} \rightarrow 256\text{GB}: +3.000.000\text{đ}$
+• $128\text{GB} \rightarrow 512\text{GB}: +8.500.000\text{đ}$
+• $128\text{GB} \rightarrow 1\text{TB}: +14.000.000\text{đ}$
+• $\text{Discount}_{\text{Condition}}(\text{Grade})$: Mức chiết khấu định lượng theo cấp độ ngoại quan:
+• BRAND_NEW: $0\text{đ}$ ($0\%$)
+• OPEN_BOX: Chiết khấu $5\% - 8\%$ so với giá mới.
+• REFURB_A (Renewed Premium): Chiết khấu $12\% - 15\%$.
+• REFURB_B (Renewed Standard): Chiết khấu $20\% - 25\%$.
+• REFURB_C (Refurbished Fair): Chiết khấu $30\% - 40\%$.
+2. Quy tắc Kiểm Soát Tồn Kho Khả Dụng (ATP Calculation Rule):
+$$\text{ATP} = \text{PhysicalStockQuantity} - \text{SoftLockedQuantity} - \text{HardReservedQuantity} - \text{QuarantinedDefectQuantity}$$
+• SoftLockedQuantity: Số lượng đang nằm trong giỏ hàng chờ thanh toán của các khách hàng khác (thời gian giữ chỗ 15 phút, giải phóng bằng Redis TTL).
+• HardReservedQuantity: Đơn hàng đã thanh toán thành công đang chờ nhân viên kho quét nhặt hàng đóng gói.
+• QuarantinedDefectQuantity: Hàng hóa bị khóa cách ly do không đạt tiêu chuẩn kỹ thuật kiểm định.
+• Ràng buộc: Nút "Thêm vào giỏ hàng" chỉ được kích hoạt khi $\text{ATP} \ge 1$.
+3. Quy tắc Cắt Tỉa Cây Biến Thể Động (Dynamic Tree Pruning Invariant):
+• Tuyệt đối cấm tạo ra đường dẫn dẫn tới màn hình lỗi "Không tìm thấy biến thể sản phẩm". Mọi sự kết hợp thuộc tính phải được xác thực trước qua bảng ánh xạ product_variant_combinations. Các tổ hợp bất khả thi phải bị triệt tiêu ngay từ tầng hiển thị giao diện.
+4. Quy tắc Đồng Bộ Hóa Trạng Thái URL (URL State Synchronization):
+• Mọi thao tác chọn thuộc tính phải cập nhật ngay vào URL thông qua HTML5 History API (replaceState):
+https://shop.example.com/products/iphone-16?model=16promax&color=desert&storage=256gb&connectivity=unlocked&grade=refurb_a
+• Đảm bảo khi người dùng tải lại trang (F5) hoặc gửi liên kết cho người khác, hệ thống tái lập nguyên vẹn 100% cấu hình đã chọn.
+7. Dữ Liệu Vào/Ra & Máy Trạng Thái (Data Entities & State Machine)
+• Dữ liệu đầu vào (Inputs):
+--- TABLE START ---
+{    "parent_product_id": "PROD-IPHONE-16",    "selected_model_code": "IPHONE_16_PRO_MAX",    "selected_color_code": "DESERT_TITANIUM",    "selected_storage_code": "256GB",    "selected_carrier_option": "FACTORY_UNLOCKED",    "selected_condition_grade": "REFURB_A",    "payment_mode": "INSTALLMENT_24M",    "applied_trade_in_id": "TIN-2026-98124"  }
+--- TABLE END ---
+• Dữ liệu đầu ra (Outputs):
+--- TABLE START ---
+{    "resolved_sku": "IP16PM-256-DESERT-UNL-REFA",    "barcode_upc": "195949821034",    "base_price": 34990000,    "final_unit_price": 29740000,    "discount_amount": 5250000,    "monthly_installment_amount": 1239166,    "installment_terms_months": 24,    "atp_quantity": 7,    "warranty_duration_days": 365,    "battery_health_guarantee_pct": 90,    "blancco_cert_preview_url": "https://certs.example.com/preview/CERT-IP16PM-8812",    "gallery_assets": [      "https://cdn.example.com/assets/ip16pm/desert/front.webp",      "https://cdn.example.com/assets/ip16pm/desert/back.webp"    ]  }
+--- TABLE END ---
+• Máy trạng thái Trình cấu hình Wizard (Wizard Configuration State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu | Sự Kiện Kích Hoạt | Điều Kiện Kiểm Tra | Trạng Thái Đích | Hành Động Kèm Theo
+UNINITIALIZED | Truy cập trang PDP | Parent Product ACTIVE | TREE_LOADED | Tải Cây Biến Thể JSON, chọn Default SKU
+TREE_LOADED | Người dùng chọn Dòng máy | Dòng máy hợp lệ | STEP_MODEL_SELECTED | Cập nhật kích thước khung, kiểm tra giới hạn dung lượng
+STEP_MODEL_SELECTED | Chọn biến thể không hỗ trợ (Pro Max 128GB) | Tổ hợp không có Leaf SKU | AUTO_STEP_TRIGGERED | Tự nhảy lên 256GB, cập nhật giá Delta, hiển thị Toast cảnh báo
+AUTO_STEP_TRIGGERED | Xử lý xong nhảy bước | Cấu hình hợp lệ | LEAF_RESOLVING | Chốt Leaf SKU, tính toán Landed Price
+LEAF_RESOLVING | Truy vấn tồn kho ATP | $\text{ATP} \ge 1$ | RESOLVED_IN_STOCK | Kích hoạt nút "Thêm vào giỏ hàng" và "Mua ngay"
+LEAF_RESOLVING | Truy vấn tồn kho ATP | $\text{ATP} \le 0$ | RESOLVED_OUT_OF_STOCK | Vô hiệu hóa nút mua, bật nút "Nhận thông báo khi có hàng"
+RESOLVED_IN_STOCK | Bấm "Thêm vào giỏ" | Session giỏ hàng hợp lệ | INVENTORY_SOFT_LOCKED | Giảm ATP tạm thời, tạo khóa giữ hàng 15 phút trong Redis
+--- TABLE END ---
+8. Tiêu Chí Nghiệm Thu Chức Năng (Acceptance Scenarios dạng Given-When-Then)
+• Kịch bản 1: AC-PROD-VAR-01-01 (Triệt tiêu Biến thể Bất khả thi khi đổi từ Pro sang Pro Max)
+• Given: Khách hàng đang ở trang cấu hình iPhone 16 Pro với tùy chọn màu Titan Tự Nhiên và dung lượng 128GB (giá 28.990.000đ).
+• When: Khách hàng bấm chọn nút "iPhone 16 Pro Max" tại Bước 1.
+• Then: Hệ thống lập tức cập nhật ảnh kích thước 6.9-inch, vô hiệu hóa nút 128GB kèm đường gạch ngang, tự động nhảy lựa chọn dung lượng sang 256GB, cập nhật giá thanh toán thành 34.990.000đ và hiển thị Toast thông báo: "Dòng iPhone 16 Pro Max có dung lượng khởi điểm từ 256GB."
+• Kịch bản 2: AC-PROD-VAR-01-02 (Tính toán và phản chiếu Price Delta chính xác theo ngữ cảnh)
+• Given: Khách hàng đang chọn cấu hình iPhone 16 Pro 128GB với giá cơ sở 28.990.000đ.
+• When: Khách hàng quan sát danh sách các nút chọn dung lượng ở Bước 4.
+• Then: Nút 256GB phải hiển thị nhãn "+3.000.000đ", nút 512GB hiển thị nhãn "+8.500.000đ", nút 1TB hiển thị nhãn "+14.000.000đ". Khi chuyển sang chế độ Trả góp 24 tháng, nhãn trên nút 256GB tự động đổi thành "+125.000đ/tháng".
+• Kịch bản 3: AC-PROD-VAR-01-03 (Chặn thêm vào giỏ hàng khi tồn kho ATP = 0)
+• Given: Biến thể SKU IP16PM-1TB-DESERT-UNL-NEW có tồn kho thực tế = 3, số lượng đang soft-lock trong giỏ của người khác = 3, số lượng hỏng = 0 (tức $\text{ATP} = 0$).
+• When: Khách hàng chọn tổ hợp iPhone 16 Pro Max, Titan Sa Mạc, 1TB, Mới 100%.
+• Then: Hệ thống hiển thị nhãn "Tạm hết hàng", vô hiệu hóa nút "Thêm vào giỏ hàng" và hiển thị form đăng ký "Nhận thông báo khi có hàng".
+————————————————————————————————————————————————————————————————————
+NGHIỆP VỤ 2: PROD-COND-02 / CAT-GRADE
+MA TRẬN PHÂN CẤP TÌNH TRẠNG THIẾT BỊ CHUẨN HÓA (SWIFTRONICS & AMAZON RENEWED), DUNG SAI THẨM MỸ NGOẠI QUAN, CAM KẾT SỨC KHỎE PIN, LOẠI TRỪ LINH KIỆN LÔ & RÀNG BUỘC MÃ BĂM CHỨNG CHỈ BLANCCO
+(GRANULAR DEVICE CONDITION GRADING MATRIX, COSMETIC TOLERANCE PROTOCOLS, TIERED BATTERY GUARANTEES, NON-OEM PART DETECTION REJECTION & BLANCCO CRYPTOGRAPHIC CERTIFICATE HASH BINDING)
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│                        MA TRẬN 5 CẤP ĐỘ TÌNH TRẠNG THIẾT BỊ CHUẨN HÓA                  │├─────────────┬──────────────────┬─────────────────┬──────────────────┬──────────────────┤│  BRAND NEW  │     OPEN-BOX     │ RENEWED PREMIUM │ RENEWED STANDARD │ REFURBISHED FAIR ││ (Mới 100%)  │ (Swift Certified)│ (Pristine - Gr A)│ (Very Good - Gr B)│  (Fair - Gr C)   │├─────────────┼──────────────────┼─────────────────┼──────────────────┼──────────────────┤│ - Seal Hãng │ - Bóc seal <14d  │ - Không xước 30cm- Xước viền <0.5mm - Cấn góc rõ rệt   ││ - Pin 100%  │ - Pin 95 - 100%  │ - Pin >= 90%    │ - Pin >= 80%     │ - Pin >= 80%     ││ - 0 Sạc     │ - Sạc < 20 lần   │ - 0 Unknown Part│ - 0 Liệt cảm ứng │ - Màn xước nhẹ   ││ - BH 12 T   │ - BH 90 Ngày     │ - BH 365 Ngày   │ - BH 90 Ngày     │ - BH 30 - 90 Ngày││ - Full Hộp  │ - Full PK Zin    │ - PK MFi Cao Cấp│ - PK Đạt Chuẩn   │ - Thân Máy + Cáp │└─────────────┴──────────────────┴─────────────────┴──────────────────┴──────────────────┘                                         │                                         ▼┌────────────────────────────────────────────────────────────────────────────────────────┐│       QUY TRÌNH KIỂM ĐỊNH TỰ ĐỘNG CHUẨN BLANCCO / PHONECHECK & KÝ SỐ MÃ HÓA            │├────────────────────────────────────────────────────────────────────────────────────────┤│ 1. Xóa sạch dữ liệu cryptographic chuẩn NIST SP 800-88 R1 / DoD 5220.22-M              ││ 2. Thử nghiệm độ rọi chuẩn 1000 lux ở cự ly 30cm & Thử nghiệm rãnh móng tay (Fingernail)││ 3. Chạy 30+ bài kiểm tra phần cứng tự động & Đo tỷ lệ dung lượng pin PMIC thực tế      ││ 4. Kiểm tra cảnh báo linh kiện iOS "Unknown Part" (Chặn tuyệt đối trên Grade A)         ││ 5. Sinh Certificate duy nhất: SHA-256(Serial + DiagnosticsData + PrivateKey)           │└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+1. Mã & Tên Nghiệp Vụ
+• Mã nghiệp vụ: PROD-COND-02 (Tương đương mã định danh danh mục: CAT-GRADE).
+• Tên nghiệp vụ: Ma trận Phân cấp Tình trạng Thiết bị Chuẩn hóa (Swiftronics & Amazon Renewed), Dung sai Thẩm mỹ Ngoại quan, Cam kết Sức khỏe Pin, Loại trừ Linh kiện Lô & Ràng buộc Mã băm Chứng chỉ Blancco (Granular Device Condition Grading Matrix, Cosmetic Tolerance Protocols, Tiered Battery Guarantees, Non-OEM Part Detection Rejection & Blancco Cryptographic Certificate Hash Binding).
+• Phân hệ quản lý: Quản trị Danh mục & Giám định Chất lượng Kho Bãi (Catalog & Warehouse Diagnostic Inspection).
+2. Mục Tiêu & Tác Nhân
+• Mục tiêu:
+• Chuẩn hóa toàn diện danh mục thiết bị công nghệ đã qua sử dụng, mở hộp và tân trang thành 5 cấp bậc phân định rõ ràng, tiệm cận tuyệt đối tiêu chuẩn chất lượng của Swiftronics USA và chương trình Amazon Renewed Guarantee.
+• Loại bỏ hoàn toàn sự cảm tính trong đánh giá ngoại quan của nhân viên kho bằng bộ quy chuẩn định lượng: Thử nghiệm độ rọi sáng 1000 lux tại cự ly tiêu chuẩn 30cm, thử nghiệm độ sâu vết xước bằng móng tay (Fingernail Scratch Depth Test), và đo lường dung sai điểm chết màn hình OLED theo chuẩn ISO 9241-307.
+• Áp dụng các mức cam kết pin tối thiểu phân tầng nghiêm ngặt: $\ge 95\%$ cho Open-Box, $\ge 90\%$ cho Renewed Premium (Grade A) và $\ge 80\%$ cho Grade B/C. Thiết lập chốt chặn an toàn (Hard Gate): Tự động tạo Work Order thay thế pin mới đối với các máy có sức khỏe pin $< 80\%$, cấm xuất bán ra thị trường.
+• Tự động phát hiện và loại trừ các thiết bị có linh kiện thay thế không chính hãng (Unknown Part Warning) trên các phân cấp cao cấp.
+• Ràng buộc mã băm chứng chỉ kiểm định điện tử (Digital Diagnostic Certificate SHA-256 Hash) được cấp bởi phần mềm Blancco Mobile Diagnostics hoặc PhoneCheck vào hồ sơ quản lý từng thân máy, in mã QR tra cứu công khai trên nhãn sản phẩm.
+• Tác nhân tham gia:
+• Kỹ thuật viên Giám định Kho (Hardware Quality Inspector): Kết nối thiết bị vào trạm chẩn đoán tự động, thực hiện kiểm định ngoại quan dưới buồng sáng tiêu chuẩn.
+• Hệ thống Chẩn đoán Phần cứng Tự động (Blancco / PhoneCheck Diagnostic Engine): Tẩy xóa dữ liệu an toàn, thực thi bộ 30+ bài test phần cứng, đọc chỉ số PMIC và sinh chứng chỉ kiểm định có chữ ký số.
+• Dịch vụ ERP & Quản trị Danh mục (Catalog & Inventory Service): Tiếp nhận kết quả kiểm định qua Webhook API, gán phân cấp SKU, ràng buộc mã băm chứng chỉ và mở quyền xuất bán.
+• Khách hàng mua sắm: Tra cứu minh bạch thông số kỹ thuật, lịch sử thay thế linh kiện và quét mã QR xem chứng chỉ kiểm định trước khi quyết định mua hàng.
+3. Điều Kiện Tiên Quyết (Preconditions)
+• Thiết bị nhập kho đã được mở khóa toàn bộ các tài khoản bảo mật cá nhân: iCloud / Find My iPhone phải ở trạng thái OFF, Google Factory Reset Protection (FRP) phải ở trạng thái CLEAN / OFF, Knox Guard / Reactivation Lock phải ở trạng thái OFF.
+• Trạm kiểm định kho bãi được trang bị:
+• Buồng kiểm tra ngoại quan đạt độ rọi tiêu chuẩn $1000 \pm 100\text{ lux}$ với nguồn sáng trắng $5000\text{K} - 6500\text{K}$ (chuẩn ánh sáng ban ngày D65).
+• Thước đo dung sai vết xước quang học (Optical Crack/Scratch Scale) có độ chính xác $0.05\text{mm}$.
+• Trạm chẩn đoán kết nối bản quyền phần mềm Blancco Mobile Diagnostics hoặc PhoneCheck Pro qua cổng cáp Thunderbolt/USB 3.2 tốc độ cao.
+4. Luồng Xử Lý Chính Từng Bước (Step-by-Step Main Flow)
+1. Bước 1 - Tiếp nhận Thiết bị & Khởi tạo Phiên Giám định:
+• Kỹ thuật viên cắm thiết bị vào trạm chẩn đoán tự động.
+• Phần mềm Blancco/PhoneCheck tự động nhận diện thiết bị, đọc số Serial Number, IMEI 1, IMEI 2, EID, mã Model phần cứng, mã thị trường (LL/A, VN/A, ZA/A...) và phiên bản hệ điều hành.
+2. Bước 2 - Tẩy xóa Dữ liệu An toàn Cryptographic (Cryptographic Data Sanitization):
+• Hệ thống tự động thực hiện quy trình ghi đè cryptographic và xóa an toàn dữ liệu người dùng cũ theo tiêu chuẩn NIST SP 800-88 Revision 1 hoặc DoD 5220.22-M.
+• Đảm bảo 100% dữ liệu vùng nhớ người dùng bị triệt tiêu không thể khôi phục, đưa thiết bị về màn hình "Hello" xuất xưởng ban đầu.
+3. Bước 3 - Thực thi Bộ 30+ Bài Kiểm Tra Phần Cứng Tự Động:
+• Trạm chẩn đoán tự động chạy chuỗi kiểm tra phần cứng toàn diện:
+• Màn hình & Cảm ứng: Quét điểm chết (Dead Pixels), ám màu (Burn-in), bóng mờ (Ghosting), kiểm tra cảm ứng đa điểm 10 ngón, độ nhạy 3D Touch/Haptic Touch, tần số quét ProMotion 120Hz, cảm biến True Tone.
+• Sinh trắc học & Cảm biến: Test mô-đun TrueDepth (FaceID) / TouchID, cảm biến tiệm cận, gia tốc kế, con quay hồi chuyển 3 trục, la bàn từ tính, cảm biến áp suất khí quyển.
+• Cụm Camera & Đèn Flash: Test lấy nét tự động Dual Pixel, chống rung cảm biến (Sensor-shift OIS), camera telephoto zoom quang học 5x, camera góc siêu rộng, cảm biến LiDAR Scanner, đèn Flash Quad-LED True Tone.
+• Hệ thống Âm thanh: Đo đáp ứng tần số loa thoại trên, loa ngoài stereo dưới, mảng 4 micro khử ồn chuẩn Studio.
+• Sóng Vô Tuyến & Định Vị: Đo độ suy hao công suất thu phát di động (Cellular RSSI), Wi-Fi 6E/7 MIMO, Bluetooth 5.3, Ultra-Wideband (UWB Chip), NFC thanh toán Apple Pay/Google Pay, GPS băng tần kép L1+L5.
+• Cổng Kết Nối & Nút Bấm: Đo thông mạch cổng sạc USB-C hỗ trợ truyền dữ liệu 10Gbps, kiểm tra nút Action Button, phím tăng/giảm âm lượng, công tắc nguồn.
+4. Bước 4 - Trích xuất Dữ liệu PMIC & Đánh giá Sức Khỏe Pin:
+• Phần mềm đọc trực tiếp dữ liệu từ IC quản lý nguồn (PMIC) bên trong khối pin:
+• Số chu kỳ sạc thực tế (Battery Charge Cycle Count).
+• Dung lượng thiết kế gốc (Design Capacity, ví dụ: 4,422 mAh).
+• Dung lượng thực tế tối đa ở thời điểm hiện tại (Actual Full Charge Capacity, ví dụ: 4,112 mAh).
+• Tính toán tỷ lệ sức khỏe pin:
+$$\text{BatteryHealthPct} = \left( \frac{4112}{4422} \right) \times 100 = 92.99\%$$
+5. Bước 5 - Thẩm định Dung sai Ngoại quan Định lượng Dưới Buồng Sáng 1000 Lux:
+• Kỹ thuật viên đưa thiết bị vào buồng kiểm tra có độ rọi $1000\text{ lux}$.
+• Quan sát thiết bị ở cự ly cánh tay chuẩn 30cm (12 inches):
+• Đánh giá Màn hình: Bật sáng màn hình nền trắng và nền đen để kiểm tra điểm sáng/điểm chết theo tiêu chuẩn ISO 9241-307 Class II.
+• Đánh giá Khung viền & Kính lưng: Quan sát tìm kiếm vết xước. Nếu hoàn toàn không phát hiện bất kỳ vết xước nào ở cự ly 30cm $\rightarrow$ Đủ điều kiện xét duyệt Grade A (Renewed Premium).
+• Thử nghiệm móng tay (Fingernail Scratch Depth Test): Dùng móng tay lướt nhẹ một góc $45^\circ$ qua các vết xước nhìn thấy được trên khung kim loại. Nếu móng tay lướt qua êm ái, vết xước có chiều dài $< 0.5\text{mm}$ $\rightarrow$ Đạt chuẩn Grade B (Renewed Standard). Nếu móng tay bị kẹt vào rãnh xước (độ sâu rãnh $> 0.05\text{mm}$) $\rightarrow$ Đánh tụt xuống Grade C hoặc chuyển trạm thay thế linh kiện.
+6. Bước 6 - Kiểm tra Cảnh báo Linh kiện Không Chính Hãng (Non-OEM Component Detection):
+• Hệ thống quét nhật ký phần cứng hệ thống (iOS Syslog / Android Dmesg):
+• Phát hiện cờ cảnh báo: Important Display Message, Important Battery Message, Important Camera Message, hoặc Unknown Part.
+• Áp dụng quy tắc loại trừ: Cấm tuyệt đối thiết bị có thông báo "Unknown Part" được xếp loại vào Grade A hoặc Open-Box.
+7. Bước 7 - Tổng hợp Phân cấp Tình trạng & Ràng buộc Mã băm Chứng chỉ Blancco:
+• Hệ thống tự động so khớp tất cả các chỉ số với Ma trận Phân cấp Tình trạng Chuẩn hóa để xác định mã phân loại cuối cùng (NEW, OPEN_BOX, REFURB_A, REFURB_B, REFURB_C).
+• Sinh Chuỗi Băm Chứng Chỉ Bảo Mật (Digital Certificate Hash):
+$$\text{CertHash} = \text{SHA-256}(\text{Serial} + \text{IMEI1} + \text{BatteryPct} + \text{GradeCode} + \text{Timestamp} + \text{StationPrivateKey})$$
+• Đẩy dữ liệu qua Webhook API về hệ thống Catalog & ERP: Gán mã SKU tương ứng, gắn diagnostic_cert_hash, sinh mã QR động và kích hoạt số lượng tồn kho ATP sẵn sàng xuất bán.
+5. Luồng Phụ & Luồng Ngoại Lệ (Alternative & Exception Flows)
+• Luồng ngoại lệ 5a - Thiết bị Dưới Chuẩn Tối Thiểu 80% Pin (Battery Under 80% Hard Gate):
+• Tình huống: Thiết bị cũ gửi về kiểm định có ngoại quan đẹp hoàn hảo không vết xước (đủ tiêu chuẩn Grade A), tuy nhiên phần mềm Blancco đo được dung lượng pin thực tế chỉ đạt $78\%$ (hoặc số chu kỳ sạc vượt quá 800 lần):
+• Cơ chế xử lý hệ thống:
+1. Hệ thống ERP lập tức kích hoạt chốt chặn an toàn: Khóa cứng việc sinh mã SKU mở bán cho thiết bị này. Tuyệt đối cấm gán mã REFURB_A, REFURB_B hoặc REFURB_C.
+2. Tự động sinh Lệnh Gia Công Kỹ Thuật (Internal Maintenance Work Order): Chuyển thiết bị sang Trạm Kỹ thuật Phần cứng với ghi chú "Yêu cầu thay thế cell pin mới đạt chứng chỉ an toàn UL 2054 / CE / PSE".
+3. Sau khi kỹ thuật viên hoàn tất việc thay pin chính hãng mới: Thiết bị được cắm trở lại trạm chẩn đoán để chạy lại toàn bộ quy trình từ Bước 1. Khi pin mới đạt sức khỏe $100\%$ (Cycle Count = 0), thiết bị mới được mở khóa để xếp hạng Grade A/B và xuất bán.
+• Luồng ngoại lệ 5b - Phát hiện Linh kiện Thay thế Không Chính Hãng (Unknown Part Detection Flow):
+• Tình huống: Trong quá trình chẩn đoán thiết bị gửi về, hệ thống phát hiện cảnh báo Important Display Message (Màn hình thay thế không có chữ ký số của Apple) hoặc màn hình lô không hỗ trợ tính năng True Tone:
+• Cơ chế xử lý hệ thống:
+1. Gán cờ an ninh FAILED_OEM_VALIDATION.
+2. Tự động loại trừ thiết bị khỏi danh mục OPEN_BOX và REFURB_A (Renewed Premium).
+3. Nếu màn hình thay thế là loại linh kiện cao cấp từ bên thứ ba (OEM Tier 1 / iFixit Certified) có cảm ứng mượt mà và hiển thị đạt chuẩn: Cho phép hạ cấp xuống REFURB_B hoặc REFURB_C, nhưng bắt buộc phải gắn nhãn công khai (Defect Disclosure Tag) trên trang sản phẩm: "Thiết bị đã được thay thế màn hình đạt chuẩn chất lượng từ bên thứ ba, hiển thị và cảm ứng hoàn hảo."
+4. Nếu màn hình là loại kém chất lượng (loạn cảm ứng, độ sáng $< 400\text{ nits}$): Loại bỏ hoàn toàn khỏi danh mục bán lẻ, chuyển sang kho thanh lý linh kiện tháo rời.
+6. Quy Tắc Nghiệp Vụ & Validation Logic (Business Rules & Validation Logic)
+1. Bảng Đặc Tả Chi Tiết Ma Trận Phân Cấp Tình Trạng Thiết Bị (Granular Grading Matrix):
+--- TABLE START ---
+Cấp Độ Tình Trạng | Mã SKU Phân Cấp | Tiêu Chuẩn Thẩm Mỹ Ngoại Quan (Buồng Sáng 1000 Lux / Cự Ly 30cm) | Dung Lượng Pin Cam Kết | Chu Kỳ Sạc Tối Đa | Yêu Cầu Linh Kiện (OEM Check) | Thời Hạn Bảo Hành | Phụ Kiện Kèm Theo
+Brand New | NEW | Mới 100% nguyên seal hộp của nhà sản xuất (Factory Sealed). Chưa từng kích hoạt bảo hành điện tử. | $100\%$ | 0 - 2 lần | 100% Linh kiện gốc xuất xưởng | 12 Tháng chính hãng | Đầy đủ nguyên hộp theo tiêu chuẩn của hãng
+Open-Box (Swift Certified) | OPEN_BOX | Hàng bóc seal đổi trả sớm trong 14 ngày hoặc máy trưng bày. Ngoại quan hoàn hảo 100%, không tì vết, không trầy xước viền và màn hình. | $\mathbf{\ge 95\%}$ | $< 20$ lần | 100% Nguyên bản, cấm tuyệt đối cảnh báo Unknown Part | 90 Ngày của sàn | Đầy đủ hộp và toàn bộ phụ kiện zin theo máy
+Renewed Premium (Grade A) | REFURB_A | Hoàn hảo như mới (Pristine). Tuyệt đối không nhìn thấy vết xước nào ở khoảng cách 30cm dưới nguồn sáng 1000 lux. Màn hình nguyên bản không xước dăm. | $\mathbf{> 90\%}$ | $< 250$ lần | 100% Linh kiện gốc, cấm tuyệt đối Unknown Part | 365 Ngày (1 Năm Trọn Vẹn) | Cáp sạc bọc dù cao cấp chuẩn MFi/UL, đóng hộp carton cao cấp
+Renewed Standard (Grade B) | REFURB_B | Rất tốt (Very Good). Khung viền kim loại/mặt lưng có thể có vết xước dăm siêu nhỏ chiều dài $< 0.5\text{mm}$, không gồ móng tay. Màn hình không trầy khi bật sáng. | $\mathbf{\ge 80\%}$ | $< 500$ lần | Chấp nhận linh kiện thay thế OEM Tier 1 nếu công bố rõ | 90 Ngày | Củ sạc + cáp sạc đạt chuẩn an toàn, đóng hộp bảo vệ
+Refurbished Fair (Grade C) | REFURB_C | Dùng tốt (Fair). Có vết cấn góc, trầy sơn hoặc xước dăm rõ ràng nhìn thấy ở cự ly 30cm. Màn hình có xước nhẹ nhưng cảm ứng và hiển thị tốt 100%. | $\mathbf{\ge 80\%}$ | $< 800$ lần | Chấp nhận linh kiện thay thế nếu vượt qua 30 bài test | 30 - 90 Ngày | Thân máy + cáp sạc tiêu chuẩn, đóng hộp bảo vệ
+--- TABLE END ---
+2. Tiêu Chuẩn Dung Sai Điểm Chết Màn Hình OLED (ISO 9241-307 Class II Tolerance):
+• Grade NEW & OPEN_BOX: $0$ Điểm sáng (Hot pixel), $0$ Điểm tối (Dead pixel), $0$ Điểm chết sub-pixel, $0$ Vết lưu ảnh (Burn-in / Ghosting).
+• Grade REFURB_A: $0$ Điểm sáng, $0$ Điểm tối, tối đa $0$ Điểm chết sub-pixel, $0$ Burn-in.
+• Grade REFURB_B: $0$ Điểm sáng, tối đa $1$ Điểm chết sub-pixel tại khu vực rìa ngoài màn hình (cách mép $> 5\text{mm}$), $0$ Burn-in.
+• Grade REFURB_C: $0$ Điểm sáng lớn, tối đa $2$ Điểm chết sub-pixel không liền kề, cho phép lưu ảnh cực nhẹ (Low ghosting) tại vị trí thanh trạng thái pin nếu không ảnh hưởng đến trải nghiệm đọc nội dung.
+3. Quy Tắc Ràng Buộc Mã Băm Chứng Chỉ Blancco (Mandatory Certificate Hash Binding):
+• Mọi thiết bị lưu kho thuộc các nhóm OPEN_BOX, REFURB_A, REFURB_B, REFURB_C bắt buộc phải có trường diagnostic_cert_hash hợp lệ trong cơ sở dữ liệu.
+• Nếu một bản ghi thiết bị thiếu mã băm chứng chỉ: Hệ thống WMS tại trạm đóng gói sẽ phát âm thanh cảnh báo lỗi và khóa cứng cổng in nhãn vận chuyển, ngăn chặn việc xuất kho máy chưa qua kiểm định.
+4. Quy Tắc Minh Bạch Khuyết Tật Ngoại Quan (Defect Disclosure Rule):
+• Đối với tất cả sản phẩm thuộc phân loại REFURB_C, hệ thống bắt buộc phải có liên kết hiển thị 3 ảnh chụp độ phân giải cao cận cảnh các vị trí trầy cấn thực tế của thiết bị cụ thể đó trên trang sản phẩm để khách hàng xem xét trước khi bấm thanh toán.
+7. Dữ Liệu Vào/Ra & Máy Trạng Thái (Data Entities & State Machine)
+• Dữ liệu đầu vào (Inputs):
+--- TABLE START ---
+{    "device_hardware_id": "HW-IP16P-99214",    "serial_number": "F2LWM098P2",    "imei_1": "356892112345678",    "cosmetic_inspection": {      "visible_scratches_at_30cm": false,      "max_scratch_length_mm": 0.0,      "fingernail_catch_detected": false,      "oled_dead_pixels_count": 0,      "burn_in_detected": false    },    "blancco_test_results": {      "hardware_suite_passed": true,      "total_tests_run": 34,      "tests_passed": 34,      "unknown_parts_flag": false,      "battery_metrics": {        "cycle_count": 87,        "design_capacity_mah": 3582,        "full_charge_capacity_mah": 3340,        "health_percentage": 93.24      }    }  }
+--- TABLE END ---
+• Dữ liệu đầu ra (Outputs):
+--- TABLE START ---
+{    "condition_grade_code": "REFURB_A",    "assigned_sku": "IP16P-256-NAT-UNL-REFA",    "warranty_duration_days": 365,    "battery_health_certified_pct": 93,    "diagnostic_cert_id": "BLAN-2026-991204",    "diagnostic_cert_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",    "certificate_verification_url": "https://verify.example.com/cert/BLAN-2026-991204",    "qr_code_payload_svg": "<svg>...</svg>",    "work_order_required": false  }
+--- TABLE END ---
+• Máy trạng thái Quy trình Giám định Thiết bị (Device Inspection State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu | Sự Kiện Kích Hoạt | Điều Kiện Kiểm Tra | Trạng Thái Đích | Hành Động Kèm Theo
+RECEIVED_AT_WH | Cắm cáp vào trạm Blancco | Cáp kết nối tốt | DATA_SANITIZING | Chạy lệnh xóa dữ liệu NIST SP 800-88 R1
+DATA_SANITIZING | Xóa dữ liệu thành công | Toàn bộ phân vùng sạch | DIAGNOSTIC_TESTING | Chạy 30+ bài test phần cứng tự động
+DIAGNOSTIC_TESTING | Test phần cứng hoàn tất | Có bài test bị fail | DEFECT_QUARANTINE | Chuyển khu vực chờ sửa chữa linh kiện
+DIAGNOSTIC_TESTING | Test phần cứng hoàn tất | Pass 100% các bài test | BATTERY_EVALUATION | Đọc dữ liệu PMIC đo % pin
+BATTERY_EVALUATION | Pin $< 80\%$ | Sức khỏe pin không đạt | BATTERY_REPLACE_REQ | Tạo Work Order thay pin mới, khóa xuất bán
+BATTERY_EVALUATION | Pin $\ge 80\%$ | Sức khỏe pin đạt chuẩn | COSMETIC_EVALUATION | Kiểm tra buồng sáng 1000 lux & cự ly 30cm
+COSMETIC_EVALUATION | Đánh giá ngoại quan xong | Không có Unknown Part | GRADE_ASSIGNED | Gán mã phân cấp, sinh Certificate SHA-256
+GRADE_ASSIGNED | Ký số Certificate xong | CSDL lưu thành công | READY_FOR_SALE | In tem Barcode/QR, kích hoạt tồn kho ATP
+--- TABLE END ---
+8. Tiêu Chí Nghiệm Thu Chức Năng (Acceptance Scenarios dạng Given-When-Then)
+• Kịch bản 1: AC-PROD-COND-02-01 (Xét duyệt Hạng Renewed Premium với pin $\ge 90\%$ và không xước ở 30cm)
+• Given: Thiết bị iPhone 15 Pro cũ vượt qua 34 bài test phần cứng Blancco, không có cảnh báo Unknown Part, ngoại quan hoàn toàn không nhìn thấy vết xước ở cự ly 30cm dưới độ rọi 1000 lux, và dung lượng pin thực tế đo được đạt 92%.
+• When: Kỹ thuật viên gửi kết quả kiểm định lên hệ thống.
+• Then: Hệ thống tự động gán phân cấp REFURB_A (Renewed Premium), thiết lập thời hạn bảo hành 365 ngày, sinh mã băm chứng chỉ diagnostic_cert_hash hợp lệ và tạo mã QR động thành công.
+• Kịch bản 2: AC-PROD-COND-02-02 (Khóa cứng xuất bán và tạo Work Order khi pin dưới 80%)
+• Given: Thiết bị Samsung Galaxy S23 Ultra cũ có ngoại quan đẹp như mới nhưng phần mềm đọc dữ liệu PMIC báo pin đạt 77%.
+• When: Kỹ thuật viên cố tình chọn phân cấp REFURB_B trên giao diện giám định.
+• Then: Hệ thống từ chối lưu, hiển thị cảnh báo đỏ: "Lỗi chốt chặn an toàn: Pin 77% không đạt ngưỡng tối thiểu 80%. Tự động tạo Work Order chuyển sang trạm kỹ thuật thay pin mới trước khi mở bán."
+• Kịch bản 3: AC-PROD-COND-02-03 (Chặn phân cấp Grade A khi phát hiện cảnh báo linh kiện Unknown Part)
+• Given: Thiết bị iPhone 14 Pro Max có ngoại quan hoàn hảo không vết xước và pin 94%, nhưng nhật ký iOS phát hiện cờ Important Display Message (Màn hình thay thế không chính hãng).
+• When: Hệ thống thực thi quy tắc phân loại tự động.
+• Then: Hệ thống chặn không cho phép xếp loại REFURB_A hoặc OPEN_BOX, tự động hạ cấp xuống REFURB_B và bắt buộc đính kèm nhãn cảnh báo thay thế linh kiện trên trang chi tiết sản phẩm.
+————————————————————————————————————————————————————————————————————
+NGHIỆP VỤ 3: PROD-COMPAT-03 / CAT-CARRIER
+CÔNG CỤ KIỂM TRA TƯƠNG THÍCH BĂNG TẦN RF (5G N77/N41), ÁNH XẠ GSMA TAC, CHUẨN VOLTE, PHÂN ĐỊNH KHÓA MẠNG, KIỂM SOÁT PHIÊN BẢN US NO-SIM-TRAY & THUẬT TOÁN KIỂM TRA IMEI LUHN
+(RF BAND COMPATIBILITY ENGINE, GSMA TAC REGISTRY MAPPING, VOLTE COMPLIANCE, CARRIER LOCK CLASSIFICATION, US NO-SIM-TRAY ENFORCEMENT & LUHN CHECKSUM ALGORITHM)
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│             HỆ THỐNG THẨM ĐỊNH ĐỘ TƯƠNG THÍCH MẠNG VIỄN THÔNG (US MOBILE BENCHMARK)    │├────────────────────────────────────────────────────────────────────────────────────────┤│  [NHẬP LIỆU: 15 SỐ IMEI / MÃ MODEL PHẦN CỨNG (A3102 / A3106) / NHÀ MẠNG MỤC TIÊU]     ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 1: XÁC THỰC THUẬT TOÁN LUHN CHECK DIGIT (MODULO 10 CHECKSUM)]                   ││    ├── Nếu Checksum sai ──> Báo lỗi tức thì tại ô nhập, yêu cầu bấm *#06# kiểm tra     ││    └── Nếu Checksum đúng ──> Cho phép thực thi phân tích chuyên sâu                    ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 2: BÓC TÁCH MÃ TAC (8 SỐ ĐẦU) & TRUY VẤN GSMA DEVICE REGISTRY]                  ││    └── Lấy Modem Hardware: Snapdragon X75, Băng tần LTE/5G, Kiến trúc SIM vật lý/eSIM ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 3: KIỂM SOÁT PHIÊN BẢN US NO-SIM-TRAY (eSIM-ONLY MODELS)]                       ││    ├── Model Mỹ (A2649, A2848, A3102...) ──> BẮT BUỘC BẬT CẢNH BÁO THUẦN ESIM          ││    └── Model Quốc tế / VN / Hong Kong ──> Hỗ trợ khay SIM vật lý Nano-SIM             ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 4: ĐỐI CHIẾU MA TRẬN BĂNG TẦN RF 5G & DANH SÁCH TRẮNG VOLTE]                   ││    ├── 5G NR: n77 (3.7GHz), n41 (2.5GHz), n78 (3.5GHz), n1, n3, n28, mmWave           ││    ├── VoLTE: Bắt buộc hỗ trợ sau khi Việt Nam & Quốc tế tắt sóng 2G/3G                ││    └── Khóa mạng: Phân định Factory Unlocked vs Carrier Locked                         ││                                │                                                       ││                                ▼                                                       ││  [BƯỚC 5: TRẢ VỀ KẾT QUẢ ĐÁNH GIÁ 3 MỨC & CẤP PHÁT CẤU HÌNH APN TỰ ĐỘNG]               ││    ├── Optimal (100%) / Partial Compatibility / Incompatible                           ││    └── Tải tệp profile .mobileconfig tự động cho iOS hoặc hướng dẫn APN cho Android    │└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+1. Mã & Tên Nghiệp Vụ
+• Mã nghiệp vụ: PROD-COMPAT-03 (Tương đương mã định danh danh mục: CAT-CARRIER).
+• Tên nghiệp vụ: Công cụ Kiểm tra Tương thích Băng tần RF (5G n77/n41), Ánh xạ GSMA TAC, Chuẩn VoLTE, Phân định Khóa mạng, Kiểm soát Phiên bản US No-SIM-Tray & Thuật toán Kiểm tra IMEI Luhn (RF Band Compatibility Engine, GSMA TAC Registry Mapping, VoLTE Compliance, Carrier Lock Classification, US No-SIM-Tray Enforcement & Luhn Checksum Algorithm).
+• Phân hệ quản lý: Quản trị Danh mục & Tích hợp Dịch vụ Viễn thông (Catalog & Telecom Carrier Integration).
+2. Mục Tiêu & Tác Nhân
+• Mục tiêu:
+• Ngăn ngừa hoàn toàn rủi ro khách hàng mua phải điện thoại xách tay quốc tế không tương thích với băng tần viễn thông của nhà mạng địa phương, dẫn đến sự cố không bắt được sóng 5G tốc độ cao hoặc mất hoàn toàn khả năng nghe gọi thoại sau khi hạ tầng 2G/3G bị tắt sóng.
+• Tích hợp công cụ thẩm định số IMEI theo thuật toán Luhn Modulo 10, trích xuất mã TAC (Type Allocation Code - 8 chữ số đầu) để truy vấn bảng đăng ký thiết bị GSMA Device Registry.
+• Đối chiếu chính xác ma trận dải tần số vô tuyến RF của modem thiết bị với băng tần đang phát sóng của các nhà mạng viễn thông mục tiêu (đặc biệt là băng tần 5G n77 và n41 của Viettel, Vinaphone tại Việt Nam và các băng tần của US Mobile, AT&T, Verizon tại Mỹ).
+• Phân định rõ ràng thiết bị Quốc tế Tự do (Factory Unlocked) và thiết bị Khóa mạng (Carrier Locked).
+• Nhận diện và thực thi cơ chế cảnh báo bắt buộc đối với các phiên bản nội địa Mỹ không có khay SIM vật lý (US No-SIM-Tray / eSIM-Only Models), định hướng khách hàng sử dụng dịch vụ kích hoạt eSIM tức thì.
+• Tự động sinh tệp cấu hình điểm truy cập APN (Over-The-Air APN Provisioning Profile) cho hệ điều hành iOS và Android.
+• Tác nhân tham gia:
+• Khách hàng mua sắm: Nhập chuỗi 15 số IMEI của máy sẵn có hoặc tra cứu mã hiệu model phần cứng (Model Hardware Code) của sản phẩm định mua.
+• Động cơ Thẩm định Tương thích (Carrier Compatibility Matching Engine): Phân tích TAC, so khớp bảng tần số RF và xác minh chứng chỉ VoLTE của nhà mạng.
+• Dịch vụ Cấp phát Cấu hình Mạng (APN Provisioning Service): Sinh tệp .mobileconfig cho Apple iOS và hướng dẫn tham số mạng cho Android.
+3. Điều Kiện Tiên Quyết (Preconditions)
+• Cơ sở dữ liệu duy trì bảng tra cứu mã định danh thiết bị catalog_gsma_tac_registry được đồng bộ từ GSMA Database, chứa đầy đủ thông tin: Mã TAC, Tên thương mại, Nhà sản xuất, Mã Model phần cứng, Chipset Modem, Dải tần RF và Kiến trúc khay SIM.
+• Bảng ma trận tần số sóng vô tuyến của các nhà mạng viễn thông Việt Nam (Viettel, Vinaphone, Mobifone) và quốc tế (US Mobile, AT&T, T-Mobile, Verizon) được cập nhật liên tục.
+4. Luồng Xử Lý Chính Từng Bước (Step-by-Step Main Flow)
+1. Bước 1 - Tiếp nhận Yêu Cầu & Thẩm Định Tính Hợp Lệ Của IMEI:
+• Khách hàng nhập chuỗi 15 chữ số IMEI trên widget "Kiểm tra Tương Thích Mạng" hoặc hệ thống tự động bóc tách IMEI/Model Code của máy khách đang duyệt.
+• Hệ thống thực thi Thuật toán Kiểm tra Số Kiểm tra Luhn (Luhn Checksum Modulo 10):
+• Nếu số kiểm tra không hợp lệ: Báo lỗi ngay lập tức tại ô nhập liệu: "Số IMEI không đúng quy chuẩn. Vui lòng bấm phím #06# trên điện thoại để kiểm tra lại chính xác 15 chữ số."*
+• Nếu số kiểm tra hợp lệ: Cho phép chuyển sang Bước 2.
+2. Bước 2 - Bóc Tách Mã TAC & Truy Vấn Cơ Sở Dữ Liệu GSMA:
+• Hệ thống trích xuất 8 chữ số đầu tiên của IMEI để xác định mã TAC ($d_1 d_2 \dots d_8$).
+• Truy vấn bảng catalog_gsma_tac_registry để lấy thông số phần cứng gốc:
+• Tên thương mại: iPhone 16 Pro Max.
+• Mã hiệu Model phần cứng: A3102 (Bản Mỹ) hoặc A3106 (Bản Quốc tế / Châu Âu) hoặc A3296 (Bản VN/A).
+• Modem vô tuyến: Qualcomm Snapdragon X75 5G Modem-RF System.
+• Kiến trúc SIM: ESIM_ONLY vs PHYSICAL_PLUS_ESIM vs DUAL_PHYSICAL_SIM.
+3. Bước 3 - Kiểm Soát Phiên Bản US No-SIM-Tray (eSIM-Only Models):
+• Nếu kết quả tra cứu cho thấy thiết bị là phiên bản thị trường Mỹ (Model A2649, A2846, A2848, A3102...):
+• Hệ thống kích hoạt cơ chế thực thi cảnh báo No-SIM-Tray: Hiển thị biểu tượng cảnh báo màu vàng rực rỡ kèm thông báo: "CHÚ Ý QUAN TRỌNG: Thiết bị này là phiên bản nội địa Mỹ, hoàn toàn không có khe cắm khay SIM vật lý bằng nhựa. Bạn bắt buộc phải chuyển đổi số thuê bao hiện tại sang công nghệ eSIM để kích hoạt mạng."
+• Tại bước giỏ hàng/thanh toán: Bắt buộc người mua phải tích vào hộp kiểm (Checkbox) xác nhận đã hiểu rõ trước khi tiến hành thanh toán.
+• Hệ thống tự động kích hoạt liên kết gợi ý sang phân hệ VAS để hỗ trợ cấp phát eSIM tức thì (Direct eSIM Push qua SM-DP+).
+4. Bước 4 - Đối Chiếu Ma Trận Tần Số Sóng RF & Chứng Chỉ VoLTE:
+• Hệ thống lấy danh sách toàn bộ các dải băng tần thiết bị hỗ trợ và so khớp với nhà mạng khách hàng đã chọn:
+• Kiểm tra 5G Băng tần n77 & n41:
+• Nhà mạng Viettel triển khai 5G trên băng tần n77 (3.7GHz - 3.8GHz) và n41 (2.5GHz). Thiết bị phải hỗ trợ cả hai băng tần này để đạt chất lượng sóng 5G hoàn hảo nhất.
+• Nhà mạng Vinaphone triển khai 5G trên băng tần n77 (3.7GHz).
+• Nhà mạng Mobifone triển khai 5G trên băng tần n78 (3.5GHz).
+• Kiểm tra 4G LTE & VoLTE:
+• Vì các nhà mạng tại Việt Nam và quốc tế (US Mobile, AT&T) đã chính thức tắt sóng 2G/3G: Bắt buộc thiết bị phải có chứng chỉ VoLTE (Voice over LTE) trên băng tần Band 1 (2100MHz) và Band 3 (1800MHz).
+• Đối chiếu số Model với Danh sách Trắng VoLTE (Carrier VoLTE Whitelist) của nhà mạng.
+• Kiểm tra Khóa mạng (Carrier Lock Status):
+• Thiết bị là bản Quốc tế Tự Do (Factory Unlocked) hay Khóa Mạng (Carrier Locked).
+5. Bước 5 - Trả Về Kết Quả Đánh Giá Tương Thích & Cấp Phát APN Tự Động:
+• Hệ thống hiển thị Thẻ Kết Quả Đánh Giá Tương Thích trực quan chia làm 3 mức:
+• TƯƠNG THÍCH HOÀN HÀO (Optimal - 100%): Hỗ trợ đầy đủ VoLTE thoại chất lượng cao, 4G LTE đa băng tần và 5G tốc độ tối đa trên dải n77/n41.
+• TƯƠNG THÍCH HẠN CHẾ (Partial Compatibility): Sử dụng được 4G và nghe gọi VoLTE bình thường, nhưng không bắt được sóng 5G do thiếu băng tần n77/n41; hoặc chỉ dùng được eSIM mà không dùng được SIM khay nhựa.
+• KHÔNG TƯƠNG THÍCH (Incompatible): Máy bị khóa mạng nước ngoài hoặc không hỗ trợ chứng chỉ VoLTE, dẫn đến nguy cơ mất sóng hoàn toàn không thể nghe gọi được tại Việt Nam.
+• Nếu khách hàng bấm nút "Tải cấu hình cài đặt mạng cho máy này":
+• Đối với iOS: Cung cấp đường dẫn tải tệp profile .mobileconfig qua giao thức OTA.
+• Đối với Android: Hiển thị bảng tham số APN chi tiết (APN Name, MMSC Proxy, APN Type default,supl,mms) kèm nút sao chép nhanh 1 chạm.
+5. Luồng Phụ & Luồng Ngoại Lệ (Alternative & Exception Flows)
+• Luồng ngoại lệ 5a - Nhập Sai Định Dạng IMEI (Luhn Algorithm Rejection):
+• Khách hàng nhập thiếu chữ số, chứa ký tự chữ cái hoặc chuỗi 15 số có check digit sai lệch:
+• Hệ thống ngăn chặn việc gửi yêu cầu lên máy chủ (Client-side validation chặn ngay lập tức), viền ô nhập đổi màu đỏ kèm thông báo hướng dẫn cụ thể: "IMEI phải gồm đúng 15 chữ số và thỏa mãn thuật toán Luhn. Vui lòng bấm #06# để kiểm tra."*
+• Luồng ngoại lệ 5b - Phát hiện Thiết bị Khóa Mạng Nước Ngoài (Carrier Locked Alert):
+• Tra cứu dữ liệu nhận thấy thiết bị thuộc diện khóa mạng (ví dụ: máy khóa mạng Docomo Nhật Bản hoặc T-Mobile USA):
+• Hệ thống bật cảnh báo màu vàng: "CẢNH BÁO: Thiết bị này là phiên bản Khóa Mạng (Carrier Locked). Máy không thể nhận SIM của các nhà mạng Việt Nam nếu chưa được thanh toán cước đầy đủ và mở mạng quốc tế chính thức từ nhà mạng gốc."
+• Luồng ngoại lệ 5c - Thiết bị Không Hỗ Trợ VoLTE (VoLTE Incompatibility Warning):
+• Khi tra cứu máy đời cũ xách tay không có cấu hình VoLTE tương thích với hạ tầng Việt Nam:
+• Hệ thống hiển thị cảnh báo đỏ khẩn cấp: "NGUY HIỂM: Thiết bị này không hỗ trợ cuộc gọi VoLTE trên mạng viễn thông Việt Nam. Do sóng 2G/3G đã tắt hoàn toàn, bạn sẽ KHÔNG THỂ thực hiện hoặc nhận bất kỳ cuộc gọi thoại nào (kể cả gọi khẩn cấp 113/114/115) nếu sử dụng máy này."
+6. Quy Tắc Nghiệp Vụ & Validation Logic (Business Rules & Validation Logic)
+1. Thuật Toán Kiểm Tra Số Kiểm Tra Luhn (Luhn Checksum Modulo 10 Algorithm):
+Chuỗi 15 chữ số IMEI được ký hiệu là $d_1 d_2 d_3 \dots d_{15}$.
+• Với mỗi vị trí chữ số $i$ từ 1 đến 14 (tính từ trái sang phải, chỉ số 1-indexed):
+• Nếu $i$ là vị trí lẻ ($i \in \{1, 3, 5, 7, 9, 11, 13\}$): $c_i = d_i$.
+• Nếu $i$ là vị trí chẵn ($i \in \{2, 4, 6, 8, 10, 12, 14\}$): $t_i = 2 \times d_i$. Nếu $t_i \ge 10$, thì $c_i = t_i - 9$ (tương đương tổng hai chữ số của $t_i$), ngược lại $c_i = t_i$.
+• Tính tổng kiểm tra:
+$$S = \sum_{i=1}^{14} c_i$$
+• Số kiểm tra hợp lệ $d_{15}$ phải thỏa mãn:
+$$d_{15} = (10 - (S \bmod 10)) \bmod 10$$
+• Toàn bộ chuỗi 15 số là hợp lệ khi và chỉ khi:
+$$\left( \sum_{i=1}^{15} c_i \right) \bmod 10 = 0 \quad (\text{với } c_{15} = d_{15})$$
+2. Ma Trận Tần Số Sóng Vô Tuyến Nhà Mạng Viễn Thông (Carrier RF Compatibility Matrix):
+--- TABLE START ---
+Nhà Mạng Viễn Thông | Băng Tần 4G LTE Xương Sống (Bắt buộc VoLTE) | Băng Tần 5G NR Triển Khai Thực Tế | Điều Kiện Đạt Chuẩn "TƯƠNG THÍCH HOÀN HẢO"
+Viettel Telecom | Band 3 (1800MHz), Band 1 (2100MHz) | n77 (3.8GHz), n41 (2.5GHz) | Có VoLTE + Có B3 + Có ít nhất một trong hai băng tần 5G n77 hoặc n41
+Vinaphone (VNPT) | Band 3 (1800MHz), Band 1 (2100MHz) | n77 (3.7GHz) | Có VoLTE + Có B1/B3 + Có băng tần 5G n77
+Mobifone | Band 3 (1800MHz), Band 1, Band 8 (900MHz) | n78 (3.5GHz) | Có VoLTE + Có B3 + Có băng tần 5G n78
+US Mobile / AT&T | Band 2, 4, 5, 12, 14, 29, 30, 66 | n5, n77, n260 (mmWave) | Có AT&T HD Voice Whitelist + Có B2/B12/B66 + Có n77
+--- TABLE END ---
+3. Quy Tắc Phân Định Kiến Trúc SIM Theo Thị Trường (SIM Hardware Architecture Rule):
+• Nhóm 1: ESIM_ONLY (Model Mỹ: A2649, A2846, A2848, A3102...). Không có khay SIM vật lý. Cho phép lưu 8 profile eSIM, hoạt động cùng lúc 2 eSIM (Dual Active eSIM).
+• Nhóm 2: PHYSICAL_PLUS_ESIM (Model Quốc tế, VN/A, Canada, Châu Âu: A3106, A3296...). Có 1 khay Nano-SIM vật lý + 1 eSIM.
+• Nhóm 3: DUAL_PHYSICAL_SIM (Model Trung Quốc, Hong Kong, Macao: ZA/A, CH/A). Có khay SIM 2 mặt chứa 2 thẻ Nano-SIM vật lý. Hoàn toàn không có chip eUICC để hỗ trợ eSIM.
+4. Quy Tắc Ràng Buộc Hộp Kiểm Miễn Trừ Trách Nhiệm (Disclaimer Binding Rule):
+• Nếu khách hàng đặt mua một thiết bị được hệ thống cảnh báo là PARTIAL_COMPATIBILITY hoặc thiết bị ESIM_ONLY, tại màn hình thanh toán bắt buộc phải hiển thị hộp kiểm xác nhận có chữ ký điện tử:
+"Tôi đã đọc và hiểu rõ thông số kỹ thuật của thiết bị (bao gồm việc máy là bản No-SIM-Tray thuần eSIM hoặc thiếu một số băng tần 5G địa phương) và cam kết tự chịu trách nhiệm về khả năng tương thích với gói cước của mình."
+• Cờ này được lưu trữ vĩnh viễn trong bản ghi đơn hàng để bảo vệ sàn khỏi các khiếu nại đổi trả vô lý sau này.
+7. Dữ Liệu Vào/Ra & Máy Trạng Thái (Data Entities & State Machine)
+• Dữ liệu đầu vào (Inputs):
+--- TABLE START ---
+{    "input_imei": "356892112345678",    "target_carrier_id": "CARRIER-VIETTEL-VN",    "client_platform": "IOS"  }
+--- TABLE END ---
+• Dữ liệu đầu ra (Outputs):
+--- TABLE START ---
+{    "luhn_valid": true,    "tac_code": "35689211",    "device_marketing_name": "iPhone 16 Pro Max",    "hardware_model_code": "A3102",    "market_region": "UNITED_STATES",    "sim_tray_architecture": "ESIM_ONLY",    "carrier_lock_status": "FACTORY_UNLOCKED",    "supported_lte_bands": ["B1", "B2", "B3", "B4", "B5", "B7", "B8", "B12", "B13", "B20", "B28", "B66"],    "supported_5g_bands": ["n1", "n2", "n3", "n5", "n7", "n8", "n20", "n28", "n41", "n66", "n71", "n77", "n78", "n258", "n260", "n261"],    "carrier_evaluation": {      "volte_supported": true,      "volte_whitelist_status": "CERTIFIED",      "lte_compatibility": "FULL_SPEED",      "5g_n77_supported": true,      "5g_n41_supported": true,      "compatibility_verdict": "OPTIMAL_COMPATIBILITY",      "compatibility_score_pct": 100    },    "esim_warning_required": true,    "apn_provisioning": {      "profile_name": "Viettel 5G Auto APN",      "download_mobileconfig_url": "https://api.example.com/apn/viettel.mobileconfig",      "apn_manual_params": {        "apn": "v-internet",        "user": "",        "password": "",        "auth_type": "NONE"      }    }  }
+--- TABLE END ---
+• Máy trạng thái Thẩm định Tương thích (Compatibility Verification State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu | Sự Kiện Kích Hoạt | Điều Kiện Kiểm Tra | Trạng Thái Đích | Hành Động Kèm Theo
+INPUT_IDLE | Khách nhập đủ 15 số | Ký tự hoàn toàn là số | VERIFYING_LUHN | Tính toán số kiểm tra Modulo 10
+VERIFYING_LUHN | Checksum sai | Thuật toán Luhn fail | LUHN_INVALID_ERROR | Báo lỗi đỏ tại ô nhập, yêu cầu nhập lại
+VERIFYING_LUHN | Checksum đúng | Thuật toán Luhn pass | TAC_EXTRACTING | Cắt 8 số đầu, truy vấn GSMA Registry
+TAC_EXTRACTING | Tìm thấy mã TAC | TAC tồn tại trong DB | EVALUATING_RF | So khớp dải tần LTE/5G & SIM Architecture
+EVALUATING_RF | Phát hiện model Mỹ | sim_tray == 'ESIM_ONLY' | FLAGGING_NO_SIM_TRAY | Kích hoạt cờ cảnh báo thuần eSIM bắt buộc
+EVALUATING_RF | Đối chiếu băng tần | Hỗ trợ VoLTE + 5G n77/n41 | VERDICT_OPTIMAL | Cấp chứng nhận Tối ưu 100%
+EVALUATING_RF | Đối chiếu băng tần | Có VoLTE nhưng thiếu n77/n41 | VERDICT_PARTIAL | Cảnh báo hạn chế tốc độ 5G
+EVALUATING_RF | Đối chiếu băng tần | Thiếu VoLTE hoặc Carrier Lock | VERDICT_INCOMPATIBLE | Cảnh báo không tương thích, chặn mua
+--- TABLE END ---
+8. Tiêu Chí Nghiệm Thu Chức Năng (Acceptance Scenarios dạng Given-When-Then)
+• Kịch bản 1: AC-PROD-COMPAT-03-01 (Phát hiện và cảnh báo phiên bản Mỹ A3102 thuần eSIM)
+• Given: Khách hàng tra cứu IMEI của một chiếc iPhone 16 Pro Max phiên bản Mỹ có mã hiệu Model A3102.
+• When: Hệ thống thực hiện giải mã TAC và phân tích kiến trúc khay SIM.
+• Then: Hệ thống hiển thị huy hiệu cảnh báo màu vàng: "Thiết bị này là phiên bản nội địa Mỹ (No-SIM-Tray), không có khe cắm khay SIM vật lý. Bắt buộc phải sử dụng công nghệ eSIM để kích hoạt mạng." Đồng thời hiển thị hộp kiểm xác nhận bắt buộc trước khi mua.
+• Kịch bản 2: AC-PROD-COMPAT-03-02 (Xác thực thuật toán Luhn cho chuỗi IMEI 15 số hợp lệ)
+• Given: Khách hàng nhập chuỗi IMEI có 15 số: 356892112345678.
+• When: Khách hàng nhấn nút "Kiểm tra tương thích".
+• Then: Thuật toán tính toán xác nhận số kiểm tra hợp lệ, hệ thống trích xuất mã TAC 35689211, hiển thị tên thiết bị iPhone 16 Pro Max và trả về báo cáo tương thích trong thời gian dưới 500ms mà không xảy ra lỗi giật lag.
+• Kịch bản 3: AC-PROD-COMPAT-03-03 (Chặn và cảnh báo thiết bị thiếu chứng chỉ VoLTE)
+• Given: Khách hàng nhập IMEI của một mẫu điện thoại Android xách tay nội địa cổ không nằm trong Carrier VoLTE Whitelist của nhà mạng Viettel.
+• When: Hệ thống thực hiện đối chiếu chứng chỉ thoại VoLTE.
+• Then: Hệ thống đánh giá trạng thái INCOMPATIBLE, hiển thị cảnh báo đỏ rực: "CẢNH BÁO NGUY HIỂM: Thiết bị này không hỗ trợ VoLTE. Do mạng 2G/3G đã tắt sóng, máy sẽ không thể gọi điện được tại Việt Nam."
+————————————————————————————————————————————————————————————————————
+NGHIỆP VỤ 4: PROD-IMEI-04 / CAT-IMEI-LOCK
+QUẢN TRỊ VÒNG ĐỜI BỘ TỨ ĐỊNH DANH PHẦN CỨNG (SERIAL, IMEI 1/2, EID), KIỂM TRA GSMA BLACKLIST, XÁC THỰC KHÓA KÍCH HOẠT APPLE GSX/ICLOUD/FRP & CHUÔNG BÁO ĐỘNG BẤT KHỚP BÀN ĐÓNG GÓI
+(QUAD-IDENTIFIER HARDWARE LIFECYCLE MANAGEMENT, GSMA BLACKLIST AUDIT, APPLE GSX / ICLOUD / FRP ACTIVATION LOCK VERIFICATION & PACKAGING STATION BARCODE MISMATCH ALARM)
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────────────────────┐│             VÒNG ĐỜI QUẢN TRỊ CÁ THỂ HÓA PHẦN CỨNG THEO BỘ TỨ ĐỊNH DANH                │├────────────────────────────────────────────────────────────────────────────────────────┤│  [BƯỚC 1: NHẬP KHO]       ──> Quét bộ tứ: Serial Number + IMEI 1 + IMEI 2 + EID        ││                                     │                                                  ││                                     ▼                                                  ││  [BƯỚC 2: AUDIT AN NINH]  ──> Tra cứu GSMA Blacklist (Báo mất cắp / Nợ cước gian lận)   ││                                     │                                                  ││                                     ▼                                                  ││  [BƯỚC 3: XÁC THỰC KHÓA]  ──> Apple GSX / iCloud Find My: OFF & Google FRP: CLEAN      ││                                     │                                                  ││                                     ▼                                                  ││  [BƯỚC 4: BÀN ĐÓNG GÓI]   ──> Quét Barcode đối soát 3 lớp (SERIAL MISMATCH ALARM)       ││                                     ├── Sai Serial ──> CÒI BÁO ĐỘNG + KHÓA MÁY IN TEM   ││                                     └── Đúng Serial ──> Nhả nhãn vận chuyển 3PL        ││                                     │                                                  ││                                     ▼                                                  ││  [BƯỚC 5: GIAO THÀNH CÔNG]──> Kích hoạt Hợp đồng Bảo hành Điện tử gắn chặt với Serial  ││                                     │                                                  ││                                     ▼                                                  ││  [BƯỚC 6: HẬU CẦN ĐỔI TRẢ]──> Quét đối soát chống tráo máy (Serial/IMEI Mismatch Fraud)││                                     └── Khóa hoàn tiền nếu iCloud Find My đang BẬT     │└────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+1. Mã & Tên Nghiệp Vụ
+• Mã nghiệp vụ: PROD-IMEI-04 (Tương đương mã định danh danh mục: CAT-IMEI-LOCK).
+• Tên nghiệp vụ: Quản trị Vòng đời Bộ Tứ Định danh Phần cứng (Serial, IMEI 1/2, EID), Kiểm tra GSMA Blacklist, Xác thực Khóa Kích hoạt Apple GSX/iCloud/FRP & Chuông Báo động Bất khớp Bàn Đóng gói (Quad-Identifier Hardware Lifecycle Management, GSMA Blacklist Audit, Apple GSX / iCloud / FRP Activation Lock Verification & Packaging Station Barcode Mismatch Alarm).
+• Phân hệ quản lý: Quản trị Tồn kho Cá thể hóa, An ninh Thiết bị & Hoàn tất Đơn hàng (Warehouse Serialization, Device Security & Order Fulfillment).
+2. Mục Tiêu & Tác Nhân
+• Mục tiêu:
+• Chuyển đổi mô hình quản lý tồn kho từ đếm số lượng tổng thông thường (Aggregate Stock Tracking) sang Quản trị cá thể hóa chuyên sâu từng thân máy vật lý độc nhất (Individual Hardware Serialization Tracking) cho toàn bộ danh mục sản phẩm điện tử giá trị cao.
+• Quản lý đồng bộ và ràng buộc tính toàn vẹn của Bộ Tứ Định Danh Phần Cứng (The Quad-Identifier Suite): Số Serial Number (SN do nhà sản xuất cấp), Số IMEI 1 (khe SIM chính), Số IMEI 2 (khe SIM phụ hoặc eSIM), và mã định danh chip điện tử eUICC (EID 32 chữ số).
+• Tự động hóa quy trình kiểm toán an ninh toàn cầu: Tra cứu cơ sở dữ liệu GSMA Device Check Blacklist để phát hiện và ngăn chặn máy bị báo mất cắp, trộm cướp hoặc nợ cước gian lận viễn thông.
+• Tích hợp cổng API Apple GSX và Google Device Management để xác thực trạng thái Khóa Kích Hoạt Bảo Mật (Activation Lock): Đảm bảo tính năng "Tìm iPhone" (Find My) và Google FRP bắt buộc phải ở trạng thái tắt hoàn toàn (OFF) trước khi nhập kho thương mại hoặc hoàn tất thủ tục đổi trả.
+• Triển khai cơ chế báo động bất khớp mã vạch tại trạm đóng gói (Packaging Station Mismatch Alarm): Khóa cứng máy in nhãn vận chuyển và phát còi báo động nếu nhân viên kho quét nhầm thân máy không khớp với số Serial được phân bổ cho đơn hàng.
+• Quản lý vòng đời bảo hành điện tử tự động và đối soát an ninh chống tráo máy/tráo linh kiện khi hàng bị đổi trả.
+• Tác nhân tham gia:
+• Nhân viên Tiếp nhận Hàng Kho (Inbound Ingestion Clerk): Quét mã vạch DataMatrix ghi nhận bộ tứ định danh khi nhập kho.
+• Cổng Xác thực An ninh Phần cứng (Hardware Security Gateway API): Kết nối với máy chủ GSMA Device Check và Apple GSX API.
+• Nhân viên Bàn Đóng Gói (Packaging Station Operator): Thao tác quét barcode xác thực thân máy trước khi niêm phong thùng hàng.
+• Động cơ Giám sát An ninh Đóng gói (Packaging Alarm & Lock Engine): Điều khiển còi báo động và khóa cổng in nhãn vận chuyển.
+3. Điều Kiện Tiên Quyết (Preconditions)
+• Trạm làm việc tại kho bãi được trang bị máy quét mã vạch 2D công nghiệp hỗ trợ chuẩn GS1 DataMatrix, kết nối mạng LAN nội bộ ổn định.
+• Hệ thống OMS/WMS có tài khoản tích hợp API doanh nghiệp hợp lệ với GSMA Device Check Service và Apple Global Service Exchange (GSX) API.
+• Máy in nhãn vận chuyển nhiệt (Thermal Label Printer) tại bàn đóng gói được kết nối qua giao thức Print Server nội bộ có khả năng nhận tín hiệu điều khiển khóa cổng in tự động.
+4. Luồng Xử Lý Chính Từng Bước (Step-by-Step Main Flow)
+1. Bước 1 - Tiếp Nhận & Quét Nhập Kho Bộ Tứ Định Danh (Inbound Quad-Identifier Scan):
+• Khi kiện hàng thiết bị cập cảng kho, nhân viên kho quét mã vạch GS1 DataMatrix trên nhãn hộp hoặc thân máy.
+• Hệ thống tự động bóc tách và tạo bản ghi thực thể thiết bị (hardware_device_item) với đầy đủ 4 tham số định danh:
+• Số Serial Number (SN): Chuỗi 10 - 12 ký tự chữ và số (ví dụ: F2LWM098P2).
+• IMEI 1: Chuỗi 15 chữ số chuẩn hóa.
+• IMEI 2: Chuỗi 15 chữ số (đối với thiết bị Dual SIM / eSIM).
+• EID: Chuỗi 32 chữ số định danh phần cứng của chip eUICC (ví dụ: 89049032000001000000031234567890).
+2. Bước 2 - Thẩm Định An Ninh Toàn Cầu & Kiểm Tra GSMA Blacklist:
+• Hệ thống tự động kích hoạt lời gọi API ngầm sang cơ sở dữ liệu GSMA Device Check Registry:
+• Kiểm tra cờ Báo Mất / Trộm Cắp (Lost / Stolen Flag).
+• Kiểm tra cờ Nợ Cước Viễn Thông / Gian Lận Hợp Đồng (Financial Unpaid / Carrier Blacklist).
+• Xử lý kết quả:
+• Nếu kết quả trả về CLEAN: Thiết bị đủ điều kiện an ninh để tiếp tục quy trình.
+• Nếu phát hiện thiết bị dính BLACKLISTED: Hệ thống lập tức chuyển trạng thái sang QUARANTINE_STOLEN, khóa toàn bộ quyền thao tác trong kho, phát thông báo khẩn cấp cho phòng an ninh và lập biên bản niêm phong tang vật theo quy định pháp luật.
+3. Bước 3 - Xác Thực Khóa Kích Hoạt (Apple GSX / iCloud / FRP Verification):
+• Đối với máy cũ, máy thu hồi Trade-in hoặc máy hoàn trả: Hệ thống gửi truy vấn kiểm tra trạng thái khóa bảo mật:
+• Thiết bị Apple: Truy vấn Apple GSX API kiểm tra FindMyiPhone_Status (phải là OFF) và iCloud_Activation_Lock_Status (phải là OFF).
+• Thiết bị Android: Truy vấn Google FRP API kiểm tra Factory_Reset_Protection (phải là CLEAN).
+• Nếu phát hiện khóa đang BẬT (ON): Chặn hoàn toàn việc nhập kho mở bán, đưa vào diện cách ly chờ gỡ tài khoản (WAITING_ACCOUNT_REMOVAL).
+4. Bước 4 - Phân Bổ Cá Thể Máy Vào Dòng Đơn Hàng (Outbound Hardware Allocation):
+• Khi đơn hàng được thanh toán thành công, thuật toán phân bổ kho (Inventory Allocation Engine) gán đích danh một hardware_device_id cụ thể đang ở trạng thái AVAILABLE_IN_STOCK vào bản ghi Order_Item_Line.
+• Trạng thái cá thể máy chuyển từ AVAILABLE sang ALLOCATED_TO_ORDER.
+5. Bước 5 - Thao Tác Bàn Đóng Gói & Chuông Báo Động Bất Khớp (Packaging Station Mismatch Alarm):
+• Nhân viên đóng gói lấy máy từ kệ và mang tới bàn đóng gói (Packaging Station).
+• Hệ thống hiển thị thông tin đơn hàng trên màn hình: Yêu cầu nhân viên dùng máy quét quét trực tiếp mã vạch Serial Number và IMEI trên thân hộp máy chuẩn bị đóng thùng.
+• Hệ thống thực thi quy trình kiểm tra đối soát chéo 3 lớp (Three-Layer Cross Check):
+• Lớp 1 (SKU Match): Thân máy vừa quét có đúng là mã SKU trong đơn hàng không?
+• Lớp 2 (Serial Allocation Match): Số Serial vừa quét có khớp chính xác 100% với allocated_hardware_id đã gán cho đơn hàng này không?
+• Lớp 3 (Status Match): Cá thể máy có đang ở trạng thái ALLOCATED_TO_ORDER hợp lệ không?
+• Xử lý bất khớp (Mismatch Exception Flow):
+• Nếu bất kỳ điều kiện nào không thỏa mãn (ví dụ quét nhầm chiếc máy của đơn khác hoặc nhầm màu):
+• Hệ thống lập tức phát âm thanh còi báo động "BEEP-BEEP-BEEP" với âm lượng lớn.
+• Màn hình trạm đóng gói chuyển toàn bộ sang giao diện đỏ rực với cảnh báo nguy hiểm: "CẢNH BÁO: BẤT KHỚP SỐ SERIAL / SAI SẢN PHẨM. Yêu cầu dừng đóng gói ngay lập tức!"
+• Khóa cứng cổng máy in nhãn vận chuyển (Hardware Printer Lock): Tuyệt đối không nhả nhãn bưu điện cho đến khi lỗi được khắc phục.
+• Ghi nhận nhật ký vi phạm thao tác của nhân viên đóng gói vào hồ sơ kiểm toán kho.
+• Xử lý trùng khớp (Match Flow):
+• Nếu khớp 100%: Màn hình chuyển sang màu xanh lá cây báo hiệu thành công (SERIAL_VERIFIED_OK).
+• Máy in tự động nhả Phiếu Giao Hàng và Nhãn Vận Chuyển 3PL có in rõ số Serial Number và IMEI để dán lên mặt ngoài kiện hàng.
+• Trạng thái cá thể máy chuyển sang PACKED_SERIAL_VERIFIED.
+6. Bước 6 - Kích Hoạt Bảo Hành Điện Tử Sau Giao Hàng Thành Công:
+• Khi đối tác giao vận gửi Webhook xác nhận bưu kiện đã giao thành công (DELIVERED):
+• Hệ thống tự động kích hoạt Hợp Đồng Bảo Hành Điện Tử nội bộ gắn chặt với số Serial Number đó, bắt đầu đếm ngược thời hạn bảo hành (30 ngày, 90 ngày hoặc 365 ngày).
+• Thông tin bảo hành được đồng bộ trực tiếp lên tài khoản của người mua trên ứng dụng di động/website, cho phép khách hàng tra cứu tiến độ bảo hành bằng số Serial mà không cần giữ thẻ giấy.
+7. Bước 7 - Hậu Cần Ngược: Đối Soát Serial Chống Tráo Máy Khi Đổi Trả:
+• Khi khách hàng gửi trả thiết bị về kho hậu mãi:
+• Thao tác bắt buộc đầu tiên của kỹ thuật viên bóc hộp là quét mã Serial Number và IMEI trên thân máy.
+• Hệ thống đối chiếu trực tiếp với số Serial Number đã xuất bán của đơn hàng gốc:
+• Nếu số Serial không khớp: Hệ thống kích hoạt cảnh báo gian lận tráo máy (FRAUD_SERIAL_MISMATCH), đóng băng hoàn tiền tức thì và chuyển hồ sơ sang bộ phận an ninh điều tra gian lận (chi tiết tại File 05).
+5. Luồng Phụ & Luồng Ngoại Lệ (Alternative & Exception Flows)
+• Luồng ngoại lệ 5a - Khách Hàng Gửi Trả Máy Quên Tắt "Tìm iPhone" (Activation Lock Freeze):
+• Tình huống: Khách hàng trả lại điện thoại iPhone nhưng chưa đăng xuất tài khoản iCloud, tính năng Find My iPhone vẫn đang bật (ON):
+• Cơ chế xử lý hệ thống:
+1. Trạm kiểm định cắm máy nhận diện FindMy_Status == ON.
+2. Hệ thống tự động chặn đứng quy trình hoàn tiền, chuyển trạng thái yêu cầu đổi trả sang ON_HOLD_ACTIVATION_LOCK.
+3. Tự động gửi Email và tin nhắn SMS kèm thông báo đa kênh cho khách hàng: "Thiết bị đổi trả của bạn vẫn đang liên kết với tài khoản Apple ID / Tìm iPhone. Vui lòng truy cập icloud.com/find từ máy tính, chọn thiết bị này và bấm 'Gỡ khỏi tài khoản' (Remove from Account) trong vòng 30 ngày để chúng tôi tiến hành hoàn tiền."
+4. Thiết lập bộ đếm thời gian 30 ngày (30-Day Expiration Timer). Nếu quá 30 ngày khách hàng không thực hiện mở khóa: Hệ thống tự động đóng yêu cầu đổi trả, đóng gói máy gửi trả lại địa chỉ khách hàng và khách phải chịu cước phí vận chuyển hoàn về.
+• Luồng ngoại lệ 5b - Thiết bị Dính Danh Sách Đen Nợ Cước Nhà Mạng (Carrier Financial Lock):
+• Trong quá trình kiểm tra GSMA, nếu phát hiện máy bị nhà mạng nước ngoài gắn cờ UNPAID_BILL (máy mua trả góp chưa trả hết tiền bỏ trốn):
+• Hệ thống tự động từ chối tiếp nhận thiết bị vào danh mục thương mại, gửi cảnh báo cho đối tác cung cấp nguồn hàng yêu cầu đổi lô thiết bị sạch.
+6. Quy Tắc Nghiệp Vụ & Validation Logic (Business Rules & Validation Logic)
+1. Ràng Buộc Duy Nhất Tuyệt Đối Của Bộ Tứ Định Danh (Quad-Identifier Uniqueness Invariant):
+• Trong toàn bộ cơ sở dữ liệu hệ thống, mỗi bộ đôi (serial_number, imei_1) là một khóa định danh vật lý duy nhất (Unique Constraint). Cấm tuyệt đối việc tồn tại hai bản ghi phần cứng trùng lặp số Serial hoặc trùng lặp số IMEI.
+2. Quy Tắc Bất Biến Về Chuyển Trạng Thái Thiết Bị (State Transition Invariants):
+• Một cá thể máy chỉ có thể được phép xuất kho đóng gói (PACKED) nếu nó đang ở trạng thái ALLOCATED_TO_ORDER.
+• Một cá thể máy bị gửi trả chỉ được phép cộng lại vào số lượng tồn kho mở bán (ATP_STOCK) khi và chỉ khi thỏa mãn đồng thời 3 điều kiện:
+$$\text{SerialMatch} == \text{TRUE} \quad\land\quad \text{ActivationLock} == \text{OFF} \quad\land\quad \text{BlanccoInspection} == \text{PASSED}$$
+3. Quy Tắc In Định Danh Lên Hóa Đơn Pháp Lý (Mandatory Invoicing Inscription):
+• Theo quy định quản lý thị trường và hóa đơn điện tử giá trị gia tăng (e-Invoice): Toàn bộ hóa đơn xuất cho các đơn hàng thiết bị điện tử có giá trị $\ge 5,000,000\text{đ}$ bắt buộc phải in kèm số Serial Number và số IMEI cụ thể của thiết bị đã giao.
+4. Quy Tắc Ghi Nhật Ký Kiểm Toán Bất Khớp Đóng Gói (Packing Audit Trail Rule):
+• Mọi sự kiện kích hoạt chuông báo động PACKING_MISMATCH_ALARM phải được ghi nhận vào bảng nhật ký an ninh warehouse_packing_audit_logs với đầy đủ thông tin: Mã nhân viên quét, Mã trạm làm việc, Mã đơn hàng, Serial Number mong đợi, Serial Number thực tế bị quét nhầm và mốc thời gian chính xác đến mili-giây.
+7. Dữ Liệu Vào/Ra & Máy Trạng Thái (Data Entities & State Machine)
+• Dữ liệu đầu vào (Inputs):
+--- TABLE START ---
+{    "scan_event_type": "PACKING_VERIFICATION",    "order_id": "ORD-2026-88129",    "warehouse_station_id": "PACK-STATION-HN-04",    "scanned_barcode_payload": {      "serial_number": "F2LWM098P2",      "imei_1": "356892112345678",      "imei_2": "356892118765432",      "eid": "89049032000001000000031234567890"    }  }
+--- TABLE END ---
+• Dữ liệu đầu ra (Outputs):
+--- TABLE START ---
+{    "verification_verdict": "MATCH_SUCCESS",    "mismatch_alarm_triggered": false,    "printer_lock_status": "UNLOCKED",    "allocated_hardware_id": "HW-IP16PM-88124",    "order_item_line_id": "LINE-99120",    "serial_binding_status": "BOUND_AND_CONFIRMED",    "waybill_print_authorized": true,    "shipping_label_data": {      "carrier_code": "SPX_EXPRESS",      "tracking_number": "SPXVN0488921029",      "inscribed_serial": "F2LWM098P2",      "inscribed_imei": "356892112345678"    }  }
+--- TABLE END ---
+• Máy trạng thái Vòng đời Phần cứng Thiết bị (Device Hardware Lifecycle State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu | Sự Kiện Kích Hoạt | Điều Kiện Kiểm Tra | Trạng Thái Đích | Hành Động Kèm Theo
+INBOUND_INGESTED | Quét bộ tứ định danh | Serial + IMEI + EID đầy đủ | SECURITY_AUDITING | Gọi API GSMA Blacklist & GSX Lock
+SECURITY_AUDITING | GSMA phát hiện Blacklist | Cờ Lost/Stolen = TRUE | QUARANTINE_STOLEN | Khóa cách ly an ninh, lập biên bản
+SECURITY_AUDITING | An ninh hợp lệ | Blacklist = CLEAN, Lock = OFF | AVAILABLE_IN_STOCK | Kích hoạt tồn kho ATP, sẵn sàng bán
+AVAILABLE_IN_STOCK | Khách đặt mua đơn hàng | Đơn hàng thanh toán thành công | ALLOCATED_TO_ORDER | Khóa cá thể máy vào dòng đơn hàng
+ALLOCATED_TO_ORDER | Quét tại bàn đóng gói | Serial quét KHÔNG KHỚP | MISMATCH_ALARM | Bật còi báo động, khóa máy in nhãn
+MISMATCH_ALARM | Quét lại đúng Serial | Serial quét KHỚP 100% | PACKED_VERIFIED | Tắt còi, nhả in nhãn vận chuyển 3PL
+PACKED_VERIFIED | Bàn giao cho tài xế 3PL | Quét mã bàn giao vận đơn | IN_TRANSIT | Cập nhật hành trình vận chuyển
+IN_TRANSIT | Khách nhận hàng thành công | Webhook bưu tá DELIVERED | DELIVERED_WARRANTY_ACTIVE | Kích hoạt hợp đồng bảo hành điện tử
+DELIVERED_WARRANTY_ACTIVE | Khách gửi trả hàng | Tiếp nhận kiện hàng đổi trả | RETURN_INSPECTING | Quét đối soát Serial gốc
+RETURN_INSPECTING | Serial trả KHÔNG KHỚP | Nghi vấn tráo máy | FRAUD_INVESTIGATION | Đóng băng hoàn tiền, chuyển an ninh
+RETURN_INSPECTING | Serial khớp, Find My ON | iCloud chưa gỡ | ON_HOLD_ACTIVATION_LOCK | Chặn hoàn tiền, gửi hạn 30 ngày
+--- TABLE END ---
+8. Tiêu Chí Nghiệm Thu Chức Năng (Acceptance Scenarios dạng Given-When-Then)
+• Kịch bản 1: AC-PROD-IMEI-04-01 (Kích hoạt còi báo động và khóa máy in khi quét sai Serial tại bàn đóng gói)
+• Given: Đơn hàng #ORD-88129 được phân bổ chiếc iPhone 16 Pro Max có số Serial F2LWM098P2.
+• When: Nhân viên đóng gói quét nhầm một chiếc hộp máy khác có số Serial F2LW8847X1.
+• Then: Hệ thống lập tức kích hoạt còi báo động "BEEP-BEEP-BEEP", màn hình trạm đổi sang màu đỏ rực hiển thị cảnh báo bất khớp số Serial, khóa cứng máy in nhãn vận chuyển và ghi lại nhật ký lỗi thao tác của nhân viên.
+• Kịch bản 2: AC-PROD-IMEI-04-02 (Khóa cách ly tức thì thiết bị dính GSMA Blacklist)
+• Given: Kiện hàng nhập kho chứa một chiếc điện thoại cũ có số IMEI bị nhà mạng nước ngoài báo mất cắp trên cơ sở dữ liệu GSMA Device Check.
+• When: Nhân viên kho quét mã vạch nhập kho tại Bước 1.
+• Then: Hệ thống phát hiện cờ mất cắp, lập tức chuyển trạng thái cá thể máy sang QUARANTINE_STOLEN, khóa không cho nhập kho thương mại và tự động gửi thông báo khẩn cấp đến phòng an ninh nội bộ.
+• Kịch bản 3: AC-PROD-IMEI-04-03 (Chặn hoàn tiền khi hàng đổi trả dính iCloud Activation Lock)
+• Given: Khách hàng gửi đổi trả một chiếc iPhone 15 Pro đã mua.
+• When: Kỹ thuật viên kho cắm máy vào cổng kiểm tra và phát hiện tính năng "Tìm iPhone" vẫn đang ở trạng thái ON.
+• Then: Hệ thống khóa cứng lệnh hoàn tiền tự động, chuyển trạng thái yêu cầu sang ON_HOLD_ACTIVATION_LOCK, gửi thông báo hướng dẫn khách hàng gỡ tài khoản từ xa qua icloud.com/find và kích hoạt bộ đếm thời hạn 30 ngày.

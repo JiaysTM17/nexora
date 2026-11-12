@@ -1,0 +1,759 @@
+--- TABLE START ---
+DỰ ÁN / HỆ THỐNG | HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ & CỘNG ĐỒNG NEXORA
+TÊN TÀI LIỆU | ĐẶC TẢ KỸ THUẬT MODULE DỊCH VỤ GIA TĂNG: THU CŨ ĐỔI MỚI, BẢO HÀNH & VIỄN THÔNG
+MÃ TÀI LIỆU / PHIÊN BẢN | NEX-SPEC-VAS-02 • Phiên bản: 2.0 (Phát hành chính thức)
+BỘ PHẬN BIÊN SOẠN | Đội ngũ Phân tích Nghiệp vụ & Kiến trúc Hệ thống (BA & SA Team)
+TRẠNG THÁI KIỂM DUYỆT | ĐÃ PHÊ DUYỆT (CHÍNH THỨC SỬ DỤNG CHO TRIỂN KHAI LẬP TRÌNH)
+--- TABLE END ---
+ĐẶC TẢ KỸ THUẬT MODULE DỊCH VỤ GIA TĂNG: THU CŨ ĐỔI MỚI, BẢO HÀNH & VIỄN THÔNG
+Phạm vi: Quy trình Re-quote online, tạm giữ hạn mức thẻ tín dụng, kit thu hồi tại nhà & cấp phát eSIM tức thì
+====================================================================
+ĐẶC TẢ NGHIỆP VỤ CHI TIẾT: DỊCH VỤ GIÁ TRỊ GIA TĂNG (VAS)
+THU CŨ ĐỔI MỚI (TRADE-IN), BẢO HIỂM MỞ RỘNG (WARRANTY) & ĐÓNG GÓI THIẾT BỊ KÈM CƯỚC VIỄN THÔNG (CARRIER/SIM BUNDLING)
+• Mã tài liệu: SPEC-VAS-02
+• Phiên bản: 2.1 (Deep Edge Cases & Niche Features Extended Specification)
+• Thư mục lưu trữ: d:\A - Học Tập\Thương Mại Điện Tử\p.tich.1\
+• Thuộc Milestone: M2 (Value-Added Services & Advanced Fulfillment)
+• Nền tảng đo chuẩn tham chiếu (Benchmark Targets):
+• Apple Store (apple.com): Apple Trade-In (Mail-in Prepaid Kit chuẩn UN 3481, Khóa hạn mức thẻ 100% Pre-auth Hold), AppleCare+ with Theft and Loss (Khấu trừ $29/$99/$149, Đổi máy nhanh ERS tận nhà 24h, Bắt buộc Find My = ON, Ngưỡng pin <80%), Cấp phát tự động ngầm qua Apple GSX gắn chặt số Serial Number, Chiết khấu kích hoạt mạng $30.
+• Samsung Store & Shopee (Samsung Shop / Shopee Trade-In): Thẩm định thu cũ tại nhà (Doorstep Trade-In) khi giao máy mới, Chẩn đoán 5 phút tại chỗ, Cấn trừ trực tiếp hoặc quẹt thẻ mPOS, Quyền hủy đơn tại chỗ 0đ không phạt (Zero-Penalty Cancellation).
+• Amazon USA (amazon.com): Amazon Trade-In định giá tự động, Re-quote Counter-offer với 14 ngày phản hồi, Gói bảo hiểm Asurion Protection Plan, Tích hợp khiếu nại 1 chạm.
+• US Mobile Shop (usmobile.com/shop): Đóng gói phần cứng kèm gói cước di động 12 tháng (Hardware Subsidy Bundle), Lựa chọn 3 hạ tầng mạng viễn thông (Warp 5G Verizon, GSM 5G T-Mobile, Dark Star AT&T), Cấp phát Instant eSIM Direct Push qua EID/Apple SM-DP+, Phạt vi phạm hợp đồng sớm (Early Termination Fee - ETF).
+• Swiftronics USA (swiftronics.com): Phân loại tình trạng máy (Brand New / Open Box / Refurbished Grade A/B/C), Khuyến cáo tương thích băng tần sóng vô tuyến RF (5G NR / LTE bands), Điều khoản loại trừ linh kiện lô bên thứ ba.
+• Tài liệu nền tảng đối chiếu (Baseline Gaps Closed):
+• Khắc phục triệt để khoảng trống Chương 10 (Trang chi tiết sản phẩm - thiếu cấu hình VAS), Chương 12 (Giỏ hàng - thiếu đối tượng Composite Cart Item), Chương 14 (Thanh toán - thiếu Pre-auth Hold 100%, 3-Tier Pre-auth Resilience và Clawback tự động), Chương 17 (Bảo hành - thiếu gắn định danh Serial/IMEI tự động, thiếu phân hạng sự cố và ERS), Chương 27 & 41 (Tồn kho và xử lý ngoại lệ tài chính, khấu trừ trợ giá viễn thông và phí phạt hủy sớm ETF).
+————————————————————————————————————————————————————————————————————
+MỤC LỤC TỔNG QUAN
+1. TỔNG QUAN HỆ THỐNG DỊCH VỤ GIÁ TRỊ GIA TĂNG (VAS ARCHITECTURE)
+2. ĐẶC TẢ CHI TIẾT VAS-TRADEIN-MAILIN: THU CŨ ĐỔI MỚI GỬI BƯU ĐIỆN, BỘ KIT BẢO VỆ CHUẨN UN 3481, KHÓA HẠN MỨC THẺ 100% & SLA 14 NGÀY
+• 2.1 Mã nghiệp vụ & Tên nghiệp vụ
+• 2.2 Mục tiêu & Tác nhân
+• 2.3 Điều kiện tiên quyết
+• 2.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• 2.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+• 2.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+• 2.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+• 2.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+3. ĐẶC TẢ CHI TIẾT VAS-TRADEIN-DOORSTEP: THẨM ĐỊNH THU CŨ TẠI NHÀ KHI GIAO MÁY MỚI, CHẨN ĐOÁN 5 PHÚT, CẤN TRỪ TỨC THÌ & HỦY KHÔNG PHẠT
+• 3.1 Mã nghiệp vụ & Tên nghiệp vụ
+• 3.2 Mục tiêu & Tác nhân
+• 3.3 Điều kiện tiên quyết
+• 3.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• 3.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+• 3.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+• 3.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+• 3.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+4. ĐẶC TẢ CHI TIẾT VAS-TRADEIN-REQUOTE: CHÍNH SÁCH HẠ GIÁ ĐỀ XUẤT MỚI (RE-QUOTE), SLA 14 NGÀY, FULL CLAWBACK VÀ TRẢ MÁY CŨ MIỄN PHÍ 0Đ
+• 4.1 Mã nghiệp vụ & Tên nghiệp vụ
+• 4.2 Mục tiêu & Tác nhân
+• 4.3 Điều kiện tiên quyết
+• 4.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• 4.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+• 4.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+• 4.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+• 4.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+5. ĐẶC TẢ CHI TIẾT VAS-WARRANTY-EXT: GÓI BẢO HIỂM MỞ RỘNG & RƠI VỠ NGUỒN/MÀN HÌNH (APPLECARE+ WITH THEFT & LOSS, KHẤU TRỪ $29/$99/$149, ĐỔI MÁY ERS 24H, PIN <80%)
+• 5.1 Mã nghiệp vụ & Tên nghiệp vụ
+• 5.2 Mục tiêu & Tác nhân
+• 5.3 Điều kiện tiên quyết
+• 5.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• 5.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+• 5.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+• 5.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+• 5.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+6. ĐẶC TẢ CHI TIẾT VAS-CARRIER-PLAN: ĐÓNG GÓI THIẾT BỊ KÈM HỢP ĐỒNG CƯỚC 12 THÁNG, TRỢ GIÁ PHẦN CỨNG, CẤP PHÁT ESIM DIRECT PUSH & PHẠT HỦY SỚM (ETF)
+• 6.1 Mã nghiệp vụ & Tên nghiệp vụ
+• 6.2 Mục tiêu & Tác nhân
+• 6.3 Điều kiện tiên quyết
+• 6.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• 6.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+• 6.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+• 6.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+• 6.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+7. TỔNG HỢP MỐI QUAN HỆ LIÊN THÔNG VÀ MA TRẬN DỮ LIỆU ĐƠN HÀNG PHỨC HỢP (COMPOSITE ORDER MATRIX) & ĐỐI SOÁT TÀI CHÍNH
+————————————————————————————————————————————————————————————————————
+1. TỔNG QUAN HỆ THỐNG DỊCH VỤ GIÁ TRỊ GIA TĂNG (VAS ARCHITECTURE)
+Trong các hệ sinh thái thương mại điện tử công nghệ cao hàng đầu thế giới như Apple Store, Amazon USA và US Mobile Shop, một sản phẩm phần cứng (Hardware SKU) hiếm khi được bán đơn lẻ. Trải nghiệm mua sắm được cấu trúc thành một Hợp thể sản phẩm và dịch vụ phức hợp (Composite Product-Service Bundle) nhằm 3 mục tiêu cốt lõi:
+1. Tối đa hóa Giá trị Đơn hàng Trung bình (AOV - Average Order Value): Tích hợp gói bảo hiểm rơi vỡ/mất cắp (AppleCare+, Asurion) và phụ kiện tương thích ngay tại trang cấu hình sản phẩm.
+2. Hạ thấp Rào cản Mua sắm Ban đầu (Lower Upfront Cost Barrier): Áp dụng chương trình Thu cũ Đổi mới (Trade-In) với cơ chế cấp tín dụng tức thì (Instant Trade-In Credit), giúp khách hàng giảm trực tiếp từ 20% đến 50% số tiền phải thanh toán ban đầu.
+3. Gia tăng Doanh thu Định kỳ (Recurring Revenue & Customer Lifetime Value): Đóng gói phần cứng kèm thuê bao cước di động (Carrier Subscription Plan) hoặc dịch vụ bảo hiểm trả theo tháng, ràng buộc khách hàng vào hệ sinh thái trong dài hạn (12 - 36 tháng).
+Sơ đồ Kiến trúc Phối hợp Dịch vụ Giá trị Gia tăng tại Khâu Mua hàng (VAS Flow Architecture):
+--- TABLE START ---
+┌──────────────────────────────────────────────────────────────────────────────────┐│                   TRANG CHI TIẾT SẢN PHẨM PHỨC HỢP (COMPOSITE PDP)               │├──────────────────────────────────────────────────────────────────────────────────┤│ 1. Cấu hình phần cứng: Model -> Finish -> Dung lượng -> Tình trạng máy (Condition)││                                                                                  ││ 2. Tùy chọn VAS 1: THU CŨ ĐỔI MỚI (Trade-In Wizard)                              ││    [ ] Có máy cũ đổi -> Nhập IMEI -> Chẩn đoán 5 câu hỏi -> Định giá: -$500      ││                                                                                  ││ 3. Tùy chọn VAS 2: KẾT NỐI MẠNG & SIM (Carrier Bundling)                         ││    (o) Mua máy Unlocked                                                          ││    ( ) Chọn mạng: Warp 5G (Verizon) / GSM 5G (T-Mobile) / Dark Star (AT&T)       ││        -> Nhập EID -> Cấp phát Instant eSIM Push (Trợ giá máy -$150)             ││                                                                                  ││ 4. Tùy chọn VAS 3: BẢO HIỂM MỞ RỘNG (AppleCare+ / Asurion)                       ││    (o) AppleCare+ Tiêu chuẩn ($199 trả 1 lần HOẶC $9.99/tháng)                   ││    ( ) AppleCare+ with Theft and Loss ($269 trả 1 lần HOẶC $13.49/tháng)          ││    ( ) Không chọn gói bảo vệ                                                     │└────────────────────────────────────────┬─────────────────────────────────────────┘                                         │                                         ▼┌──────────────────────────────────────────────────────────────────────────────────┐│                  GIỎ HÀNG & CHỐT ĐƠN PHỨC HỢP (COMPOSITE CHECKOUT)               │├──────────────────────────────────────────────────────────────────────────────────┤│ • Tổng giá trị phần cứng (Hardware):                       $1,199.00             ││ • Giảm trừ Instant Trade-In Credit:                       -$  500.00             ││ • Trợ giá gói cước viễn thông 12 tháng:                   -$  150.00             ││ • Gói AppleCare+ (Tháng đầu tiên):                        +$   13.49             ││ • Tiền cước viễn thông trả trước (12 tháng gói Premium):  +$  450.00             ││ ────────────────────────────────────────────────────────────────────             ││ TỔNG THANH TOÁN NGAY (NET OUT-OF-POCKET):                 $1,012.49              ││                                                                                  ││ [RÀNG BUỘC THANH TOÁN ĐẶC BIỆT]:                                                 ││ -> Capture ngay tiền thực trả: $1,012.49                                         ││ -> KHÓA HẠN MỨC DỰ PHÒNG THẺ TÍN DỤNG (Pre-auth Hold): $500.00 (Bảo chứng thu cũ)│└──────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+2. ĐẶC TẢ CHI TIẾT VAS-TRADEIN-MAILIN: THU CŨ ĐỔI MỚI GỬI BƯU ĐIỆN, BỘ KIT BẢO VỆ CHUẨN UN 3481, KHÓA HẠN MỨC THẺ 100% & SLA 14 NGÀY
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 1: KHẢO SÁT & ĐỊNH GIÁ TRỰC TUYẾN TRÊN PDP / CHECKOUT         │       │   - Chọn Hãng / Model / Dung lượng / Tình trạng máy                    │       │   - Đối soát thuật toán Luhn & GSMA Device Check Blacklist             │       │   - Cấp Instant Trade-In Credit cấn trừ trực tiếp vào giỏ hàng         │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 2: KHÓA HẠN MỨC THẺ TÍN DỤNG BẢO CHỨNG (PRE-AUTH HOLD = 100%)  │       │   - Capture tiền thực trả máy mới (Net Out-of-pocket)                  │       │   - Pre-auth Hold 100% giá trị Instant Credit (Thời hạn 30 ngày)       │       │   - Thiết lập ủy quyền ghi nợ CIT-MIT Mandate & Rolling Re-auth        │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 3: XUẤT KHO MÁY MỚI & PHÁT HÀNH BỘ KIT BƯU CHÍNH CHUYÊN DỤNG  │       │   - Giao máy mới trước -> Khi DELIVERED: Kích hoạt SLA 14 ngày lịch    │       │   - Gửi Trade-in Kit: Thùng carton chống sốc, Khay xốp đúc bọt biển,   │       │     Tem niêm phong Tamper-Evident Tape, Nhãn UN 3481 Lithium Battery,  │       │     Nhãn vận chuyển trả trước Prepaid Return Label 2 chiều (UPS/FedEx) │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 4: KHÁCH HÀNG ĐÓNG GÓI, BÀN GIAO BƯU ĐIỆN TRƯỚC HẠN 14 NGÀY    │       │   - Sao lưu dữ liệu, tắt Find My / iCloud / FRP, Factory Reset xóa sạch│       │   - Đóng máy vào kit, dán tem Void Seal, dán nhãn nguy hiểm UN 3481    │       │   - Bưu điện quét mã vận đơn (First Carrier Scan) trong vòng 14 ngày   │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 5: GIÁM ĐỊNH TỰ ĐỘNG TẠI TRUNG TÂM KIỂM ĐỊNH KHO VẬN (HUB)    │       │   - Kiểm tra tính nguyên vẹn của tem Tamper-evident và pin UN 3481     │       │   - Chạy chẩn đoán tự động Blancco / PhoneCheck 30 bước                │       │   - Đối soát Serial Number bo mạch, IMEI, PMIC Battery Health, FaceID  │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                         ┌─────────────────┴─────────────────┐                         ▼                                   ▼               ┌───────────────────┐               ┌───────────────────┐               │  KHỚP TÌNH TRẠNG  │               │   SAI LỆCH TÌNH   │               │   (100% MATCH)    │               │  TRẠNG (MISMATCH) │               └─────────┬─────────┘               └─────────┬─────────┘                         │                                   │                         ▼                                   ▼               ┌───────────────────┐               ┌───────────────────┐               │  GIẢI TỎA HẠN MỨC │               │  CHUYỂN SANG QUY  │               │   (RELEASE HOLD)  │               │ TRÌNH HẠ GIÁ ĐỀ   │               │ Giao dịch hoàn tất│               │  XUẤT MỚI RE-QUOTE│               │  Trade-In Khép lại│               │ (VAS-TRADEIN-04)  │               └───────────────────┘               └───────────────────┘
+--- TABLE END ---
+2.1 Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: VAS-TRADEIN-MAILIN
+• Tên nghiệp vụ: Quy trình Thu Cũ Đổi Mới Gửi Bưu Điện, Bộ Kit Đóng Gói An Toàn Chuẩn Nguy Hiểm UN 3481, Khóa Hạn Mức Thẻ Tín Dụng 100% & SLA 14 Ngày (Prepaid Mail-in Trade-In, UN 3481 Hazmat Lithium-ion Battery Kit, 100% Credit Card Pre-authorization Hold & 14-Day Calendar Drop-off SLA).
+2.2 Mục tiêu & Tác nhân
+• Mục tiêu: Cung cấp giải pháp đổi máy cũ lấy máy mới không tiếp xúc từ xa qua đường bưu điện; cấp tín dụng tức thì (Instant Trade-In Credit) khấu trừ trực tiếp vào giỏ hàng máy mới; bảo toàn tài chính cho doanh nghiệp thông qua lệnh tạm khóa hạn mức thẻ tín dụng 100% (Pre-auth Hold); tuân thủ nghiêm ngặt quy định an toàn vận tải hàng nguy hiểm quốc tế đối với pin Lithium-ion (UN 3481) và tem chống giả mạo (Tamper-evident); tự động hóa đối soát SLA gửi hàng 14 ngày.
+• Tác nhân tham gia (Actors):
+• Khách hàng (Customer): Khai báo tình trạng trực tuyến, nhận máy mới, đóng gói máy cũ vào bộ kit bưu chính theo chuẩn UN 3481, bàn giao bưu cục trong 14 ngày.
+• Hệ thống Bán hàng TMĐT (Storefront & Order Engine): Hiển thị bảng câu hỏi khảo sát, tính toán Instant Credit, tạo đơn hàng phức hợp Composite Order.
+• Cổng Xác thực Định danh GSMA (GSMA Device Check API): Kiểm tra danh sách đen báo mất cắp/khóa nợ cước viễn thông quốc tế.
+• Cổng Thanh toán (Payment Gateway): Xử lý giao dịch trừ tiền thực trả và thực hiện lệnh Pre-authorization Hold 100% giá trị Instant Credit trên thẻ tín dụng.
+• Đơn vị Chuyển phát 3PL (UPS / FedEx / Bưu điện): Giao bộ kit thu hồi, tiếp nhận bưu kiện chứa pin Lithium-ion và vận chuyển về Hub kiểm định.
+• Trung tâm Giám định Kho vận (Depot Inspection Hub): Tiếp nhận kiện hàng, kiểm tra tính nguyên vẹn của tem niêm phong và thực hiện quy trình chẩn đoán tự động.
+2.3 Điều kiện tiên quyết
+1. Thiết bị mua mới thuộc danh mục hỗ trợ chương trình thu cũ đổi mới (Điện thoại thông minh, Máy tính bảng, Đồng hồ thông minh, Máy tính xách tay).
+2. Thiết bị cũ có mã số IMEI (15 chữ số) hoặc Serial Number hợp lệ, vượt qua thuật toán kiểm tra số kiểm tra Luhn Modulo 10, và có trạng thái gsma_blacklist_status = FALSE (không bị báo mất cắp, nợ cước hoặc khóa mạng toàn cầu).
+3. Khách hàng bắt buộc phải sở hữu thẻ tín dụng quốc tế (Visa, Mastercard, JCB, American Express) còn hạn hiệu lực tối thiểu 60 ngày, có hạn mức khả dụng bằng hoặc lớn hơn 100% giá trị định giá thu cũ tạm tính để ký quỹ bảo chứng (Pre-authorization Hold) và chấp thuận thỏa thuận ủy quyền ghi nợ CIT-MIT Mandate.
+2.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Khảo sát chẩn đoán trực tuyến trên PDP / Checkout):
+• Khách hàng bấm chọn "Tham gia Thu cũ Đổi mới (Apple/Amazon Trade-In)" tại trang cấu hình sản phẩm hoặc giỏ hàng.
+• Khách chọn Hãng sản xuất, Dòng máy, Dung lượng bộ nhớ và Màu sắc.
+• Nhập số IMEI (15 ký tự). Hệ thống gọi API sang GSMA Device Check:
+• Nếu IMEI dính Blacklist trộm cắp -> Lập tức chặn luồng, thông báo từ chối.
+• Nếu IMEI hợp lệ -> Mở bộ 5 câu hỏi chẩn đoán chuẩn mực: (1) Máy có bật nguồn và sạc bình thường không? (2) Màn hình cảm ứng hoàn hảo, không nứt vỡ, không đốm sọc, không ám ảnh (burn-in)? (3) Thân vỏ khung viền không móp méo cong vênh, camera không nứt vỡ? (4) FaceID/TouchID hoạt động tốt? (5) Cam kết tắt Find My/iCloud và xóa dữ liệu gốc trước khi gửi?
+• Bước 2 (Tính toán & Khấu trừ tức thì - Instant Credit Allocation):
+• Dựa trên kết quả tự khai báo, Động cơ Định giá Thu cũ (Valuation Matrix) trả về giá trị ước tính (Estimated Trade-In Value, ví dụ: $500.00 / 12.500.000đ).
+• Khoản tiền này hiển thị dưới dạng số âm (-$500.00) trong tóm tắt thanh toán, khấu trừ trực tiếp vào số tiền khách phải trả ngay cho máy mới.
+• Bước 3 (Khóa hạn mức thẻ tín dụng bảo chứng 100% tại Checkout):
+• Khách hàng nhập thông tin thẻ tín dụng để thanh toán phần tiền ròng còn lại của máy mới.
+• Cổng thanh toán đồng thời gửi 2 lệnh tới ngân hàng phát hành thẻ:
+1. CAPTURE: Trừ số tiền thực trả của máy mới (Net Amount = Giá máy mới - $500.00).
+2. PRE_AUTHORIZATION: Khóa tạm giữ hạn mức thẻ số tiền chính xác bằng 100.0% giá trị Instant Credit ($500.00) với mã chuẩn AUTH_HOLD_TRADEIN.
+• Khách hàng ký điện tử thỏa thuận ủy quyền ghi nợ tài khoản (Customer-Initiated / Merchant-Initiated Transaction Mandate - CIT/MIT) cho phép sàn truy thu tự động nếu không gửi máy cũ hoặc máy bị sai lệch.
+• Bước 4 (Xuất kho giao máy mới & Kích hoạt đồng hồ SLA 14 ngày):
+• Đơn hàng máy mới được xuất kho và giao tới địa chỉ khách hàng.
+• Ngay khi đơn vị vận chuyển quét trạng thái DELIVERED của kiện hàng máy mới, hệ thống tự động kích hoạt đồng hồ đếm ngược SLA 14 ngày lịch (336 giờ) gửi máy cũ.
+• Bước 5 (Giao Bộ Kit Thu Đổi Bưu Điện Đạt Chuẩn UN 3481):
+• Trong vòng 24 - 48 giờ sau khi máy mới được giao thành công, một kiện hàng riêng biệt mang tên "Trade-In Return Shipping Kit" được giao tới nhà khách hàng:
+• Hộp carton 3 lớp đạt chuẩn thử nghiệm thả rơi ISTA 3A: Khay bọt xốp đúc định hình (Custom die-cut foam insert) ôm khít thân máy, chống va đập và chống tĩnh điện ESD.
+• Tem niêm phong an toàn chống mở trộm (Tamper-evident Security Tape): Dải băng keo đặc chế; khi bị bóc ra sẽ tự động tách lớp và hiện vĩnh viễn dòng chữ cảnh báo đỏ OPENED / VOID / ĐÃ MỞ NIÊM PHONG trên bề mặt hộp.
+• Nhãn cảnh báo pin nguy hiểm theo quy chuẩn quốc tế UN 3481 (Lithium-ion Batteries Contained in Equipment): Kích thước chuẩn tối thiểu $100\text{mm} \times 100\text{mm}$, viền sọc chéo đỏ, in biểu tượng ngọn lửa và pin Lithium-ion kèm dòng chữ "UN 3481 - For information call [Số điện thoại khẩn cấp 24/7 của Sàn]" tuân thủ nghiêm ngặt điều lệ vận tải hàng nguy hiểm của Cục Hàng không Quốc tế (ICAO/IATA DGR Packing Instruction 967) và Bộ Giao thông Vận tải Hoa Kỳ (DOT/PHMSA 49 CFR § 173.185).
+• Nhãn vận chuyển trả trước (Prepaid Return Shipping Label): In sẵn mã vạch bưu điện (UPS/FedEx/Bưu điện VN) liên kết 2 chiều với mã hồ sơ Trade-In.
+• Sách hướng dẫn quy chuẩn: Hướng dẫn sao lưu dữ liệu iCloud/Google, hướng dẫn tắt Find My, hướng dẫn sạc xả pin về mức $\le 30\%$ State of Charge (SoC) để triệt tiêu nguy cơ cháy nổ nhiệt (thermal runaway) khi vận chuyển trên máy bay.
+• Bước 6 (Khách hàng đóng gói và bàn giao bưu chính):
+• Khách chuyển dữ liệu sang máy mới, tắt Find My/iCloud, bấm "Xóa tất cả nội dung và cài đặt (Factory Reset)".
+• Đặt máy cũ vào khay xốp, dán dải tem Tamper-evident Tape qua mép nắp hộp, dán nhãn UN 3481 và nhãn vận chuyển trả trước ra mặt ngoài thùng.
+• Mang kiện hàng ra bưu cục đối tác hoặc gọi bưu tá lấy hàng tận nơi miễn phí trước mốc 23:59:59 của ngày thứ 14 trong SLA.
+• Bước 7 (Quét ghi nhận bưu chính & Vận chuyển về Hub):
+• Bưu tá quét mã vận đơn lần đầu (First Carrier Scan Event: PICKED_UP hoặc DROP_OFF_AT_STATION).
+• Hệ thống ghi nhận mốc thời gian này để xác thực tuân thủ SLA 14 ngày thành công. Kiện hàng được trung chuyển qua mạng lưới bưu chính về Hub giám định trung tâm.
+• Bước 8 (Giám định kỹ thuật tự động 30 bước tại Depot Hub):
+• Kỹ thuật viên kiểm tra ngoại quan kiện hàng: Xác nhận tem niêm phong Tamper-evident nguyên vẹn, không có dấu hiệu bị rạch tráo đồ trên đường.
+• Mở hộp, quét số Serial Number và IMEI vật lý trên thân máy / khay SIM đối chiếu với thông số khai báo ban đầu.
+• Cắm máy vào Trạm Chẩn đoán Phần cứng Tự động (chạy phần mềm chứng chỉ Blancco Mobile Diagnostics / PhoneCheck):
+• Kiểm tra màn hình OLED: Đo điểm chết, sọc màn, độ sáng cảm ứng, độ nguyên bản (chính hãng vs linh kiện lô).
+• Kiểm tra pin PMIC: Đọc dung lượng thực tế (mAh), số chu kỳ sạc (cycle count), tỷ lệ sức khỏe pin (State of Health - SOH %).
+• Kiểm tra FaceID/TouchID, hệ thống camera trước/sau, micro, loa, sạc không dây, cảm biến tiệm cận.
+• Xác thực trạng thái khóa kích hoạt: Apple GSX Server xác nhận Activation Lock: OFF, Find My: OFF, MDM: OFF.
+• Bước 9 (Hoàn tất giao dịch & Giải tỏa hạn mức thẻ 100%):
+• Kết quả giám định xác nhận: Thiết bị trùng khớp 100% với tình trạng khai báo trực tuyến của khách hàng (DIAGNOSTIC_VERDICT = MATCHED_100).
+• Hệ thống OMS gửi thông báo xác nhận "Trade-In Hoàn Tất Xuất Sắc" qua email và SMS cho khách hàng.
+• Cổng thanh toán phát lệnh RELEASE_AUTHORIZATION tới ngân hàng phát hành thẻ tín dụng của khách, giải phóng toàn bộ 100% số tiền $500.00 đang bị khóa hạn mức.
+• Khách hàng nhận lại trọn vẹn hạn mức khả dụng của thẻ tín dụng. Giao dịch Trade-In kết thúc thành công mỹ mãn.
+2.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+A. Luồng ngoại lệ 1: Quá hạn SLA 14 ngày khách không gửi máy cũ (No-Device SLA Expiration Clawback)
+• Kịch bản: Đã qua 14 ngày lịch kể từ ngày máy mới được giao thành công (DELIVERED), nhưng hệ thống đối soát bưu chính ghi nhận mã vận đơn Prepaid Label chưa từng phát sinh sự kiện quét nhận hàng (CARRIER_FIRST_SCAN = False).
+• Xử lý hệ thống:
+1. Hệ thống cảnh báo đa kênh chủ động:
+• Ngày thứ 7: Gửi email + Push Notification nhắc nhở: "Bạn còn 7 ngày để gửi máy cũ nhận $500.00 trợ giá".
+• Ngày thứ 11: Gửi SMS cảnh báo tài chính: "Chỉ còn 3 ngày để bàn giao thiết bị. Sau thời gian này, hạn mức thẻ $500.00 sẽ bị khấu trừ chính thức".
+• Ngày thứ 14 (12:00:00 UTC): Thông báo đếm ngược 12 giờ cuối cùng.
+2. Kích hoạt truy thu tự động:
+• Đúng 00:00:01 ngày thứ 15, Cron Job phát hiện vi phạm SLA.
+• Chuyển trạng thái Trade-In sang SLA_BREACHED_CLAWBACK_TRIGGERED.
+• Cổng thanh toán gửi lệnh CAPTURE_HOLD tới ngân hàng phát hành thẻ tín dụng, chuyển đổi toàn bộ số tiền $500.00 đang bị tạm giữ thành giao dịch thanh toán thực tế (Captured Debit Charge).
+• Tài khoản thẻ của khách hàng bị trừ chính thức $500.00 với nội dung sao kê: "Trade-In Unreturned Hardware Clawback Charge - Order #[ID]".
+• Mã vận đơn bưu điện bị vô hiệu hóa (Void Label). Khách hàng giữ lại thiết bị cũ, giao dịch mua máy mới chuyển thành giao dịch mua nguyên giá thông thường.
+B. Luồng ngoại lệ 2: Thiết bị gửi về chưa tắt tính năng Khóa kích hoạt (Activation Lock / iCloud Lock ON)
+• Kịch bản: Máy cũ về đến Hub kiểm định nhưng trạm chẩn đoán phát hiện màn hình kích hoạt yêu cầu Apple ID / Google Account hoặc trạng thái GSX báo Activation Lock: ON.
+• Xử lý hệ thống:
+1. Trạm giám định tạm dừng quy trình, chuyển trạng thái ON_HOLD_ACTIVATION_LOCK.
+2. Hệ thống gửi email khẩn cấp kèm tài liệu hướng dẫn từng bước: "Hướng dẫn gỡ bỏ thiết bị khỏi tài khoản iCloud từ xa qua trình duyệt web tại icloud.com/find trong 10 ngày".
+3. Bật đồng hồ đếm ngược 10 ngày làm việc (Grace Period).
+4. Nếu khách gỡ thành công: Kỹ thuật viên kiểm tra lại trên Apple GSX thấy Activation Lock: OFF -> Tiếp tục quy trình giám định bình thường.
+5. Nếu sau 10 ngày khách không phản hồi hoặc không thể gỡ khóa: Thiết bị bị định giá là $0.00. Hệ thống kích hoạt Full Clawback truy thu $500.00 từ thẻ tín dụng của khách và đóng gói gửi trả máy cũ về cho khách.
+C. Luồng ngoại lệ 3: Đối kháng rủi ro hết hạn tạm giữ thẻ tín dụng (3-Tier Pre-auth Resilience Architecture)
+• Kịch bản: Theo quy chuẩn tổ chức thẻ quốc tế (Visa/Mastercard Rules), lệnh Pre-auth Hold thông thường chỉ có hiệu lực từ 7 đến 14 ngày. Nếu chu kỳ vận chuyển và kiểm định kéo dài sang ngày thứ 15-20, lệnh giữ hạn mức có nguy cơ bị ngân hàng tự động giải phóng (HOLD_EXPIRED), khiến sàn mất khả năng truy thu.
+• Giải pháp kỹ thuật đối kháng 3 tầng (3-Tier Resilience):
+1. Tầng 1 - Thỏa thuận Ghi nợ Tiếp diễn (Recurring CIT-MIT Mandate Binding): Khách hàng ký ủy quyền Merchant-Initiated Transaction Mandate lưu trữ payment_token chuẩn PCI-DSS Level 1. Nếu lệnh Hold hết hạn, sàn có toàn quyền pháp lý và kỹ thuật phát lệnh thanh toán ghi nợ mới (NEW_DEBIT_CHARGE) thu hồi khoản tiền mà không cần khách nhập lại mã CVV/OTP.
+2. Tầng 2 - Cơ chế Gia hạn Khóa Tự động (Rolling Re-authorization Cron Job): Hệ thống thiết lập Cron Job chạy định kỳ: Vào ngày thứ 6 và ngày thứ 12 của chu kỳ Trade-in, hệ thống tự động phát lệnh gia hạn hạn mức (RE_AUTHORIZE_HOLD) tới ngân hàng phát hành thẻ, làm mới con dấu hiệu lực thêm 7 ngày liên tục.
+3. Tầng 3 - Leo thang Công nợ Khẩn cấp (Contingency Debt Escalation): Nếu lệnh Re-auth thất bại (thẻ bị chủ thẻ khóa hoặc giảm hạn mức), hệ thống gửi tối hậu thư tài chính yêu cầu cập nhật phương thức thanh toán mới trong 48 giờ. Quá 48h, hệ thống đóng băng quyền lợi tài khoản, đưa vào danh sách nợ xấu TRADE_IN_BAD_DEBT và cấn trừ vào các giao dịch hoàn tiền hoặc ví điện tử trong tương lai.
+D. Luồng ngoại lệ 4: Pin Lithium-ion bị phồng biến dạng nặng vi phạm an toàn vận chuyển (Damaged/Defective Lithium Battery Hazmat Alert)
+• Kịch bản: Khách hàng phát hiện hoặc bưu cục tiếp nhận nhận thấy pin của máy cũ bị phồng rộp làm vênh nắp lưng (Swollen battery).
+• Xử lý an toàn theo quy chuẩn FAA/DOT:
+1. Tuyệt đối cấm vận chuyển bưu phẩm chứa pin Lithium-ion bị biến dạng hoặc phồng rộp qua đường hàng không theo điều luật DOT Hazardous Materials Regulations (49 CFR § 173.185(f)).
+2. Hệ thống hướng dẫn khách hàng KHÔNG đóng gói vào bộ kit bưu chính.
+3. Khách hàng được chuyển hướng sang một trong hai giải pháp:
+• Mang máy trực tiếp đến Trung tâm Bảo hành Ủy quyền gần nhất (ASP/Genius Bar) để chuyên viên tiếp nhận xử lý an toàn trong hộp chống cháy chuyên dụng.
+• Sử dụng quy trình Thẩm định Thu cũ Tại nhà (VAS-TRADEIN-DOORSTEP).
+2.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-MAL-01 | Tỷ lệ Khóa Hạn mức Bảo chứng 100% (100% Pre-auth Ratio Mandate) | Giá trị khóa hạn mức thẻ tín dụng bắt buộc phải bằng chính xác 100.0% giá trị Instant Credit đã cấp trừ tại giỏ hàng. Tuyệt đối không chấp nhận thanh toán qua thẻ ghi nợ nội địa (Debit Card), ví điện tử không hỗ trợ pre-auth, hoặc COD. Bắt buộc kích hoạt thỏa thuận CIT-MIT Tokenization Mandate và cơ chế Rolling Re-auth vào ngày 6 và 12 của chu kỳ.
+BR-MAL-02 | Ràng buộc Ràng buộc Thiết bị Đổi Cũ 1-1 (1-to-1 Device Binding) | Mỗi sản phẩm phần cứng mới chỉ được áp dụng duy nhất 1 thiết bị thu cũ (1-to-1 Trade-in Binding). Không cho phép gộp nhiều máy cũ để mua 1 máy mới trong cùng một đơn hàng trực tuyến. Giá trị Instant Credit tối đa không được vượt quá 90% tổng giá trị thanh toán của máy mới.
+BR-MAL-03 | Chốt Chặn Danh Sách Đen GSMA (GSMA Blacklist Gate) | Bất kỳ thiết bị nào có kết quả kiểm tra gsma_blacklist_status = TRUE hoặc lost_stolen_flag = TRUE sẽ bị từ chối ngay lập tức tại bước thẩm định trực tuyến. Hệ thống ghi nhật ký cảnh báo an ninh và từ chối cấp Instant Credit.
+BR-MAL-04 | SLA 14 Ngày Tính Theo Dấu Thời Gian Vận Chuyển (14-Day Timestamp Rule) | Thời hạn 14 ngày được tính từ dấu thời gian đơn vị vận chuyển quét thành công trạng thái DELIVERED của máy mới cho đến dấu thời gian đơn vị vận chuyển quét lần đầu PICKED_UP hoặc DROP_OFF_AT_STATION của kiện hàng máy cũ. Thời gian kiện hàng trung chuyển trên đường sau đó không tính vào SLA của khách.
+BR-MAL-05 | Quy Chuẩn Đóng Gói An Toàn Pin Lithium UN 3481 (UN 3481 Hazmat Packing Rule) | Kiện hàng thu cũ bưu điện bắt buộc phải có nhãn cảnh báo UN 3481 kích thước tối thiểu $100\text{mm} \times 100\text{mm}$, in số điện thoại hỗ trợ khẩn cấp 24/7. Thùng carton chịu lực tối thiểu 200 lb test. Khách hàng được khuyến cáo xả pin về mức $\le 30\%$ State of Charge trước khi gửi để triệt tiêu nguy cơ cháy nổ nhiệt.
+BR-MAL-06 | Tem Niêm Phong Chống Mở Trộm (Tamper-Evident Tape Invariant) | Nắp thùng kit bưu chính bắt buộc dán dải băng keo Tamper-evident có chỉ số phá hủy vật lý khi bóc. Trạm Depot Hub bóc kiện hàng bắt buộc quay video CCTV bàn bóc hộp; nếu tem đã bị bóc hoặc rách trước khi đến kho, biên bản vi phạm bưu chính lập tức được phát hành để yêu cầu đơn vị vận chuyển bồi thường.
+--- TABLE END ---
+2.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+A. Cấu trúc Dữ liệu Đối tượng Thu Cũ Gửi Bưu Điện (Mail-in Trade-In Entity Schema):
+--- TABLE START ---
+{  "trade_in_id": "TIN-MAIL-2026-89412",  "order_id": "ORD-VN-98214",  "customer_id": "CUST-774102",  "trade_in_channel": "MAIL_IN_PREPAID_KIT",  "declared_device": {    "brand": "Apple",    "model": "iPhone 14 Pro",    "storage": "128GB",    "imei": "358921098234123",    "serial_number": "F2LW9082X1",    "declared_condition": {      "powers_on": true,      "screen_intact": true,      "body_condition": "GOOD",      "biometrics_working": true,      "activation_lock_removed_promised": true    }  },  "valuation": {    "estimated_credit_amount": 500.00,    "currency": "USD",    "valuation_matrix_version": "V4.2_2026",    "valuation_timestamp": "2026-11-04T08:15:30Z"  },  "preauth_guarantee": {    "method": "CREDIT_CARD_PREAUTH",    "gateway": "STRIPE",    "preauth_transaction_id": "ch_3Mxyz9821HoldToken",    "preauth_amount": 500.00,    "hold_status": "ACTIVE",    "cit_mit_mandate_id": "MNDT-88912-TOKEN",    "next_rolling_reauth_at": "2026-11-10T08:15:30Z",    "hold_expiration_date": "2026-12-04T08:15:30Z"  },  "kit_fulfillment": {    "kit_outbound_tracking": "1Z9999999999999999",    "kit_delivered_to_customer_at": "2026-11-05T14:30:00Z",    "return_label_tracking_number": "1Z8888888888888888",    "un3481_label_certified": true,    "tamper_evident_seal_code": "SEAL-VO-99214-A",    "sla_deadline_timestamp": "2026-11-19T23:59:59Z",    "first_carrier_scan_timestamp": "2026-11-12T09:15:00Z",    "sla_compliance_status": "COMPLIANT_ON_TIME"  },  "depot_inspection": {    "received_at_hub": "2026-11-14T11:20:00Z",    "inspected_by_staff_id": "TECH_INSP_042",    "diagnostic_report_ref": "DIAG-BLANCCO-55410",    "tamper_seal_verified_intact": true,    "un3481_battery_swollen_detected": false,    "actual_screen_condition": "GOOD_PRISTINE",    "actual_battery_health_pct": 87,    "actual_activation_lock_status": "OFF",    "final_verdict": "MATCHED_100",    "revised_credit_amount": null  },  "lifecycle_status": "RELEASED_HOLD_COMPLETED",  "created_at": "2026-11-04T08:15:30Z",  "updated_at": "2026-11-14T15:00:00Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Thu Cũ Bưu Điện (Mail-in Trade-In State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[NONE] | START_ONLINE_SURVEY | IMEI Luhn hợp lệ, GSMA clean | APPRAISAL_OFFERED | Tính giá trị Instant Credit dự kiến
+APPRAISAL_OFFERED | APPLY_TO_CHECKOUT | Thẻ tín dụng khả dụng $\ge$ Credit | INSTANT_CREDIT_APPLIED | Cấn trừ vào số tiền phải trả ngay
+INSTANT_CREDIT_APPLIED | CHECKOUT_COMPLETED | Lệnh Pre-auth Hold thành công | PREAUTH_HOLD_ACTIVE | Khóa hạn mức 100% thẻ tín dụng
+PREAUTH_HOLD_ACTIVE | NEW_DEVICE_DELIVERED | Máy mới giao thành công | KIT_DISPATCHED_SLA_ACTIVE | Xuất bộ kit UN 3481, đếm ngược 14 ngày
+KIT_DISPATCHED_SLA_ACTIVE | FIRST_CARRIER_SCAN | Bưu tá quét mã trong 14 ngày | IN_TRANSIT_TO_DEPOT_HUB | Ghi nhận tuân thủ SLA gửi hàng
+KIT_DISPATCHED_SLA_ACTIVE | SLA_14D_EXPIRED | Không có scan bưu chính sau 14 ngày | SLA_BREACHED_CLAWBACK_INIT | Chuyển Pre-auth Hold sang Capture 100%
+IN_TRANSIT_TO_DEPOT_HUB | DEPOT_HUB_SCANNED | Bưu kiện về đến trung tâm | DEPOT_INSPECTION_IN_PROGRESS | Kiểm tra seal và chạy Blancco 30 bước
+DEPOT_INSPECTION_IN_PROGRESS | DIAGNOSTIC_MATCHED_100 | Trùng khớp 100% tình trạng khai | RELEASED_HOLD_COMPLETED | Gửi lệnh giải phóng hold thẻ, đóng đơn
+DEPOT_INSPECTION_IN_PROGRESS | DISCREPANCY_FOUND | Sai lệch ngoại quan/pin/màn hình | TRANSFERRED_TO_REQUOTE_FLOW | Khóa đơn, chuyển sang VAS-TRADEIN-REQUOTE
+--- TABLE END ---
+2.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+--- TABLE START ---
+Feature: Thu Cũ Đổi Mới Gửi Bưu Điện Chuẩn An Toàn UN 3481 và Khóa Thẻ 100% (VAS-TRADEIN-MAILIN)  Scenario: Thẩm định trực tuyến, nhận máy mới, gửi kit bưu điện và hoàn tất giải tỏa hạn mức    Given Khách hàng chọn mua iPhone 16 Pro giá $1,199.00 trên trang Apple Store    And Khách hàng chọn tham gia Trade-In gửi máy cũ qua bưu điện với iPhone 14 Pro 128GB    And Khách hàng nhập số IMEI "358921098234123" hợp lệ, GSMA Blacklist trả về kết quả "CLEAN"    And Khách hàng hoàn tất khảo sát 5 câu hỏi xác nhận tình trạng máy hoàn hảo    When Khách hàng tiến hành thanh toán với thẻ tín dụng Visa    Then Tổng số tiền thanh toán thực tế của máy mới là $699.00 ($1,199.00 - $500.00 Instant Credit)    And Cổng thanh toán tạo lệnh Pre-authorization Hold khóa đúng số tiền $500.00 trên thẻ tín dụng    And Khi máy mới được giao thành công, hệ thống kích hoạt bộ đếm ngược SLA 14 ngày lịch    And Bộ kit bưu chính chuyên dụng có dán nhãn nguy hiểm UN 3481 và tem niêm phong Void Seal được giao tới khách    When Khách hàng đóng gói và gửi bưu điện vào ngày thứ 6 của SLA    And Hub kiểm định quét nhận và chạy chẩn đoán Blancco xác nhận máy trùng khớp 100% tình trạng khai báo    Then Cổng thanh toán gửi lệnh Release Authorization giải phóng toàn bộ số tiền $500.00 trên thẻ tín dụng    And Trạng thái giao dịch Trade-In chuyển sang "RELEASED_HOLD_COMPLETED"  Scenario: Tự động truy thu 100% tiền tạm ứng khi khách hàng quá hạn 14 ngày không gửi máy cũ    Given Khách hàng đã nhận máy mới vào lúc 09:00:00 ngày 2026-11-04    And Lệnh khóa hạn mức Pre-auth Hold $500.00 đang hoạt động trên thẻ tín dụng    When Đồng hồ hệ thống chạm mốc 00:00:01 ngày 2026-11-19 (chính thức hết hạn SLA 14 ngày lịch)    And Hệ thống đối soát kiểm tra mã vận đơn bưu cục chưa từng phát sinh sự kiện quét nhận bưu phẩm    Then Hệ thống tự động chuyển trạng thái Trade-In sang "SLA_BREACHED_CLAWBACK_TRIGGERED"    And Cổng thanh toán thực thi lệnh Capture Hold chuyển $500.00 tạm giữ thành thanh toán thực tế    And Thẻ tín dụng của khách hàng bị trừ chính thức $500.00 với nội dung "Trade-In Non-Return Charge"    And Mã vận chuyển thu hồi bưu chính bị hủy bỏ và vô hiệu hóa  Scenario: Cơ chế Rolling Re-authorization gia hạn hạn mức thẻ thành công vào ngày thứ 6    Given Lệnh Pre-auth Hold $500.00 được tạo vào ngày 2026-11-04 với thời hạn tạm giữ mặc định 7 ngày    And Khách hàng đang trong quá trình chuyển dữ liệu chưa gửi máy cũ    When Cron Job kiểm tra vào lúc 08:15:30 ngày 2026-11-10 (ngày thứ 6 của chu kỳ Trade-in)    Then Hệ thống tự động gửi lệnh "RE_AUTHORIZE_HOLD" tới ngân hàng phát hành thẻ tín dụng    And Ngân hàng xác nhận gia hạn hiệu lực khóa hạn mức thành công thêm 7 ngày liên tục    And Hồ sơ Trade-in ghi nhận "next_rolling_reauth_at" được dời sang ngày thứ 12 (2026-11-16)  Scenario: Chặn đứng thiết bị dính nợ cước hoặc báo mất cắp trên GSMA Blacklist tại bước nhập IMEI    Given Khách hàng đang ở bước nhập thông tin thiết bị cũ trên giao diện Trade-In Wizard    When Khách hàng nhập số IMEI "352094081234567"    And Hệ thống gọi API sang GSMA Device Check trả về "blacklist_status: TRUE, reason: REPORTED_LOST_STOLEN"    Then Hệ thống hiển thị cảnh báo đỏ "Thiết bị này không đủ điều kiện tham gia chương trình thu cũ đổi mới"    And Khách hàng không thể tiếp tục luồng khảo sát với số IMEI này    And Nút áp dụng Instant Credit vào giỏ hàng bị vô hiệu hóa hoàn toàn
+--- TABLE END ---
+3. ĐẶC TẢ CHI TIẾT VAS-TRADEIN-DOORSTEP: THẨM ĐỊNH THU CŨ TẠI NHÀ KHI GIAO MÁY MỚI, CHẨN ĐOÁN 5 PHÚT, CẤN TRỪ TỨC THÌ & HỦY KHÔNG PHẠT
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 1: ĐẶT LỊCH HẸN GIAO MÁY MỚI & THẨM ĐỊNH TẠI NHÀ (CHECKOUT)   │       │   - Khách chọn khung giờ hẹn 2 tiếng (Appointment Time Window)         │       │   - Khảo sát online sơ bộ hiển thị giá tạm tính (Estimated Credit)     │       │   - Cam kết sạc pin >=20% và chuẩn bị sao lưu dữ liệu trước            │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 2: KỸ THUẬT VIÊN XUẤT KHO MANG THEO MÁY MỚI & BỘ TEST DI ĐỘNG │       │   - Máy mới nguyên seal trong hộp niêm phong chống sốc                 │       │   - Tablet chẩn đoán chuyên dụng + Cáp OTG đa năng Lightning/Type-C    │       │   - Thiết bị quẹt thẻ mPOS cầm tay, túi niêm phong ESD chống tĩnh điện │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 3: QUY TRÌNH CHẨN ĐOÁN TẠI CHỖ TRONG 5 PHÚT (ONSITE 5-MIN)    │       │   - 3 phút: Cắm cáp OTG chạy phần mềm Blancco / PhoneCheck Mobile      │       │     (Test cảm ứng màn hình, đo pin PMIC SOH %, camera, FaceID, LDI)    │       │   - 2 phút: Kiểm tra ngoại quan cự ly 30cm chuẩn ISO, soi vết cấn móp  │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 4: XUẤT BÁO CÁO THỰC ĐỊA & CHỐT GIÁ THẨM ĐỊNH CUỐI CÙNG       │       │   - Ứng dụng hiển thị chi tiết từng hạng mục đánh giá                  │       │   - Chốt mức giá thu cũ thực tế (Final Onsite Trade-In Value)          │       │   - Tính toán số tiền chênh lệch cần thanh toán hoặc cấn trừ 100%      │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                         ┌─────────────────┴─────────────────┐                         ▼                                   ▼               ┌───────────────────┐               ┌───────────────────┐               │  KHÁCH ĐỒNG Ý     │               │  KHÁCH TỪ CHỐI    │               │  (ACCEPT ONSITE)  │               │ (DECLINE ONSITE)  │               └─────────┬─────────┘               └─────────┬─────────┘                         │                                   │                         ▼                                   ▼               ┌───────────────────┐               ┌───────────────────┐               │ • Ký điện tử app  │               │ KHÁCH CHỌN 1 TRONG│               │ • Quẹt thẻ mPOS bù│               │  2 PHƯƠNG ÁN:     │               │ • Factory Reset   │               ├───────────────────┤               │ • Niêm phong túi  │               │ (A) Mua máy mới   │               │ • Bàn giao máy mới│               │     nguyên giá    │               │   Giao dịch đóng  │               │ (B) HỦY ĐƠN 0đ    │               │                   │               │     KHÔNG PHẠT    │               └───────────────────┘               └───────────────────┘
+--- TABLE END ---
+3.1 Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: VAS-TRADEIN-DOORSTEP
+• Tên nghiệp vụ: Quy trình Thẩm Định Thu Cũ Đổi Mới Tại Nhà Khi Giao Máy Mới, Chẩn Đoán Kỹ Thuật 5 Phút, Cấn Trừ Trực Tiếp, Khách Hàng Quyết Định Tức Thì & Quyền Hủy Đơn Không Phạt (Doorstep / At-Home Trade-in Appraisal, 5-Minute Onsite Diagnostic, Instant Credit Settlement, Immediate Acceptance/Rejection & Zero-Penalty Cancellation).
+3.2 Mục tiêu & Tác nhân
+• Mục tiêu: Xóa bỏ hoàn toàn rào cản tâm lý e ngại bưu chính và thời gian chờ đợi đối soát của khách hàng; kỹ thuật viên giao máy mới tận nhà đồng thời đóng vai trò giám định viên kiểm tra máy cũ tại chỗ trong vòng 5 phút bằng phần mềm chuyên dụng; thực hiện cấn trừ tiền ngay tại hiện trường qua thiết bị mPOS hoặc QR code; trao quyền tối thượng cho khách hàng chấp thuận hoặc từ chối bán máy cũ tại chỗ với quyền hủy đơn hàng 0đ không chịu bất kỳ hình phạt nào.
+• Tác nhân tham gia (Actors):
+• Khách hàng (Onsite Customer): Đặt lịch hẹn, chuẩn bị máy cũ còn pin, quan sát quy trình chẩn đoán, đưa ra quyết định chấp thuận hoặc từ chối tại chỗ.
+• Chuyên viên Kỹ thuật Thực địa (Certified Field Technician / Specialist Courier): Vận chuyển máy mới, kết nối thiết bị kiểm định, thực hiện quy trình chẩn đoán 5 phút, thu cước chênh lệch và niêm phong máy cũ.
+• Ứng dụng Di động Kỹ thuật viên (Technician Field Diagnostic App): Ứng dụng chạy trên máy tính bảng/smartphone kỹ thuật viên, tích hợp bộ công cụ Blancco/Apple GSX Diagnostic qua cáp OTG hoặc Wi-Fi Direct.
+• Thiết bị Thanh toán Di động mPOS (Mobile POS Terminal): Hỗ trợ thanh toán quẹt thẻ chip, contactless (Apple Pay/Google Pay) và tạo mã VietQR động để thu số tiền chênh lệch.
+• Hệ thống OMS/WMS Trung tâm (Order & Warehouse Management System): Điều phối lịch hẹn, đồng bộ tồn kho máy mới và ghi nhận trạng thái niêm phong máy cũ.
+3.3 Điều kiện tiên quyết
+1. Địa chỉ nhận hàng của khách hàng nằm trong khu vực địa lý hỗ trợ dịch vụ Thẩm định Thu Cũ Tại Nhà (Nội thành các đô thị cấp 1: Hà Nội, TP. Hồ Chí Minh, Đà Nẵng, Cần Thơ, Hải Phòng).
+2. Đơn hàng mua thiết bị mới lựa chọn phương thức giao hàng: "Doorstep Trade-In Delivery (Giao máy mới & Thu cũ tại nhà)".
+3. Khách hàng cam kết có mặt tại địa chỉ đã hẹn trong khung giờ 2 tiếng đã chọn (ví dụ: 09:00 - 11:00 hoặc 14:00 - 16:00).
+4. Thiết bị cũ có dung lượng pin tối thiểu $\ge 20\%$ để khởi động và duy trì hoạt động trong suốt quá trình chạy bài kiểm tra chẩn đoán. Khách hàng được khuyến cáo sao lưu dữ liệu cá nhân lên đám mây trước giờ hẹn.
+3.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Chọn phương thức Doorstep & Đặt khung giờ hẹn tại Checkout):
+• Khi mua máy mới trên website/ứng dụng, khách hàng tick chọn "Đổi cũ lấy mới tại nhà (Doorstep Trade-In)".
+• Khách trả lời 5 câu hỏi khảo sát sơ bộ để nhận mức giá ước tính (Estimated Credit, ví dụ: $450.00 / 11.250.000đ).
+• Khách hàng chọn Khung giờ hẹn thẩm định (2-hour Appointment Window) phù hợp trong vòng 3 ngày làm việc tiếp theo.
+• Khách hàng thanh toán phần tiền tạm tính của máy mới qua thẻ hoặc chọn phương thức "Thanh toán phần chênh lệch khi nhận hàng tại nhà qua mPOS/QR".
+• Bước 2 (Kỹ thuật viên tiếp nhận ca điều phối và chuẩn bị công cụ):
+• Chuyên viên kỹ thuật được cấp phát: (1) Máy mới nguyên seal đóng hộp an toàn; (2) Máy tính bảng kỹ thuật viên cài ứng dụng Tech Field App; (3) Cáp kết nối OTG chuyên dụng (Lightning/Type-C); (4) Thiết bị quẹt thẻ mPOS cầm tay; (5) Túi bảo vệ chống sốc chống tĩnh điện ESD có mã barcode niêm phong; (6) Cục sạc dự phòng sạc nhanh 30W.
+• Bước 3 (Đến điểm hẹn & Khởi tạo phiên chẩn đoán tại chỗ):
+• Chuyên viên đến nhà khách hàng đúng khung giờ đã hẹn, xuất trình thẻ nhân viên có ảnh và mã số kỹ thuật viên.
+• Chuyên viên mở ứng dụng Tech App, quét mã vạch trên đơn hàng để kích hoạt phiên làm việc DOORSTEP_SESSION_ACTIVE.
+• Bước 4 (Thực hiện quy trình chẩn đoán chuẩn mực trong 5 phút - 5-Minute Onsite Diagnostic):
+• Phút 1-3 (Chẩn đoán Phần mềm Tự động - 3 phút):
+• Chuyên viên cắm cáp OTG kết nối máy cũ với Tablet kỹ thuật viên (hoặc khách quét mã QR để cấp quyền chẩn đoán qua trình duyệt nội bộ).
+• Phần mềm tự động kiểm tra chuyên sâu các module phần cứng:
+• Đọc trực tiếp chip PMIC: Dung lượng pin thực tế, số chu kỳ sạc, tỷ lệ sức khỏe pin (Battery Health SOH %).
+• Kiểm tra tính nguyên bản linh kiện: Phát hiện màn hình, camera hoặc pin lô bên thứ ba (Apple Unknown Part check).
+• Chạy bài test cảm ứng đa điểm (Touch digitizer grid test) hiển thị lưới ô vuông để khách lướt tay kiểm tra điểm liệt.
+• Kiểm tra cảm biến tiệm cận, cảm biến gia tốc, FaceID/TouchID, hệ thống micro, loa thoại, loa ngoài, Wi-Fi, Bluetooth.
+• Kiểm tra chỉ báo quỳ tím ẩm nước LDI (Liquid Damage Indicator) trong khay SIM.
+• Phút 4-5 (Kiểm tra Thẩm mỹ & Ngoại quan - 2 phút):
+• Chuyên viên kiểm tra thân vỏ ở khoảng cách chuẩn 30cm dưới nguồn sáng tự nhiên.
+• Đánh giá vết xước theo tiêu chuẩn Swiftronics: Xước lông mèo Grade A vs Xước sâu Grade B (móng tay vấp) vs Cấn móp Grade C.
+• Kiểm tra mặt kính lưng (Rear Glass): Xác nhận kính lưng nguyên vẹn, không có vết nứt chân chim.
+• Bước 5 (Xuất Báo cáo Thực địa & Chốt Giá Thu Cũ Cuối Cùng):
+• Ứng dụng Tech App tổng hợp kết quả và hiển thị Báo cáo Giám định Thực địa (Field Diagnostic Inspection Report).
+• Hệ thống tính toán và chốt mức giá thu mua chính thức (Final Onsite Trade-In Value).
+• So sánh với giá ước tính trực tuyến ban đầu:
+• Trường hợp A (Khớp 100%): Mức giá bằng đúng $450.00 như đã hứa.
+• Trường hợp B (Có sai lệch): Phát hiện pin chai 74% hoặc màn hình xước Grade B -> Hệ thống hiển thị rõ ràng từng dòng khấu trừ theo bảng giá niêm yết, chốt giá mới là $320.00 (chênh lệch $130.00).
+• Bước 6 (Khách hàng đưa ra quyết định tức thì tại chỗ):
+• LỰA CHỌN 1: KHÁCH ĐỒNG Ý BÀN GIAO MÁY CŨ (ACCEPTANCE):
+1. Khách hàng nhấn "Đồng ý bàn giao máy cũ" và ký tên điện tử trực tiếp trên màn hình Tablet của kỹ thuật viên.
+2. Thanh toán phần chênh lệch (nếu có):
+• Nếu đơn hàng đã trả trước trực tuyến: Hệ thống tự động cấn trừ hoặc xuất lệnh hoàn/thu chênh lệch.
+• Nếu khách chọn thanh toán tại chỗ: Chuyên viên đưa máy mPOS để khách quẹt thẻ tín dụng/thẻ ATM, chạm Apple Pay, hoặc hiển thị mã VietQR động để khách chuyển khoản ngân hàng 24/7.
+3. Sao lưu & Xóa sạch dữ liệu (Witnessed Data Wipe): Chuyên viên hướng dẫn khách hàng đăng xuất hoàn toàn tài khoản iCloud/Google Account, tắt tính năng Find My, và bấm "Xóa tất cả nội dung và cài đặt (Factory Reset)". Chuyên viên chứng kiến máy khởi động lại về màn hình chào mừng ngôn ngữ ban đầu.
+4. Niêm phong tài sản: Chuyên viên đặt máy cũ vào túi chống tĩnh điện ESD, dán dải tem niêm phong có mã barcode duy nhất SEAL-BARCODE, kỹ thuật viên và khách hàng cùng ký tên lên mép dán tem.
+5. Bàn giao máy mới: Chuyên viên trao tận tay chiếc máy mới nguyên seal cho khách hàng, in biên bản bàn giao điện tử gửi qua Email và SMS.
+• LỰA CHỌN 2: KHÁCH TỪ CHỐI BÁN MÁY CŨ (IMMEDIATE REJECTION):
+• Khách hàng nhận thấy mức giá điều chỉnh không thỏa đáng và nhấn "Từ chối bán máy cũ".
+• Ứng dụng kỹ thuật viên lập tức đưa ra 2 phương án minh bạch cho khách hàng lựa chọn:
+• Phương án 2A (Giữ máy cũ, vẫn mua máy mới nguyên giá): Khách thanh toán bổ sung số tiền đúng bằng khoản giá trị thu cũ tạm tính ($450.00) qua mPOS hoặc VietQR. Sau khi thanh toán xong, chuyên viên bàn giao máy mới cho khách. Khách giữ lại chiếc điện thoại cũ của mình.
+• Phương án 2B (HỦY ĐƠN HÀNG TẠI CHỖ 0Đ KHÔNG PHẠT - Zero-Penalty Cancellation): Khách hàng không muốn mua máy mới nữa. Chuyên viên bấm xác nhận "Khách hàng hủy đơn do không đồng ý giá thu cũ".
+• Khách hàng hoàn toàn KHÔNG phải trả bất kỳ chi phí nào (0đ phí giao hàng, 0đ phí kỹ thuật viên, 0đ phí thẩm định).
+• Chuyên viên đóng gói lại máy mới nguyên seal mang về kho.
+• Hệ thống OMS tự động kích hoạt lệnh hoàn tiền 100% đối với mọi khoản tiền hoặc hạn mức thẻ đã tạm giữ trước đó. Tiền về tài khoản khách hàng trong vòng 2 giờ (đối với ví/QR) hoặc 1-3 ngày làm việc (đối với thẻ tín dụng). Khách hàng giữ nguyên máy cũ.
+3.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+A. Luồng ngoại lệ 1: Máy cũ bị cạn kiệt pin hoàn toàn tại thời điểm hẹn (Dead Battery Onsite)
+• Kịch bản: Kỹ thuật viên đến nơi nhưng điện thoại cũ của khách hàng bị sập nguồn hoàn toàn không bật lên được do để quên sạc.
+• Xử lý hệ thống:
+1. Kỹ thuật viên sử dụng bộ sạc dự phòng sạc nhanh 30W chuẩn PD cấp nguồn khẩn cấp cho thiết bị trong 5 phút.
+2. Nếu sau 5 phút máy bật nguồn thành công: Tiếp tục chạy quy trình chẩn đoán bình thường.
+3. Nếu sau 10 phút cắm sạc máy vẫn hoàn toàn không lên nguồn (chết nguồn mainboard / hỏng cổng sạc): Thiết bị được xác định tình trạng HARDWARE_NO_POWER_DEFECT, định giá thu mua rơi về mức thu mua xác linh kiện (ví dụ: 0đ hoặc $20.00).
+4. Kỹ thuật viên giải thích rõ ràng và để khách chọn: Mua máy mới nguyên giá hoặc hủy đơn hàng tại chỗ hoàn toàn miễn phí.
+B. Luồng ngoại lệ 2: Khách hàng vắng mặt tại điểm hẹn trong khung giờ (Customer Missed Appointment)
+• Kịch bản: Kỹ thuật viên đến đúng địa chỉ trong khung giờ hẹn nhưng gọi điện khách không bắt máy hoặc không có người ở nhà.
+• Xử lý hệ thống:
+1. Kỹ thuật viên thực hiện tối thiểu 3 cuộc gọi cách nhau 5 phút và bấm chuông cửa.
+2. Kỹ thuật viên bấm nút "Khách vắng mặt" trên Tech App. Ứng dụng kích hoạt đồng hồ chờ 15 phút bắt buộc (15-Minute Onsite Waiting Grace Timer) có định vị GPS xác thực kỹ thuật viên đang đứng trước cửa nhà khách.
+3. Hệ thống OMS gửi SMS và Push Notification tự động: "Kỹ thuật viên đang có mặt tại địa chỉ của bạn. Vui lòng liên hệ trong 15 phút".
+4. Nếu hết 15 phút khách không xuất hiện: Kỹ thuật viên chụp ảnh số nhà làm bằng chứng POD và rời đi. Hệ thống ghi nhận trạng thái APPOINTMENT_MISSED_RESCHEDULE.
+5. Khách hàng được quyền chọn lại lịch hẹn mới miễn phí tối đa 2 lần. Nếu sau 2 lần vẫn vắng mặt, đơn hàng tự động bị hủy và hoàn tiền 100%.
+C. Luồng phụ 3: Hỗ trợ chuyển dữ liệu máy cũ sang máy mới tại chỗ (Data Migration Assistance)
+• Kịch bản: Khách hàng lớn tuổi hoặc không rành công nghệ, muốn chuyển toàn bộ danh bạ, ảnh và tin nhắn từ máy cũ sang máy mới trước khi bàn giao máy cũ.
+• Xử lý hệ thống:
+1. Trên Tech App, kỹ thuật viên bật tùy chọn dịch vụ cộng thêm: "Hỗ trợ Chuyển dữ liệu Nhanh (Apple Quick Start / Samsung Smart Switch)".
+2. Kỹ thuật viên bóc seal máy mới dưới sự chứng kiến của khách, bật tính năng Quick Start không dây giữa 2 máy.
+3. Hệ thống cấp thêm thời gian chờ tối đa 15 đến 20 phút trong lịch trình điều phối của kỹ thuật viên.
+4. Sau khi dữ liệu chuyển thành công 100%, kỹ thuật viên mới tiến hành Factory Reset máy cũ và niêm phong túi.
+D. Luồng ngoại lệ 4: Thiết bị dính khóa quản trị doanh nghiệp MDM (Remote Management / Corporate MDM Lock)
+• Kịch bản: Máy cũ của khách là tài sản của công ty cũ cấp, khi chẩn đoán phần mềm phát hiện hồ sơ giám sát MDM Enrollment Profile chưa được gỡ bỏ.
+• Xử lý hệ thống:
+1. Phần mềm Blancco cảnh báo đỏ: ENTERPRISE_MDM_LOCKED.
+2. Kỹ thuật viên giải thích với khách: Thiết bị dính khóa MDM doanh nghiệp không đủ tư cách pháp lý để thu gom theo quy định sở hữu tài sản.
+3. Kỹ thuật viên từ chối thu mua chiếc máy này. Khách hàng có quyền đổi sang một thiết bị cũ khác (nếu có sẵn tại nhà) để test lại hoặc chọn hủy đơn không phạt.
+3.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-DST-01 | Giới Hạn Thời Gian Chẩn Đoán Thực Địa (5-Minute Diagnostic Rule) | Thời gian chạy bài kiểm tra phần mềm tự động không được vượt quá 3 phút; thời gian kiểm tra ngoại quan không quá 2 phút. Toàn bộ phiên làm việc tại nhà khách hàng (tính cả khâu quẹt thẻ và bàn giao) cam kết hoàn tất trong tối đa 15 phút để đảm bảo SLA điều phối.
+BR-DST-02 | Quyền Hủy Đơn Tuyệt Đối Không Phạt (Zero-Penalty Cancellation Right) | Khách hàng có quyền tuyệt đối từ chối kết quả thẩm định tại chỗ và yêu cầu hủy đơn hàng ngay lập tức mà không phải trả bất kỳ khoản phí vận chuyển, phí kỹ thuật hay phí hủy đơn nào (0đ). Mọi nỗ lực ép buộc khách nhận máy hoặc thu phí dịch vụ khi khách hủy đơn đều bị nghiêm cấm và xử phạt kỷ luật kỹ thuật viên.
+BR-DST-03 | Thanh Toán Đa Kênh Tại Chỗ (Onsite Split Settlement Protocol) | Chấp nhận thanh toán phần tiền chênh lệch thông qua: Thẻ tín dụng/ATM qua mPOS, Apple Pay/Google Pay không tiếp xúc, hoặc chuyển khoản VietQR động 24/7. Cấm tuyệt đối thu tiền mặt vượt hạn mức quy định phòng chống rửa tiền (trên 20.000.000đ bắt buộc thanh toán qua ngân hàng).
+BR-DST-04 | Quy Chuẩn Xóa Sạch Dữ Liệu Có Chứng Kiến (Witnessed Data Wipe Protocol) | Kỹ thuật viên bắt buộc phải chứng kiến khách tự tay bấm Reset hoặc kỹ thuật viên hỗ trợ thực hiện Factory Reset và máy hiển thị màn hình "Hello / Chào mừng" trước khi cho vào túi niêm phong. Cấm tuyệt đối thu máy cũ khi còn dữ liệu cá nhân hoặc tài khoản cá nhân chưa thoát.
+BR-DST-05 | Mã Hóa Niêm Phong Túi Máy Cũ (Tamper-evident Bag Invariant) | Mỗi túi đựng máy cũ có mã số barcode duy nhất gắn chặt với doorstep_session_id. Mép dán có chỉ số hủy hoại vật lý (khi mở ra sẽ rách nát). Kỹ thuật viên và khách hàng cùng ký tên sống lên dải tem trước khi kỹ thuật viên rời khỏi nhà khách.
+--- TABLE END ---
+3.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+A. Cấu trúc Dữ liệu Phiên Thẩm Định Tại Nhà (Doorstep Session Entity Schema):
+--- TABLE START ---
+{  "doorstep_session_id": "DST-2026-77812",  "order_id": "ORD-VN-98214",  "customer_id": "CUST-774102",  "technician_id": "TECH_FIELD_108",  "scheduled_window": {    "appointment_date": "2026-11-06",    "time_window": "14:00-16:00",    "customer_geo_location": {"lat": 10.7769, "lng": 106.7009},    "address_text": "Phòng 1204, Chung cư Landmark 81, Bình Thạnh, TP.HCM"  },  "declared_estimate": {    "declared_model": "iPhone 14 Pro Max 256GB",    "online_estimated_credit": 450.00  },  "onsite_diagnostic_result": {    "diagnostic_dongle_connected_at": "2026-11-06T14:22:10Z",    "software_test_duration_seconds": 165,    "pmic_battery_health_pct": 84,    "battery_cycle_count": 412,    "oem_parts_verification": {      "screen_genuine": true,      "camera_genuine": true,      "battery_genuine": true,      "unknown_parts_warning": false    },    "touch_digitizer_passed": true,    "face_id_functional": true,    "cosmetic_grade_observed": "GRADE_A_PRISTINE",    "rear_glass_intact": true,    "final_onsite_value": 450.00,    "variance_from_estimate": 0.00  },  "customer_action": {    "decision": "ACCEPTED_TRADEIN",    "digital_signature_url": "https://cdn.platform.com/signatures/sig-99214.png",    "data_wipe_witnessed": true,    "tamper_bag_barcode": "BAG-ESD-991204",    "onsite_settlement_method": "ZERO_BALANCE_MATCHED",    "new_device_serial_handed_over": "DNQX198402X9"  },  "session_lifecycle_status": "COMPLETED_HANDOVER_SUCCESS",  "completed_at": "2026-11-06T14:35:40Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Thẩm Định Tại Nhà (Doorstep State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[NONE] | BOOK_DOORSTEP_SCHEDULE | Khu vực hỗ trợ, chọn khung giờ | SCHEDULED_AWAITING_DISPATCH | Tạo lịch hẹn trên hệ thống điều phối
+SCHEDULED_AWAITING_DISPATCH | TECHNICIAN_DISPATCHED | Kỹ thuật viên nhận máy mới | DISPATCHED_EN_ROUTE | Gửi SMS thông báo kỹ thuật viên đang đến
+DISPATCHED_EN_ROUTE | TECHNICIAN_ARRIVED | Quét GPS trong bán kính 100m | ARRIVED_ONSITE_DIAGNOSING | Mở phiên chẩn đoán 5 phút trên Tech App
+ARRIVED_ONSITE_DIAGNOSING | DIAGNOSTIC_FINISHED | Test xong phần mềm và ngoại quan | FINAL_OFFER_PRESENTED | Xuất Báo cáo Thực địa và giá chốt
+FINAL_OFFER_PRESENTED | CUSTOMER_ACCEPTS_OFFER | Khách ký tên điện tử trên app | SETTLEMENT_AND_WIPE_PENDING | Thu chênh lệch mPOS, Factory Reset máy cũ
+SETTLEMENT_AND_WIPE_PENDING | BAG_SEALED_DEVICE_EXCHANGED | Dán tem niêm phong, trao máy mới | COMPLETED_HANDOVER_SUCCESS | Bàn giao máy mới, đóng đơn thành công
+FINAL_OFFER_PRESENTED | CUSTOMER_DECLINES_OFFER | Khách không đồng ý giá chốt | DECLINE_HANDLING_WINDOW | Hiển thị 2 lựa chọn: Mua nguyên giá / Hủy
+DECLINE_HANDLING_WINDOW | BUY_NEW_FULL_PRICE | Quẹt mPOS thanh toán đủ giá máy | FULL_PRICE_SETTLED_HANDOVER | Giao máy mới, khách giữ lại máy cũ
+DECLINE_HANDLING_WINDOW | CANCEL_ORDER_ZERO_FEE | Khách chọn hủy không mất phí | CANCELLED_ZERO_PENALTY_REFUND | Mang máy mới về kho, hoàn tiền 100%
+--- TABLE END ---
+3.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+--- TABLE START ---
+Feature: Thẩm Định Thu Cũ Tại Nhà Khi Giao Máy Mới (VAS-TRADEIN-DOORSTEP)  Scenario: Thẩm định tại nhà trong 5 phút đạt chuẩn 100% và bàn giao máy mới thành công    Given Khách hàng đặt mua iPhone 16 Pro Max và chọn lịch hẹn thẩm định tại nhà lúc 14:00 ngày 2026-11-06    And Mức giá ước tính trực tuyến ban đầu cho chiếc iPhone 14 Pro Max là $450.00    When Chuyên viên kỹ thuật đến địa chỉ khách hàng đúng khung giờ hẹn    And Chuyên viên kết nối thiết bị chẩn đoán qua cáp OTG chạy kiểm tra phần mềm trong 3 phút    And Phần mềm Blancco xác nhận pin đạt 84%, màn hình và camera nguyên bản chính hãng Apple    And Chuyên viên kiểm tra ngoại quan 2 phút xác nhận thân máy đạt chuẩn Grade A không nứt vỡ    Then Ứng dụng Tech App chốt mức giá thu mua thực tế chính xác là $450.00 (khớp 100%)    When Khách hàng nhấn đồng ý và ký tên điện tử trên màn hình Tablet    And Chuyên viên hỗ trợ khách hàng thực hiện Factory Reset xóa sạch dữ liệu trước sự chứng kiến    And Chiếc máy cũ được niêm phong vào túi ESD có dán mã barcode bảo mật    Then Chuyên viên bàn giao máy mới nguyên seal cho khách hàng và hoàn tất đơn hàng  Scenario: Khách hàng từ chối mức giá thẩm định tại nhà và chọn hủy đơn hàng 0đ không phạt    Given Khách hàng đã đặt đơn giao máy mới kèm thẩm định thu cũ tại nhà    And Giá ước tính online ban đầu là $450.00    When Kỹ thuật viên chẩn đoán phát hiện màn hình có vết xước sâu cấp độ B và pin chai còn 73%    And Hệ thống tính toán mức giá thu mua điều chỉnh giảm xuống còn $290.00 (giảm $160.00)    When Khách hàng không đồng ý với mức giá $290.00 và bấm "Từ chối bán máy cũ"    And Khách hàng chọn phương án "Hủy toàn bộ đơn hàng tại chỗ"    Then Kỹ thuật viên lập tức xác nhận hủy đơn hàng mà không thu bất kỳ chi phí nào của khách (0đ phí hủy)    And Kỹ thuật viên thu hồi máy mới nguyên seal quay về kho    And Cổng thanh toán tự động kích hoạt hoàn trả 100% số tiền hoặc giải phóng hạn mức thẻ cho khách hàng trong 2 giờ    And Khách hàng giữ lại thiết bị cũ nguyên vẹn  Scenario: Khách hàng từ chối giá thu cũ nhưng chọn thanh toán phần chênh lệch qua mPOS để lấy máy mới    Given Giá ước tính thu cũ ban đầu là $450.00    When Kỹ thuật viên thẩm định chốt giá thực tế là $320.00 do nắp lưng có vết cấn góc    And Khách hàng không muốn bán máy cũ với giá $320.00 mà muốn giữ lại cho người thân    When Khách hàng chọn phương án "Giữ lại máy cũ và mua máy mới nguyên giá"    Then Kỹ thuật viên xuất hóa đơn thanh toán bổ sung số tiền đúng bằng $450.00 trên thiết bị mPOS    When Khách hàng chạm thẻ tín dụng thanh toán không tiếp xúc thành công $450.00 trên mPOS    Then Kỹ thuật viên bàn giao máy mới nguyên seal cho khách hàng    And Khách hàng giữ lại chiếc điện thoại cũ của mình, đơn hàng hoàn tất mua nguyên giá  Scenario: Xử lý thiết bị cũ bị cạn kiệt pin tại chỗ bằng sạc nhanh khẩn cấp 5 phút    Given Kỹ thuật viên đến nhà khách hàng đúng hẹn nhưng chiếc máy cũ bị sập nguồn hoàn toàn    When Kỹ thuật viên sử dụng pin sạc dự phòng sạc nhanh 30W cắm sạc cho thiết bị trong 5 phút    Then Thiết bị nhận sạc bình thường và màn hình khởi động lên hiển thị 8% pin    And Kỹ thuật viên lập tức kết nối cáp chẩn đoán OTG chạy bài kiểm tra tự động thành công    And Kết quả chẩn đoán xác nhận máy đủ điều kiện thu mua theo đúng quy trình
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+4. ĐẶC TẢ CHI TIẾT VAS-TRADEIN-REQUOTE: CHÍNH SÁCH HẠ GIÁ ĐỀ XUẤT MỚI (RE-QUOTE), SLA 14 NGÀY, FULL CLAWBACK VÀ TRẢ MÁY CŨ MIỄN PHÍ 0Đ
+--- TABLE START ---
+┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 1: TRUNG TÂM GIÁM ĐỊNH DEPOT HUB PHÁT HIỆN SAI LỆCH TÌNH TRẠNG │       │   - Quét Serial/IMEI, chạy Blancco/PhoneCheck phát hiện lỗi khuyết tật:│       │     Kính lưng nứt vỡ, Pin phồng chai <80%, Pin bên thứ ba Unknown Part,│       │     Màn hình xước sâu Grade B/C, Màn hình ám ố OLED burn-in, Quỳ tím đỏ │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 2: ĐỘNG CƠ TỰ ĐỘNG TÍNH GIÁ RE-QUOTE & TẠO HỒ SƠ ĐỐI SOÁT      │       │   - Nạp Bảng ma trận khấu trừ lỗi (Defect Penalty Valuation Matrix)    │       │   - Chụp 4 ảnh macro độ phân giải cao vết nứt + Báo cáo mã lỗi         │       │   - Tính Clawback Variance: Số tiền chênh lệch cần truy thu bù trừ      │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                                           ▼       ┌────────────────────────────────────────────────────────────────────────┐       │     BƯỚC 3: PHÁT HÀNH ĐỀ XUẤT MỚI (RE-QUOTE) & KÍCH HOẠT SLA 14 NGÀY   │       │   - Gửi Email bảo mật có ảnh bằng chứng + SMS + Push Notification      │       │   - Bật đồng hồ đếm ngược SLA 14 ngày lịch (336 giờ) trên Customer App │       │   - Bảng tài chính: Giá cũ $500 vs Giá mới $280 -> Lệch cần bù: $220   │       └───────────────────────────────────┬────────────────────────────────────┘                                           │                         ┌─────────────────┴─────────────────┐                         ▼                                   ▼               ┌───────────────────┐               ┌───────────────────┐               │    LỰA CHỌN A:    │               │    LỰA CHỌN B:    │               │   CHẤP NHẬN GIÁ   │               │   TỪ CHỐI GIÁ     │               │ (ACCEPT RE-QUOTE) │               │ (DECLINE RE-QUOTE)│               └─────────┬─────────┘               └─────────┬─────────┘                         │                                   │                         ▼                                   ▼               ┌───────────────────┐               ┌───────────────────┐               │ PARTIAL CLAWBACK: │               │ FULL CLAWBACK:    │               │ Trừ $220 từ thẻ   │               │ Trừ đủ $500 từ thẻ│               │ Giải tỏa $280 hold│               │ ĐÓNG GÓI TRẢ LẠI  │               │ Trade-in hoàn tất │               │ MÁY CŨ MIỄN PHÍ   │               │                   │               │ 0đ PHÍ SHIP HOÀN  │               └───────────────────┘               └───────────────────┘                                           ▲                                           │ (Quá hạn 14 ngày không phản hồi)                                           │                                 ┌─────────┴─────────┐                                 │ EXPIRED 14D SLA:  │                                 │ Tự động kích hoạt │                                 │ Full Clawback $500│                                 │ & Trả máy cũ 0đ   │                                 └───────────────────┘
+--- TABLE END ---
+4.1 Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: VAS-TRADEIN-REQUOTE
+• Tên nghiệp vụ: Chính Sách Đề Xuất Giá Mới Khi Giám Định Phát Hiện Sai Lệch Tình Trạng, Thời Hạn Phản Hồi SLA 14 Ngày, Truy Thu Một Phần vs Truy Thu Toàn Bộ Kèm Gửi Trả Máy Cũ Miễn Phí 0đ & Cơ Chế Tự Động Xử Lý Quá Hạn (Trade-In Re-Quote Counter-Offer Policy, 14-Day Customer SLA, Partial Clawback vs Full Clawback with 0đ Free Return Shipping & Expired Auto-Clawback Engine).
+4.2 Mục tiêu & Tác nhân
+• Mục tiêu: Thiết lập khung pháp lý và quy trình vận hành kỹ thuật minh bạch tuyệt đối khi thiết bị thu cũ gửi về kho có tình trạng vật lý hoặc linh kiện kém hơn bản tự khai báo trực tuyến; bảo vệ doanh nghiệp khỏi nguy cơ thất thoát tài chính do khai báo gian dối; đồng thời bảo vệ quyền lợi người tiêu dùng thông qua cơ chế gửi bằng chứng hình ảnh macro, thời hạn cân nhắc 14 ngày lịch (336 giờ), và cam kết hoàn trả thiết bị cũ về tận nhà hoàn toàn miễn phí (0đ phí ship) nếu khách không đồng ý với mức giá đề xuất mới.
+• Tác nhân tham gia (Actors):
+• Khách hàng (Customer): Nhận thông báo điều chỉnh giá, truy cập cổng đối soát xem hình ảnh giám định, đưa ra quyết định Chấp nhận hoặc Từ chối trong 14 ngày.
+• Trạm Giám định Kỹ thuật Kho Trung tâm (Depot Inspection Station): Chuyên viên kỹ thuật và phần mềm tự động chẩn đoán phát hiện lỗi, chụp ảnh macro bằng chứng.
+• Động cơ Định giá Thu cũ (Valuation Pricing Matrix Engine): Tự động áp dụng bảng khấu trừ khuyết tật và tính toán số tiền chênh lệch (Clawback Variance).
+• Cổng Thanh toán (Payment Gateway): Thực thi giao dịch Partial Clawback Debit hoặc Full Clawback Debit dựa trên token thanh toán đã lưu.
+• Đơn vị Vận chuyển Logistics Ngược (Reverse 3PL Carrier): Đóng gói và chuyển phát kiện hàng máy cũ gửi trả về địa chỉ khách hàng.
+4.3 Điều kiện tiên quyết
+1. Thiết bị cũ đã được đơn vị vận chuyển giao tới Trung tâm Giám định Kho vận (Depot Hub) và được quét mã vạch tiếp nhận DEPOT_HUB_SCANNED.
+2. Báo cáo chẩn đoán kỹ thuật ghi nhận tối thiểu một (01) khuyết tật thực tế không trùng khớp với bản tự khai báo trực tuyến của khách: Nứt kính lưng, pin chai dưới 80%, phát hiện linh kiện bên thứ ba không chính hãng (Unknown Part), màn hình có điểm chết/sọc/xước sâu Grade B/C, hoặc cảm biến quỳ tím LDI chuyển sang màu đỏ.
+3. Hồ sơ Trade-In đang trong trạng thái tạm khóa hạn mức thẻ tín dụng bảo chứng 100% (PREAUTH_HOLD_ACTIVE) hoặc có thỏa thuận ghi nợ ủy quyền CIT-MIT Tokenization Mandate còn hiệu lực.
+4.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Phát hiện Sai lệch & Khóa Tạm dừng Hồ sơ):
+• Khi cắm máy vào trạm kiểm định Blancco/PhoneCheck, phần mềm phát hiện bất thường và kích hoạt cờ cảnh báo CONDITION_MISMATCH_DETECTED.
+• Hệ thống tự động khóa tạm dừng hồ sơ Trade-In, chuyển trạng thái sang REQUOTE_EVALUATION_IN_PROGRESS.
+• Bước 2 (Chụp Ảnh Bằng Chứng Macro & Nạp Bảng Khấu Trừ Khuyết Tật):
+• Kỹ thuật viên đưa máy vào buồng chụp ảnh kỹ thuật số đa góc:
+• Chụp tối thiểu 4 ảnh macro độ phân giải cao (20MP, zoom quang học vết xước/nứt).
+• Chụp ảnh màn hình hiển thị thông tin Serial Number, IMEI và thông báo lỗi hệ điều hành (ví dụ: cảnh báo "Unknown Battery Part" hoặc "Important Display Message").
+• Động cơ Định giá Thu cũ (Valuation Engine) tự động nạp Bảng ma trận khấu trừ lỗi (Defect Penalty Deductions):
+• Kính lưng sau bị nứt (Cracked Rear Glass): Khấu trừ 35% giá trị máy.
+• Màn hình xước sâu nhìn rõ ở 30cm (Fingernail catch): Hạ từ Grade A xuống Grade B (trừ $150.00).
+• Pin chai < 80% hoặc pin lô không chính hãng: Khấu trừ chi phí thay thế pin chuẩn OEM ($89.00).
+• Màn hình có điểm chết hoặc bóng mờ OLED burn-in: Khấu trừ 50% giá trị màn hình ($180.00).
+• Cảm biến quỳ tím vào nước chuyển đỏ (LDI Tripped): Định giá thu cũ hạ về $0.00.
+• Tính toán số tiền chênh lệch cần truy thu:
+$$\text{Clawback Variance} = \text{Initial Estimated Credit (\$500.00)} - \text{Revised Re-quote Value (\$280.00)} = \$220.00$$
+• Bước 3 (Phát hành Đề xuất Mới & Kích hoạt Đồng hồ SLA 14 Ngày):
+• Hệ thống tạo bản ghi trade_in_requote_ticket với mã đề xuất duy nhất.
+• Tự động phát thông báo khẩn cấp đa kênh tới khách hàng: Email có chữ ký số chứa đường dẫn đối soát bảo mật, tin nhắn SMS cảnh báo và thông báo đẩy (Push Notification) trong App TMĐT.
+• Kích hoạt đồng hồ đếm ngược SLA 14 ngày lịch (chính xác 336 giờ 00 phút 00 giây) hiển thị trực quan trên trang quản trị đơn hàng của khách.
+• Trang web đối soát hiển thị trực quan:
+• Ảnh chụp thực tế khuyết tật đối chiếu với tiêu chuẩn khai báo ban đầu.
+• Bảng so sánh tài chính: Giá tạm tính ban đầu ($500.00) vs Giá điều chỉnh mới ($280.00) $\implies$ Khoản tiền chênh lệch cần bù: $220.00.
+• Hai nút thao tác lớn: "Chấp nhận mức giá mới $280.00" và "Từ chối & Nhận lại máy cũ 0đ".
+• Bước 4 (Khách hàng Đưa ra Quyết định trên Cổng Tự Phục Vụ):
+• LỰA CHỌN A: KHÁCH HÀNG CHẤP NHẬN GIÁ MỚI (ACCEPT RE-QUOTE):
+1. Khách hàng bấm nút "Đồng ý nhận giá $280.00".
+2. Cổng thanh toán kích hoạt giao dịch Truy thu một phần (Partial Clawback Charge): Thu chính xác $220.00 từ hạn mức thẻ tín dụng đang bị tạm giữ.
+3. Khoản tiền tạm giữ còn lại ($280.00) được ngân hàng giải tỏa ngay lập tức (RELEASE_PARTIAL_HOLD).
+4. Hệ thống xuất hóa đơn điện tử điều chỉnh gửi qua email. Giao dịch Trade-In khép lại ở trạng thái REQUOTE_ACCEPTED_PARTIALLY_CLAWED. Máy cũ chính thức chuyển quyền sở hữu cho sàn.
+• LỰA CHỌN B: KHÁCH HÀNG TỪ CHỐI GIÁ MỚI (DECLINE RE-QUOTE):
+1. Khách hàng bấm nút "Từ chối nhận mức giá mới".
+2. Hồ sơ Trade-In cho thiết bị này lập tức bị hủy bỏ (TRADE_IN_REJECTED_BY_USER).
+3. Cổng thanh toán kích hoạt giao dịch Truy thu toàn bộ (Full Clawback Charge): Chuyển toàn bộ khoản tiền đã giảm trừ ban đầu $500.00 từ trạng thái tạm giữ sang trạng thái thanh toán thực tế (Capture 100%) trên thẻ tín dụng của khách. Giao dịch mua máy mới trở thành giao dịch mua nguyên giá thông thường.
+4. Cam kết Miễn phí Vận chuyển Hoàn trả 0đ (Zero-Cost Return Guarantee):
+• Trung tâm kiểm định đóng gói chiếc máy cũ của khách vào hộp bảo vệ chống sốc nguyên bản.
+• Tạo nhãn vận chuyển hoàn trả bưu điện (Return Waybill) chuyển phát nhanh có bảo hiểm và gửi trả lại tận nhà khách hàng hoàn toàn MIỄN PHÍ (0đ phí ship hoàn, 0đ phí thẩm định) trong vòng 3 ngày làm việc.
+• Cung cấp mã tracking bưu điện để khách hàng theo dõi hành trình chiếc máy cũ trở về tay mình.
+4.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+A. Luồng ngoại lệ 1: Xử lý quá hạn 14 ngày không phản hồi (Expired 14-Day Re-quote SLA & Default Execution)
+• Kịch bản: Khách hàng nhận được email đề xuất giá mới nhưng bỏ qua, không bấm Chấp nhận và cũng không bấm Từ chối suốt 14 ngày.
+• Hệ thống cảnh báo tự động:
+• Ngày thứ 5: Gửi email nhắc nhở lần 1 kèm ảnh bằng chứng lỗi.
+• Ngày thứ 10: Gửi SMS cảnh báo tài chính: "Bạn còn 4 ngày để phản hồi đề xuất giá Trade-In. Sau thời hạn này hệ thống sẽ tự động thực thi điều khoản mặc định".
+• Ngày thứ 13 (23:59:59 UTC): Thông báo đẩy 24 giờ cuối cùng.
+• Xử lý tự động khi chạm mốc 00:00:01 ngày thứ 15:
+1. Cron Job quét hệ thống phát hiện trạng thái REQUOTE_DECISION_PENDING đã quá 336 giờ.
+2. Kích hoạt Điều khoản Mặc định Chuẩn Apple (Default Consumer-Protective Policy):
+• Tự động thực thi lệnh Full Clawback Debit $500.00 từ thẻ tín dụng của khách hàng.
+• Tự động tạo lệnh xuất kho gửi trả máy cũ về tận địa chỉ của khách hàng hoàn toàn miễn phí 0đ phí vận chuyển.
+• Lý do thiết kế: Bảo vệ quyền sở hữu tài sản của khách hàng, tránh khiếu nại tranh chấp việc sàn tự ý thu mua tài sản khi chủ sở hữu chưa đồng thuận mức giá mới.
+B. Luồng ngoại lệ 2: Lệnh Clawback thẻ tín dụng bị từ chối do không đủ hạn mức hoặc thẻ bị khóa (Clawback Debit Failed Escalation)
+• Kịch bản: Khi sàn phát lệnh Partial Clawback ($220.00) hoặc Full Clawback ($500.00), ngân hàng phát hành thẻ trả về mã lỗi: INSUFFICIENT_FUNDS, CARD_EXPIRED hoặc DO_NOT_HONOR do khách chủ động khóa thẻ.
+• Quy trình Leo thang Công nợ & Quyền Giữ Tài sản (Lien on Collateral):
+1. Cổng thanh toán đánh dấu trạng thái CLAWBACK_PAYMENT_FAILED.
+2. Tạm dừng xuất trả máy cũ: Trung tâm kiểm định lập tức khóa giữ chiếc máy cũ trong kho an ninh. Sàn thực thi Quyền Giữ Tài sản Bảo chứng (Legal Possessory Lien) theo quy định của luật thương mại dân sự: Không xuất trả thiết bị cũ cho đến khi khoản nợ truy thu được thanh toán đầy đủ.
+3. Hệ thống gửi thông báo tối hậu thư tài chính qua Email/SMS: Yêu cầu cập nhật phương thức thanh toán mới hoặc thanh toán qua cổng chuyển khoản trong vòng 7 ngày làm việc.
+4. Tạm khóa các tính năng của tài khoản người dùng trên sàn (chặn rút tiền ví xu, chặn đặt đơn mới, khóa quyền mua trả góp).
+5. Nếu sau 7 ngày không thanh toán: Chuyển hồ sơ nợ sang Đội ngũ Thu hồi Công nợ Chuyên nghiệp (Debt Collection Agency), đồng thời tiến hành thủ tục pháp lý thanh lý thiết bị cũ theo giá thị trường để bù trừ công nợ.
+C. Luồng phụ 3: Khách hàng khiếu nại bằng chứng giám định (Contested Re-quote Arbitration Flow)
+• Kịch bản: Khách hàng khẳng định trước khi gửi máy màn hình không hề bị nứt, cho rằng vết nứt phát sinh do đơn vị vận chuyển bưu điện làm rơi vỡ trên đường.
+• Xử lý trọng tài ba bên:
+1. Khách hàng bấm nút "Khiếu nại kết quả giám định (Contest Valuation)" trên cổng đối soát và tải lên ảnh/video chụp máy lúc đóng gói.
+2. Hệ thống tạo ticket khẩn cấp cho Bộ phận Trọng tài Chất lượng (Quality Assurance Specialist).
+3. Trọng tài viên trích xuất video CCTV độ phân giải cao ghi lại khoảnh khắc nhân viên kho bóc tem niêm phong kiện hàng:
+• Kết luận 1 (Lỗi do bưu điện): Hộp carton bên ngoài có dấu hiệu bị bẹp góc nặng hoặc tem niêm phong bị rách trước khi vào kho $\implies$ Sàn kích hoạt bảo hiểm hàng hóa bưu chính (Carrier Shipping Insurance Claim) đòi bưu điện bồi thường; đồng thời bảo lưu 100% mức giá ban đầu $500.00 cho khách hàng, giải tỏa lệnh hold thẻ tín dụng ngay.
+• Kết luận 2 (Lỗi có từ trước): Hộp nguyên vẹn, tem niêm phong hoàn hảo, vết nứt nằm bên trong $\implies$ Duy trì phán quyết Re-quote, gửi thông báo giải trình kèm video bóc hộp cho khách hàng xem và tiếp tục đếm ngược thời gian SLA còn lại.
+4.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-REQ-01 | Bằng Chứng Hình Ảnh Macro Bắt Buộc (Photographic Evidence Mandate) | Tuyệt đối không được phép phát hành Re-quote nếu thiếu tối thiểu 2 bức ảnh macro chụp rõ vết nứt/xước và 1 bức ảnh chụp màn hình chẩn đoán hiển thị rõ số Serial/IMEI. Bằng chứng ảnh phải có chữ ký số xác thực thời gian (Timestamped Metadata).
+BR-REQ-02 | Thời Hạn Cân Nhắc 14 Ngày Bất Khả Xâm Phạm (Unconditional 14-Day Decision SLA) | Khách hàng được hưởng trọn vẹn 336 giờ đếm ngược tính từ thời điểm email thông báo được gửi đi thành công. Trong thời gian này, sàn không được phép tự ý thanh lý máy cũ hoặc tự động trừ tiền trước hạn.
+BR-REQ-03 | Cam Kết Hoàn Trả Máy Cũ Miễn Phí 0đ (Zero-Cost Return Guarantee) | Khi khách hàng bấm từ chối đề xuất giá mới, sàn có trách nhiệm đóng gói an toàn và chuyển phát trả lại máy cũ tận nhà khách hàng hoàn toàn miễn phí (0đ). Tuyệt đối không thu phí giám định, phí đóng gói hay cước vận chuyển chiều ngược lại.
+BR-REQ-04 | Công Thức Tính Toán Truy Thu Minh Bạch (Clawback Mathematical Formula) | Số tiền truy thu một phần (Partial Clawback) phải bằng đúng công thức: $\text{Clawback Variance} = \text{Initial Credit Amount} - \text{Revised Offer Amount}$. Tuyệt đối không được tính thêm bất kỳ khoản phí phạt ẩn hay phí xử lý hồ sơ nào.
+BR-REQ-05 | Quyền Giữ Tài Sản Khi Lỗi Thanh Toán (Possessory Lien Rule) | Chỉ được phép tạm giữ máy cũ không xuất trả trong trường hợp giao dịch thẻ tín dụng Full Clawback bị ngân hàng từ chối thanh toán. Khi khoản nợ được tất toán, máy cũ phải được gửi trả lại cho khách trong vòng 48 giờ.
+--- TABLE END ---
+4.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+A. Cấu trúc Dữ liệu Phiếu Đề Xuất Giá Mới (Trade-In Re-quote Ticket Schema):
+--- TABLE START ---
+{  "requote_ticket_id": "REQ-2026-00412",  "trade_in_id": "TIN-MAIL-2026-89412",  "order_id": "ORD-VN-98214",  "customer_id": "CUST-774102",  "hardware_serial": "F2LW9082X1",  "financial_breakdown": {    "initial_estimated_credit": 500.00,    "revised_offer_amount": 280.00,    "clawback_variance_amount": 220.00,    "currency": "USD"  },  "defects_identified": [    {      "category": "COSMETIC_BODY",      "defect_code": "CRACKED_REAR_GLASS",      "severity": "MAJOR",      "penalty_deduction": 150.00,      "photo_evidence_urls": [        "https://cdn.platform.com/evidence/req-412/rear_macro_1.jpg",        "https://cdn.platform.com/evidence/req-412/rear_macro_2.jpg"      ]    },    {      "category": "BATTERY_HEALTH",      "defect_code": "DEGRADED_BATTERY_UNDER_80",      "severity": "MODERATE",      "penalty_deduction": 70.00,      "photo_evidence_urls": [        "https://cdn.platform.com/evidence/req-412/pmic_diagnostic.jpg"      ]    }  ],  "sla_tracking": {    "requote_issued_at": "2026-11-14T11:30:00Z",    "sla_expiration_deadline": "2026-11-28T11:30:00Z",    "hours_remaining": 336,    "reminders_sent_count": 0  },  "customer_decision": {    "verdict": "DECLINED",    "decision_timestamp": "2026-11-16T15:20:00Z",    "clawback_charge_executed": {      "type": "FULL_CLAWBACK_DEBIT",      "amount": 500.00,      "gateway_transaction_id": "ch_3MxyzFullClawbackCharge",      "status": "SUCCEEDED"    },    "return_shipment": {      "carrier": "UPS",      "return_waybill_tracking": "1Z7777777777777777",      "shipping_fee_charged_to_customer": 0.00,      "dispatched_at": "2026-11-17T09:00:00Z",      "status": "IN_TRANSIT_BACK_TO_CUSTOMER"    }  },  "ticket_status": "DEVICE_RETURN_IN_TRANSIT"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Đề Xuất Giá Mới (ReQuote State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+INSPECTION_MISMATCH | GENERATE_REQUOTE | Có ảnh macro và mã lỗi hợp lệ | REQUOTE_ISSUED_SLA_ACTIVE | Gửi email ảnh lỗi, chạy đồng hồ 14 ngày
+REQUOTE_ISSUED_SLA_ACTIVE | CUSTOMER_ACCEPTS_REQUOTE | Trong thời hạn 14 ngày | PARTIAL_CLAWBACK_IN_PROGRESS | Thu tiền chênh lệch từ thẻ của khách
+PARTIAL_CLAWBACK_IN_PROGRESS | CHARGE_SUCCESS | Thu tiền chênh lệch thành công | REQUOTE_COMPLETED_SETTLED | Giải tỏa phần hold dư, chuyển quyền sở hữu
+REQUOTE_ISSUED_SLA_ACTIVE | CUSTOMER_DECLINES_REQUOTE | Trong thời hạn 14 ngày | FULL_CLAWBACK_IN_PROGRESS | Thu lại 100% tiền tạm ứng ban đầu
+FULL_CLAWBACK_IN_PROGRESS | CHARGE_SUCCESS | Thu 100% tiền thẻ thành công | DEVICE_RETURN_PACKING_DISPATCH | Đóng gói máy cũ, in mã vận đơn ship 0đ
+DEVICE_RETURN_PACKING_DISPATCH | CARRIER_DELIVERED_BACK | Bưu điện giao tận tay khách | TRADEIN_CANCELLED_RETURNED | Đóng hồ sơ, máy mới thành mua nguyên giá
+REQUOTE_ISSUED_SLA_ACTIVE | SLA_14D_EXPIRED | Quá 14 ngày không phản hồi | AUTO_EXPIRED_FULL_CLAWBACK | Tự động Full Clawback 100% & gửi trả máy 0đ
+FULL_CLAWBACK_IN_PROGRESS | CHARGE_DECLINED | Thẻ hết hạn / không đủ số dư | LIEN_HOLD_COLLECTION_ESCALATE | Khóa giữ máy cũ, gửi tối hậu thư nợ 7 ngày
+--- TABLE END ---
+4.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+--- TABLE START ---
+Feature: Chính Sách Đề Xuất Giá Mới Re-Quote và Đối Soát Truy Thu (VAS-TRADEIN-REQUOTE)  Scenario: Phát hiện nứt kính lưng, gửi Re-quote và khách hàng chấp nhận trừ tiền chênh lệch    Given Khách hàng đã nhận máy mới và tạm khóa hạn mức thẻ $500.00    And Chiếc iPhone 14 Pro gửi về kho giám định được kỹ thuật viên phát hiện mặt kính lưng bị nứt chân chim    When Hệ thống tính toán lại giá trị thu cũ giảm từ $500.00 xuống $280.00 (chênh lệch $220.00)    And Hệ thống gửi email thông báo kèm 4 ảnh macro độ phân giải cao chụp vết nứt kính lưng    And Đồng hồ đếm ngược 14 ngày lịch (336 giờ) được kích hoạt    When Khách hàng truy cập cổng đối soát và nhấn "Đồng ý nhận giá $280.00" vào ngày thứ 3    Then Cổng thanh toán thực hiện giao dịch Partial Clawback trừ chính xác $220.00 từ thẻ tín dụng của khách    And Lệnh khóa hạn mức đối với số tiền còn lại $280.00 lập tức được giải tỏa (Release Partial Hold)    And Trạng thái hồ sơ Trade-In chuyển thành "REQUOTE_COMPLETED_SETTLED"  Scenario: Khách hàng từ chối giá Re-quote, hệ thống Full Clawback 100% và gửi trả máy cũ miễn phí 0đ    Given Khách hàng nhận được đề xuất giá mới giảm còn $250.00 do màn hình bị sọc ám    When Khách hàng truy cập cổng hỗ trợ và nhấn nút "Từ chối đề xuất giá mới"    Then Hệ thống lập tức hủy bỏ giao dịch thu cũ của thiết bị này    And Cổng thanh toán thực hiện giao dịch Full Clawback chuyển toàn bộ $500.00 tạm giữ thành thanh toán thực tế trên thẻ    And Trung tâm kiểm định đóng gói chiếc máy cũ vào hộp bảo vệ chuyên dụng    And Hệ thống tạo mã vận đơn bưu điện chuyển phát nhanh gửi trả máy cũ về tận nhà khách hàng    And Khoản phí vận chuyển hoàn trả tính cho khách hàng là chính xác $0.00 (Miễn phí 100%)    And Trạng thái hồ sơ Trade-In chuyển thành "TRADEIN_CANCELLED_RETURNED"  Scenario: Quá hạn 14 ngày không phản hồi, hệ thống tự động kích hoạt Full Clawback và xuất trả máy    Given Khách hàng nhận được email đề xuất giá Re-quote vào lúc 10:00:00 ngày 2026-11-04    And Khách hàng không nhấn Chấp nhận và không nhấn Từ chối trên cổng tự phục vụ    When Đồng hồ hệ thống chạm mốc 10:00:01 ngày 2026-11-18 (chính thức đủ 336 giờ - 14 ngày lịch)    Then Cron Job tự động kích hoạt điều khoản mặc định bảo vệ người tiêu dùng    And Cổng thanh toán tự động thực thi lệnh Full Clawback $500.00 từ thẻ tín dụng của khách hàng    And Trung tâm kiểm định xuất kho chuyển phát trả lại chiếc máy cũ về địa chỉ khách hàng hoàn toàn miễn phí 0đ    And Gửi email thông báo hoàn tất xử lý quá hạn cho khách hàng kèm mã theo dõi bưu chính  Scenario: Tạm dừng gửi trả máy cũ khi lệnh Full Clawback thẻ tín dụng bị ngân hàng từ chối    Given Khách hàng bấm từ chối đề xuất giá Re-quote    When Cổng thanh toán phát lệnh Full Clawback $500.00 nhưng ngân hàng trả về "INSUFFICIENT_FUNDS"    Then Hệ thống lập tức kích hoạt cơ chế Quyền Giữ Tài sản Bảo chứng (Possessory Lien)    And Lệnh in nhãn gửi trả máy cũ bị tạm dừng, chiếc máy cũ được lưu giữ an toàn trong kho bảo mật    And Hệ thống gửi thông báo tối hậu thư yêu cầu khách cập nhật thẻ thanh toán trong vòng 7 ngày làm việc    And Toàn bộ quyền lợi tài khoản của khách hàng trên sàn bị tạm khóa cho đến khi khoản nợ được giải quyết
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+5. ĐẶC TẢ CHI TIẾT VAS-WARRANTY-EXT: GÓI BẢO HIỂM & BẢO HÀNH MỞ RỘNG THIẾT BỊ, CẤP PHÁT THEO SERIAL/IMEI & BỒI THƯỜNG ĐA CẤP
+5. ĐẶC TẢ CHI TIẾT VAS-WARRANTY-EXT: GÓI BẢO HIỂM MỞ RỘNG & RƠI VỠ NGUỒN/MÀN HÌNH (APPLECARE+ WITH THEFT & LOSS, KHẤU TRỪ $29/$99/$149, ĐỔI MÁY ERS 24H, PIN <80%)
+--- TABLE START ---
+[MUA THIẾT BỊ MỚI HOẶC TRONG VÒNG 60 NGÀY QUA CHẨN ĐOÁN TỪ XA OTA]                     │                     ▼[LỰA CHỌN GÓI BẢO HIỂM MỞ RỘNG: APPLECARE+ HOẶC ASURION PLAN]  ├── Gói Tiêu chuẩn (Standard Care): Rơi vỡ vô ý, Vào nước, Cháy chập, Hỏng pin  └── Gói Nâng cao (Theft & Loss): Bao gồm Tiêu chuẩn + MẤT CẮP & THẤT LẠC (Ràng buộc: Find My = ON)                     │                     ▼[PHƯƠNG THỨC THANH TOÁN PHÍ BẢO HIỂM]  ├── Trả thẳng 1 lần: Hiệu lực 2 năm (Điện thoại/Watch) hoặc 3 năm (MacBook)  └── Thuê bao định kỳ: Trả hàng tháng qua Thẻ/Apple Pay (Monthly Recurring, ân hạn 15 ngày)                     │                     ▼[CẤP PHÁT TỰ ĐỘNG NGẦM KHÔNG CHẠM (ZERO-TOUCH PROVISIONING)]  ├── Kho quét Serial Number khi xuất hàng -> Gọi API Apple GSX / Asurion Core Server  └── Gắn mã Hợp đồng (Policy Agreement ID) vĩnh viễn vào Serial Number bo mạch & IMEI                     │                     ▼[XÁC THỰC PHẦN CỨNG TRÊN HỆ ĐIỀU HÀNH THIẾT BỊ]  └── Khách bật máy kết nối Wi-Fi -> Settings: "AppleCare+ Coverage: Active (Unlimited Incidents)"                     │                     ▼[QUY TRÌNH YÊU CẦU BỒI THƯỜNG SỰ CỐ (CLAIMS WORKFLOW)]  ├── Bước 1: Khách báo sự cố qua Apple Support App / Web Portal TMĐT  ├── Bước 2: Thẩm định tự động & Thu phí khấu trừ dịch vụ bắt buộc (Deductible Fee):  │            • Nứt vỡ màn hình cảm ứng hoặc mặt kính lưng: $29.00 (790.000đ)  │            • Hư hỏng thân vỏ / Vào nước / Camera / Chập mainboard: $99.00 (2.690.000đ)  │            • Mất cắp hoặc Thất lạc hoàn toàn: $149.00 (3.990.000đ) [Find My kiểm tra ON]  ├── Bước 3: Thay pin miễn phí $0 khi dung lượng chai xuống dưới 80% (<80% PMIC)  └── Bước 4: Dịch vụ Đổi máy Nhanh ERS (Express Replacement Service) tận nhà trong 24 giờ              (Tạm khóa thẻ 100% giá trị máy mới -> Gửi máy mới -> Khách trả máy vỡ trong 10 ngày)
+--- TABLE END ---
+5.1 Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: VAS-WARRANTY-EXT
+• Tên nghiệp vụ: Gói Bảo Hiểm Mở Rộng & Bảo Hành Phần Cứng Rơi Vỡ Nguồn/Màn Hình, Cấp Phát Tự Động Theo Serial Number, Biểu Phí Khấu Trừ Phân Hạng $29/$99/$149, Không Giới Hạn Số Vụ, Ràng Buộc Kích Hoạt Find My, Đổi Máy Nhanh ERS Tận Nhà 24 Giờ & Thay Pin Miễn Phí <80% (Extended Warranty & Accidental Damage Protection, AppleCare+ with Theft and Loss, Tiered Deductibles $29/$99/$149, Unlimited Incidents, Mandatory Find My Enforcement, 24-Hour Express Replacement Service & Battery Threshold <80%).
+5.2 Mục tiêu & Tác nhân
+• Mục tiêu: Cung cấp giải pháp bảo vệ toàn diện, cao cấp nhất cho các thiết bị di động công nghệ cao; bảo vệ người dùng trước các rủi ro thảm họa phần cứng (rơi vỡ màn hình, vỡ kính lưng, ngấm nước ngập bo mạch, chập IC nguồn và mất cắp/cướp giật); tự động hóa việc kích hoạt và liên kết số Serial Number bo mạch vào cơ sở dữ liệu bảo hành toàn cầu của nhà sản xuất (Apple GSX / Asurion Underwriting Core) mà không cần khách hàng nhập thủ công; thiết lập quy trình bồi thường minh bạch với phí dịch vụ khấu trừ cố định không phụ thuộc giá trị máy; cung cấp dịch vụ đổi máy mới tận nhà trong 24 giờ (ERS) và quyền lợi thay pin miễn phí khi dung lượng xuống dưới 80%.
+• Tác nhân tham gia (Actors):
+• Khách hàng tham gia bảo hiểm (Insured Customer): Chọn mua gói bảo hiểm (lúc mua máy mới hoặc trong vòng 60 ngày), nộp hồ sơ bồi thường, thanh toán phí khấu trừ.
+• Hệ thống Bán hàng TMĐT (Storefront): Nhúng điểm bán chéo (Cross-sell Insertion Point) tại trang chi tiết sản phẩm PDP, trang giỏ hàng và email chăm sóc sau bán hàng.
+• Động cơ Quản lý Hợp đồng Bảo hiểm (Warranty Policy Engine): Quản lý vòng đời hợp đồng, xử lý thanh toán định kỳ hàng tháng, theo dõi lịch sử số vụ bồi thường.
+• Cổng Tích hợp Nhà sản xuất / Bảo hiểm (Apple GSX API / Asurion Core API): Kích hoạt điện tử tức thời trạng thái bảo hiểm trên máy chủ toàn cầu, tra cứu trạng thái Find My qua Apple ID iCloud Server.
+• Trung tâm Dịch vụ Kỹ thuật Ủy quyền (Authorized Service Provider - ASP / Apple Genius Bar): Tiếp nhận máy, kiểm tra tính nguyên bản linh kiện, sửa chữa thay thế linh kiện chính hãng.
+• Mạng lưới Chuyển phát Hỏa tốc ERS (24-Hour Express Replacement Courier): Vận chuyển máy thay thế nguyên seal tận nhà và thu hồi máy hỏng về trung tâm.
+5.3 Điều kiện tiên quyết
+1. Sản phẩm phần cứng thuộc danh mục thiết bị điện tử có giá trị cao được hỗ trợ chương trình bảo hiểm (iPhone, iPad, Mac, Apple Watch, Tai nghe AirPods Max).
+2. Thời điểm mua gói bảo hiểm:
+• Cách 1 (Mua cùng đơn máy mới): Tự động hợp lệ 100%, không cần kiểm tra ngoại quan.
+• Cách 2 (Mua bổ sung sau khi nhận máy): Thiết bị chưa được kích hoạt quá 60 ngày lịch tính từ ngày kích hoạt đầu tiên trên máy chủ bảo hành (CurrentDate - FirstActivationDate <= 60 days); bắt buộc phải vượt qua bài kiểm tra Chẩn đoán Từ xa qua Mạng (Over-The-Air Remote Diagnostics Test) xác nhận màn hình, camera, bo mạch và pin hoạt động hoàn hảo không có lỗi trước khi mua.
+3. Đối với quyền lợi Mất cắp và Thất lạc (Theft and Loss): Tính năng định vị "Tìm iPhone / Tìm thiết bị (Find My)" bắt buộc phải được bật liên tục (Find My = ON) trên thiết bị của khách hàng tại thời điểm xảy ra sự cố mất cắp và trong suốt quá trình xử lý yêu cầu bồi thường.
+5.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Lựa chọn Gói Bảo hiểm trên Trang Cấu hình Sản phẩm PDP):
+• Tại trang chi tiết sản phẩm, hệ thống hiển thị khối tùy chọn dịch vụ bảo vệ AppleCare+ / Asurion với 2 phân hạng rõ ràng:
+• Phân hạng 1: AppleCare+ Tiêu Chuẩn (Accidental Damage Protection): Bảo hiểm rơi vỡ, vào nước không giới hạn số lần; thay pin miễn phí khi dung lượng xuống dưới 80%; hỗ trợ kỹ thuật ưu tiên 24/7 từ chuyên gia Apple.
+• Phân hạng 2: AppleCare+ with Theft and Loss (Tiêu Chuẩn + Mất Cắp & Thất Lạc): Bao gồm toàn bộ quyền lợi Phân hạng 1, cộng thêm quyền được cấp một máy thay thế mới nguyên seal nếu bị trộm cướp hoặc làm rơi mất (yêu cầu Find My bật liên tục).
+• Bước 2 (Lựa chọn Cấu trúc Thanh toán Phí Bảo hiểm):
+• Tùy chọn A - Trả thẳng một lần (One-Time Upfront Payment): Trả trước toàn bộ phí bảo hiểm cho thời hạn 2 năm (hoặc 3 năm đối với MacBook). Hết 2 năm, khách hàng có tùy chọn chuyển sang thuê bao tháng để tiếp tục duy trì bảo vệ trọn đời máy.
+• Tùy chọn B - Thuê bao hàng tháng (Monthly Recurring Subscription): Thanh toán phí tháng đầu tiên cùng đơn hàng (ví dụ: $13.49/tháng). Hệ thống thiết lập lịch tự động trừ tiền qua thẻ tín dụng/Apple Pay định kỳ hàng tháng cho đến khi khách hàng chủ động hủy.
+• Bước 3 (Thanh toán & Gắn kết Đơn hàng Phức hợp):
+• Đơn hàng được thanh toán thành công. Dòng sản phẩm phần cứng được đánh dấu cờ HAS_ATTACHED_WARRANTY = True kèm mã gói bảo hiểm PolicyTierCode.
+• Bước 4 (Cấp phát Tự động Ngầm Không Chạm khi Xuất Kho - Zero-Touch Backend Binding):
+• Khi nhân viên kho quét mã vạch Serial Number (SN) của thiết bị để đóng gói và chuyển trạng thái đơn hàng sang SHIPPED:
+• Worker nền tự động kích hoạt cuộc gọi API sang máy chủ Apple GSX (hoặc API của Asurion):
+• Payload gửi đi: SerialNumber, DeviceModel, PurchaseDate, CustomerEmail, PolicyTierCode, BillingType.
+• Máy chủ bảo hành nhà sản xuất phản hồi mã hợp đồng duy nhất PolicyAgreementNumber trong vòng 5 giây.
+• Bước 5 (Xác thực Trực quan Ngay trên Hệ Điều Hành Thiết Bị):
+• Khách hàng nhận máy, mở hộp, bật nguồn và kết nối Wi-Fi lần đầu tiên.
+• Thiết bị tự động đồng bộ ngầm với máy chủ kích hoạt. Ngay lập tức trong mục Cài đặt (Settings) -> Cài đặt chung (General) -> Giới thiệu (About), dòng thông tin bảo hiểm hiển thị rõ ràng:
+▌ AppleCare+ Coverage: Active
+▌ Accidental Damage Protection Included (Unlimited Incidents)
+▌ Expires: [Ngày hết hạn 2 năm sau hoặc 'Renews Monthly']
+• Khách hàng không cần phải nhập bất kỳ mã thẻ cào nào, không cần gọi tổng đài, không cần giữ lại hóa đơn giấy tờ bảo hành.
+• Bước 6 (Quy trình Nộp Hồ Sơ Bồi Thường Sự Cố - Claims Submission):
+• Khi thiết bị gặp sự cố (ví dụ: rơi nứt vỡ màn hình hoặc bị mất trộm), khách hàng mở ứng dụng Hỗ trợ (Apple Support App) hoặc truy cập Cổng Hỗ trợ TMĐT nhấn "Yêu cầu bồi thường bảo hiểm".
+• Hệ thống nhận diện tự động số Serial Number thông qua tài khoản Apple ID / Single Sign-On, tải về trạng thái hợp đồng bảo hiểm còn hiệu lực.
+• Khách hàng chọn loại sự cố: Nứt vỡ màn hình/kính lưng vs Hư hỏng vật lý khác vs Mất cắp/thất lạc.
+• Bước 7 (Thanh toán Biểu Phí Khấu Trừ Dịch Vụ Cố Định - Tiered Deductible Fee):
+• Khách hàng thanh toán khoản phí khấu trừ dịch vụ theo đúng phân hạng sự cố qua thẻ tín dụng/ví điện tử:
+• Phân hạng 1: Nứt vỡ màn hình cảm ứng hoặc mặt kính lưng: $29.00 (hoặc 790.000đ).
+• Phân hạng 2: Mọi hư hỏng do tai nạn khác (vào nước, vỡ camera, cong sườn, chập bo mạch): $99.00 (hoặc 2.690.000đ).
+• Phân hạng 3: Mất cắp hoặc Thất lạc hoàn toàn (Theft and Loss): $149.00 (hoặc 3.990.000đ).
+• Không thu bất kỳ tỷ lệ phần trăm nào trên giá trị máy.
+• Bước 8 (Dịch vụ Đổi Máy Nhanh Tận Nhà ERS trong 24 Giờ - Express Replacement Service):
+• Khách hàng lựa chọn phương thức phục vụ:
+• Phương thức 1: Mang máy ra Apple Store / ASP sửa chữa lấy ngay trong ngày.
+• Phương thức 2: Dịch vụ Đổi máy nhanh ERS tận nhà trong 24 giờ:
+1. Cổng thanh toán thực hiện lệnh tạm khóa hạn mức thẻ tín dụng của khách số tiền đúng bằng giá trị chiếc máy mới nguyên seal ($1,199.00) để làm bảo chứng thiết bị.
+2. Đơn vị chuyển phát hỏa tốc xuất kho gửi 01 máy thay thế mới nguyên seal tới tận cửa nhà khách hàng trong vòng 24 - 48 giờ.
+3. Khách hàng nhận máy mới, chuyển dữ liệu từ máy cũ (nếu còn dùng được), đóng chiếc máy vỡ vào hộp bảo vệ chuyên dụng và gửi trả lại trung tâm trong vòng 10 ngày làm việc.
+4. Khi trung tâm nhận được chiếc máy vỡ, chuyên viên quét số Serial đối soát trùng khớp -> Lập tức phát lệnh Giải tỏa 100% hạn mức thẻ tín dụng $1,199.00 cho khách hàng. Hợp đồng bảo hiểm tự động chuyển sang số Serial của chiếc máy mới.
+• Bước 9 (Ngưỡng Thay Pin Miễn Phí <80% Dung Lượng):
+• Nếu trong thời hạn hợp đồng bảo hiểm còn hiệu lực, chip PMIC đo được dung lượng pin tối đa giảm xuống dưới 80% (< 80%) so với thông số xuất xưởng:
+• Khách hàng mang máy đến Apple Store / ASP sẽ được thay thế cụm pin chính hãng mới nguyên bản hoàn toàn MIỄN PHÍ ($0 Service Fee).
+5.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+A. Luồng phụ 1: Mua bổ sung bảo hiểm sau khi nhận máy (Day 1 to Day 60 Post-Purchase OTA Diagnostics)
+• Kịch bản: Khách hàng lúc mua máy không chọn mua bảo hiểm, nhưng sau 25 ngày sử dụng muốn mua thêm gói AppleCare+.
+• Xử lý hệ thống:
+1. Khách hàng vào mục Settings -> General -> About trên điện thoại hoặc truy cập mysupport.apple.com nhấn "Add AppleCare+ Coverage".
+2. Hệ thống kiểm tra ngày kích hoạt máy trên máy chủ Apple: CurrentDate - FirstActivationDate <= 60 days.
+3. Hệ thống bắt buộc kích hoạt công cụ Chẩn đoán Từ xa qua Mạng (Over-The-Air Remote Diagnostics):
+• Gửi một thông báo hệ thống / liên kết chẩn đoán an toàn tới thiết bị.
+• Khách hàng bấm chấp nhận chạy chẩn đoán.
+• Phần mềm tự động quét kiểm tra: Điểm cảm ứng màn hình, cảm biến tiệm cận, gia tốc kế, camera, chỉ báo quỳ tím ẩm nước LDI và tình trạng pin.
+4. Nếu kết quả chẩn đoán trả về DIAGNOSTICS_CLEAN = True: Hệ thống mở khóa cổng thanh toán cho phép khách trả thẳng hoặc chọn thuê bao tháng. Hợp đồng có hiệu lực ngay lập tức.
+5. Nếu phát hiện linh kiện đã có lỗi hoặc cảm biến vào nước chuyển đỏ: Hệ thống từ chối bán bảo hiểm từ xa, yêu cầu khách mang máy đến trung tâm bảo hành ủy quyền để kiểm định ngoại quan trực tiếp.
+B. Luồng ngoại lệ 2: Từ chối bồi thường Mất cắp do tính năng Find My bị tắt (Theft & Loss Claim Denial)
+• Kịch bản: Khách hàng mua gói AppleCare+ with Theft and Loss, bị mất trộm máy và nộp hồ sơ yêu cầu nhận máy thay thế mới với phí khấu trừ $149.00.
+• Xử lý hệ thống:
+1. Cổng tiếp nhận hồ sơ bồi thường gọi API sang Apple iCloud Server để kiểm tra lịch sử trạng thái thiết bị tại thời điểm xảy ra sự cố mất cắp.
+2. Nếu phát hiện tính năng Find My đã bị tắt (Status = OFF) trước hoặc tại thời điểm báo mất:
+3. Hệ thống lập tức từ chối hồ sơ bồi thường tự động và gửi thông báo văn bản giải trình:
+▌ "Yêu cầu bồi thường bị từ chối: Điều khoản hợp đồng AppleCare+ with Theft and Loss quy định thiết bị bắt buộc phải bật tính năng Tìm (Find My) liên tục trong suốt thời gian bảo hiểm. Do Find My đã bị tắt trên thiết bị này, yêu cầu cấp máy thay thế không đủ điều kiện xử lý."
+4. Khoản phí khấu trừ $149.00 không bị thu. Khách hàng chỉ có quyền khiếu nại nếu chứng minh được việc Find My bị tắt là do lỗi gián đoạn dịch vụ hệ thống từ phía máy chủ Apple ID.
+C. Luồng ngoại lệ 3: Khách hàng không gửi trả máy vỡ sau 10 ngày trong dịch vụ ERS (Non-Return of Damaged Device)
+• Kịch bản: Khách hàng đã nhận máy thay thế mới qua dịch vụ ERS, nhưng quá 10 ngày làm việc vẫn không gửi trả lại chiếc máy hỏng về trung tâm kiểm định.
+• Xử lý hệ thống:
+1. Ngày thứ 7: Gửi email + SMS cảnh báo khẩn cấp: "Bạn còn 3 ngày để gửi trả máy cũ theo cam kết dịch vụ đổi máy nhanh ERS".
+2. Ngày thứ 10 (23:59:59 UTC): Hết hạn SLA gửi trả máy.
+3. Ngày thứ 11: Cổng thanh toán tự động chuyển đổi toàn bộ khoản tiền $1,199.00 đang tạm khóa trên thẻ tín dụng thành giao dịch thanh toán thực tế (Capture Non-return Fee).
+4. Khách hàng sở hữu hợp pháp cả 2 chiếc máy (chiếc máy mới và chiếc máy vỡ cũ), giao dịch đóng lại thành công.
+D. Luồng ngoại lệ 4: Phát hiện linh kiện bên thứ ba không chính hãng hoặc sửa chữa trái phép (Unauthorized Tampering Denial)
+• Kịch bản: Khách hàng nộp máy vỡ yêu cầu sửa chữa theo gói bảo hiểm, nhưng kỹ thuật viên tại Genius Bar phát hiện màn hình đã từng bị thay thế tại cửa hàng trôi nổi bên ngoài bằng màn hình linh kiện lô (Unknown Display Part) hoặc thiếu ốc bảo vệ bo mạch.
+• Xử lý hệ thống:
+1. Chuyên viên từ chối cung cấp dịch vụ bảo hiểm theo điều khoản loại trừ sửa chữa trái phép (Unauthorized Third-Party Modification Exclusion).
+2. Hệ thống hủy bỏ yêu cầu bồi thường, hoàn trả lại khoản phí khấu trừ $29 hoặc $99 đã tạm thu.
+3. Máy được trả lại nguyên trạng cho khách hàng. Hợp đồng bảo hiểm bị chấm dứt do vi phạm nghĩa vụ duy trì tính nguyên bản của phần cứng.
+E. Luồng phụ 5: Thu phí định kỳ thất bại & Thời gian ân hạn 15 ngày (Monthly Recurring Grace Period)
+• Kịch bản: Khách hàng sử dụng gói thuê bao tháng, nhưng đến ngày gia hạn thì thẻ tín dụng hết hạn hoặc không đủ số dư.
+• Xử lý hệ thống:
+1. Giao dịch bị từ chối. Hợp đồng chuyển sang trạng thái PAYMENT_GRACE_PERIOD.
+2. Kích hoạt thời gian ân hạn 15 ngày lịch (15-Day Grace Period): Quyền lợi bảo hiểm của khách vẫn được tạm duy trì đầy đủ trong 15 ngày này.
+3. Lịch thử lại thanh toán tự động (Retry Schedule) vào các ngày: T+1, T+3, T+7, T+14.
+4. Nếu sau ngày thứ 15 vẫn không thu được tiền: Hợp đồng bảo hiểm chính thức bị HỦY VĨNH VIỄN (TERMINATED_FOR_NONPAYMENT). Khách hàng không thể kích hoạt lại gói bảo hiểm cho thiết bị này nếu máy đã xuất xưởng quá 60 ngày.
+5.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-WAR-01 | Cửa Sổ Mua Bổ Sung 60 Ngày (60-Day Post-Purchase Window) | Hạn chót để mua gói bảo hiểm mở rộng là 23:59:59 của ngày thứ 60 kể từ ngày kích hoạt thiết bị đầu tiên (first_activation_date). Bắt buộc phải vượt qua bài kiểm tra Chẩn đoán Từ xa qua Mạng (OTA Remote Diagnostics) sạch lỗi 100%. Quá 60 ngày, tính năng mua bảo hiểm bị khóa vĩnh viễn trên toàn hệ thống.
+BR-WAR-02 | Biểu Phí Khấu Trừ Cố Định 3 Phân Hạng (Tiered Fixed Deductible Fees) | Mức phí khấu trừ là cố định không phụ thuộc vào giá bán của máy: Màn hình hoặc mặt kính lưng: $29.00 (790.000đ); Mọi hư hỏng do tai nạn khác (rơi vỡ, ngấm nước, chập nguồn): $99.00 (2.690.000đ); Mất cắp hoặc Thất lạc hoàn toàn: $149.00 (3.990.000đ). Không áp dụng tỷ lệ % trên giá máy, đảm bảo minh bạch tuyệt đối.
+BR-WAR-03 | Quy Tắc Số Vụ Yêu Cầu Bồi Thường (Incident Frequency Rules) | - Đối với tai nạn rơi vỡ / vào nước (Accidental Damage): Không giới hạn số lần bồi thường (Unlimited incidents) trong suốt thời hạn hợp đồng còn hiệu lực.<br>- Đối với mất cắp / thất lạc (Theft and Loss): Tối đa 2 vụ việc trong mỗi chu kỳ 12 tháng liên tục.
+BR-WAR-04 | Ràng Buộc Kích Hoạt Find My Liên Tục (Mandatory Find My Enforcement) | Đối với gói bảo hiểm mất cắp (Theft and Loss), tính năng Find My bắt buộc phải được bật liên tục trên thiết bị tại thời điểm xảy ra sự cố và trong suốt quá trình xử lý bồi thường. Nếu kiểm tra qua máy chủ Apple ID ghi nhận Find My bị tắt trước khi nộp hồ sơ, yêu cầu bồi thường bị tự động từ chối ngay lập tức.
+BR-WAR-05 | Ngưỡng Thay Pin Miễn Phí <80% Dung Lượng (Battery Replacement <80% Guarantee) | Nếu dung lượng tối đa của pin đo qua chip PMIC giảm xuống dưới 80% (< 80%) so với thông số gốc trong thời hạn bảo hiểm, khách hàng được thay pin chính hãng mới hoàn toàn miễn phí ($0 Service Fee).
+BR-WAR-06 | Dịch Vụ Đổi Máy Nhanh ERS Tận Nhà 24 Giờ (24-Hour ERS Courier Rule) | Khách hàng được quyền yêu cầu đổi máy mới nguyên seal tại nhà trong vòng 24 - 48 giờ. Cổng thanh toán tạm giữ 100% giá trị máy mới trên thẻ tín dụng. Khách hàng có trách nhiệm gửi trả lại máy vỡ trong vòng 10 ngày làm việc để được giải tỏa 100% hạn mức thẻ.
+--- TABLE END ---
+5.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+A. Cấu trúc Dữ liệu Hợp đồng Bảo hiểm Mở rộng (Extended Warranty Policy Schema):
+--- TABLE START ---
+{  "policy_id": "POL-AC-2026-99120",  "policy_agreement_number": "AGR-APL-88419201",  "device_binding": {    "product_sku": "IPHONE-16PM-256-DES",    "serial_number": "DNQX198402X9",    "imei": "359128091823412",    "device_model_desc": "iPhone 16 Pro Max 256GB Desert Titanium",    "original_purchase_order_id": "ORD-VN-98214"  },  "plan_details": {    "plan_tier": "APPLECARE_PLUS_THEFT_LOSS",    "billing_structure": "MONTHLY_RECURRING",    "monthly_fee_amount": 13.49,    "currency": "USD",    "billing_day_of_month": 4,    "current_period_start": "2026-11-04T00:00:00Z",    "current_period_end": "2026-12-03T23:59:59Z",    "incident_limits": {      "accidental_damage": "UNLIMITED",      "theft_and_loss_max_per_12m": 2,      "theft_claims_used_in_current_12m": 0    }  },  "claims_history": [    {      "claim_id": "CLM-2026-0012",      "incident_date": "2026-11-20T15:30:00Z",      "incident_type": "SCREEN_AND_BACK_GLASS_CRACK",      "deductible_paid": 29.00,      "fulfillment_method": "EXPRESS_REPLACEMENT_SERVICE_24H",      "ers_details": {        "preauth_hold_amount": 1199.00,        "ers_replacement_serial": "DNQX994120Y3",        "broken_device_returned_on": "2026-11-25T10:00:00Z",        "hold_released_timestamp": "2026-11-25T14:30:00Z"      },      "claim_status": "RESOLVED_CLOSED"    }  ],  "underwriting_status": "ACTIVE_IN_GOOD_STANDING",  "find_my_enforcement_status": "MONITORED_ON",  "battery_health_warranty_eligible": true,  "created_at": "2026-11-04T08:15:30Z",  "last_synced_gsx": "2026-11-04T08:16:10Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Hợp đồng & Bồi thường (Warranty State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[NONE] | POLICY_PURCHASED | Thanh toán đơn hàng thành công | PENDING_SERIAL_SCAN | Chờ kho quét Serial Number khi đóng gói
+PENDING_SERIAL_SCAN | ORDER_SHIPPED_SN_SCANNED | Serial Number hợp lệ | PROVISIONING_API_CALL | Gửi request kích hoạt sang Apple GSX
+PROVISIONING_API_CALL | GSX_ACK_SUCCESS | GSX trả về mã hợp đồng | ACTIVE_IN_GOOD_STANDING | Gắn số Serial vĩnh viễn, cập nhật máy chủ
+ACTIVE_IN_GOOD_STANDING | MONTHLY_BILLING_FAILED | Thẻ trừ tiền thất bại | PAYMENT_GRACE_PERIOD | Bật ân hạn 15 ngày, gửi email nhắc
+PAYMENT_GRACE_PERIOD | RETRY_PAYMENT_SUCCESS | Thu tiền thành công trong 15 ngày | ACTIVE_IN_GOOD_STANDING | Khôi phục tài khoản, gia hạn thêm 30 ngày
+PAYMENT_GRACE_PERIOD | GRACE_PERIOD_EXPIRED | Quá 15 ngày không trả tiền | TERMINATED_FOR_NONPAYMENT | Hủy hợp đồng trên GSX, cắt quyền lợi
+ACTIVE_IN_GOOD_STANDING | CLAIM_FILED | Khách nộp hồ sơ bồi thường | CLAIM_EVALUATION_ACTIVE | Kiểm tra tính hợp lệ & kiểm tra Find My
+CLAIM_EVALUATION_ACTIVE | THEFT_CLAIM_FIND_MY_OFF | Find My ghi nhận bị tắt | CLAIM_REJECTED_FIND_MY_OFF | Từ chối bồi thường, không thu phí $149
+CLAIM_EVALUATION_ACTIVE | DEDUCTIBLE_PAID | Thu phí $29/$99/$149 thành công | REPLACEMENT_OR_REPAIR_DISPATCH | Điều phối máy ERS 24h hoặc lịch ASP
+REPLACEMENT_OR_REPAIR_DISPATCH | ERS_RETURN_RECEIVED_10D | Khách gửi lại máy vỡ trong 10 ngày | ACTIVE_IN_GOOD_STANDING | Giải tỏa 100% hold thẻ, đổi số Serial bảo hiểm
+REPLACEMENT_OR_REPAIR_DISPATCH | ERS_RETURN_OVERDUE_10D | Quá 10 ngày không gửi máy vỡ | ERS_FULL_CHARGE_EXECUTED | Capture $1,199 tiền thẻ, chuyển quyền máy
+ACTIVE_IN_GOOD_STANDING | BATTERY_UNDER_80_PERCENT | Pin đo PMIC < 80% dung lượng | FREE_BATTERY_REPLACE_ORDER | Thay pin miễn phí $0 Service Fee tại ASP
+--- TABLE END ---
+5.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+--- TABLE START ---
+Feature: Quản lý Gói Bảo hiểm Mở rộng Toàn diện và Dịch vụ Đổi Máy Nhanh ERS (VAS-WARRANTY-EXT)  Scenario: Bồi thường sự cố nứt vỡ màn hình với mức phí khấu trừ $29 qua dịch vụ đổi máy nhanh ERS 24h    Given Khách hàng đang có hợp đồng AppleCare+ hoạt động trên điện thoại iPhone 16 Pro Max    When Khách hàng nộp hồ sơ yêu cầu bồi thường sự cố "Nứt vỡ màn hình cảm ứng do va đập"    And Khách hàng chọn dịch vụ đổi máy nhanh tận nhà (Express Replacement Service)    Then Hệ thống yêu cầu thanh toán khoản phí khấu trừ dịch vụ chính xác là $29.00    And Cổng thanh toán thực hiện tạm khóa hạn mức thẻ tín dụng bằng giá trị máy mới ($1,199.00)    And Trung tâm bảo hành xuất kho chuyển phát hỏa tốc gửi một máy mới tinh tới địa chỉ khách hàng trong 24 giờ    When Khách hàng nhận máy mới và đóng gói máy vỡ gửi trả lại trung tâm trong vòng 10 ngày làm việc    Then Lệnh khóa hạn mức $1,199.00 trên thẻ tín dụng lập tức được giải tỏa hoàn toàn 100%    And Hợp đồng AppleCare+ được tự động chuyển nhượng sang số Serial của chiếc máy mới  Scenario: Từ chối bồi thường sự cố mất cắp do tính năng Find My iPhone bị tắt    Given Khách hàng tham gia gói bảo hiểm "AppleCare+ with Theft and Loss"    When Khách hàng khai báo bị mất cắp máy và nộp yêu cầu bồi thường nhận máy mới thay thế với phí $149.00    And Hệ thống kiểm tra dữ liệu trạng thái Apple ID của thiết bị ghi nhận "Find My: OFF" tại thời điểm xảy ra sự cố    Then Hệ thống tự động từ chối hồ sơ bồi thường ngay lập tức    And Màn hình hiển thị lý do từ chối: vi phạm điều khoản duy trì tính năng Find My bắt buộc    And Khoản phí khấu trừ $149.00 không bị thu từ thẻ của khách hàng  Scenario: Thay thế pin miễn phí $0 khi dung lượng pin chai xuống dưới 80% trong thời hạn bảo hiểm    Given Khách hàng sở hữu gói bảo hiểm AppleCare+ còn hiệu lực trên thiết bị iPhone    When Thiết bị được cắm vào bàn chẩn đoán kỹ thuật tại Apple Store sau 18 tháng sử dụng    And Phần mềm đọc dữ liệu PMIC ghi nhận dung lượng pin tối đa chỉ còn 77% (dưới ngưỡng 80%)    Then Hệ thống tự động xác thực đủ điều kiện thay pin miễn phí theo quy tắc BR-WAR-05    And Kỹ thuật viên thực hiện thay thế cụm pin chính hãng mới nguyên bản cho khách hàng    And Khoản phí khấu trừ dịch vụ tính cho khách hàng là chính xác $0.00 (Hoàn toàn miễn phí)  Scenario: Mua bổ sung gói bảo hiểm trong vòng 60 ngày thông qua chẩn đoán từ xa qua mạng (OTA)    Given Khách hàng sở hữu một chiếc iPad Pro đã kích hoạt được 35 ngày (dưới ngưỡng 60 ngày)    And Thiết bị chưa từng đăng ký gói bảo hiểm trước đó    When Khách hàng truy cập cổng hỗ trợ và nhấn "Mua gói AppleCare+"    Then Hệ thống gửi một thông báo kèm liên kết chẩn đoán phần mềm từ xa (Remote Diagnostics) tới màn hình iPad    And Khách hàng xác nhận bắt đầu bài kiểm tra chẩn đoán    And Toàn bộ cảm biến, màn hình cảm ứng, pin và bo mạch vượt qua bài kiểm tra sạch lỗi 100%    Then Hệ thống mở khóa giao diện thanh toán gói bảo hiểm    And Sau khi thanh toán thành công, hợp đồng chuyển sang trạng thái "ACTIVE_IN_GOOD_STANDING"
+--- TABLE END ---
+6. ĐẶC TẢ CHI TIẾT VAS-CARRIER-PLAN: ĐÓNG GÓI THIẾT BỊ KÈM HỢP ĐỒNG CƯỚC 12 THÁNG, TRỢ GIÁ PHẦN CỨNG, CẤP PHÁT ESIM DIRECT PUSH & PHẠT HỦY SỚM (ETF)
+--- TABLE START ---
+[CHỌN THIẾT BỊ DI ĐỘNG TẠI STOREFRONT]                   │                   ▼[TÙY CHỌN ĐÓNG GÓI GÓI CƯỚC (CARRIER PLAN BUNDLING)]  ├── (o) Mua máy trần quốc tế (Unlocked - Không trợ giá)  └── (•) ĐÓNG GÓI KÈM HỢP ĐỒNG GÓI CƯỚC 12 THÁNG (Nhận trợ giá phần cứng -$150 đến -$200)                   │                   ▼[LỰA CHỌN 1 TRONG 3 HẠ TẦNG VIỄN THÔNG ĐỘC QUYỀN (US MOBILE MODEL)]  ├── WARP 5G      : Hạ tầng Verizon Ultra Wideband (Băng tần mmWave, C-Band n77, QCI 8)  ├── GSM 5G       : Hạ tầng T-Mobile Ultra Capacity (Băng tần n41, Chuyển vùng quốc tế)  └── DARK STAR    : Hạ tầng AT&T Coverage (Vùng phủ sóng rộng nhất, Priority Data Add-on)                   │                   ▼[KIỂM TRA ĐỘ TƯƠNG THÍCH PHẦN CỨNG BẰNG IMEI / EID CHECKER]  ├── Nhập IMEI (15 số) -> Bóc tách mã TAC -> Tra cứu GSMA / Carrier VoLTE Whitelist  └── Nhập EID (32 số)  -> Kiểm tra tính hợp lệ của chip eUICC cho eSIM                   │                   ▼[PHƯƠNG THỨC CẤP PHÁT ĐƯỜNG TRUYỀN (PROVISIONING METHOD)]  ├── BỘ KIT SIM VẬT LÝ (PHYSICAL TRIPLE-CUT SIM KIT): Giao cùng máy mới  └── CẤP PHÁT eSIM ĐẨY TRỰC TIẾP KHÔNG CHẠM (DIRECT PUSH VIA GSMA SM-DP+):      Kết nối SM-DP+ -> Khách bật máy mới kết nối Wi-Fi -> Pop-up cài đặt 1-chạm                   │                   ▼[KÝ HỢP ĐỒNG CAM KẾT 12 THÁNG & CHẾ TÀI PHẠT HỦY HỢP ĐỒNG SỚM (ETF)]  └── Khách hủy cước trước 12 tháng -> Tự động trừ thẻ phí ETF:      ETF = Trợ giá ($150) * (1 - Tháng_đã_dùng / 12) + Phí quản trị ($25)      (Nếu thẻ từ chối -> Khóa từ xa Carrier Financing IMEI Lock)
+--- TABLE END ---
+6.1 Mã nghiệp vụ & Tên nghiệp vụ
+• Mã nghiệp vụ: VAS-CARRIER-PLAN (đồng thời đáp ứng danh mục VAS-CARRIER)
+• Tên nghiệp vụ: Đóng Gói Thiết Bị Phần Cứng Kèm Hợp Đồng Gói Cước Mạng Viễn Thông Cam Kết 12 Tháng, Mức Trợ Giá Thiết Bị, Lựa Chọn Đa Hạ Tầng Mạng, Cấp Phát eSIM Đẩy Trực Tiếp Qua Máy Chủ GSMA SM-DP+ & Động Cơ Tính Phí Phạt Hủy Hợp Đồng Sớm ETF (Hardware Subsidy with 12-Month Carrier Contract Commitment, Multi-Network Selection, Instant eSIM Direct Push via GSMA SM-DP+ & Automated Early Termination Fee Calculation Engine).
+6.2 Mục tiêu & Tác nhân
+• Mục tiêu: Tích hợp mô hình kinh doanh nhà mạng viễn thông ảo (MVNO) trực tiếp vào phễu mua sắm phần cứng công nghệ cao; cho phép người mua điện thoại được hưởng mức trợ giá thiết bị hấp dẫn (giảm trực tiếp từ $150.00 đến $200.00 trên giá bán lẻ máy mới) hoặc nhận Chiết khấu Kết nối Nhà mạng Tức thì ($30 Carrier Connection Instant Discount) khi ký hợp đồng cam kết sử dụng dịch vụ viễn thông liên tục 12 tháng; cung cấp quyền tự do lựa chọn giữa 3 hạ tầng mạng viễn thông hàng đầu (Verizon, T-Mobile, AT&T) trên cùng một giao diện; tự động hóa việc cấp phát đường truyền kỹ thuật số không chạm (Zero-touch eSIM Direct Push via GSMA SM-DP+) đẩy thẳng profile vào thiết bị mà không cần quét mã QR; thiết lập cơ chế kiểm soát rủi ro tài chính tự động tính toán và truy thu Phí phạt vi phạm cam kết hủy hợp đồng sớm (Early Termination Fee - ETF) kèm chế tài khóa IMEI từ xa.
+• Tác nhân tham gia (Actors):
+• Khách hàng thuê bao (Subscriber): Chọn gói cước, cung cấp thông tin tương thích (IMEI/EID), ký hợp đồng cam kết 12 tháng điện tử, kích hoạt đường truyền.
+• Hệ thống Bán hàng TMĐT (Storefront & Composite Checkout): Hiển thị bảng chọn hạ tầng mạng, áp dụng mức trợ giá phần cứng, đóng gói giỏ hàng phức hợp.
+• Công cụ Kiểm tra Tương thích IMEI (IMEI Compatibility Checker): Bóc tách mã TAC, đối soát danh sách trắng (Whitelist) VoLTE và 5G của từng nhà mạng đối tác.
+• Hệ thống BSS/OSS Viễn thông (Billing & Operations Support System): Quản lý vòng đời thuê bao (MSISDN), chu kỳ cước định kỳ và chính sách giám sát cam kết hợp đồng.
+• Máy chủ Cấp phát eSIM Chuẩn GSMA SM-DP+ (Subscription Manager Data Preparation +): Khởi tạo, mã hóa và đẩy profile mạng trực tiếp tới chip eUICC của thiết bị thông qua Apple Carrier Entitlement Server / Google Android Core.
+• Cổng Thanh toán (Payment Gateway): Xử lý giao dịch cước trả trước và tự động kích hoạt lệnh truy thu phí phạt ETF từ thẻ tín dụng đã lưu khi có sự kiện vi phạm hợp đồng.
+6.3 Điều kiện tiên quyết
+1. Thiết bị di động chọn mua là phiên bản không khóa mạng (Factory Unlocked) hoặc phiên bản khóa mạng tương thích với hạ tầng viễn thông đã chọn.
+2. Khách hàng cam kết sử dụng dịch vụ viễn thông liên tục tối thiểu 12 tháng (12-Month Annual Commitment Mandate) và ký điện tử điều khoản chấp thuận phí phạt ETF nếu hủy trước hạn.
+3. Đối với phương thức cấp phát eSIM Direct Push: Thiết bị bắt buộc phải có chip eUICC tích hợp và có mã số nhận dạng EID hợp lệ gồm đúng 32 chữ số thập phân chuẩn GSMA.
+4. Đối với luồng giữ số cũ chuyển mạng (Mobile Number Portability - MNP / Port-in): Khách hàng phải có số điện thoại đang hoạt động hai chiều, Account Number và mã Transfer PIN/Port-out PIN hợp lệ do nhà mạng cũ cấp qua SMS.
+6.4 Luồng xử lý chính từng bước (Step-by-step Main Flow)
+• Bước 1 (Chọn thiết bị & Kích hoạt tùy chọn đóng gói gói cước trên PDP):
+• Trên trang chi tiết sản phẩm điện thoại (PDP), tại khối "Kết nối mạng & Gói cước di động (Carrier & Connectivity)", khách hàng chuyển đổi giữa 2 chế độ:
+• Chế độ 1: Mua máy trần không kèm gói cước (Device Only - Unlocked): Giá bán nguyên niêm yết $1,199.00.
+• Chế độ 2: Đóng gói kèm Gói cước Viễn thông Cam kết 12 Tháng (Bundle & Save): Khách hàng được giảm ngay $150.00 trực tiếp trên giá bán máy mới (giá máy chỉ còn $1,049.00) nếu đăng ký gói cước trả trước 12 tháng (Annual Plan). Ngoài ra, nếu chọn hình thức kích hoạt nhà mạng ngay tại thời điểm mua (Active Carrier Connect), khách được áp dụng thêm chiết khấu $30.00.
+• Bước 2 (Lựa chọn 1 trong 3 hạ tầng mạng viễn thông độc quyền):
+• Khách hàng chọn 1 trong 3 hạ tầng mạng tương ứng với nhu cầu và vùng địa lý:
+1. Warp 5G (Hạ tầng Verizon Ultra Wideband): Tối ưu cho tốc độ tải cực cao trên băng tần C-Band n77 và mmWave, độ ưu tiên băng thông đường truyền QCI 8.
+2. GSM 5G / Light Speed (Hạ tầng T-Mobile Ultra Capacity): Vùng phủ sóng 5G Ultra Capacity (băng tần n41) rộng khắp, hỗ trợ chuyển vùng dữ liệu quốc tế tại 180+ quốc gia.
+3. Dark Star (Hạ tầng AT&T Coverage): Mạng phủ sóng nông thôn và vùng sâu vùng xa tốt nhất, có tùy chọn nâng cấp quyền ưu tiên mạng (Priority Data Add-on).
+• Bước 3 (Kiểm tra tương thích phần cứng tự động qua IMEI/EID Checker):
+• Nếu khách mua máy mới cùng đơn: Hệ thống tự động trích xuất thông số kỹ thuật của SKU được chọn.
+• Nếu khách mua gói cước cho thiết bị sẵn có: Khách nhập 15 số IMEI của điện thoại.
+• Hệ thống bóc tách 8 chữ số đầu (Mã Type Allocation Code - TAC) và gọi API kiểm tra chéo với cơ sở dữ liệu GSMA:
+• Xác nhận thiết bị có hỗ trợ gọi thoại chất lượng cao qua 4G (VoLTE) hay không.
+• Xác nhận thiết bị có tương thích dải băng tần 5G NR của hạ tầng mạng đã chọn không.
+• Xác nhận thiết bị có hỗ trợ chip eUICC (eSIM) hay không.
+• Bước 4 (Chọn phương thức cấp phát đường truyền):
+• Tùy chọn A - Bộ Kit thẻ SIM vật lý (Physical Triple-Cut SIM Kit): Hệ thống bổ sung một thẻ SIM vật lý đa kích cỡ (Standard/Micro/Nano) tương ứng với mạng đã chọn vào kiện hàng đóng gói chung với điện thoại.
+• Tùy chọn B - Cấp phát eSIM Đẩy Trực Tiếp Tức Thì (Instant eSIM Direct Push): Không phát sinh rác thải nhựa, kích hoạt không chạm không cần quét QR.
+• Bước 5 (Cấu hình Cấp phát eSIM Đẩy Trực Tiếp qua Máy chủ GSMA SM-DP+):
+• Khách hàng cung cấp mã số EID (32 ký tự, lấy từ mục Settings -> General -> About -> EID hoặc trên vỏ hộp máy).
+• Hệ thống BSS/OSS gửi lệnh tới máy chủ GSMA SM-DP+ Server (Subscription Manager Data Preparation+):
+• Khởi tạo một eSIM Profile duy nhất gắn với mã EID của thiết bị.
+• Đăng ký hồ sơ kích hoạt lên máy chủ ủy thác nhà mạng của hệ điều hành (Apple Carrier Entitlement Service / Google Android eSIM Core).
+• Bước 6 (Thanh toán & Ký Hợp Đồng Cam Kết 12 Tháng Điện Tử):
+• Giỏ hàng phản ánh mức trợ giá phần cứng (-$150.00) và tiền cước viễn thông trả trước 12 tháng (+$450.00).
+• Khách hàng ký điện tử Thỏa thuận Cam kết Dịch vụ 12 Tháng (12-Month Service Agreement Mandate), chấp thuận điều khoản khấu trừ phí phạt ETF nếu hủy trước hạn, và lưu trữ thông tin thẻ thanh toán CIT-MIT Tokenization.
+• Khách hàng hoàn tất thanh toán đơn hàng phức hợp.
+• Bước 7 (Trải nghiệm Kích hoạt Đường truyền Thực tế trên Thiết Bị):
+• Đối với eSIM Direct Push: Khi khách hàng nhận điện thoại mới, bật nguồn và kết nối Wi-Fi:
+• Màn hình iPhone/Android tự động bật lên một cửa sổ thông báo hệ điều hành: "Gói cước di động đã sẵn sàng cài đặt (Cellular Plan Ready to Install)".
+• Khách hàng chỉ cần bấm nút "Tiếp tục (Continue)".
+• eSIM Profile tự động được tải xuống và kích hoạt trong vòng 30 giây mà không cần quét mã QR. Thiết bị lập tức hiện cột sóng 5G và thực hiện cuộc gọi đầu tiên.
+• Đối với SIM vật lý: Khách nhận máy, lắp SIM vào khay, đăng nhập cổng web nhập mã số ICCID in trên mặt thẻ để kích hoạt dịch vụ trong 60 giây.
+6.5 Luồng phụ & Luồng ngoại lệ (Alternative & Exception Flows)
+A. Luồng ngoại lệ 1: Khách hàng đơn phương chấm dứt hợp đồng gói cước trước hạn 12 tháng (Early Cancellation & ETF Penalty Auto-Charge)
+• Kịch bản: Khách hàng mua điện thoại được hưởng trợ giá giảm $150.00 kèm cam kết dùng gói cước 12 tháng, nhưng sau 3 tháng sử dụng khách hàng gửi yêu cầu hủy gói cước để chuyển mạng hoặc giữ máy trần.
+• Động cơ Tính Phí Phạt Hủy Hợp Đồng Sớm (Early Termination Fee - ETF Engine):
+1. Trong Điều khoản Dịch vụ (ToS) đã được khách hàng ký điện tử: Việc đơn phương chấm dứt hợp đồng viễn thông trước thời hạn cam kết 12 tháng cấu thành hành vi vi phạm thỏa thuận trợ giá phần cứng.
+2. Hệ thống BSS tự động tính toán phí phạt ETF theo công thức khấu trừ tỷ lệ thời gian chưa sử dụng cộng chi phí quản trị vi phạm cam kết:
+$$\text{Phí phạt ETF} = \text{Mức trợ giá ban đầu (\$150.00)} \times \left(1 - \frac{\text{Số tháng đã sử dụng hoàn tất}}{12}\right) + \text{Phí quản trị (\$25.00)}$$
+3. Áp dụng cụ thể với 3 tháng đã dùng:
+$$\text{Phí phạt ETF} = \$150.00 \times \left(1 - \frac{3}{12}\right) + \$25.00 = \$150.00 \times 0.75 + \$25.00 = \$112.50 + \$25.00 = \$137.50$$
+4. Cổng thanh toán tự động kích hoạt lệnh thu nợ (Auto-Charge Debit) số tiền $137.50 từ thẻ tín dụng của khách hàng theo thỏa thuận CIT-MIT Mandate đã ký.
+5. Sau khi thu phí phạt thành công: Hồ sơ thuê bao được chuyển sang trạng thái TERMINATED_RELEASED, hợp đồng đóng lại hợp pháp.
+B. Luồng ngoại lệ 2: Lệnh trừ tiền phạt ETF thất bại & Chế tài khóa máy Carrier Financing IMEI Lock
+• Kịch bản: Khách hàng hủy hợp đồng sớm nhưng thẻ tín dụng bị khóa hoặc không đủ tiền để trừ khoản phí phạt ETF $137.50.
+• Quy trình chế tài kỹ thuật & pháp lý:
+1. Cổng thanh toán thông báo ETF_CHARGE_FAILED.
+2. Hệ thống gửi tối hậu thư tài chính yêu cầu thanh toán khoản phạt trong vòng 48 giờ.
+3. Nếu quá 48 giờ khách hàng không thanh toán:
+• Hệ thống BSS gửi lệnh sang Cổng Điều Phối Thiết Bị Từ Xa (Remote Device Management Gateway) kích hoạt tính năng Khóa Mạng Thiết Bị do Nợ Cước (Carrier Financing IMEI Lock).
+• Số IMEI của máy bị đưa vào danh sách đen hạn chế dịch vụ (GSMA Network Blacklist - Financial Non-Payment Block).
+• Thiết bị bị khóa hoàn toàn chức năng nhận sóng di động trên cả 3 hạ tầng viễn thông đối tác (hiển thị thông báo "No Service / SIM Not Supported").
+• Khi khách hàng hoàn tất thanh toán khoản nợ phạt ETF, hệ thống tự động phát lệnh mở khóa IMEI trên máy chủ GSMA trong vòng 2 giờ.
+C. Luồng ngoại lệ 3: Cấp phát eSIM thất bại & Cơ chế chuyển đổi dự phòng 2 tầng (2-Tier eSIM Fallback)
+• Kịch bản: Khi hệ thống gửi lệnh tới máy chủ SM-DP+ nhưng bị lỗi kết nối mạng viễn thông, hoặc mã EID không nhận diện được sau 3 lần thử tự động, hoặc thiết bị của khách hàng gặp sự cố chip eUICC không thể nạp profile eSIM.
+• Xử lý chuyển đổi dự phòng 2 tầng (2-Tier Fallback):
+1. Tầng 1 - Cấp phát mã QR dự phòng (Encrypted QR Code Fallback): Hệ thống tự động tạo mã kích hoạt dự phòng (LPA Activation Code) định dạng QR Code và gửi tới email/SMS có mã hóa bảo mật của khách hàng để quét thủ công từ thiết bị khác.
+2. Tầng 2 - Xuất kho SIM vật lý khẩn cấp (Physical SIM Kit Emergency Dispatch): Nếu sau 2 giờ khách hàng vẫn không kích hoạt được profile eSIM (lỗi phần cứng chip eUICC): Hệ thống OMS tự động kích hoạt lệnh xuất kho khẩn cấp 01 Bộ KIT SIM Vật lý (Physical Triple-Cut SIM Kit) có nạp sẵn gói cước đã đăng ký.
+3. Gói KIT SIM vật lý được chuyển phát hỏa tốc miễn phí trong 2-4 giờ nội thành (hoặc chuyển phát nhanh 24h liên tỉnh) tới địa chỉ của khách hàng, đảm bảo quyền lợi sử dụng dịch vụ viễn thông không bị gián đoạn.
+D. Luồng phụ 4: Giữ số điện thoại cũ chuyển mạng (Mobile Number Portability - MNP / Port-in Flow)
+• Kịch bản: Khách hàng muốn chuyển số điện thoại đang dùng từ nhà mạng khác sang gói cước mới của sàn.
+• Xử lý hệ thống:
+1. Tại bước chọn gói cước, khách chọn "Tôi muốn giữ lại số điện thoại hiện tại (Keep My Number)".
+2. Hệ thống yêu cầu cung cấp 3 trường thông tin bảo mật bắt buộc:
+• Số thuê bao cần chuyển (10 chữ số).
+• Mã số tài khoản nhà mạng cũ (Account Number - thường gồm 9 đến 12 số).
+• Mã PIN chuyển mạng (Port-out PIN / Transfer PIN - mã bảo mật tạm thời có hiệu lực 4 ngày do nhà mạng cũ cấp qua SMS).
+3. Hệ thống gửi yêu cầu chuyển mạng tự động sang Cổng thanh toán bù trừ chuyển mạng quốc gia (National Porting Clearinghouse).
+4. Trong thời gian chờ chuyển mạng (thường mất từ 15 phút đến 24 giờ), hệ thống cấp một số điện thoại tạm thời (Temporary Number) để khách hàng sử dụng ngay sóng dữ liệu 5G.
+5. Khi nhà mạng cũ xác nhận nhả số: Hệ thống tự động ghi đè số cũ vào profile SIM của khách hàng mà không cần khởi động lại máy.
+E. Luồng phụ 5: Công nghệ Đổi mạng Linh hoạt sau khi mua (TelePortal Engine Workflow)
+• Kịch bản: Sau 3 tháng sử dụng mạng Warp 5G, khách hàng chuyển chỗ ở sang vùng nông thôn nơi sóng mạng Dark Star (AT&T) mạnh hơn. Khách hàng muốn đổi hạ tầng mạng.
+• Xử lý hệ thống:
+1. Khách hàng truy cập Dashboard Quản lý Thuê bao, nhấn nút "Chuyển đổi mạng (TelePortal)".
+2. Chọn mạng đích: Dark Star.
+3. Hệ thống kiểm tra điều kiện: Tài khoản không nợ cước và chưa đổi mạng trong vòng 30 ngày qua (mỗi thuê bao được tặng 2 lượt TelePortal miễn phí mỗi năm).
+4. Hệ thống tự động hủy profile eSIM trên mạng cũ, gọi API máy chủ SM-DP+ sinh profile eSIM mới trên hạ tầng Dark Star gắn với cùng số thuê bao đó.
+5. Màn hình điện thoại khách hàng nhận được thông báo cài đặt cấu hình mạng mới. Toàn bộ quá trình chuyển đổi hoàn tất trong vòng 10 đến 15 phút.
+6.6 Quy tắc nghiệp vụ & Validation Logic (Business Rules)
+--- TABLE START ---
+Mã Quy Tắc | Tên Quy Tắc | Nội Dung Chi Tiết & Ràng Buộc Kỹ Thuật
+BR-CAR-01 | Điều Kiện Hưởng Trợ Giá Phần Cứng (Hardware Subsidy Rule) | Mức giảm giá phần cứng chỉ được kích hoạt khi đơn hàng thỏa mãn đồng thời: (1) Giỏ hàng chứa đồng thời thiết bị đủ điều kiện và gói cước trả trước tối thiểu 12 tháng; (2) Phương thức thanh toán là trả thẳng hoặc trả góp định danh hợp lệ; (3) Mỗi tài khoản khách hàng chỉ được hưởng tối đa 2 lần trợ giá phần cứng trong mỗi 365 ngày.
+BR-CAR-02 | Ràng Buộc Định Dạng Mã EID (eSIM EID Format Validation) | Mã EID nhập vào bắt buộc phải chứa đúng chính xác 32 chữ số thập phân (numeric characters), bắt đầu bằng tiền tố định danh quốc tế chuẩn GSMA (thường bắt đầu bằng 89...). Hệ thống tự động loại bỏ khoảng trắng hoặc ký tự đặc biệt trước khi gửi lệnh sang máy chủ SM-DP+.
+BR-CAR-03 | Công Thức Tính Phí Phạt Hủy Hợp Đồng Sớm (Early Termination Fee Formula) | Phí phạt vi phạm cam kết hủy hợp đồng sớm được tính toán theo công thức bất biến: $\text{ETF} = \text{Trợ giá ban đầu} \times (1 - \frac{\text{Tháng đã dùng}}{12}) + \text{Phí quản trị (\$25.00)}$. Cổng thanh toán có quyền tự động trừ tiền từ thẻ tín dụng của khách hàng theo thỏa thuận CIT-MIT Mandate.
+BR-CAR-04 | Chế Tài Khóa IMEI Thiết Bị Do Nợ Cước (Carrier Financing IMEI Lock) | Nếu lệnh trừ tiền phạt ETF thất bại và khách hàng không thanh toán trong vòng 48 giờ, hệ thống kích hoạt khóa mạng IMEI từ xa trên toàn bộ các hạ tầng viễn thông đối tác (GSMA Blacklist). Thiết bị chỉ được mở khóa khi công nợ được tất toán đầy đủ.
+BR-CAR-05 | Bóc Tách Hóa Đơn Doanh Thu Viễn Thông (Tax & Invoicing Separation) | Doanh thu bán máy (thuế suất VAT thiết bị phần cứng thông thường) và doanh thu cước viễn thông (chịu thuế dịch vụ viễn thông đặc thù) bắt buộc phải được bóc tách thành 2 mục hóa đơn điện tử độc lập ngay tại thời điểm thanh toán thành công, không được gộp chung thành một dòng giá tổng.
+BR-CAR-06 | Giới Hạn Tần Suất Đổi Mạng TelePortal (TelePortal Cooldown Period) | Sau mỗi lần thực hiện TelePortal đổi mạng thành công, thuê bao sẽ bị khóa chức năng đổi mạng trong thời gian 30 ngày liên tục (Cooldown Period) trước khi được phép chuyển sang hạ tầng mạng khác.
+--- TABLE END ---
+6.7 Dữ liệu vào/ra & Máy trạng thái (Data Entities & State Machine)
+A. Cấu trúc Dữ liệu Đăng Ký Gói Cước & Phí Phạt ETF (Cellular Subscription Entity Schema):
+--- TABLE START ---
+{  "cellular_subscription_id": "SUB-USM-2026-44102",  "order_id": "ORD-VN-98214",  "customer_id": "CUST-774102",  "hardware_association": {    "device_sku": "IPHONE-16PM-256-DES",    "imei": "359128091823412",    "eid": "89049032005008882600031234567890",    "subsidy_discount_applied": 150.00,    "instant_carrier_connection_discount": 30.00  },  "carrier_plan": {    "network_infrastructure": "WARP_5G",    "underlying_carrier": "VERIZON",    "plan_tier_code": "UNLIMITED_PREMIUM",    "billing_commitment": "ANNUAL_PREPAID_12M",    "prepaid_amount_paid": 450.00,    "commitment_months_total": 12,    "months_completed_count": 3,    "qci_priority_level": 8,    "roaming_included": true  },  "provisioning": {    "sim_type": "INSTANT_ESIM_DIRECT_PUSH",    "iccid": "89014103211118549210",    "smdp_address": "smdp.usmobile.com",    "matching_id": "TEST-PROFILE-CONFIRM-9921",    "apple_direct_push_status": "PUSHED_PENDING_INSTALL",    "phone_number_assigned": "+12025550199",    "fallback_qr_generated": false,    "port_in_details": null  },  "etf_penalty_tracking": {    "early_termination_requested": true,    "termination_request_date": "2027-02-04T10:00:00Z",    "months_unfulfilled": 9,    "base_subsidy_penalty": 112.50,    "administrative_fee": 25.00,    "total_etf_amount_due": 137.50,    "auto_charge_status": "SUCCEEDED",    "payment_gateway_ref": "ch_3MxyzETFChargeSucceeded"  },  "lifecycle_status": "TERMINATED_EARLY_ETF_BILLED",  "activated_at": "2026-11-04T08:20:00Z",  "terminated_at": "2027-02-04T10:05:00Z"}
+--- TABLE END ---
+B. Ma trận Chuyển đổi Trạng thái Cấp phát SIM & Thuê bao (Carrier Provisioning State Machine):
+--- TABLE START ---
+Trạng Thái Ban Đầu (From State) | Sự Kiện Kích Hoạt (Trigger Event) | Điều Kiện Ràng Buộc (Guards) | Trạng Thái Kế Tiếp (To State) | Hành Động Kèm Theo (System Actions)
+[NONE] | SELECT_BUNDLE_IN_PDP | IMEI/EID hợp lệ | BUNDLE_CONFIGURED | Khấu trừ tiền trợ giá máy -$150
+BUNDLE_CONFIGURED | CHECKOUT_PAYMENT_SUCCESS | Thanh toán đơn hàng thành công | PROVISIONING_INITIATED | Khởi tạo bản ghi thuê bao trên BSS
+PROVISIONING_INITIATED | SIM_TYPE_PHYSICAL | Khách chọn thẻ SIM nhựa | SIM_KIT_AWAITING_PACKING | Cấp số ICCID thẻ, gửi lệnh kho đóng gói
+PROVISIONING_INITIATED | SIM_TYPE_ESIM | Khách chọn Instant eSIM | SMDP_PROFILE_GENERATING | Gửi request sinh profile sang SM-DP+
+SMDP_PROFILE_GENERATING | PROFILE_READY_PUSH | Server SM-DP+ trả về MatchingID | ESIM_PUSHED_PENDING_DOWNLOAD | Gửi Direct Push qua Apple Carrier Server
+ESIM_PUSHED_PENDING_DOWNLOAD | DEVICE_FIRST_ATTACH_NETWORK | Thiết bị tải profile & bắt sóng | ACTIVE_IN_SERVICE | Kích hoạt chu kỳ tính cước chính thức
+SIM_KIT_AWAITING_PACKING | CUSTOMER_MANUAL_ACTIVATE | Khách nhập ICCID trên website | ACTIVE_IN_SERVICE | Mở cổng dữ liệu mạng cho thẻ SIM vật lý
+ACTIVE_IN_SERVICE | TRIGGER_TELEPORT_NETWORK | Không nợ cước, hết thời gian chờ | TELEPORT_SWITCH_IN_PROGRESS | Chuyển đổi hạ tầng mạng (Warp -> Dark Star)
+TELEPORT_SWITCH_IN_PROGRESS | NEW_NETWORK_ATTACHED | Thiết bị bắt sóng mạng mới | ACTIVE_IN_SERVICE | Cập nhật hạ tầng mạng mới trên BSS
+ACTIVE_IN_SERVICE | EARLY_TERMINATION_REQUEST | Chưa hết hạn 12 tháng cam kết | ETF_CALCULATION_AND_CHARGE | Tính công thức ETF và tự động trừ thẻ
+ETF_CALCULATION_AND_CHARGE | ETF_PAYMENT_SUCCESS | Trừ thẻ thành công | TERMINATED_EARLY_ETF_BILLED | Hủy gói cước, giải phóng cam kết IMEI
+ETF_CALCULATION_AND_CHARGE | ETF_PAYMENT_DECLINED | Thẻ hết tiền / bị khóa | CARRIER_FINANCING_IMEI_LOCKED | Khóa sóng IMEI toàn cầu, leo thang thu nợ
+--- TABLE END ---
+6.8 Tiêu chí nghiệm thu (Given-When-Then / Acceptance Scenarios)
+--- TABLE START ---
+Feature: Đóng Gói Phần Cứng Kèm Gói Cước Mạng Viễn Thông và Tính Phí Phạt ETF (VAS-CARRIER-PLAN)  Scenario: Mua máy kèm gói cước năm mạng Warp 5G và cấp phát eSIM Direct Push thành công    Given Khách hàng chọn mua iPhone 16 Pro Max phiên bản Unlocked    When Khách hàng chọn tùy chọn "Đóng gói kèm hợp đồng gói cước trả trước 1 năm Unlimited Premium"    And Khách hàng chọn hạ tầng viễn thông "Warp 5G (Verizon)"    Then Giá của chiếc điện thoại được tự động giảm trừ ngay $150.00 trợ giá    When Khách hàng chọn phương thức cấp phát "Instant eSIM" và nhập mã EID 32 chữ số "89049032005008882600031234567890"    And Khách hàng hoàn tất thanh toán đơn hàng    Then Hệ thống BSS kết nối với máy chủ SM-DP+ sinh profile eSIM hợp lệ    And Khi khách hàng bật máy mới lên và kết nối Wi-Fi lần đầu    Then Màn hình thiết bị tự động xuất hiện pop-up thông báo "Gói cước di động đã sẵn sàng cài đặt"    And Khách hàng nhấn "Tiếp tục" thì thiết bị bắt sóng 5G thành công mà không cần quét mã QR  Scenario: Tự động tính toán và truy thu phí phạt ETF khi khách hàng hủy hợp đồng ở tháng thứ 3    Given Khách hàng đã mua điện thoại được trợ giá giảm $150.00 kèm cam kết gói cước 12 tháng    And Khách hàng đã sử dụng dịch vụ viễn thông hoàn tất được 3 tháng    When Khách hàng gửi yêu cầu hủy gói cước viễn thông trên cổng tự phục vụ    Then Động cơ tính phí phạt ETF tự động áp dụng công thức theo quy tắc BR-CAR-03    And Số tiền phạt được tính toán: $150.00 * (1 - 3/12) + $25.00 phí quản trị = $137.50    And Cổng thanh toán tự động thực hiện lệnh trừ số tiền $137.50 từ thẻ tín dụng của khách hàng    And Sau khi thu phí thành công, hợp đồng viễn thông chuyển sang trạng thái "TERMINATED_EARLY_ETF_BILLED"    And Thiết bị phần cứng của khách hàng được giải phóng hoàn toàn không bị khóa IMEI  Scenario: Kích hoạt chế tài khóa IMEI từ xa khi trừ tiền phạt ETF thất bại quá 48 giờ    Given Khách hàng phát sinh khoản phạt hủy hợp đồng sớm ETF là $137.50    When Cổng thanh toán gửi lệnh trừ tiền thẻ tín dụng nhưng ngân hàng báo lỗi "DO_NOT_HONOR"    And Hệ thống gửi thông báo tối hậu thư yêu cầu thanh toán trong 48 giờ    When Đồng hồ hệ thống chạm mốc 48:00:01 mà khách hàng chưa tất toán công nợ    Then Hệ thống BSS gửi lệnh sang máy chủ điều phối thiết bị kích hoạt "Carrier Financing IMEI Lock"    And Số IMEI "359128091823412" của thiết bị bị đưa vào danh sách đen mạng viễn thông toàn cầu    And Thiết bị của khách hàng bị khóa toàn bộ chức năng nhận sóng di động hiển thị "No Service"  Scenario: Kiểm tra tương thích IMEI phát hiện thiết bị thiếu băng tần VoLTE và tự động chuyển mạng    Given Khách hàng muốn mua gói cước cho điện thoại sẵn có của mình    When Khách hàng nhập số IMEI của một thiết bị chỉ hỗ trợ băng tần GSM nội địa châu Á    And Khách hàng chọn hạ tầng mạng "Warp 5G (Verizon)"    Then Hệ thống thực hiện kiểm tra chéo với GSMA TAC database    And Hệ thống phát hiện thiết bị không có chứng nhận VoLTE trên mạng Verizon    Then Hệ thống hiển thị cảnh báo không tương thích và vô hiệu hóa nút Tiếp tục của mạng Warp 5G    And Hệ thống tự động chuyển vùng chọn sang "GSM 5G (T-Mobile)" với thông báo "Tương thích 100%"
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+7. TỔNG HỢP MỐI QUAN HỆ LIÊN THÔNG VÀ MA TRẬN DỮ LIỆU ĐƠN HÀNG PHỨC HỢP (COMPOSITE ORDER MATRIX) & ĐỐI SOÁT TÀI CHÍNH
+Để đảm bảo tính liên kết xuyên suốt giữa 5 dịch vụ giá trị gia tăng (VAS) và các phân hệ Giỏ hàng, Thanh toán, Vận chuyển, và Hậu mãi trong toàn bộ hệ thống, đơn hàng phức hợp tuân thủ cấu trúc hợp đồng dữ liệu chuẩn mực sau:
+--- TABLE START ---
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐│                                COMPOSITE ORDER ITEM DATA CONTRACT                                │├──────────────────────────────────────────────────────────────────────────────────────────────────┤│ {                                                                                                ││   "line_item_id": "LINE-001",                                                                    ││   "main_hardware_sku": "IPHONE-16PRO-256-DES",                                                   ││   "hardware_unit_price": 1199.00,                                                                ││   "serial_number_assigned": "DNQX198402X9",                                                      ││   "imei_assigned": "359128091823412",                                                            ││   "attached_vas_services": [                                                                     ││     {                                                                                            ││       "vas_type": "TRADE_IN_MAIL_IN",                                                            ││       "vas_ref_id": "TIN-MAIL-2026-89412",                                                       ││       "credit_impact": -500.00,                                                                  ││       "un3481_certified": true,                                                                  ││       "sla_deadline": "2026-11-19T23:59:59Z",                                                    ││       "risk_mitigation": {                                                                       ││         "mechanism": "PREAUTH_CREDIT_HOLD",                                                      ││         "hold_amount": 500.00,                                                                   ││         "cit_mit_mandate_id": "MNDT-88912-TOKEN",                                                ││         "hold_auth_id": "ch_3Mxyz9821HoldToken"                                                  ││       }                                                                                          ││     },                                                                                           ││     {                                                                                            ││       "vas_type": "EXTENDED_WARRANTY",                                                           ││       "vas_ref_id": "POL-AC-2026-99120",                                                         ││       "warranty_plan": "APPLECARE_PLUS_THEFT_LOSS",                                              ││       "billing_mode": "MONTHLY_RECURRING",                                                       ││       "immediate_charge": 13.49,                                                                 ││       "deductible_tiers": {"screen": 29.00, "other": 99.00, "theft": 149.00},                    ││       "ers_24h_eligible": true,                                                                  ││       "binding_target": "SERIAL_NUMBER"                                                          ││     },                                                                                           ││     {                                                                                            ││       "vas_type": "CARRIER_SUBSCRIPTION",                                                        ││       "vas_ref_id": "SUB-USM-2026-44102",                                                        ││       "network_infrastructure": "WARP_5G",                                                       ││       "hardware_subsidy_discount": -150.00,                                                      ││       "carrier_instant_connect_discount": -30.00,                                                ││       "plan_prepaid_charge": 450.00,                                                             ││       "contract_commitment_months": 12,                                                          ││       "etf_penalty_rate_initial": 150.00,                                                        ││       "provisioning_type": "INSTANT_ESIM_DIRECT_PUSH"                                            ││     }                                                                                            ││   ],                                                                                             ││   "net_line_total": 982.49                                                                       ││ }                                                                                                │└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+--- TABLE END ---
+Bảng Đối Soát Trách Nhiệm Tài Chính, Dòng Tiền & Cơ Chế Phòng Ngừa Rủi Ro Giữa Các Phân Hệ:
+--- TABLE START ---
+Phân Hệ Nghiệp Vụ | Mã Nghiệp Vụ | Tác Động Doanh Thu Tức Thời | Tác Động Dòng Tiền Ban Đầu | Cơ Chế Phòng Ngừa Rủi Ro Tài Chính | Phân Hệ Liên Thông Phụ Trách
+Catalog & Tương Thích | CAT-CARRIER / CAT-IMEI-LOCK | Không đổi | Không đổi | Kiểm tra GSMA Blacklist, Luhn Checksum, TAC Whitelist | Catalog (01) ↔ VAS (02)
+Thu Cũ Gửi Bưu Điện | VAS-TRADEIN-MAILIN | Ghi nhận nguyên giá máy mới | Giảm tiền thu ngay (-$500) | Khóa thẻ 100% Pre-auth Hold + Rolling Re-auth + Chuẩn UN 3481 + Tem Void | VAS (02) ↔ Cổng Thanh Toán (03) ↔ 3PL (04)
+Thu Cũ Tại Nhà | VAS-TRADEIN-DOORSTEP | Ghi nhận nguyên giá máy mới | Khấu trừ trực tiếp tại chỗ | Test tự động 5 phút + Quẹt thẻ mPOS bù tiền + Hủy đơn 0đ không phạt | VAS (02) ↔ Logistics Hỏa Tốc (04) ↔ mPOS (03)
+Hạ Giá Giám Định | VAS-TRADEIN-REQUOTE | Giảm giá trị thu cũ ròng | Truy thu chênh lệch (+$220) | Chụp 4 ảnh macro + SLA 14 ngày + Full Clawback & Trả máy 0đ + Giữ tài sản bảo chứng | VAS (02) ↔ Depot Hub (05) ↔ Cổng Thanh Toán (03)
+Bảo Hiểm Mở Rộng | VAS-WARRANTY-EXT | Tăng doanh thu dịch vụ (+Thuê bao tháng hoặc +Trả trước 2 năm) | Tăng dòng tiền tương ứng | Ràng buộc chẩn đoán OTA 60 ngày + Khóa Find My bắt buộc + Khấu trừ $29/$99/$149 + Tạm giữ thẻ đổi máy ERS | VAS (02) ↔ Apple GSX ↔ Genius Bar / ASP (05)
+Gói Cước Viễn Thông | VAS-CARRIER-PLAN | Tăng doanh thu cước (+Cước 12 tháng), Giảm biên lợi nhuận máy (-Trợ giá $150) | Tăng ròng dòng tiền gộp (+Cước trả trước 1 năm) | Hợp đồng 12 tháng + Tự động trừ phí phạt ETF + Chế tài khóa sóng IMEI từ xa qua GSMA | VAS (02) ↔ BSS/OSS Viễn Thông ↔ SM-DP+ (07)
+--- TABLE END ---
+————————————————————————————————————————————————————————————————————
+Tài liệu đặc tả nghiệp vụ VAS-02 (Phiên bản 2.1) được biên soạn theo tiêu chuẩn phân tích kỹ thuật chuẩn mực quốc tế, phản ánh đầy đủ các luồng nghiệp vụ ngách, rủi ro biên và kịch bản đối kháng sâu rộng, phục vụ trực tiếp cho công tác thiết kế CSDL (M5/07), tích hợp API cổng thanh toán/viễn thông, thiết kế giao diện người dùng và lập trình kịch bản kiểm thử tự động E2E.

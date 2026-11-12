@@ -15,13 +15,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
   useEffect(refresh, []);
   useEffect(() => setOpen(false), [path]);
   return <UserContext.Provider value={{ user, refresh }}>
-    <div className="announcement">NHỮNG MÓN ĐỒ TỐT. NHỮNG CÁCH MẶC RIÊNG. <span>Khám phá các shop Việt ↗</span></div>
-    <header className="header"><Link href="/" className="logo" aria-label="Mặc, trang chủ">mặc<span>●</span></Link>
-      <nav className={open ? 'nav open' : 'nav'} aria-label="Điều hướng chính"><Link className={path === '/' || path.startsWith('/san-pham') ? 'active' : ''} href="/">Khám phá</Link><Link className={path === '/cong-dong' ? 'active' : ''} href="/cong-dong">Cộng đồng phối đồ</Link><Link className={path === '/seller' ? 'active' : ''} href="/seller">Dành cho shop</Link>{user?.role === 'ADMIN' && <Link href="/admin">Quản trị</Link>}</nav>
+    <div className="announcement">NEXORA — HỆ SINH THÁI THỜI TRANG & CỘNG ĐỒNG PHỐI ĐỒ THẾ HỆ MỚI <span>Khám phá ngay ↗</span></div>
+    <header className="header"><Link href="/" className="logo" aria-label="NEXORA, trang chủ"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '30px', width: 'auto' }} /></Link>
+      <nav className={open ? 'nav open' : 'nav'} aria-label="Điều hướng chính"><Link className={path === '/' || path.startsWith('/san-pham') ? 'active' : ''} href="/">Khám phá</Link><Link className={path === '/cong-dong' ? 'active' : ''} href="/cong-dong">Cộng đồng OOTD</Link><Link className={path === '/seller' ? 'active' : ''} href="/seller">Dành cho Shop</Link>{user?.role === 'ADMIN' && <Link href="/admin">Quản trị</Link>}</nav>
       <div className="header-actions"><Link className="icon-link account" href={user ? '/don-hang' : '/dang-nhap'} aria-label={user ? 'Đơn hàng của tôi' : 'Đăng nhập'}><UserRound size={21}/><span>{user?.name.split(' ')[0] ?? 'Tài khoản'}</span></Link><Link href="/gio-hang" className="icon-link" aria-label="Giỏ hàng"><ShoppingBag size={22}/></Link><button className="icon-link mobile-menu" onClick={() => setOpen(!open)} aria-label="Mở menu" aria-expanded={open}>{open ? <X/> : <Menu/>}</button></div>
     </header>
     <main>{children}</main>
-    <footer><div><Link href="/" className="logo">mặc<span>●</span></Link><p>Mặc đẹp bắt đầu từ việc là chính mình.</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục</Link><Link href="/cong-dong">Cảm hứng phối đồ</Link></div><div><p>ĐỒNG HÀNH</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng Mặc</Link></div><div className="footer-note">Môi trường phát triển<br/>Sản phẩm và hình ảnh minh họa.<br/>COD và vận chuyển đang mô phỏng.</div></footer>
+    <footer><div><Link href="/" className="logo"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '26px', width: 'auto' }} /></Link><p>The Next Era of Fashion Commerce & Lifestyle Community.</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục & Phụ kiện</Link><Link href="/cong-dong">Cộng đồng OOTD</Link></div><div><p>HỆ SINH THÁI</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng NEXORA</Link></div><div className="footer-note">Hệ sinh thái NEXORA<br/>Nền tảng TMĐT thời trang thế hệ mới.<br/>Tích hợp Trade-in & Chăm sóc đồ hiệu.</div></footer>
   </UserContext.Provider>;
 }
 export function Notice({ children, error = false }: { children: React.ReactNode; error?: boolean }) { return <div role={error ? 'alert' : 'status'} className={error ? 'notice error' : 'notice'}>{children}</div>; }
