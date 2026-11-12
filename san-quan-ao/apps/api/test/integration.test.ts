@@ -174,3 +174,51 @@ test('database-driven expiration is idempotent and preserves confirmed orders', 
   assert.equal((await db.shopOrder.findUniqueOrThrow({where:{id:so2.id}})).status,'CONFIRMED');
   assert.equal((await db.inventoryBalance.findUniqueOrThrow({where:{variantId:g.variant.id}})).reserved,1);
 });
+test('reviews, return/refund flow and seller vouchers/ledger enforce rules end-to-end', async () => {
+  const f = await fixture(), admin = await account('ADMIN');
+  const q = await quote(f.buyer, f.variant.id);
+  const placed = await place(f.buyer, q.id);
+  const so = placed.body.shops[0];
+  const itemId = so.items[0].id;
+  // Cannot review before DELIVERED
+  assert.equal((await f.buyer.call('/reviews', 'POST', { orderItemId: itemId, rating: 5, body: 'Đẹp lắm nha' })).status, 409);
+  await f.seller.call(`/seller/shops/${f.shop.id}/orders/${so.id}/transition`, 'POST', { status: 'CONFIRMED' });
+  await f.seller.call(`/seller/shops/${f.shop.id}/orders/${so.id}/transition`, 'POST', { status: 'PACKED' });
+  await f.seller.call(`/seller/shops/${f.shop.id}/orders/${so.id}/transition`, 'POST', { status: 'SHIPPED' });
+  const shipment = await db.shipment.findUniqueOrThrow({ where: { shopOrderId: so.id } });
+  await admin.call(`/admin/mock/shipments/${shipment.id}/event`, 'POST', { externalId: randomUUID(), status: 'DELIVERED' });
+  // Review succeeds once delivered, duplicate blocked
+  assert.equal((await f.buyer.call('/reviews', 'POST', { orderItemId: itemId, rating: 5, body: 'Vải linen rất mát và đứng phom' })).status, 201);
+  assert.equal((await f.buyer.call('/reviews', 'POST', { orderItemId: itemId, rating: 4, body: 'Đánh giá lặp' })).status, 409);
+  // Buyer requests refund, seller approves & completes -> ledger debited & status RETURNED
+  const ret = await f.buyer.call(`/orders/shops/${so.id}/returns`, 'POST', { kind: 'REFUND', reason: 'Không vừa vai áo', items: [{ orderItemId: itemId, quantity: 1 }] });
+  assert.equal(ret.status, 201);
+  assert.equal((await f.seller.call(`/seller/shops/${f.shop.id}/returns/${ret.body.id}/decision`, 'POST', { status: 'APPROVED' })).status, 201);
+  assert.equal((await f.seller.call(`/seller/shops/${f.shop.id}/returns/${ret.body.id}/decision`, 'POST', { status: 'COMPLETED' })).status, 201);
+  assert.equal((await db.shopOrder.findUniqueOrThrow({ where: { id: so.id } })).status, 'RETURNED');
+  const ledger = await f.seller.call(`/seller/shops/${f.shop.id}/ledger`);
+  assert.equal(ledger.status, 200);
+  assert.ok(ledger.body.entries.some((e: { kind: string }) => e.kind === 'REFUND_DEBIT'));
+  // Seller creates voucher
+  const vRes = await f.seller.call(`/seller/shops/${f.shop.id}/vouchers`, 'POST', { code: `NX${randomUUID().slice(0, 6).toUpperCase()}`, amount: 30000, minimum: 200000, maxUses: 10, daysValid: 15 });
+  assert.equal(vRes.status, 201);
+});
+test('trade-in 2-round appraisal and vas-care zip-seal booking work end-to-end', async () => {
+  const f = await fixture(), admin = await account('ADMIN');
+  // Trade-In Vòng 1 (AI Preliminary) -> Vòng 2 (Admin Hub Inspection) -> Voucher issued
+  const ti = await f.buyer.call('/trade-in', 'POST', { brand: 'NÉP Studio', itemName: 'Áo khoác Trench', category: 'Áo khoác', conditionNote: 'Mới 95%, còn nguyên tem' });
+  assert.equal(ti.status, 201);
+  assert.equal(ti.body.status, 'AI_PRELIMINARY');
+  assert.ok(ti.body.estimatedValue > 0);
+  const inspected = await admin.call(`/admin/services/trade-ins/${ti.body.id}/inspect`, 'POST', { grade: 'A', finalValue: 1100000, status: 'APPROVED' });
+  assert.equal(inspected.status, 201);
+  assert.equal(inspected.body.status, 'APPROVED');
+  assert.ok(String(inspected.body.voucherCode).startsWith('NXTI-'));
+  // VAS Care booking -> Zip-seal code generated -> Admin updates White-glove status
+  const care = await f.buyer.call('/vas-care', 'POST', { itemName: 'Túi da bê mini', serviceType: 'LEATHER_RESTORE', insuredValue: 20000000, notes: 'Dưỡng ẩm da' });
+  assert.equal(care.status, 201);
+  assert.ok(String(care.body.zipSealCode).startsWith('NX-SEAL-'));
+  const updated = await admin.call(`/admin/services/care/${care.body.id}/status`, 'POST', { status: 'OPTICAL_CHECK' });
+  assert.equal(updated.status, 201);
+  assert.equal(updated.body.status, 'OPTICAL_CHECK');
+});
