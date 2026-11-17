@@ -30,20 +30,35 @@ wsl -d Ubuntu -- bash '/mnt/d/A - Học Tập/Thương Mại Điện Tử/san-qu
 pnpm dev
 ```
 
-### Tài khoản demo
+### Khởi động nhanh 1-Click trên máy local (Khuyên dùng)
 
-Mật khẩu chung `MacLocal2026!`. Đây là dữ liệu phát triển, không gửi email hay thanh toán thật.
+Dự án đã tích hợp sẵn script tự động kết nối và khởi động toàn bộ cụm dịch vụ (WSL Postgres/Redis, Socket Relay, NestJS API và Next.js Web):
 
-| Vai trò | Email | Mật khẩu |
-|---|---|---|
-| Quản trị NEXORA | admin@nexora.vn | admin123 |
-| Người mua NEXORA | user@nexora.vn | user123 |
-| Người mua demo | buyer@mac.local | MacLocal2026! |
-| Shop NÉP Studio | seller.a@mac.local | MacLocal2026! |
-| Shop Lụa & Co / Mộc Everyday | seller.b@mac.local | MacLocal2026! |
-| Quản trị sàn | admin@mac.local | MacLocal2026! |
+```powershell
+powershell -NoProfile -File scripts/start-local.ps1
+```
 
-Seed chạy lại không ghi đè dữ liệu đang thử. Có 2 shop, 4 mẫu, 24 SKU, 1 bài phối đồ gắn 2 sản phẩm và 1 địa chỉ mẫu. Áo sơ mi màu đen chỉ còn L với tồn 1. Voucher `CHAO50` của Nếp giảm 50.000đ cho đơn từ 400.000đ. Hình minh họa SVG được viết riêng cho bộ dữ liệu mẫu.
+- **Giao diện Web (Frontend Next.js)**: [http://localhost:3000](http://localhost:3000)
+- **Cổng API (Backend NestJS)**: [http://localhost:4000/api/v1](http://localhost:4000/api/v1)
+- **Kiểm tra trạng thái (Health Check)**: [http://localhost:4000/api/v1/health](http://localhost:4000/api/v1/health)
+
+### Tài khoản demo sẵn có
+
+Mật khẩu chung `MacLocal2026!` hoặc `admin123`/`user123`:
+
+| Vai trò | Email | Mật khẩu | Chức năng chính |
+|---|---|---|---|
+| **Quản trị NEXORA** | `admin@nexora.vn` | `admin123` | Cổng Admin: Duyệt Shop, Kiểm duyệt OOTD, Thẩm định Trade-In Hub vòng 2, Quản lý hoa hồng KOC Affiliate, Giao hàng mô phỏng |
+| **Người mua / KOC** | `user@nexora.vn` | `user123` | Mua sắm, Đánh giá, Trả hàng, Danh sách yêu thích (Wishlist), Ví hoa hồng KOC 5%, Đặt lịch VAS Luxury Care |
+| **Người mua demo** | `buyer@mac.local` | `MacLocal2026!` | Khách hàng mẫu luồng checkout đa shop, đăng bài OOTD |
+| **Shop NÉP Studio** | `seller.a@mac.local` | `MacLocal2026!` | Kênh người bán: Quản lý đơn, Ví 3 tầng (Available/Held/Disputed), Tạo Voucher shop |
+| **Shop Lụa & Co** | `seller.b@mac.local` | `MacLocal2026!` | Kênh người bán: Duyệt đổi/trả hàng, Quản lý tồn kho SKU |
+
+Dữ liệu seed mẫu bao gồm:
+- **6 sản phẩm thiết kế đa dạng**: Sơ mi linen, Quần suông, Đầm dạo cuối tuần, Áo thun, Áo khoác Blazer Linen, Áo măng tô Trench Coat dạ mỏng.
+- **Danh mục phong phú**: Áo, Quần, Váy & đầm, Áo khoác & Blazer.
+- **2 bài phối đồ Lookbook OOTD** gắn thẻ sản phẩm có thể bấm mua trọn bộ (Shop the Look).
+- **Mã Voucher Trade-In `NXTI-DEMO50`** và **Mã niêm phong VAS Care `NX-SEAL-DEMO01`**.
 
 ## Kiểm thử
 
