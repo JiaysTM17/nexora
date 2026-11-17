@@ -11,18 +11,39 @@ export class CatalogController {
   constructor(@Inject(Db) private db: Db, @Inject(Auth) private auth: Auth) {}
   @Get('categories') categories() { return this.db.category.findMany({ orderBy: { name: 'asc' } }); }
   @Get('products') async products(@Query() input: unknown) {
-    const q = z.object({ q: z.string().max(100).optional(), color: z.string().max(60).optional(), size: z.string().max(20).optional(), category: z.string().max(60).optional(), inStock: z.enum(['true', 'false']).optional(), page: z.coerce.number().int().min(1).max(1000).default(1) }).parse(input);
+    const q = z.object({
+      q: z.string().max(100).optional(),
+      color: z.string().max(60).optional(),
+      size: z.string().max(20).optional(),
+      category: z.string().max(60).optional(),
+      minPrice: z.coerce.number().int().min(0).optional(),
+      maxPrice: z.coerce.number().int().min(0).optional(),
+      inStock: z.enum(['true', 'false']).optional(),
+      page: z.coerce.number().int().min(1).max(1000).default(1)
+    }).parse(input);
     // A single existential SKU predicate prevents black/L + white/M matching black/M.
     let stockIds: string[] | undefined;
     if (q.inStock === 'true') {
       const rows = await this.db.$queryRaw<{ variantId: string }[]>`SELECT "variantId" FROM "InventoryBalance" WHERE "onHand" > "reserved"`;
       stockIds = rows.map(r => r.variantId);
     }
+    const priceFilter: Prisma.IntFilter = {};
+    if (q.minPrice !== undefined) priceFilter.gte = q.minPrice;
+    if (q.maxPrice !== undefined) priceFilter.lte = q.maxPrice;
+
     const where: Prisma.ProductWhereInput = {
       status: 'ACTIVE', shop: { status: 'APPROVED' },
       ...(q.q ? { name: { contains: q.q, mode: 'insensitive' } } : {}),
       ...(q.category ? { category: { slug: q.category } } : {}),
-      variants: { some: { active: true, ...(q.color ? { color: q.color } : {}), ...(q.size ? { size: q.size } : {}), ...(stockIds ? { id: { in: stockIds } } : {}) } },
+      variants: {
+        some: {
+          active: true,
+          ...(q.color ? { color: q.color } : {}),
+          ...(q.size ? { size: q.size } : {}),
+          ...(Object.keys(priceFilter).length ? { price: priceFilter } : {}),
+          ...(stockIds ? { id: { in: stockIds } } : {})
+        }
+      },
     };
     const [items, total] = await this.db.$transaction([this.db.product.findMany({ where, include: productInclude, orderBy: { createdAt: 'desc' }, take: 24, skip: (q.page - 1) * 24 }), this.db.product.count({ where })]);
     return { items, total, page: q.page };
