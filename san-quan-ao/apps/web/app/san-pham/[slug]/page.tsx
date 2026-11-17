@@ -1,29 +1,316 @@
 'use client';
 import { use, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Heart, Ruler, ShoppingBag, Truck } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShoppingBag, Truck } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
+
 export default function Detail({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params), { data: p, error, loading, reload } = useResource<Product & { isWishlisted?: boolean }>(`/products/${slug}`);
-  const [color, setColor] = useState(''), [size, setSize] = useState(''), [quantity, setQuantity] = useState(1), [notice, setNotice] = useState(''), [failed, setFailed] = useState(false), [busy, setBusy] = useState(false), [wishBusy, setWishBusy] = useState(false);
+  const { slug } = use(params);
+  const { data: p, error, loading, reload } = useResource<Product & { isWishlisted?: boolean }>(`/products/${slug}`);
+  const [color, setColor] = useState('');
+  const [size, setSize] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [notice, setNotice] = useState('');
+  const [failed, setFailed] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [wishBusy, setWishBusy] = useState(false);
   const { user } = useUser();
-  if (loading) return <Loading/>;
-  if (error || !p) return <section className="section"><Notice error>{error}</Notice><Link href="/">Về khám phá</Link></section>;
-  const selectedColor = color || p.variants[0]?.color, colors = [...new Map(p.variants.map(v => [v.color, v.colorHex])).entries()];
-  const variant = p.variants.find(v => v.color === selectedColor && v.size === size), available = variant?.inventory ? variant.inventory.onHand - variant.inventory.reserved : 0;
-  const chart = p.sizeCharts[0];
-  async function add() {
-    if (!variant) return; setBusy(true); setNotice('');
-    try { await api('/cart', 'POST', { variantId: variant.id, quantity }); setFailed(false); setNotice('Đã thêm vào giỏ. Bạn có thể tiếp tục chọn đồ hoặc xem giỏ hàng.'); } catch (e) { setFailed(true); setNotice((e as Error).message); } finally { setBusy(false); }
+
+  if (loading) return <Loading />;
+  if (error || !p) {
+    return (
+      <section className="section">
+        <Notice error>{error}</Notice>
+        <Link href="/">Về khám phá</Link>
+      </section>
+    );
   }
+
+  const selectedColor = color || p.variants[0]?.color;
+  const colors = [...new Map(p.variants.map((v) => [v.color, v.colorHex])).entries()];
+  const variant = p.variants.find((v) => v.color === selectedColor && v.size === size);
+  const available = variant?.inventory ? variant.inventory.onHand - variant.inventory.reserved : 0;
+  const chart = p.sizeCharts[0];
+
+  async function add() {
+    if (!variant) return;
+    setBusy(true);
+    setNotice('');
+    try {
+      await api('/cart', 'POST', { variantId: variant.id, quantity });
+      setFailed(false);
+      setNotice('Đã thêm vào giỏ. Bạn có thể tiếp tục chọn đồ hoặc xem giỏ hàng.');
+    } catch (e) {
+      setFailed(true);
+      setNotice((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function toggleWishlist() {
     if (!user || !p) return;
     setWishBusy(true);
     try {
       await api(`/wishlist/${p.id}`, 'POST', {});
       reload();
-    } catch {} finally { setWishBusy(false); }
+    } catch {} finally {
+      setWishBusy(false);
+    }
   }
-  return <section className="section detail"><Link href="/" className="back"><ArrowLeft size={16}/>Tất cả trang phục</Link><div className="detail-grid"><div className="detail-image"><img src={(p.images.find(i => i.color === selectedColor) ?? p.images[0])?.url} alt={`${p.name}, màu ${selectedColor}`}/><span>Hình minh họa sản phẩm mẫu</span></div><div className="detail-copy"><div className="row between"><p className="eyebrow">{p.shop.name} / {p.category.name}</p>{user && <button className="icon-link" style={{ border: '1px solid var(--line)', padding: '6px 12px', gap: 6, fontSize: 12 }} disabled={wishBusy} onClick={toggleWishlist} aria-label="Yêu thích"><Heart size={16} fill={p.isWishlisted ? 'var(--clay)' : 'none'} color={p.isWishlisted ? 'var(--clay)' : 'var(--ink)'}/><span>{p.isWishlisted ? 'Đã lưu' : 'Lưu lại'}</span></button>}</div><h1>{p.name}</h1><p className="detail-price">{vnd(variant?.price ?? Math.min(...p.variants.map(v => v.price)))}</p><p>{p.description}</p><div className="spec-pills"><span>{p.material}</span><span>{p.fit}</span></div><fieldset><legend>Màu sắc · <strong>{selectedColor}</strong></legend><div className="choices">{colors.map(([c, hex]) => <button key={c} className={selectedColor === c ? 'choice chosen' : 'choice'} onClick={() => { setColor(c); setSize(''); setNotice(''); }}><i style={{ background: hex }}/>{c}</button>)}</div></fieldset><fieldset><legend>Kích cỡ</legend><div className="choices">{p.variants.filter(v => v.color === selectedColor).map(v => <button key={v.id} className={size === v.size ? 'choice chosen' : 'choice'} disabled={!v.inventory || v.inventory.onHand <= v.inventory.reserved} onClick={() => { setSize(v.size); setNotice(''); }}>{v.size}</button>)}</div><small>{variant ? `Còn ${available} sản phẩm` : 'Chọn size phù hợp với số đo của bạn.'}</small></fieldset><label className="quantity">Số lượng<input type="number" min={1} max={Math.min(20, available || 1)} value={quantity} onChange={e => setQuantity(Number(e.target.value))}/></label>{user ? <button className="button full" onClick={add} disabled={busy || !variant || available < quantity || quantity < 1}>{busy ? 'Đang thêm…' : 'Thêm vào giỏ'}<ShoppingBag size={19}/></button> : <Link className="button full" href="/dang-nhap">Đăng nhập để thêm vào giỏ<ShoppingBag size={19}/></Link>}{notice && <Notice error={failed}>{notice} {!failed && <Link href="/gio-hang">Xem giỏ →</Link>}</Notice>}<div className="delivery-note"><Truck size={19}/><span>COD · Phí giao hiển thị riêng cho từng shop tại bước đặt hàng.</span></div><details open><summary><Ruler size={18}/>Bảng size riêng của {p.shop.name}</summary>{chart ? <><p>Số đo {chart.kind === 'GARMENT' ? 'quần áo' : 'cơ thể'} · {chart.unit} · Phiên bản {chart.version}</p><div className="table-wrap"><table><thead><tr>{Object.keys(chart.rows[0] ?? {}).map(key => <th key={key}>{({ size: 'Size', nguc: 'Ngực', vai: 'Vai', dai: 'Dài', eo: 'Eo', mong: 'Mông' } as Record<string,string>)[key] ?? key}</th>)}</tr></thead><tbody>{chart.rows.map((r, i) => <tr key={i}>{Object.keys(chart.rows[0]).map(key => <td key={key}>{r[key]}</td>)}</tr>)}</tbody></table></div><p>{chart.guide}</p></> : <p>Shop chưa cung cấp bảng size.</p>}</details><details><summary>Chính sách đổi size</summary><p>{p.shop.returnPolicy}</p></details><details open><summary>Đánh giá từ người mua ({p.reviews?.length ?? 0})</summary>{p.reviews?.length ? <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>{p.reviews.map(r => <div key={r.id} style={{ borderBottom: '1px solid var(--line)', paddingBottom: 10 }}><div className="row between"><strong>{r.user.name}</strong><span>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span></div><p style={{ margin: '6px 0 0' }}>{r.body}</p></div>)}</div> : <p>Chưa có đánh giá. Bạn có thể đánh giá sau khi nhận hàng.</p>}</details></div></div></section>;
+
+  const currentImage = (p.images.find((i) => i.color === selectedColor) ?? p.images[0])?.url;
+
+  return (
+    <section className="section detail">
+      <Link href="/" className="back">
+        <ArrowLeft size={16} />Tất cả trang phục
+      </Link>
+      <div className="detail-grid">
+        <div className="detail-image">
+          <img
+            src={currentImage}
+            alt={`${p.name}, màu ${selectedColor}`}
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              if (!target.src.includes('/products/shirt.svg')) {
+                target.src = '/products/shirt.svg';
+              }
+            }}
+          />
+          <div
+            style={{
+              marginTop: 10,
+              padding: '6px 12px',
+              background: '#f4efe6',
+              borderRadius: 4,
+              fontSize: 11,
+              color: 'var(--muted)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span>📷 Ảnh chụp thực tế sản phẩm (Không dùng AI)</span>
+            <span style={{ fontWeight: 600, color: 'var(--ink)' }}>NEXORA Verified</span>
+          </div>
+        </div>
+
+        <div className="detail-copy">
+          <div className="row between">
+            <p className="eyebrow">{p.shop.name} / {p.category.name}</p>
+            {user && (
+              <button
+                className="icon-link"
+                style={{ border: '1px solid var(--line)', padding: '6px 12px', gap: 6, fontSize: 12 }}
+                disabled={wishBusy}
+                onClick={toggleWishlist}
+                aria-label="Yêu thích"
+              >
+                <Heart size={16} fill={p.isWishlisted ? 'var(--clay)' : 'none'} color={p.isWishlisted ? 'var(--clay)' : 'var(--ink)'} />
+                <span>{p.isWishlisted ? 'Đã lưu' : 'Lưu lại'}</span>
+              </button>
+            )}
+          </div>
+
+          <h1>{p.name}</h1>
+          <p className="detail-price">{vnd(variant?.price ?? Math.min(...p.variants.map((v) => v.price)))}</p>
+
+          <div style={{ margin: '14px 0', fontSize: 13, lineHeight: 1.8 }}>
+            {p.description.split('\n\n').map((para, idx) => {
+              const urlMatch = para.match(/https?:\/\/[^\s\)]+/);
+              if (urlMatch) {
+                const url = urlMatch[0];
+                const textWithoutUrl = para.replace(url, '').trim();
+                return (
+                  <div
+                    key={idx}
+                    style={{
+                      marginTop: 12,
+                      padding: '12px 14px',
+                      background: '#f3efe7',
+                      borderLeft: '3px solid var(--clay)',
+                      fontSize: 12,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    <strong style={{ display: 'block', marginBottom: 4, color: 'var(--ink)' }}>
+                      Nguồn gốc &amp; Bản quyền tham khảo:
+                    </strong>
+                    <p style={{ margin: 0, color: '#555' }}>{textWithoutUrl}</p>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        color: 'var(--clay)',
+                        fontWeight: 600,
+                        marginTop: 6,
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      <span>Xem sản phẩm gốc từ thương hiệu</span>
+                      <ExternalLink size={13} />
+                    </a>
+                  </div>
+                );
+              }
+              return <p key={idx} style={{ margin: '6px 0', color: '#444' }}>{para}</p>;
+            })}
+          </div>
+
+          <div className="spec-pills">
+            <span>{p.material}</span>
+            <span>{p.fit}</span>
+          </div>
+
+          <fieldset>
+            <legend>Màu sắc · <strong>{selectedColor}</strong></legend>
+            <div className="choices">
+              {colors.map(([c, hex]) => (
+                <button
+                  key={c}
+                  className={selectedColor === c ? 'choice chosen' : 'choice'}
+                  onClick={() => {
+                    setColor(c);
+                    setSize('');
+                    setNotice('');
+                  }}
+                >
+                  <i style={{ background: hex }} />
+                  {c}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Kích cỡ</legend>
+            <div className="choices">
+              {p.variants
+                .filter((v) => v.color === selectedColor)
+                .map((v) => (
+                  <button
+                    key={v.id}
+                    className={size === v.size ? 'choice chosen' : 'choice'}
+                    disabled={!v.inventory || v.inventory.onHand <= v.inventory.reserved}
+                    onClick={() => {
+                      setSize(v.size);
+                      setNotice('');
+                    }}
+                  >
+                    {v.size}
+                  </button>
+                ))}
+            </div>
+            <small>{variant ? `Còn ${available} sản phẩm` : 'Chọn size phù hợp với số đo của bạn.'}</small>
+          </fieldset>
+
+          <label className="quantity">
+            Số lượng
+            <input
+              type="number"
+              min={1}
+              max={Math.min(20, available || 1)}
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            />
+          </label>
+
+          {user ? (
+            <button
+              className="button full"
+              onClick={add}
+              disabled={busy || !variant || available < quantity || quantity < 1}
+            >
+              {busy ? 'Đang thêm…' : 'Thêm vào giỏ'}
+              <ShoppingBag size={19} />
+            </button>
+          ) : (
+            <Link className="button full" href="/dang-nhap">
+              Đăng nhập để thêm vào giỏ
+              <ShoppingBag size={19} />
+            </Link>
+          )}
+
+          {notice && (
+            <Notice error={failed}>
+              {notice} {!failed && <Link href="/gio-hang">Xem giỏ →</Link>}
+            </Notice>
+          )}
+
+          <div className="delivery-note">
+            <Truck size={19} />
+            <span>COD · Phí giao hiển thị riêng cho từng shop tại bước đặt hàng.</span>
+          </div>
+
+          <details open>
+            <summary>
+              <Ruler size={18} />Bảng size riêng của {p.shop.name}
+            </summary>
+            {chart ? (
+              <>
+                <p>
+                  Số đo {chart.kind === 'GARMENT' ? 'quần áo' : 'cơ thể'} · {chart.unit} · Phiên bản {chart.version}
+                </p>
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        {Object.keys(chart.rows[0] ?? {}).map((key) => (
+                          <th key={key}>
+                            {({ size: 'Size', nguc: 'Ngực', vai: 'Vai', dai: 'Dài', eo: 'Eo', mong: 'Mông' } as Record<string, string>)[key] ?? key}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {chart.rows.map((r, i) => (
+                        <tr key={i}>
+                          {Object.keys(chart.rows[0]).map((key) => (
+                            <td key={key}>{r[key]}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p>{chart.guide}</p>
+              </>
+            ) : (
+              <p>Shop chưa cung cấp bảng size.</p>
+            )}
+          </details>
+
+          <details>
+            <summary>Chính sách đổi size</summary>
+            <p>{p.shop.returnPolicy}</p>
+          </details>
+
+          <details open>
+            <summary>Đánh giá từ người mua ({p.reviews?.length ?? 0})</summary>
+            {p.reviews?.length ? (
+              <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
+                {p.reviews.map((r) => (
+                  <div key={r.id} style={{ borderBottom: '1px solid var(--line)', paddingBottom: 10 }}>
+                    <div className="row between">
+                      <strong>{r.user.name}</strong>
+                      <span>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                    </div>
+                    <p style={{ margin: '6px 0 0' }}>{r.body}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>Chưa có đánh giá. Bạn có thể đánh giá sau khi nhận hàng.</p>
+            )}
+          </details>
+        </div>
+      </div>
+    </section>
+  );
 }

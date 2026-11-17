@@ -34,5 +34,31 @@ export function Empty({ title, detail, href = '/', action = 'Khám phá trang ph
 export function ProductCard({ product }: { product: Product }) {
   const colors = [...new Map(product.variants.map(v => [v.color, v.colorHex])).entries()];
   const available = product.variants.some(v => v.inventory && v.inventory.onHand > v.inventory.reserved);
-  return <Link href={`/san-pham/${product.slug}`} className="product-card"><div className="product-image"><img src={product.images[0]?.url} alt={product.name}/><span className="product-tag">{product.material}</span><span className="card-arrow"><ArrowUpRight size={20}/></span>{!available && <span className="sold-out">Tạm hết hàng</span>}</div><div className="product-meta"><span>{product.shop.name}</span><div className="swatches">{colors.map(([color, hex]) => <i key={color} title={color} style={{ background: hex }}/>)}</div></div><h3>{product.name}</h3><p className="price">{vnd(Math.min(...product.variants.map(v => v.price)))}</p></Link>;
+  return (
+    <Link href={`/san-pham/${product.slug}`} className="product-card">
+      <div className="product-image">
+        <img
+          src={product.images[0]?.url}
+          alt={product.name}
+          onError={(e) => {
+            const target = e.currentTarget as HTMLImageElement;
+            if (!target.src.includes('/products/shirt.svg')) {
+              target.src = '/products/shirt.svg';
+            }
+          }}
+        />
+        <span className="product-tag">{product.material}</span>
+        <span className="card-arrow"><ArrowUpRight size={20}/></span>
+        {!available && <span className="sold-out">Tạm hết hàng</span>}
+      </div>
+      <div className="product-meta">
+        <span>{product.shop.name}</span>
+        <div className="swatches">
+          {colors.map(([color, hex]) => <i key={color} title={color} style={{ background: hex }}/>)}
+        </div>
+      </div>
+      <h3>{product.name}</h3>
+      <p className="price">{vnd(Math.min(...product.variants.map(v => v.price)))}</p>
+    </Link>
+  );
 }

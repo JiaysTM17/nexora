@@ -43,7 +43,16 @@ function SearchResults({ q, category, priceRange }: { q: string; category?: stri
           return (
             <Link href={`/san-pham/${p.slug}`} key={p.id} className="product-card">
               <div className="product-image">
-                {p.images[0] && <img src={p.images[0].url} alt={p.name} />}
+                {p.images[0] && (
+                  <img
+                    src={p.images[0].url}
+                    alt={p.name}
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                    }}
+                  />
+                )}
                 {!inStock && <span className="sold-out">Hết hàng</span>}
                 <span className="card-arrow">→</span>
               </div>

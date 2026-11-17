@@ -1,23 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="100%" height="100%">
   <defs>
-    <!-- Gradients for the dynamic X Nexus mark matching brand aesthetics -->
+    <!-- Gradients for the dynamic X Nexus mark (Original Brand Colors) -->
     <linearGradient id="nexoraGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#253C32" />
-      <stop offset="100%" stop-color="#4F7162" />
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#06B6D4" />
     </linearGradient>
     <linearGradient id="nexoraGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#A15B43" />
-      <stop offset="100%" stop-color="#253C32" />
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#6366F1" />
     </linearGradient>
     <linearGradient id="nexoraGradAccent" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#A15B43" />
-      <stop offset="50%" stop-color="#C27A60" />
-      <stop offset="100%" stop-color="#253C32" />
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#4F46E5" />
     </linearGradient>
     
-    <!-- Soft shadow with transparent blend -->
+    <!-- Subtle drop shadow for depth -->
     <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#253C32" flood-opacity="0.15" />
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#4F46E5" flood-opacity="0.16" />
     </filter>
   </defs>
 
@@ -45,7 +45,7 @@
              C 170,22 175,35 155,35 Z" 
           fill="url(#nexoraGrad2)" />
 
-    <!-- Core Nexus Intersection Bridge -->
+    <!-- Core Nexus Intersection Bridge: Overlapping ribbon depth -->
     <path d="M 85,85 
              C 95,72 105,72 115,85 
              C 125,98 120,112 110,120 
@@ -54,29 +54,29 @@
           fill="url(#nexoraGradAccent)" 
           opacity="0.95" />
 
-    <!-- Central Focus Spark / Node: Ring structure with clear center -->
-    <circle cx="100" cy="100" r="14" fill="none" stroke="#253C32" stroke-width="4" />
-    <circle cx="100" cy="100" r="7" fill="url(#nexoraGradAccent)" />
+    <!-- Central Focus Spark / Node -->
+    <circle cx="100" cy="100" r="14" fill="#FFFFFF" />
+    <circle cx="100" cy="100" r="9" fill="url(#nexoraGrad1)" />
   </g>
 
   <!-- TYPOGRAPHY: 'NEXORA' (Right Side) -->
   <g transform="translate(280, 138)">
-    <text font-family="Georgia, 'Times New Roman', serif" 
-          font-size="84" 
-          font-weight="bold" 
-          letter-spacing="4" 
-          fill="#253C32">
-      NEX<tspan fill="#A15B43">O</tspan>RA
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" 
+          font-size="82" 
+          font-weight="900" 
+          letter-spacing="5" 
+          fill="#0F172A">
+      NEX<tspan fill="url(#nexoraGrad1)">O</tspan>RA
     </text>
     
-    <!-- Tagline: High-end Fashion Aesthetic -->
-    <text x="6" y="44" 
+    <!-- Tagline -->
+    <text x="5" y="44" 
           font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
-          font-size="16" 
+          font-size="19" 
           font-weight="600" 
-          letter-spacing="6" 
-          fill="#777E73">
-      TECH COMMERCE &amp; OOTD
+          letter-spacing="7" 
+          fill="#64748B">
+      NEXT-GEN TECH COMMERCE
     </text>
   </g>
 </svg>

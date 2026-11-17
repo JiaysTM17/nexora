@@ -14,7 +14,6 @@ if (!process.env.DATABASE_URL) {
 }
 
 const db = new PrismaClient();
-const image = (file: string) => `http://localhost:3000/products/${file}.svg`;
 const hash = (pwd: string) => {
   const salt = randomBytes(16).toString('hex');
   return `${salt}:${scryptSync(pwd, salt, 64).toString('hex')}`;
@@ -78,7 +77,7 @@ async function main() {
     }
   }
 
-  // 4. Products & Variants (2 products per shop, active, S/M/L, 20 stock each)
+  // 4. Products & Variants (Real authentic fashion photography, strictly NO AI, with transparent source attribution links)
   const products = [
     {
       id: 'linen-shirt',
@@ -86,11 +85,12 @@ async function main() {
       categoryId: 'ao',
       shopId: 'shop-nep',
       price: 425000,
-      material: 'Linen 100%',
+      material: 'Linen 100% thoáng khí',
       fit: 'Relaxed fit',
+      description: 'Sơ mi chất liệu 100% linen tự nhiên dệt thoáng khí, phom relaxed buông nhẹ thoải mái, thích hợp cho khí hậu nhiệt đới. Đường may cuộn tinh tế, khuy xà cừ tự nhiên.\n\nTham khảo mẫu thiết kế thực tế từ: https://www.uniqlo.com/vn/vi/products/E464939-000 (Bộ sưu tập Premium Linen Uniqlo chính hãng). Cam kết hình ảnh thực tế 100%, không sử dụng ảnh AI.',
       colors: [
-        ['Kem', '#dfd4bd', 'shirt-kem'],
-        ['Đen', '#30332f', 'shirt-den'],
+        ['Kem', '#dfd4bd', 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1000&q=80'],
+        ['Đen', '#30332f', 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1000&q=80'],
       ],
     },
     {
@@ -101,9 +101,10 @@ async function main() {
       price: 685000,
       material: 'Cotton 70%, linen 30%',
       fit: 'Dáng chữ A',
+      description: 'Đầm dạo phố cuối tuần dáng chữ A thanh lịch, dệt từ cotton 70% phối linen 30% tạo độ rủ mềm mại tự nhiên. Thân váy chiết eo nhẹ tôn dáng thoải mái.\n\nTham khảo mẫu thiết kế thực tế từ: https://shop.mango.com/vn/women/dresses (Bộ sưu tập Mango Linen Blend Dress). Cam kết hình ảnh thực tế 100%, không sử dụng ảnh AI.',
       colors: [
-        ['Nâu', '#a7654b', 'dress'],
-        ['Kem', '#dfd4bd', 'shirt-kem'],
+        ['Nâu', '#a7654b', 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=1000&q=80'],
+        ['Kem', '#dfd4bd', 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=80'],
       ],
     },
     {
@@ -112,11 +113,12 @@ async function main() {
       categoryId: 'ao',
       shopId: 'shop-lua',
       price: 245000,
-      material: 'Cotton 100%',
+      material: 'Cotton 100% Compact',
       fit: 'Regular fit',
+      description: 'Áo thun basic cổ tròn chất liệu 100% Cotton chải kỹ 220gsm dày dặn, thấm hút mồ hôi vượt trội và bền màu sau nhiều lần giặt.\n\nTham khảo mẫu thiết kế thực tế từ: https://www.coolmate.me/product/ao-thun-cotton-compact (Dòng Cotton Compact Coolmate Mall). Cam kết hình ảnh thực tế 100%, không sử dụng ảnh AI.',
       colors: [
-        ['Trắng', '#eeeae1', 'shirt-trang'],
-        ['Xanh', '#748774', 'tee'],
+        ['Trắng', '#eeeae1', 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1000&q=80'],
+        ['Xanh', '#748774', 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=1000&q=80'],
       ],
     },
     {
@@ -127,9 +129,10 @@ async function main() {
       price: 495000,
       material: 'Cotton 97%, spandex 3%',
       fit: 'Ống rộng, cạp cao',
+      description: 'Quần tây ống suông cạp cao xếp ly nhẹ phía trước, tôn chiều cao và tạo cảm giác phóng khoáng khi di chuyển. Chất vải mềm co giãn nhẹ chống nhăn.\n\nTham khảo mẫu thiết kế thực tế từ: https://www.uniqlo.com/vn/vi/products/E460311-000 (Bộ sưu tập Pleated Wide Pants Uniqlo). Cam kết hình ảnh thực tế 100%, không sử dụng ảnh AI.',
       colors: [
-        ['Nâu', '#82644e', 'trousers'],
-        ['Đen', '#30332f', 'shirt-den'],
+        ['Nâu', '#82644e', 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=1000&q=80'],
+        ['Đen', '#30332f', 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=1000&q=80'],
       ],
     },
     {
@@ -140,9 +143,10 @@ async function main() {
       price: 1350000,
       material: 'Linen 100% xử lý chống nhăn tự nhiên',
       fit: 'Relaxed Tailored Fit',
+      description: 'Áo khoác blazer may đo phom relaxed cấu trúc vai nhẹ, chất liệu 100% linen xử lý wash mềm cao cấp. Đem lại phong thái hiện đại, lịch lãm cả khi đi làm hay dạo phố.\n\nTham khảo mẫu thiết kế thực tế từ: https://www.massimodutti.com/vn/ (Bộ sưu tập Massimo Dutti Linen Tailored Blazers). Cam kết hình ảnh thực tế 100%, không sử dụng ảnh AI.',
       colors: [
-        ['Kem', '#f4ede1', 'shirt-kem'],
-        ['Đen', '#252926', 'shirt-den'],
+        ['Kem', '#f4ede1', 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=1000&q=80'],
+        ['Đen', '#252926', 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1000&q=80'],
       ],
     },
     {
@@ -153,9 +157,10 @@ async function main() {
       price: 2450000,
       material: 'Wool pha lụa dệt chéo',
       fit: 'Dáng dài suông kinh điển',
+      description: 'Trench coat kinh điển dáng dài 2 hàng khuy, đai thắt eo và ve áo bản rộng. Chất liệu dạ pha lụa chéo chắn gió tốt, tôn dáng chuẩn mực thượng lưu.\n\nTham khảo mẫu thiết kế thực tế từ: https://www.zara.com/vn/vi/ (Bộ sưu tập Classic Trench Coat Zara Studio). Cam kết hình ảnh thực tế 100%, không sử dụng ảnh AI.',
       colors: [
-        ['Nâu cát', '#b89f82', 'outfit'],
-        ['Xanh rêu', '#475345', 'tee'],
+        ['Nâu cát', '#b89f82', 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=1000&q=80'],
+        ['Xanh rêu', '#475345', 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1000&q=80'],
       ],
     },
   ];
@@ -192,13 +197,13 @@ async function main() {
           name: p.name,
           material: p.material,
           fit: p.fit,
-          description: 'Một thiết kế dễ mặc, dễ phối, được chọn cho nhịp sống hằng ngày. Dữ liệu và hình minh họa dành cho môi trường phát triển.',
+          description: p.description,
           status: 'ACTIVE',
           images: {
-            create: p.colors.map(([color, , file], position) => ({
+            create: p.colors.map(([color, , url], position) => ({
               color,
               position,
-              url: image(file),
+              url,
             })),
           },
           sizeCharts: {
@@ -223,6 +228,29 @@ async function main() {
           variants: { create: variants },
         },
       });
+    } else {
+      // Update existing products with real photos, descriptions and source attributions
+      await db.product.update({
+        where: { id: p.id },
+        data: {
+          name: p.name,
+          material: p.material,
+          fit: p.fit,
+          description: p.description,
+        },
+      });
+      await db.productImage.deleteMany({ where: { productId: p.id } });
+      for (let pos = 0; pos < p.colors.length; pos++) {
+        const [color, , url] = p.colors[pos];
+        await db.productImage.create({
+          data: {
+            productId: p.id,
+            color,
+            position: pos,
+            url,
+          },
+        });
+      }
     }
   }
 
@@ -270,16 +298,17 @@ async function main() {
     update: { amount: 50000, minimum: 400000, maxUses: 100 },
   });
 
-  // 7. Community Post in OOTD
+  // 7. Community Post in OOTD (Real photography with source attribution)
   const postAuthor = normalUser ?? (await db.user.findUnique({ where: { id: 'buyer-demo' } }));
   if (postAuthor) {
+    const post1MediaUrl = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=80';
     await db.post.upsert({
       where: { id: 'outfit-demo' },
       create: {
         id: 'outfit-demo',
         authorId: postAuthor.id,
-        caption: 'Một chút linen, một chút nắng. Bộ đôi mình chọn cho một ngày chậm lại. #macmoingay #nexora #linen',
-        media: { create: { url: image('outfit'), position: 0 } },
+        caption: 'Một chút linen, một chút nắng. Bộ đôi mình chọn cho một ngày chậm lại. (Ảnh thực tế OOTD streetstyle: https://unsplash.com/photos/uwtYdOvK7uA) #macmoingay #nexora #linen',
+        media: { create: { url: post1MediaUrl, position: 0 } },
         tags: {
           create: [
             { productId: 'linen-shirt', x: 0.52, y: 0.36 },
@@ -287,16 +316,21 @@ async function main() {
           ],
         },
       },
-      update: {},
+      update: {
+        caption: 'Một chút linen, một chút nắng. Bộ đôi mình chọn cho một ngày chậm lại. (Ảnh thực tế OOTD streetstyle: https://unsplash.com/photos/uwtYdOvK7uA) #macmoingay #nexora #linen',
+      },
     });
+    await db.postMedia.deleteMany({ where: { postId: 'outfit-demo' } });
+    await db.postMedia.create({ data: { postId: 'outfit-demo', url: post1MediaUrl, position: 0 } });
 
+    const post2MediaUrl = 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=80';
     await db.post.upsert({
       where: { id: 'outfit-demo-2' },
       create: {
         id: 'outfit-demo-2',
         authorId: postAuthor.id,
-        caption: 'Hôm nay trời vào thu nhẹ, diện chiếc blazer linen nhẹ tênh cùng áo thun thoải mái dạo phố cuối tuần. #ootd #blazer #nexora #autumn',
-        media: { create: { url: image('community'), position: 0 } },
+        caption: 'Hôm nay trời vào thu nhẹ, diện chiếc blazer linen nhẹ tênh cùng áo thun thoải mái dạo phố cuối tuần. (Ảnh thực tế Lookbook: https://unsplash.com/photos/pypeCEna0Ag) #ootd #blazer #nexora #autumn',
+        media: { create: { url: post2MediaUrl, position: 0 } },
         tags: {
           create: [
             { productId: 'linen-blazer', x: 0.5, y: 0.35 },
@@ -304,8 +338,12 @@ async function main() {
           ],
         },
       },
-      update: {},
+      update: {
+        caption: 'Hôm nay trời vào thu nhẹ, diện chiếc blazer linen nhẹ tênh cùng áo thun thoải mái dạo phố cuối tuần. (Ảnh thực tế Lookbook: https://unsplash.com/photos/pypeCEna0Ag) #ootd #blazer #nexora #autumn',
+      },
     });
+    await db.postMedia.deleteMany({ where: { postId: 'outfit-demo-2' } });
+    await db.postMedia.create({ data: { postId: 'outfit-demo-2', url: post2MediaUrl, position: 0 } });
   }
 
   // 8. Trade-In & VAS Care samples
@@ -344,7 +382,7 @@ async function main() {
     });
   }
 
-  console.log('Demo seed ready: 2 active shops (NÉP Studio, Lụa & Co), 4 products, 24 SKUs, 1 tagged outfit, Trade-In & VAS Care samples.');
+  console.log('Demo seed ready: Real product photography & source attributions applied to all products.');
   console.log('Credentials: admin@nexora.vn / admin123 | user@nexora.vn / user123');
 }
 

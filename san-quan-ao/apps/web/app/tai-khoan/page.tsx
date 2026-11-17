@@ -115,7 +115,16 @@ export default function AccountPage() {
             {wishlist.data.map(item => (
               <Link href={`/san-pham/${item.slug}`} key={item.id} className="product-card" style={{ border: '1px solid var(--line)', padding: 12, background: '#fff' }}>
                 <div className="product-image" style={{ aspectRatio: '1/1' }}>
-                  {item.images[0] && <img src={item.images[0].url} alt={item.name} />}
+                  {item.images[0] && (
+                    <img
+                      src={item.images[0].url}
+                      alt={item.name}
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement;
+                        if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                      }}
+                    />
+                  )}
                 </div>
                 <div style={{ marginTop: 8 }}>
                   <span className="subtle" style={{ fontSize: 11 }}>{item.shop.name}</span>

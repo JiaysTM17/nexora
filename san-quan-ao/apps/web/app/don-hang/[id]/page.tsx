@@ -152,6 +152,10 @@ export default function OrderDetail() {
                   <img
                     src={item.snapshot.image}
                     alt={item.snapshot.name}
+                    onError={(e) => {
+                      const target = e.currentTarget as HTMLImageElement;
+                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                    }}
                     style={{ width: 70, height: 86, objectFit: 'cover', background: 'var(--sage)' }}
                   />
                   <div className="grow">
