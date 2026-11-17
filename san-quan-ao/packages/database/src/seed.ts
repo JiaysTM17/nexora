@@ -43,7 +43,7 @@ async function main() {
   }
 
   // 2. Categories
-  for (const [id, name] of [['ao', 'Áo'], ['quan', 'Quần'], ['vay', 'Váy & đầm']] as const) {
+  for (const [id, name] of [['ao', 'Áo'], ['quan', 'Quần'], ['vay', 'Váy & đầm'], ['ao-khoac', 'Áo khoác & Blazer']] as const) {
     await db.category.upsert({
       where: { id },
       create: { id, slug: id, name },
@@ -130,6 +130,32 @@ async function main() {
       colors: [
         ['Nâu', '#82644e', 'trousers'],
         ['Đen', '#30332f', 'shirt-den'],
+      ],
+    },
+    {
+      id: 'linen-blazer',
+      name: 'Áo khoác Blazer Linen cấu trúc nhẹ',
+      categoryId: 'ao-khoac',
+      shopId: 'shop-nep',
+      price: 1350000,
+      material: 'Linen 100% xử lý chống nhăn tự nhiên',
+      fit: 'Relaxed Tailored Fit',
+      colors: [
+        ['Kem', '#f4ede1', 'shirt-kem'],
+        ['Đen', '#252926', 'shirt-den'],
+      ],
+    },
+    {
+      id: 'wool-trench-coat',
+      name: 'Áo măng tô Trench Coat dạ mỏng cao cấp',
+      categoryId: 'ao-khoac',
+      shopId: 'shop-nep',
+      price: 2450000,
+      material: 'Wool pha lụa dệt chéo',
+      fit: 'Dáng dài suông kinh điển',
+      colors: [
+        ['Nâu cát', '#b89f82', 'outfit'],
+        ['Xanh rêu', '#475345', 'tee'],
       ],
     },
   ];
