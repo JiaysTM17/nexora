@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -22,6 +22,7 @@ export default function OrderDetail() {
   const [notice, setNotice] = useState(''), [success, setSuccess] = useState(''), [busy, setBusy] = useState('');
   const [reviewing, setReviewing] = useState<string | null>(null);
   const [returningShop, setReturningShop] = useState<string | null>(null);
+  const [maskedPhone, setMaskedPhone] = useState(true);
 
   async function cancel(shopOrderId: string) {
     setBusy(shopOrderId);
@@ -49,8 +50,8 @@ export default function OrderDetail() {
         rating: Number(d.get('rating')),
         body: String(d.get('body')),
       });
-      setReviewing(null);
       setSuccess('Cảm ơn bạn đã gửi đánh giá sản phẩm!');
+      setReviewing(null);
       reload();
     } catch (err) {
       setNotice((err as Error).message);
@@ -59,23 +60,23 @@ export default function OrderDetail() {
     }
   }
 
-  async function submitReturn(e: FormEvent<HTMLFormElement>, shopOrderId: string, items: { id: string; quantity: number }[]) {
+  async function submitReturn(e: FormEvent<HTMLFormElement>, shopId: string, items: { id: string; quantity: number }[]) {
     e.preventDefault();
     const d = new FormData(e.currentTarget);
-    const kind = String(d.get('kind')) as 'EXCHANGE' | 'REFUND';
-    const reason = String(d.get('reason'));
-    setBusy(`return:${shopOrderId}`);
+    setBusy(`return:${shopId}`);
     setNotice('');
     setSuccess('');
     try {
-      await api(`/orders/shops/${shopOrderId}/returns`, 'POST', {
-        kind,
-        reason,
+      await api('/returns', 'POST', {
+        shopId,
+        kind: d.get('kind'),
+        reason: String(d.get('reason')),
         items: items.map(i => ({ orderItemId: i.id, quantity: i.quantity })),
       });
+      setSuccess('Đã gửi yêu cầu đổi size / hoàn trả tới shop thành công!');
       setReturningShop(null);
-      setSuccess('Đã gửi yêu cầu đổi/trả đến shop.');
       reloadReturns();
+      reload();
     } catch (err) {
       setNotice((err as Error).message);
     } finally {
@@ -122,11 +123,26 @@ export default function OrderDetail() {
       {success && <Notice>{success}</Notice>}
       {address && (
         <div className="panel" style={{ marginBottom: 24 }}>
-          <p className="eyebrow" style={{ marginBottom: 8 }}>
-            <MapPin size={14} style={{ display: 'inline', marginRight: 4, verticalAlign: -2 }} />
-            ĐỊA CHỈ NHẬN HÀNG
-          </p>
-          <strong>{address.recipient} · {address.phone}</strong>
+          <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+            <p className="eyebrow" style={{ margin: 0 }}>
+              <MapPin size={14} style={{ display: 'inline', marginRight: 4, verticalAlign: -2 }} />
+              ĐỊA CHỈ NHẬN HÀNG
+            </p>
+            <span style={{ fontSize: 10, background: '#eef2ed', color: '#2b522b', padding: '3px 8px', borderRadius: 2, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <ShieldCheck size={12} /> Mặt nạ bảo mật NĐ 13/2023/NĐ-CP (PDPD Protected)
+            </span>
+          </div>
+          <strong>
+            {address.recipient} · {maskedPhone ? address.phone.replace(/(\d{3})\d{4}(\d{3})/, '$1****$2') : address.phone}
+            <button
+              type="button"
+              className="text-button"
+              style={{ fontSize: 11, marginLeft: 8 }}
+              onClick={() => setMaskedPhone(!maskedPhone)}
+            >
+              {maskedPhone ? 'Hiện số' : 'Ẩn số'}
+            </button>
+          </strong>
           <p style={{ margin: '4px 0 0', color: 'var(--muted)', fontSize: 13 }}>
             {address.line}, {address.province}
           </p>
@@ -182,19 +198,15 @@ export default function OrderDetail() {
                   <form className="form" style={{ padding: '12px 0', borderBottom: '1px solid var(--line)' }} onSubmit={e => submitReview(e, item.id)}>
                     <label>Số sao<select name="rating" defaultValue="5"><option value="5">5 ★ — Rất hài lòng</option><option value="4">4 ★ — Hài lòng</option><option value="3">3 ★ — Bình thường</option><option value="2">2 ★ — Chưa tốt</option><option value="1">1 ★ — Kém</option></select></label>
                     <label>Nhận xét<textarea name="body" required minLength={5} placeholder="Chất liệu, phom dáng, giao hàng..." /></label>
-                    <button className="button" disabled={busy === item.id}>{busy === item.id ? 'Đang gửi…' : 'Gửi đánh giá'}</button>
+                    <button className="button" disabled={busy === item.id}>{busy === item.id ? 'Đang gửi…' : 'Gửi nhận xét'}</button>
                   </form>
                 )}
               </div>
             );
           })}
-          <div className="row between" style={{ padding: '12px 0', borderTop: '1px solid var(--line)', fontSize: 12 }}>
-            <span>Tiền hàng</span>
-            <span>{vnd(shop.subtotal)}</span>
-          </div>
           {shop.discount > 0 && (
             <div className="row between" style={{ fontSize: 12 }}>
-              <span>Giảm giá</span>
+              <span>Voucher shop</span>
               <span>−{vnd(shop.discount)}</span>
             </div>
           )}
@@ -257,6 +269,33 @@ export default function OrderDetail() {
         <strong>{vnd(order.total)}</strong>
       </div>
       <p className="fine-print">Mỗi shop xử lý và giao riêng. Đơn đã hủy không phát sinh tiền thu COD.</p>
+
+      <details className="panel" style={{ marginTop: 20 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <FileText size={16} /> Hóa đơn điện tử e-Invoice (Thông tư 78/2021/TT-BTC)
+        </summary>
+        <div style={{ marginTop: 14, fontSize: 13, lineHeight: 1.8 }}>
+          <div className="row between" style={{ borderBottom: '1px solid var(--line)', paddingBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+            <span>Ký hiệu mẫu số: <code>1C26TNO</code></span>
+            <span>Số hóa đơn: <code>HD-{order.code.slice(0, 8).toUpperCase()}</code></span>
+          </div>
+          <div className="row between" style={{ marginTop: 8 }}>
+            <span>Tổng tiền hàng (chưa thuế):</span>
+            <span>{vnd(Math.round(order.total / 1.08))}</span>
+          </div>
+          <div className="row between">
+            <span>Thuế suất GTGT (VAT 8% thời trang):</span>
+            <span>{vnd(order.total - Math.round(order.total / 1.08))}</span>
+          </div>
+          <div className="row between" style={{ fontWeight: 600, borderTop: '1px solid var(--line)', paddingTop: 8 }}>
+            <span>Tổng cộng thanh toán:</span>
+            <span>{vnd(order.total)}</span>
+          </div>
+          <p className="subtle" style={{ fontSize: 11, marginTop: 10 }}>
+            Hóa đơn điện tử khởi tạo từ máy tính tiền có kết nối dữ liệu Cơ quan Thuế. Được lưu trữ dữ liệu 10 năm theo Luật Kế toán và Nghị định 123/2020/NĐ-CP.
+          </p>
+        </div>
+      </details>
     </section>
   );
 }

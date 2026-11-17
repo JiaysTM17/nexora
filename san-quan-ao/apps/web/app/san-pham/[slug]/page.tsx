@@ -99,7 +99,26 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
         <div className="detail-copy">
           <div className="row between">
-            <p className="eyebrow">{p.shop.name} / {p.category.name}</p>
+            <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span>{p.shop.name}</span>
+              {p.shop.isMall && (
+                <span
+                  style={{
+                    background: 'var(--clay)',
+                    color: '#fff',
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: 2,
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  NEXORA MALL · CHÍNH HÃNG
+                </span>
+              )}
+              <span style={{ color: 'var(--muted)' }}>/</span>
+              <span>{p.category.name}</span>
+            </p>
             {user && (
               <button
                 className="icon-link"

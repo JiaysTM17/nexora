@@ -10,26 +10,31 @@ import type { Product } from '../api';
 type ProductsResult = { items: Product[]; total: number; page: number };
 type Category = { id: string; name: string; slug: string };
 
-function SearchResults({ q, category, priceRange }: { q: string; category?: string; priceRange?: string }) {
+function SearchResults({ q, category, priceRange, isMall }: { q: string; category?: string; priceRange?: string; isMall?: boolean }) {
   let queryUrl = `/products?page=1`;
   if (q) queryUrl += `&q=${encodeURIComponent(q)}`;
   if (category) queryUrl += `&category=${encodeURIComponent(category)}`;
+  if (isMall) queryUrl += `&isMall=true`;
   if (priceRange === 'under-1m') queryUrl += `&maxPrice=1000000`;
   else if (priceRange === '1m-2m') queryUrl += `&minPrice=1000000&maxPrice=2000000`;
   else if (priceRange === 'over-2m') queryUrl += `&minPrice=2000000`;
 
   const { data, loading, error } = useResource<ProductsResult>(queryUrl);
-  if (!q && !category && !priceRange) return <p style={{ color: 'var(--muted)', margin: '60px auto', textAlign: 'center' }}>Nhập từ khóa hoặc chọn bộ lọc để tìm kiếm sản phẩm.</p>;
+  if (!q && !category && !priceRange && !isMall) {
+    return <p style={{ color: 'var(--muted)', margin: '60px auto', textAlign: 'center' }}>Nhập từ khóa hoặc chọn bộ lọc để tìm kiếm sản phẩm.</p>;
+  }
   if (loading) return <Loading />;
   if (error) return <p style={{ color: 'var(--muted)' }}>Không thể tải kết quả. Vui lòng thử lại.</p>;
-  if (!data?.items.length) return (
-    <Empty
-      title="Không tìm thấy sản phẩm phù hợp"
-      detail="Thử thay đổi từ khóa, danh mục hoặc khoảng giá lọc."
-      href="/tim-kiem"
-      action="Xóa bộ lọc"
-    />
-  );
+  if (!data?.items.length) {
+    return (
+      <Empty
+        title="Không tìm thấy sản phẩm phù hợp"
+        detail="Thử thay đổi từ khóa, danh mục, khoảng giá hoặc tắt lọc NEXORA Mall."
+        href="/tim-kiem"
+        action="Xóa bộ lọc"
+      />
+    );
+  }
   return (
     <>
       <p style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 24 }}>
@@ -57,7 +62,24 @@ function SearchResults({ q, category, priceRange }: { q: string; category?: stri
                 <span className="card-arrow">→</span>
               </div>
               <div className="product-meta">
-                <span>{p.shop.name}</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  {p.shop.name}
+                  {p.shop.isMall && (
+                    <span
+                      style={{
+                        background: 'var(--clay)',
+                        color: '#fff',
+                        fontSize: 9,
+                        fontWeight: 700,
+                        padding: '1px 5px',
+                        borderRadius: 2,
+                        letterSpacing: '0.4px',
+                      }}
+                    >
+                      MALL
+                    </span>
+                  )}
+                </span>
                 <div className="swatches">
                   {colors.slice(0, 4).map(c => <i key={c} style={{ background: c }} />)}
                 </div>
@@ -78,11 +100,13 @@ function SearchPage() {
   const initialQ = params?.get('q') ?? '';
   const initialCat = params?.get('category') ?? '';
   const initialPrice = params?.get('price') ?? '';
+  const initialMall = params?.get('mall') === 'true';
 
   const [input, setInput] = useState(initialQ);
   const [q, setQ] = useState(initialQ);
   const [category, setCategory] = useState(initialCat);
   const [priceRange, setPriceRange] = useState(initialPrice);
+  const [mallOnly, setMallOnly] = useState(initialMall);
 
   const categories = useResource<Category[]>('/categories');
 
@@ -91,13 +115,15 @@ function SearchPage() {
     setQ(params?.get('q') ?? '');
     setCategory(params?.get('category') ?? '');
     setPriceRange(params?.get('price') ?? '');
+    setMallOnly(params?.get('mall') === 'true');
   }, [params]);
 
-  function applyFilters(newQ: string, newCat: string, newPrice: string) {
+  function applyFilters(newQ: string, newCat: string, newPrice: string, newMall: boolean) {
     const sp = new URLSearchParams();
     if (newQ.trim()) sp.set('q', newQ.trim());
     if (newCat) sp.set('category', newCat);
     if (newPrice) sp.set('price', newPrice);
+    if (newMall) sp.set('mall', 'true');
     const qs = sp.toString();
     router.push(qs ? `/tim-kiem?${qs}` : '/tim-kiem', { scroll: false });
   }
@@ -106,7 +132,7 @@ function SearchPage() {
     e.preventDefault();
     const trimmed = input.trim();
     setQ(trimmed);
-    applyFilters(trimmed, category, priceRange);
+    applyFilters(trimmed, category, priceRange, mallOnly);
   }
 
   return (
@@ -117,22 +143,21 @@ function SearchPage() {
         <label style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid var(--line)', background: '#fff', padding: '0 14px', gap: 10 }}>
           <Search size={16} style={{ color: 'var(--muted)', flexShrink: 0 }} />
           <input
+            style={{ border: 'none', outline: 'none', width: '100%', fontSize: 14 }}
+            placeholder="Tìm theo tên sản phẩm, chất liệu..."
             value={input}
             onChange={e => setInput(e.target.value)}
-            placeholder="Tìm áo linen, đầm lụa, blazer, trench coat…"
-            style={{ border: 'none', background: 'none', flex: 1, padding: '13px 0', fontSize: 14 }}
-            autoFocus
-            maxLength={100}
           />
         </label>
-        <button className="button" type="submit">Tìm</button>
+        <button type="submit" className="button" style={{ padding: '0 24px' }}>
+          Tìm kiếm
+        </button>
       </form>
 
-      <div className="row wrap" style={{ gap: 12, marginBottom: 36, alignItems: 'center' }}>
-        <span style={{ fontSize: 12, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bộ lọc:</span>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 32 }}>
         <select
           value={category}
-          onChange={e => { setCategory(e.target.value); applyFilters(q, e.target.value, priceRange); }}
+          onChange={e => { setCategory(e.target.value); applyFilters(q, e.target.value, priceRange, mallOnly); }}
           style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
           aria-label="Lọc theo danh mục"
         >
@@ -142,7 +167,7 @@ function SearchPage() {
 
         <select
           value={priceRange}
-          onChange={e => { setPriceRange(e.target.value); applyFilters(q, category, e.target.value); }}
+          onChange={e => { setPriceRange(e.target.value); applyFilters(q, category, e.target.value, mallOnly); }}
           style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
           aria-label="Lọc theo mức giá"
         >
@@ -152,12 +177,24 @@ function SearchPage() {
           <option value="over-2m">Trên 2.000.000đ</option>
         </select>
 
-        {(q || category || priceRange) && (
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '7px 12px', border: '1px solid var(--line)', background: mallOnly ? '#f5eee6' : '#fff', fontSize: 13, userSelect: 'none' }}>
+          <input
+            type="checkbox"
+            checked={mallOnly}
+            onChange={e => {
+              setMallOnly(e.target.checked);
+              applyFilters(q, category, priceRange, e.target.checked);
+            }}
+          />
+          <strong style={{ color: 'var(--clay)' }}>NEXORA Mall</strong> (Chính hãng 100%)
+        </label>
+
+        {(q || category || priceRange || mallOnly) && (
           <button
             type="button"
             className="button secondary"
             style={{ padding: '8px 12px', fontSize: 12 }}
-            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); router.push('/tim-kiem', { scroll: false }); }}
+            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); setMallOnly(false); router.push('/tim-kiem', { scroll: false }); }}
           >
             Đặt lại bộ lọc
           </button>
@@ -165,7 +202,7 @@ function SearchPage() {
       </div>
 
       <Suspense fallback={<Loading />}>
-        <SearchResults q={q} category={category} priceRange={priceRange} />
+        <SearchResults q={q} category={category} priceRange={priceRange} isMall={mallOnly} />
       </Suspense>
     </section>
   );

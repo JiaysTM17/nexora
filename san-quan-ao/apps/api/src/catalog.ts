@@ -5,7 +5,7 @@ import { Auth, Authed, SignedIn } from './auth';
 import { Db, serial } from './db';
 import { id, json, money } from './common';
 
-const productInclude = { shop: { select: { id: true, name: true, slug: true, returnPolicy: true } }, category: true, images: { orderBy: { position: 'asc' as const } }, variants: { where: { active: true }, include: { inventory: true }, orderBy: { sku: 'asc' as const } }, sizeCharts: { orderBy: { version: 'desc' as const }, take: 1 } };
+const productInclude = { shop: { select: { id: true, name: true, slug: true, returnPolicy: true, isMall: true } }, category: true, images: { orderBy: { position: 'asc' as const } }, variants: { where: { active: true }, include: { inventory: true }, orderBy: { sku: 'asc' as const } }, sizeCharts: { orderBy: { version: 'desc' as const }, take: 1 } };
 @Controller()
 export class CatalogController {
   constructor(@Inject(Db) private db: Db, @Inject(Auth) private auth: Auth) {}
@@ -18,6 +18,7 @@ export class CatalogController {
       category: z.string().max(60).optional(),
       minPrice: z.coerce.number().int().min(0).optional(),
       maxPrice: z.coerce.number().int().min(0).optional(),
+      isMall: z.enum(['true', 'false']).optional(),
       inStock: z.enum(['true', 'false']).optional(),
       page: z.coerce.number().int().min(1).max(1000).default(1)
     }).parse(input);
@@ -32,7 +33,11 @@ export class CatalogController {
     if (q.maxPrice !== undefined) priceFilter.lte = q.maxPrice;
 
     const where: Prisma.ProductWhereInput = {
-      status: 'ACTIVE', shop: { status: 'APPROVED' },
+      status: 'ACTIVE',
+      shop: {
+        status: 'APPROVED',
+        ...(q.isMall === 'true' ? { isMall: true } : {}),
+      },
       ...(q.q ? { name: { contains: q.q, mode: 'insensitive' } } : {}),
       ...(q.category ? { category: { slug: q.category } } : {}),
       variants: {

@@ -52,7 +52,24 @@ export function ProductCard({ product }: { product: Product }) {
         {!available && <span className="sold-out">Tạm hết hàng</span>}
       </div>
       <div className="product-meta">
-        <span>{product.shop.name}</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          {product.shop.name}
+          {product.shop.isMall && (
+            <span
+              style={{
+                background: 'var(--clay)',
+                color: '#fff',
+                fontSize: 9,
+                fontWeight: 700,
+                padding: '1px 5px',
+                borderRadius: 2,
+                letterSpacing: '0.4px',
+              }}
+            >
+              MALL
+            </span>
+          )}
+        </span>
         <div className="swatches">
           {colors.map(([color, hex]) => <i key={color} title={color} style={{ background: hex }}/>)}
         </div>
