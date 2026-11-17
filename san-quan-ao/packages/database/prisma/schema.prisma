@@ -64,6 +64,7 @@ model User {
   tradeIns     TradeInRequest[]
   careBookings CareBooking[]
   affiliateEarnings AffiliateEarning[]
+  wishlist     Wishlist[]
 }
 model Session {
   id        String @id @default(cuid())
@@ -134,6 +135,7 @@ model Product {
   sizeCharts  SizeChartVersion[]
   tags        ProductTag[]
   reviews     Review[]
+  wishlists   Wishlist[]
   @@index([shopId, status])
 }
 model ProductImage {
@@ -487,4 +489,16 @@ model AffiliateEarning {
   holdUntil   DateTime
   createdAt   DateTime @default(now())
   @@index([kocUserId, status])
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId, createdAt])
 }

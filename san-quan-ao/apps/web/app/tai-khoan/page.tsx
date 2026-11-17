@@ -2,8 +2,8 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LogOut, MapPin, Package, RefreshCw, ShieldCheck } from 'lucide-react';
-import { api, AffiliateSummary, CareBooking, TradeInRequest, useResource, vnd } from '../api';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck } from 'lucide-react';
+import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
 type Address = { id: string; recipient: string; phone: string; line: string; province: string };
@@ -15,6 +15,7 @@ export default function AccountPage() {
   const tradeIns = useResource<TradeInRequest[]>(user ? '/trade-in' : null);
   const careList = useResource<CareBooking[]>(user ? '/vas-care' : null);
   const affiliate = useResource<AffiliateSummary>(user ? '/affiliate/summary' : null);
+  const wishlist = useResource<Product[]>(user ? '/wishlist' : null);
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -77,8 +78,8 @@ export default function AccountPage() {
           <Link href="/vas-care" className="row"><ShieldCheck size={18} /><strong>{careList.data?.length ?? 0} lịch</strong></Link>
         </div>
         <div>
-          <small>ĐỊA CHỈ</small>
-          <strong>{addresses.data?.length ?? 0} địa chỉ</strong>
+          <small>ĐÃ LƯU</small>
+          <strong>{wishlist.data?.length ?? 0} món</strong>
         </div>
       </div>
 
@@ -100,6 +101,31 @@ export default function AccountPage() {
           <div><small>ĐÃ HỦY (HOÀN ĐƠN)</small><strong>{vnd(affiliate.data?.cancelled ?? 0)}</strong></div>
           <div><small>ĐƠN GIỚI THIỆU</small><strong>{affiliate.data?.items.length ?? 0}</strong></div>
         </div>
+      </article>
+
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12 }}>
+          <h2><Heart size={18} style={{ display: 'inline', marginRight: 6, verticalAlign: -2 }} />Danh sách trang phục yêu thích</h2>
+          <span className="subtle">{wishlist.data?.length ?? 0} sản phẩm</span>
+        </div>
+        {wishlist.loading ? <Loading /> : !wishlist.data?.length ? (
+          <p className="subtle">Bạn chưa lưu sản phẩm nào. Nhấn biểu tượng trái tim ở trang sản phẩm để lưu lại.</p>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+            {wishlist.data.map(item => (
+              <Link href={`/san-pham/${item.slug}`} key={item.id} className="product-card" style={{ border: '1px solid var(--line)', padding: 12, background: '#fff' }}>
+                <div className="product-image" style={{ aspectRatio: '1/1' }}>
+                  {item.images[0] && <img src={item.images[0].url} alt={item.name} />}
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <span className="subtle" style={{ fontSize: 11 }}>{item.shop.name}</span>
+                  <h3 style={{ fontSize: 13, margin: '4px 0' }}>{item.name}</h3>
+                  <p className="price" style={{ fontSize: 12, fontWeight: 600 }}>{vnd(Math.min(...item.variants.map(v => v.price)))}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </article>
 
       <article className="panel">

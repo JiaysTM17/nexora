@@ -48,10 +48,20 @@ export class CatalogController {
     const [items, total] = await this.db.$transaction([this.db.product.findMany({ where, include: productInclude, orderBy: { createdAt: 'desc' }, take: 24, skip: (q.page - 1) * 24 }), this.db.product.count({ where })]);
     return { items, total, page: q.page };
   }
-  @Get('products/:id') async product(@Param('id') productId: string) {
-    const product = await this.db.product.findFirst({ where: { OR: [{ id: productId }, { slug: productId }], status: 'ACTIVE', shop: { status: 'APPROVED' } }, include: { ...productInclude, reviews: { include: { user: { select: { name: true } } }, take: 20, orderBy: { createdAt: 'desc' } } } });
+  @Get('products/:id') async product(@Param('id') productId: string, @Req() req: { user?: { id: string } }) {
+    const product = await this.db.product.findFirst({
+      where: { OR: [{ id: productId }, { slug: productId }], status: 'ACTIVE', shop: { status: 'APPROVED' } },
+      include: {
+        ...productInclude,
+        reviews: { include: { user: { select: { name: true } } }, take: 20, orderBy: { createdAt: 'desc' } },
+        ...(req.user?.id ? { wishlists: { where: { userId: req.user.id }, select: { id: true } } } : {}),
+      },
+    });
     if (!product) throw new NotFoundException('Sản phẩm đã ngừng bán hoặc không tồn tại');
-    return product;
+    return {
+      ...product,
+      isWishlisted: Boolean((product as any).wishlists?.length),
+    };
   }
   @Get('seller/shops') @UseGuards(SignedIn) shops(@Req() req: Authed) { return this.db.shop.findMany({ where: { members: { some: { userId: req.user.id } } } }); }
   @Post('seller/shops') @UseGuards(SignedIn) async createShop(@Req() req: Authed, @Body() body: unknown) {

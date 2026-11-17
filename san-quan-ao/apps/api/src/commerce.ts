@@ -340,4 +340,36 @@ export class CommerceController {
     const available = Math.max(0, balance - held - disputed);
     return { balance, available, held, disputed, entries };
   }
+
+  @Get('wishlist') async getWishlist(@Req() req: Authed) {
+    const items = await this.db.wishlist.findMany({
+      where: { userId: req.user.id },
+      include: {
+        product: {
+          include: {
+            shop: { select: { id: true, name: true, slug: true } },
+            images: { orderBy: { position: 'asc' }, take: 1 },
+            variants: { where: { active: true }, include: { inventory: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+    return items.map(w => w.product);
+  }
+
+  @Post('wishlist/:productId') async toggleWishlist(@Req() req: Authed, @Param('productId') productId: string) {
+    const existing = await this.db.wishlist.findUnique({
+      where: { userId_productId: { userId: req.user.id, productId } },
+    });
+    if (existing) {
+      await this.db.wishlist.delete({ where: { id: existing.id } });
+      return { wishlisted: false };
+    }
+    await this.db.wishlist.create({
+      data: { userId: req.user.id, productId },
+    });
+    return { wishlisted: true };
+  }
 }
