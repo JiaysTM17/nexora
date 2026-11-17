@@ -289,6 +289,23 @@ async function main() {
       },
       update: {},
     });
+
+    await db.post.upsert({
+      where: { id: 'outfit-demo-2' },
+      create: {
+        id: 'outfit-demo-2',
+        authorId: postAuthor.id,
+        caption: 'Hôm nay trời vào thu nhẹ, diện chiếc blazer linen nhẹ tênh cùng áo thun thoải mái dạo phố cuối tuần. #ootd #blazer #nexora #autumn',
+        media: { create: { url: image('community'), position: 0 } },
+        tags: {
+          create: [
+            { productId: 'linen-blazer', x: 0.5, y: 0.35 },
+            { productId: 'everyday-tee', x: 0.5, y: 0.65 },
+          ],
+        },
+      },
+      update: {},
+    });
   }
 
   // 8. Trade-In & VAS Care samples
