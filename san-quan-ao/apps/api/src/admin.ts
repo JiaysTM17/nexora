@@ -101,4 +101,68 @@ export class AdminController {
     await this.db.auditLog.create({ data: { actorId: req.user.id, action: 'ADMIN_AFFILIATE_RELEASE', entityId: 'affiliate', data: { released } } });
     return { released };
   }
+  @Get('tax-report') async getTaxReport() {
+    const shops = await this.db.shop.findMany({
+      where: { status: 'APPROVED' },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        taxCode: true,
+        origin: true,
+        isMall: true,
+        orders: {
+          where: { status: 'DELIVERED' },
+          select: { id: true, total: true, subtotal: true, discount: true, deliveredAt: true },
+        },
+        ledger: {
+          where: { kind: 'TAX_WITHHOLDING_VAT_PIT' },
+          select: { id: true, amount: true, createdAt: true },
+        },
+      },
+    });
+
+    const reportData = shops.map(s => {
+      const totalDeliveredOrders = s.orders.length;
+      const totalRevenue = s.orders.reduce((sum, o) => sum + o.total, 0);
+      const totalTaxWithheld = Math.abs(s.ledger.reduce((sum, l) => sum + l.amount, 0));
+      return {
+        shopId: s.id,
+        shopName: s.name,
+        slug: s.slug,
+        taxCode: s.taxCode || 'CHƯA_KÊ_KHAI',
+        origin: s.origin,
+        isMall: s.isMall,
+        totalDeliveredOrders,
+        totalRevenue,
+        totalTaxWithheld,
+      };
+    });
+
+    const totalSystemRevenue = reportData.reduce((s, r) => s + r.totalRevenue, 0);
+    const totalSystemTaxWithheld = reportData.reduce((s, r) => s + r.totalTaxWithheld, 0);
+
+    return {
+      decree: 'Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC',
+      period: `Quý ${Math.floor(new Date().getMonth() / 3) + 1}/${new Date().getFullYear()}`,
+      generatedAt: new Date().toISOString(),
+      summary: {
+        totalShops: reportData.length,
+        totalRevenue: totalSystemRevenue,
+        totalTaxWithheld: totalSystemTaxWithheld,
+      },
+      items: reportData,
+    };
+  }
+  @Post('shops/:id/mall') async setMallStatus(@Req() req: Authed, @Param('id') shopId: string, @Body() body: unknown) {
+    const data = z.object({ isMall: z.boolean(), taxCode: z.string().trim().max(30).optional() }).strict().parse(body);
+    const shop = await this.db.shop.update({
+      where: { id: shopId },
+      data: { isMall: data.isMall, ...(data.taxCode !== undefined ? { taxCode: data.taxCode } : {}) },
+    });
+    await this.db.auditLog.create({
+      data: { actorId: req.user.id, action: `SHOP_MALL_${data.isMall ? 'VERIFIED' : 'REVOKED'}`, entityId: shopId, data: json(data) },
+    });
+    return shop;
+  }
 }

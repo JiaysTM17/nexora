@@ -53,16 +53,16 @@ async function main() {
 
   // 3. Shops (status: APPROVED)
   const shops = [
-    ['shop-nep', 'shop-nep', 'NÉP Studio', 'seller-a', '45 Nguyễn Trãi, Hà Nội', 'Thời trang tối giản, chất liệu tự nhiên.'],
-    ['shop-lua', 'shop-lua', 'Lụa & Co', 'seller-b', '12 Lê Lợi, TP.HCM', 'Trang phục lụa và vải nhẹ cao cấp.'],
-    ['shop-moc', 'moc-everyday', 'Mộc Everyday', 'seller-b', '36 Trần Phú, Đà Nẵng', 'Trang phục thoải mái cho những ngày bình thường thật đẹp.'],
+    ['shop-nep', 'shop-nep', 'NÉP Studio', 'seller-a', '45 Nguyễn Trãi, Hà Nội', 'Thời trang tối giản, chất liệu tự nhiên.', '0109887766', true],
+    ['shop-lua', 'shop-lua', 'Lụa & Co', 'seller-b', '12 Lê Lợi, TP.HCM', 'Trang phục lụa và vải nhẹ cao cấp.', '0312345678', true],
+    ['shop-moc', 'moc-everyday', 'Mộc Everyday', 'seller-b', '36 Trần Phú, Đà Nẵng', 'Trang phục thoải mái cho những ngày bình thường thật đẹp.', '0405678912', false],
   ] as const;
 
-  for (const [id, slug, name, userId, origin, description] of shops) {
+  for (const [id, slug, name, userId, origin, description, taxCode, isMall] of shops) {
     await db.shop.upsert({
       where: { id },
-      create: { id, slug, name, origin, description, status: 'APPROVED', members: { create: { userId } } },
-      update: { name, slug, origin, description, status: 'APPROVED' },
+      create: { id, slug, name, origin, description, taxCode, isMall, status: 'APPROVED', members: { create: { userId } } },
+      update: { name, slug, origin, description, taxCode, isMall, status: 'APPROVED' },
     });
   }
 

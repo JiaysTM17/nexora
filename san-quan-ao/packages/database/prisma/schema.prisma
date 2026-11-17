@@ -83,6 +83,8 @@ model Shop {
   origin       String
   status       ShopStatus @default(PENDING)
   feeBps       Int @default(500)
+  taxCode      String @default("")
+  isMall       Boolean @default(false)
   returnPolicy String @default("Yêu cầu đổi size trong 7 ngày sau khi nhận. Hàng chưa mặc, còn tem. Phí đổi cần được shop xác nhận.")
   createdAt    DateTime @default(now())
   members      ShopMember[]
