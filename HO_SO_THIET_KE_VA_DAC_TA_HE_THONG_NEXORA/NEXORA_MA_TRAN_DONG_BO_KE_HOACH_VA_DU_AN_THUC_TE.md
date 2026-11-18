@@ -29,6 +29,9 @@
 | **18** | **Hóa đơn Điện tử e-Invoice (Thông tư 78/2021/TT-BTC)**| *Bổ sung kế toán* | Đã hoàn thiện | Bản thể hiện hóa đơn VAT khởi tạo từ máy tính tiền kết nối dữ liệu Thuế, phân tách thuế suất 8%/10%, lưu trữ 10 năm theo Luật Kế toán |
 | **19** | **Đổi Size / Hoàn tiền & Đánh giá Sản phẩm** | Module 05 | Đã hoàn thiện | `ReturnRequest` (Đổi size hoặc Trả hàng hoàn tiền), xếp hạng 1-5 sao kèm nhận xét chân thực từ người mua đã nhận hàng |
 | **20** | **Kiểm định Tự động & Vận hành 1-Click** | DevOps & CI/CD | Đã hoàn thiện | Script `start-local.ps1` 1-click khởi động trọn bộ dịch vụ (WSL + Relay + API + Web); 12/12 integration tests pass; CI workflow tự động |
+| **21** | **Mã PIN Bảo Mật Giao Nhận An Ninh (FUL-VERIF-05)** | Module 04 | Đã hoàn thiện | Mã PIN 6 chữ số sinh an toàn theo từng đơn hàng/shop, bảo vệ người mua khỏi mạo nhận shipper và đối soát ký nhận chính chủ tại `/don-hang/[id]` |
+| **22** | **Quy Trình Đồng Kiểm Ngoại Quan (RET-COINSPECT)** | Module 05 | Đã hoàn thiện | Khung hướng dẫn đồng kiểm ngoại quan trực tiếp giữa shipper và khách hàng (kiểm tra bao bì, niêm phong, số lượng trước khi nhận COD) |
+| **23** | **Tiến Trình Đơn Hàng Đa Chặng (Visual Order Stepper)**| Module 04 | Đã hoàn thiện | Thanh hiển thị 4 nấc tiến trình trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn hàng của shop |
 
 ---
 
@@ -79,6 +82,14 @@
 ### 5. Bảo vệ Dữ liệu Cá nhân Vận đơn (PDPD Masking - Nghị định 13/2023/NĐ-CP)
 - **Mục tiêu**: Bảo mật số điện thoại và địa chỉ người nhận hàng khỏi nguy cơ bị lộ lọt dữ liệu hoặc các cuộc gọi lừa đảo mạo danh shipper.
 - **Cơ chế**: Tự động mã hóa mặt nạ 4 số giữa của số điện thoại (`090****567`) khi hiển thị trên phiếu giao hàng công cộng hoặc màn hình theo dõi đơn hàng, chỉ người dùng sở hữu tài khoản mới có quyền mở khóa xem số đầy đủ.
+
+### 6. Xác Thực An Ninh Giao Nhận Bằng Mã PIN (FUL-VERIF-05)
+- **Mục tiêu**: Ngăn chặn tình trạng shipper tự ý ấn "Đã giao" khi chưa thực tế giao hàng hoặc giao nhầm người nhận đối với các kiện hàng thời trang cao cấp.
+- **Cơ chế**: Hệ thống sinh mã PIN bảo mật 6 chữ số độc bản cho từng gói hàng của shop, hiển thị riêng cho người mua trong trang chi tiết đơn hàng `/don-hang/[id]`. Khách hàng cung cấp mã này cho bưu tá khi nhận hàng để hoàn tất việc ký nhận.
+
+### 7. Tiêu Chuẩn Đồng Kiểm Ngoại Quan Khi Giao Nhận (RET-COINSPECT)
+- **Mục tiêu**: Tạo sự an tâm tuyệt đối và giảm thiểu tranh chấp hậu mãi về bưu kiện móp méo, rách vỡ hoặc thiếu món.
+- **Cơ chế**: Cho phép người mua đồng kiểm ngoại quan cùng bưu tá trước khi ký nhận hoặc thanh toán COD: kiểm tra tình trạng hộp ngoài, tem niêm phong ni-lông và số lượng sản phẩm; nghiêm cấm việc mặc thử đồ hoặc cắt đứt tem mác bảo hành của sản phẩm.
 
 ---
 

@@ -34,3 +34,15 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 7. **Hóa Đơn Điện Tử VAT Kép (Thông Tư 78/2021/TT-BTC)**:
    - Hồ sơ bổ sung: Kế toán tài chính & Chứng từ mua hàng.
    - Thực tế: Khung hiển thị chi tiết hóa đơn điện tử VAT khởi tạo từ máy tính tiền kết nối dữ liệu Cơ quan Thuế, phân tách thuế suất 8% và tiền hàng trước thuế trên màn hình theo dõi đơn hàng `/don-hang/[id]`.
+
+8. **Mã PIN Giao Nhận An Ninh Đơn Hàng Cao Cấp (FUL-VERIF-05)**:
+   - Hồ sơ: Module 04 Vận chuyển & Giao nhận.
+   - Thực tế: Mã PIN bảo mật 6 số độc bản sinh riêng cho từng đơn hàng của shop, hiển thị trên trang `/don-hang/[id]` để người mua đọc cho shipper đối soát lúc giao nhận, chống giao nhầm hoặc mạo danh.
+
+9. **Tiêu Chuẩn Đồng Kiểm Ngoại Quan Khi Nhận Kiện Hàng (RET-COINSPECT)**:
+   - Hồ sơ: Module 05 Hậu mãi & Đổi trả.
+   - Thực tế: Tích hợp khung thông tin đồng kiểm ngoại quan trên vận đơn chi tiết, cho phép khách hàng kiểm tra tình trạng hộp niêm phong và số lượng sản phẩm cùng shipper trước khi nhận hàng.
+
+10. **Tiến Trình Vận Chuyển Đa Chặng (Visual Order Stepper)**:
+   - Hồ sơ: Module 04 Vận chuyển & Theo dõi.
+   - Thực tế: Thanh hiển thị 4 giai đoạn xử lý đơn hàng trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn của shop.

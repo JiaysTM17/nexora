@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2 } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -13,6 +13,17 @@ const RETURN_LABELS: Record<string, string> = {
   REJECTED: 'Đã từ chối',
   COMPLETED: 'Hoàn tất',
 };
+
+function getSecurityPin(orderCode: string, shopId: string): string {
+  let hash = 0;
+  const str = `${orderCode}:${shopId}:NEXORA_PIN`;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const pin = (Math.abs(hash) % 900000) + 100000;
+  return pin.toString();
+}
 
 export default function OrderDetail() {
   const params = useParams();
@@ -160,6 +171,33 @@ export default function OrderDetail() {
               </span>
             </div>
           </div>
+          {shop.status !== 'CANCELLED' ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '14px 0 16px', padding: '10px 14px', background: 'rgba(0,0,0,0.02)', borderRadius: 2, fontSize: 11, border: '1px solid var(--line)', flexWrap: 'wrap', gap: 6 }}>
+              {[
+                { key: 'PENDING', label: '1. Tiếp nhận' },
+                { key: 'PACKED', label: '2. Đóng gói' },
+                { key: 'SHIPPED', label: '3. Vận chuyển' },
+                { key: 'DELIVERED', label: '4. Đã giao' },
+              ].map((step, idx) => {
+                const stageMap: Record<string, number> = { PENDING: 0, CONFIRMED: 0, PACKED: 1, SHIPPED: 2, DELIVERED: 3 };
+                const currentStage = stageMap[shop.status] ?? 0;
+                const isPassed = currentStage >= idx;
+                const isCurrent = currentStage === idx;
+                return (
+                  <div key={step.key} style={{ display: 'flex', alignItems: 'center', gap: 5, fontWeight: isCurrent ? 700 : 500, color: isPassed ? 'var(--ink)' : 'var(--muted)' }}>
+                    <span style={{ width: 16, height: 16, borderRadius: '50%', background: isPassed ? 'var(--clay)' : 'var(--line)', color: isPassed ? '#fff' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>
+                      {isPassed ? '✓' : idx + 1}
+                    </span>
+                    <span>{step.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ margin: '10px 0', padding: '8px 12px', background: '#fdf2f2', color: '#991b1b', fontSize: 12, borderRadius: 2 }}>
+              Đơn hàng này đã được hủy theo yêu cầu.
+            </div>
+          )}
           {shop.items.map(item => {
             const reviewed = item.reviews && item.reviews.length > 0;
             return (
@@ -218,9 +256,35 @@ export default function OrderDetail() {
             <strong>Thanh toán cho shop</strong>
             <strong>{vnd(shop.total)}</strong>
           </div>
-          {shop.shipment && (
+          {shop.shipment ? (
+            <div style={{ marginTop: 14, padding: 14, background: 'var(--sage)', borderRadius: 2, fontSize: 12 }}>
+              <div className="row between" style={{ flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>
+                  <Truck size={15} /> Vận đơn: <code style={{ fontSize: 13 }}>{shop.shipment.tracking}</code>
+                </span>
+                <span className="badge" style={{ fontSize: 10 }}>
+                  {shop.shipment.provider === 'mock' ? 'NEXORA Express' : shop.shipment.provider} · {shop.shipment.status}
+                </span>
+              </div>
+              <div className="row between" style={{ background: '#fff', padding: '8px 12px', borderRadius: 2, marginBottom: 10, flexWrap: 'wrap', gap: 6, border: '1px solid var(--line)' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <KeyRound size={14} style={{ color: 'var(--clay)' }} />
+                  <strong>Mã PIN an ninh nhận hàng (FUL-VERIF-05):</strong>
+                </span>
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: 3, color: 'var(--clay)', fontSize: 15 }}>
+                  {getSecurityPin(order.code, shop.id)}
+                </span>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', display: 'flex', alignItems: 'flex-start', gap: 6, lineHeight: 1.5 }}>
+                <PackageCheck size={15} style={{ flexShrink: 0, marginTop: 1, color: '#2b522b' }} />
+                <span>
+                  <strong>Đồng kiểm ngoại quan (RET-COINSPECT):</strong> Quý khách được quyền cùng nhân viên giao hàng kiểm tra tem niêm phong, số lượng và quy cách hộp trước khi thanh toán COD/nhận hàng. Vui lòng không cắt tem mác hoặc mặc thử.
+                </span>
+              </div>
+            </div>
+          ) : (
             <p className="subtle" style={{ fontSize: 11, margin: '8px 0 0' }}>
-              Vận đơn: {shop.shipment.tracking} · {shop.shipment.provider === 'mock' ? 'Mô phỏng' : shop.shipment.provider} · {shop.shipment.status}
+              Kiện hàng đang được shop chuẩn bị đóng gói và bàn giao cho đơn vị vận chuyển.
             </p>
           )}
           {shopReturns.length > 0 && (

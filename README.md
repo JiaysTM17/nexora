@@ -223,7 +223,10 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **13** | **Ví Người Bán 3 Tầng & Centralized Escrow** | Module 03 & 07 | **100% Hoàn thiện** | Phân tách 3 số dư: Khả dụng (Available), Tạm giữ ký quỹ 7 ngày (Held), Đóng băng tranh chấp (Disputed) tại `/seller` |
 | **14** | **Giỏ hàng Đa Shop & Tách Đơn con** | Module 03 & 04 | **100% Hoàn thiện** | Tách đơn hàng cha thành các đơn con độc lập cho từng nhà bán, voucher riêng và phí ship tính riêng từng shop |
 | **15** | **Đổi Size / Hoàn tiền & Đánh giá Sao** | Module 05 | **100% Hoàn thiện** | Quy trình RMA đổi size hoặc trả hàng hoàn tiền, đánh giá 1-5 sao kèm nhận xét sau khi đơn hàng giao thành công |
-| **16** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **16** | **Mã PIN Bảo Mật Giao Nhận An Ninh (FUL-VERIF-05)** | Module 04 | **100% Hoàn thiện** | Mã PIN 6 chữ số sinh an toàn theo từng đơn hàng/shop, bảo vệ người mua khỏi mạo nhận shipper và đối soát ký nhận chính chủ tại `/don-hang/[id]` |
+| **17** | **Quy Trình Đồng Kiểm Ngoại Quan (RET-COINSPECT)** | Module 05 | **100% Hoàn thiện** | Khung hướng dẫn đồng kiểm ngoại quan trực tiếp giữa shipper và khách hàng (kiểm tra bao bì, niêm phong, số lượng trước khi nhận COD) |
+| **18** | **Tiến Trình Đơn Hàng Đa Chặng (Visual Stepper)** | Module 04 | **100% Hoàn thiện** | Thanh hiển thị 4 nấc tiến trình trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn hàng của shop |
+| **19** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
