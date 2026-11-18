@@ -160,5 +160,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Mã PIN Giao Nhận An Ninh** | Module 04 | Đã hoàn thiện | Mã PIN 6 chữ số (FUL-VERIF-05) đối soát chính chủ khi nhận hàng |
 | **Đồng Kiểm Ngoại Quan** | Module 05 | Đã hoàn thiện | Tiêu chuẩn đồng kiểm (RET-COINSPECT) cùng shipper trước khi nhận |
 | **Tiến Trình Đơn Hàng 4 Nấc** | Module 04 | Đã hoàn thiện | Stepper trực quan (Tiếp nhận → Đóng gói → Vận chuyển → Đã giao) |
+| **Trọng Tài Sàn Khiếu Nại** | Module 05 | Đã hoàn thiện | Cơ chế khiếu nại RET-DISPUTE SLA 48h, đóng băng ví shop và phán quyết trọng tài |
+| **Hoàn Tiền Không Trả Hàng** | Module 05 | Đã hoàn thiện | Thuật toán RET-RETURNLESS hoàn tiền nhanh không cần trả kiện hàng vật lý |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

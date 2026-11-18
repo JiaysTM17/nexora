@@ -165,4 +165,82 @@ export class AdminController {
     });
     return shop;
   }
+  @Get('disputes') async getDisputes() {
+    const disputes = await this.db.returnRequest.findMany({
+      where: { status: 'DISPUTED' },
+      include: {
+        items: {
+          include: {
+            orderItem: {
+              include: {
+                shopOrder: {
+                  select: { id: true, order: { select: { code: true } }, shop: { select: { id: true, name: true } } },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+    const userIds = [...new Set(disputes.map(d => d.userId))];
+    const users = await this.db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true, email: true } });
+    const userMap = new Map(users.map(u => [u.id, u]));
+    return disputes.map(d => ({ ...d, user: userMap.get(d.userId) }));
+  }
+  @Post('disputes/:id/arbitrate') async arbitrateDispute(
+    @Req() req: Authed,
+    @Param('id') returnId: string,
+    @Body() body: unknown,
+  ) {
+    const data = z.object({
+      decision: z.enum(['REFUND', 'REJECT']),
+      note: z.string().trim().min(5).max(1000),
+    }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const rr = await tx.returnRequest.findUnique({
+        where: { id: returnId },
+        include: { items: { include: { orderItem: true } } },
+      });
+      if (!rr) throw new NotFoundException('Không tìm thấy khiếu nại');
+      if (rr.status !== 'DISPUTED') throw new ConflictException('Yêu cầu không trong trạng thái tranh chấp cần trọng tài');
+      if (data.decision === 'REFUND') {
+        const totalRefund = rr.items.reduce((s, i) => s + i.refundAmount, 0);
+        const shopOrderId = rr.items[0]?.orderItem.shopOrderId;
+        if (totalRefund > 0) {
+          await tx.sellerLedgerEntry.create({
+            data: {
+              shopId: rr.shopId,
+              shopOrderId,
+              kind: 'DISPUTE_REFUND_DEBIT',
+              amount: -totalRefund,
+              sourceKey: `dispute:${rr.id}`,
+            },
+          });
+        }
+        if (shopOrderId) {
+          await tx.shopOrder.update({ where: { id: shopOrderId }, data: { status: 'RETURNED' } });
+          await tx.affiliateEarning.updateMany({ where: { shopOrderId, status: 'HELD' }, data: { status: 'CANCELLED' } });
+        }
+        await tx.auditLog.create({
+          data: { actorId: req.user.id, action: 'DISPUTE_ARBITRATE_REFUND', entityId: rr.id, data: { note: data.note, totalRefund } },
+        });
+        return tx.returnRequest.update({
+          where: { id: rr.id },
+          data: { status: 'COMPLETED' },
+          include: { items: true },
+        });
+      } else {
+        await tx.auditLog.create({
+          data: { actorId: req.user.id, action: 'DISPUTE_ARBITRATE_REJECT', entityId: rr.id, data: { note: data.note } },
+        });
+        return tx.returnRequest.update({
+          where: { id: rr.id },
+          data: { status: 'REJECTED' },
+          include: { items: true },
+        });
+      }
+    });
+  }
 }

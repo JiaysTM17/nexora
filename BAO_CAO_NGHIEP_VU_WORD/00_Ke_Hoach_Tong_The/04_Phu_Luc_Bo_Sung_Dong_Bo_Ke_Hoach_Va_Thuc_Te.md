@@ -46,3 +46,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 10. **Tiến Trình Vận Chuyển Đa Chặng (Visual Order Stepper)**:
    - Hồ sơ: Module 04 Vận chuyển & Theo dõi.
    - Thực tế: Thanh hiển thị 4 giai đoạn xử lý đơn hàng trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn của shop.
+
+11. **Trọng Tài Sàn Phân Xử Khiếu Nại Đa Phương SLA 48h (RET-DISPUTE)**:
+   - Hồ sơ: Module 05 Hậu mãi & Xử lý Tranh chấp.
+   - Thực tế: Nút khiếu nại lên Hội đồng Trọng tài Sàn trên trang `/don-hang/[id]`, Cổng Trọng tài tại `/admin` cho phép Admin ra phán quyết độc lập: duyệt hoàn tiền cưỡng chế từ ví shop hoặc bác khiếu nại, tự động phong tỏa và giải phóng số dư tranh chấp (`disputed`).
+
+12. **Thuật Toán Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)**:
+   - Hồ sơ: Module 05 Hậu mãi & Quản trị Rủi ro.
+   - Thực tế: Cho phép người bán quyết định hoàn tiền nhanh mà không yêu cầu khách gửi trả kiện hàng vật lý, tiết kiệm chi phí logistics ngược và nâng cao trải nghiệm khách hàng.

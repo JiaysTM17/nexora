@@ -282,7 +282,10 @@ export class CommerceController {
     @Body() body: unknown,
   ) {
     await this.auth.shop(req.user.id, shopId);
-    const { status } = z.object({ status: z.enum(['APPROVED', 'REJECTED', 'COMPLETED']) }).strict().parse(body);
+    const { status, returnless } = z.object({
+      status: z.enum(['APPROVED', 'REJECTED', 'COMPLETED']),
+      returnless: z.boolean().optional(),
+    }).strict().parse(body);
     return serial(this.db, async tx => {
       const rr = await tx.returnRequest.findFirst({ where: { id: returnId, shopId }, include: { items: { include: { orderItem: true } } } });
       if (!rr) throw new NotFoundException('Không tìm thấy yêu cầu đổi/trả');
@@ -301,9 +304,33 @@ export class CommerceController {
           await tx.shopOrder.update({ where: { id: shopOrderId }, data: { status: 'RETURNED' } });
           await tx.affiliateEarning.updateMany({ where: { shopOrderId, status: 'HELD' }, data: { status: 'CANCELLED' } });
         }
+        if (returnless) {
+          await tx.auditLog.create({ data: { actorId: req.user.id, action: 'RET_RETURNLESS_REFUND', entityId: rr.id, data: { shopId, totalRefund } } });
+        }
       }
-      await tx.auditLog.create({ data: { actorId: req.user.id, action: `RETURN_${status}`, entityId: rr.id, data: { shopId } } });
+      await tx.auditLog.create({ data: { actorId: req.user.id, action: `RETURN_${status}`, entityId: rr.id, data: { shopId, returnless } } });
       return tx.returnRequest.update({ where: { id: rr.id }, data: { status }, include: { items: true } });
+    });
+  }
+
+  @Post('returns/:id/dispute') async disputeReturn(
+    @Req() req: Authed,
+    @Param('id') returnId: string,
+    @Body() body: unknown,
+  ) {
+    const data = z.object({ reason: z.string().trim().min(5).max(1000) }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const rr = await tx.returnRequest.findFirst({ where: { id: returnId, userId: req.user.id } });
+      if (!rr) throw new NotFoundException('Không tìm thấy yêu cầu đổi/trả');
+      if (!['REQUESTED', 'REJECTED'].includes(rr.status)) throw new ConflictException('Chỉ có thể khiếu nại yêu cầu đang chờ hoặc đã bị shop từ chối');
+      await tx.auditLog.create({
+        data: { actorId: req.user.id, action: 'RETURN_DISPUTED_ESCALATION', entityId: rr.id, data: { reason: data.reason } },
+      });
+      return tx.returnRequest.update({
+        where: { id: rr.id },
+        data: { status: 'DISPUTED', reason: `${rr.reason} | [Khiếu nại trọng tài sàn SLA 48h: ${data.reason}]` },
+        include: { items: true },
+      });
     });
   }
 
@@ -334,7 +361,7 @@ export class CommerceController {
     const balance = entries.reduce((s, e) => s + e.amount, 0);
     const escrowCutoff = new Date(Date.now() - 7 * 86400000);
     const recentDelivered = await this.db.shopOrder.findMany({ where: { shopId, status: 'DELIVERED', deliveredAt: { gt: escrowCutoff } }, select: { total: true } });
-    const openReturns = await this.db.returnRequest.findMany({ where: { shopId, status: { in: ['REQUESTED', 'APPROVED'] } }, include: { items: true } });
+    const openReturns = await this.db.returnRequest.findMany({ where: { shopId, status: { in: ['REQUESTED', 'APPROVED', 'DISPUTED'] } }, include: { items: true } });
     const held = recentDelivered.reduce((s, o) => s + o.total, 0);
     const disputed = openReturns.reduce((s, r) => s + r.items.reduce((x, i) => x + i.refundAmount, 0), 0);
     const available = Math.max(0, balance - held - disputed);

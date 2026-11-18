@@ -32,6 +32,8 @@
 | **21** | **Mã PIN Bảo Mật Giao Nhận An Ninh (FUL-VERIF-05)** | Module 04 | Đã hoàn thiện | Mã PIN 6 chữ số sinh an toàn theo từng đơn hàng/shop, bảo vệ người mua khỏi mạo nhận shipper và đối soát ký nhận chính chủ tại `/don-hang/[id]` |
 | **22** | **Quy Trình Đồng Kiểm Ngoại Quan (RET-COINSPECT)** | Module 05 | Đã hoàn thiện | Khung hướng dẫn đồng kiểm ngoại quan trực tiếp giữa shipper và khách hàng (kiểm tra bao bì, niêm phong, số lượng trước khi nhận COD) |
 | **23** | **Tiến Trình Đơn Hàng Đa Chặng (Visual Order Stepper)**| Module 04 | Đã hoàn thiện | Thanh hiển thị 4 nấc tiến trình trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn hàng của shop |
+| **24** | **Trọng Tài Sàn Xử Lý Tranh Chấp Đa Phương (RET-DISPUTE)**| Module 05 | Đã hoàn thiện | Cơ chế leo thang khiếu nại lên Ban Quản Trị Sàn SLA 48h khi shop từ chối đổi trả; API `POST /returns/:id/dispute`, `POST /admin/disputes/:id/arbitrate`, tự động phong tỏa ví shop và cưỡng chế hoàn tiền |
+| **25** | **Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)** | Module 05 | Đã hoàn thiện | Thuật toán hoàn tiền lập tức không bắt buộc gửi trả kiện hàng vật lý đối với sự cố rõ ràng hoặc hàng lỗi, tối ưu chi phí logistics ngược |
 
 ---
 
@@ -90,6 +92,14 @@
 ### 7. Tiêu Chuẩn Đồng Kiểm Ngoại Quan Khi Giao Nhận (RET-COINSPECT)
 - **Mục tiêu**: Tạo sự an tâm tuyệt đối và giảm thiểu tranh chấp hậu mãi về bưu kiện móp méo, rách vỡ hoặc thiếu món.
 - **Cơ chế**: Cho phép người mua đồng kiểm ngoại quan cùng bưu tá trước khi ký nhận hoặc thanh toán COD: kiểm tra tình trạng hộp ngoài, tem niêm phong ni-lông và số lượng sản phẩm; nghiêm cấm việc mặc thử đồ hoặc cắt đứt tem mác bảo hành của sản phẩm.
+
+### 8. Cơ Chế Leo Thang Khiếu Nại & Trọng Tài Sàn Phân Xử SLA 48h (RET-DISPUTE)
+- **Mục tiêu**: Bảo đảm quyền lợi tối thượng của người mua sắm và tính công bằng cho người bán khi phát sinh bất đồng về đổi size hoặc trả hàng.
+- **Cơ chế**: Khi shop từ chối (`REJECTED`) hoặc yêu cầu đổi trả quá hạn phản hồi, người mua có thể bấm nút "Khiếu nại lên Sàn (RET-DISPUTE Trọng tài SLA 48h)". Trạng thái yêu cầu lập tức chuyển sang `DISPUTED`, số tiền hoàn trả tương ứng được tự động đóng băng trong ví ký quỹ của shop (`disputed`). Hội đồng Quản trị Sàn tại Cổng Quản trị `/admin` có thẩm quyền ra phán quyết độc lập: duyệt hoàn tiền cưỡng chế từ ví shop (`DISPUTE_REFUND_DEBIT`) hoặc bác khiếu nại nếu shop chứng minh hàng hóa chuẩn mực.
+
+### 9. Thuật Toán Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)
+- **Mục tiêu**: Tối ưu hóa chi phí logistics ngược (Reverse Logistics Cost) đối với các sự cố hư hỏng không thể phục hồi hoặc đơn hàng có giá trị thu hồi thanh lý ròng (Net Salvage Value) nhỏ hơn chi phí vận chuyển thu hồi.
+- **Cơ chế**: Shop có thể lựa chọn quyết định "Hoàn tiền không cần trả hàng (RET-RETURNLESS)". Tiền được hoàn lại cho khách hàng ngay lập tức mà không yêu cầu khách phải đóng gói, gửi bưu tá mang hàng về, giúp nâng cao chỉ số NPS và sự hài lòng của khách hàng.
 
 ---
 

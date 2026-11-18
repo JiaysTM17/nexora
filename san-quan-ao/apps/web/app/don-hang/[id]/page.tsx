@@ -10,7 +10,8 @@ import { Empty, Loading, Notice } from '../../ui';
 const RETURN_LABELS: Record<string, string> = {
   REQUESTED: 'Chờ shop xử lý',
   APPROVED: 'Đã duyệt',
-  REJECTED: 'Đã từ chối',
+  REJECTED: 'Shop từ chối',
+  DISPUTED: 'Trọng tài Sàn thụ lý (SLA 48h)',
   COMPLETED: 'Hoàn tất',
 };
 
@@ -289,11 +290,42 @@ export default function OrderDetail() {
           )}
           {shopReturns.length > 0 && (
             <div style={{ marginTop: 12, padding: 12, background: 'var(--sage)', fontSize: 12 }}>
-              <strong>Yêu cầu đổi/trả:</strong>
+              <strong>Yêu cầu đổi/trả &amp; Khiếu nại:</strong>
               {shopReturns.map(r => (
-                <p key={r.id} style={{ margin: '6px 0 0' }}>
-                  {r.kind === 'EXCHANGE' ? 'Đổi size' : 'Hoàn trả'} · <strong>{RETURN_LABELS[r.status] ?? r.status}</strong> — {r.reason}
-                </p>
+                <div key={r.id} style={{ margin: '8px 0 0', padding: '6px 0', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                  <p style={{ margin: 0 }}>
+                    {r.kind === 'EXCHANGE' ? 'Đổi size' : 'Hoàn trả'} · <strong className={`badge ${r.status.toLowerCase()}`}>{RETURN_LABELS[r.status] ?? r.status}</strong> — {r.reason}
+                  </p>
+                  {r.status === 'REJECTED' && (
+                    <div style={{ marginTop: 6 }}>
+                      <button
+                        type="button"
+                        className="text-button danger"
+                        style={{ fontSize: 11, padding: 0 }}
+                        onClick={async () => {
+                          const note = prompt('Nhập lý do khiếu nại lên Hội đồng Trọng tài Sàn NEXORA (SLA xử lý 48h):');
+                          if (note && note.trim().length >= 5) {
+                            try {
+                              await api(`/returns/${r.id}/dispute`, 'POST', { reason: note.trim() });
+                              setSuccess('Đã chuyển khiếu nại lên Hội đồng Trọng tài Sàn NEXORA thành công!');
+                              reloadReturns();
+                              reload();
+                            } catch (e) {
+                              setNotice((e as Error).message);
+                            }
+                          }
+                        }}
+                      >
+                        ⚖️ Khiếu nại lên Trọng tài Sàn (RET-DISPUTE SLA 48h)
+                      </button>
+                    </div>
+                  )}
+                  {r.status === 'DISPUTED' && (
+                    <p className="subtle" style={{ fontSize: 11, margin: '4px 0 0', color: 'var(--clay)' }}>
+                      🛡️ Vụ việc đang được Ban Quản Trị Sàn thụ lý và phân xử độc lập trong 48 giờ.
+                    </p>
+                  )}
+                </div>
               ))}
             </div>
           )}
