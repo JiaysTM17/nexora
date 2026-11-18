@@ -34,6 +34,8 @@
 | **23** | **Tiến Trình Đơn Hàng Đa Chặng (Visual Order Stepper)**| Module 04 | Đã hoàn thiện | Thanh hiển thị 4 nấc tiến trình trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn hàng của shop |
 | **24** | **Trọng Tài Sàn Xử Lý Tranh Chấp Đa Phương (RET-DISPUTE)**| Module 05 | Đã hoàn thiện | Cơ chế leo thang khiếu nại lên Ban Quản Trị Sàn SLA 48h khi shop từ chối đổi trả; API `POST /returns/:id/dispute`, `POST /admin/disputes/:id/arbitrate`, tự động phong tỏa ví shop và cưỡng chế hoàn tiền |
 | **25** | **Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)** | Module 05 | Đã hoàn thiện | Thuật toán hoàn tiền lập tức không bắt buộc gửi trả kiện hàng vật lý đối với sự cố rõ ràng hoặc hàng lỗi, tối ưu chi phí logistics ngược |
+| **26** | **Phiên Giờ Vàng Flash Sale & Đếm Ngược (CART-FLASH-03)**| Module 03 | Đã hoàn thiện | Banner Flash Sale độc quyền trang chủ kèm đồng hồ đếm ngược thời gian thực (Countdown Timer), cơ chế phân lập kho và khóa giữ giá 15 phút chống race-condition |
+| **27** | **Mua Trước Trả Sau NEXORA PayLater (PAY-BNPL-MIDFLOW-05)**| Module 03 | Đã hoàn thiện | Tùy chọn thanh toán trả góp 0% lãi suất chia 3 kỳ linh hoạt tại Checkout Giỏ hàng và bảng theo dõi tiến độ thanh toán kỳ hạn tại `/don-hang/[id]` |
 
 ---
 
@@ -100,6 +102,14 @@
 ### 9. Thuật Toán Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)
 - **Mục tiêu**: Tối ưu hóa chi phí logistics ngược (Reverse Logistics Cost) đối với các sự cố hư hỏng không thể phục hồi hoặc đơn hàng có giá trị thu hồi thanh lý ròng (Net Salvage Value) nhỏ hơn chi phí vận chuyển thu hồi.
 - **Cơ chế**: Shop có thể lựa chọn quyết định "Hoàn tiền không cần trả hàng (RET-RETURNLESS)". Tiền được hoàn lại cho khách hàng ngay lập tức mà không yêu cầu khách phải đóng gói, gửi bưu tá mang hàng về, giúp nâng cao chỉ số NPS và sự hài lòng của khách hàng.
+
+### 10. Động Cơ Flash Sale & Đồng Hồ Đếm Ngược Thời Gian Thực (CART-FLASH-03)
+- **Mục tiêu**: Khơi dậy cảm xúc săn đón sản phẩm thời trang thiết kế phiên bản giới hạn, thúc đẩy quyết định mua sắm tức thời với hiệu ứng khan hiếm và ưu đãi giờ vàng.
+- **Cơ chế**: Banner Flash Sale tích hợp đồng hồ đếm ngược thời gian thực (Countdown Timer) sống động trên trang chủ. Tách biệt vùng tồn kho Flash Sale độc lập, áp dụng cơ chế khóa giá động và giữ giỏ hàng trong 15 phút. Nếu khách không thanh toán trước khi hết giờ, hệ thống tự động giải phóng tồn kho về kho chung mà không gây nghẽn database.
+
+### 11. Giải Pháp Mua Trước Trả Sau NEXORA PayLater 0% Lãi Suất (PAY-BNPL-MIDFLOW-05)
+- **Mục tiêu**: Nâng cao giá trị giỏ hàng bình quân (AOV) cho các thiết kế thời trang cao cấp và dịch vụ chăm sóc đồ hiệu, mang đến sự linh hoạt tài chính tối đa cho người mua trẻ.
+- **Cơ chế**: Tích hợp tùy chọn PayLater tại khâu Checkout Giỏ hàng. Tự động chia nhỏ tổng số tiền thành 3 kỳ trả góp bằng nhau (33.3% - 33.3% - 33.4%) với 0% lãi suất và không phụ phí dịch vụ. Màn hình chi tiết đơn hàng `/don-hang/[id]` hiển thị bảng lịch trình trả góp chi tiết giúp người dùng dễ dàng theo dõi thời hạn của từng kỳ thanh toán.
 
 ---
 

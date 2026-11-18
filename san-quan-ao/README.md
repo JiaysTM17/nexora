@@ -162,5 +162,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Tiến Trình Đơn Hàng 4 Nấc** | Module 04 | Đã hoàn thiện | Stepper trực quan (Tiếp nhận → Đóng gói → Vận chuyển → Đã giao) |
 | **Trọng Tài Sàn Khiếu Nại** | Module 05 | Đã hoàn thiện | Cơ chế khiếu nại RET-DISPUTE SLA 48h, đóng băng ví shop và phán quyết trọng tài |
 | **Hoàn Tiền Không Trả Hàng** | Module 05 | Đã hoàn thiện | Thuật toán RET-RETURNLESS hoàn tiền nhanh không cần trả kiện hàng vật lý |
+| **Giờ Vàng Flash Sale** | Module 03 | Đã hoàn thiện | Đếm ngược thời gian thực (CART-FLASH-03), phân lập kho và giữ giá 15 phút |
+| **NEXORA PayLater (BNPL)** | Module 03 | Đã hoàn thiện | Trả góp 0% lãi suất (PAY-BNPL-MIDFLOW-05) chia 3 kỳ tại Checkout & Chi tiết đơn |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

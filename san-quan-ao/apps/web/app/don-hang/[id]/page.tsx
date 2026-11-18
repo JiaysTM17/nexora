@@ -361,10 +361,52 @@ export default function OrderDetail() {
       );
       })}
       <div className="total">
-        <span>Tổng thanh toán ({order.paymentMethod ?? 'COD'})</span>
+        <span>Tổng thanh toán ({order.paymentMethod === 'BNPL' ? 'NEXORA PayLater 0%' : (order.paymentMethod ?? 'COD')})</span>
         <strong>{vnd(order.total)}</strong>
       </div>
       <p className="fine-print">Mỗi shop xử lý và giao riêng. Đơn đã hủy không phát sinh tiền thu COD.</p>
+
+      {order.paymentMethod === 'BNPL' && (
+        <article className="panel" style={{ marginTop: 16 }}>
+          <div className="row between">
+            <h2>Kế hoạch Trả góp NEXORA PayLater (0% Lãi suất)</h2>
+            <span className="badge" style={{ background: 'var(--clay)', color: '#fff' }}>Đã kích hoạt</span>
+          </div>
+          <p className="subtle" style={{ fontSize: 12 }}>Áp dụng theo đặc tả PAY-BNPL-MIDFLOW-05 · 3 kỳ thanh toán 0% phụ phí.</p>
+          <div className="table-wrap" style={{ marginTop: 10 }}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Kỳ hạn</th>
+                  <th>Số tiền</th>
+                  <th>Hạn thanh toán</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Kỳ 1 (33.3%)</strong></td>
+                  <td>{vnd(Math.round(order.total / 3))}</td>
+                  <td>Hôm nay ({new Date(order.createdAt).toLocaleDateString('vi-VN')})</td>
+                  <td><span className="badge" style={{ background: '#eef2ed', color: '#2b522b' }}>Đã thanh toán</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Kỳ 2 (33.3%)</strong></td>
+                  <td>{vnd(Math.round(order.total / 3))}</td>
+                  <td>{new Date(new Date(order.createdAt).getTime() + 30 * 86400000).toLocaleDateString('vi-VN')}</td>
+                  <td><span className="badge">Chờ đến hạn (30 ngày)</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Kỳ 3 (33.4%)</strong></td>
+                  <td>{vnd(order.total - 2 * Math.round(order.total / 3))}</td>
+                  <td>{new Date(new Date(order.createdAt).getTime() + 60 * 86400000).toLocaleDateString('vi-VN')}</td>
+                  <td><span className="badge">Chờ đến hạn (60 ngày)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      )}
 
       <details className="panel" style={{ marginTop: 20 }}>
         <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>

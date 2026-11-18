@@ -54,3 +54,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 12. **Thuật Toán Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)**:
    - Hồ sơ: Module 05 Hậu mãi & Quản trị Rủi ro.
    - Thực tế: Cho phép người bán quyết định hoàn tiền nhanh mà không yêu cầu khách gửi trả kiện hàng vật lý, tiết kiệm chi phí logistics ngược và nâng cao trải nghiệm khách hàng.
+
+13. **Cơ Chế Flash Sale & Đồng Hồ Đếm Ngược Giờ Vàng (CART-FLASH-03)**:
+   - Hồ sơ: Module 03 Giỏ hàng & Khuyến mãi Đa tầng.
+   - Thực tế: Khung đếm ngược thời gian thực trên trang chủ, cơ chế phân lập tồn kho Flash Sale độc lập và khóa giá động 15 phút chống nghẽn và bán âm tồn kho.
+
+14. **Phương Thức Mua Trước Trả Sau NEXORA PayLater 0% (PAY-BNPL-MIDFLOW-05)**:
+   - Hồ sơ: Module 03 Giỏ hàng, BNPL & Thanh toán Đa nguồn.
+   - Thực tế: Lựa chọn thanh toán PayLater tại Giỏ hàng chia 3 kỳ thanh toán 0% lãi suất (hôm nay, 30 ngày, 60 ngày), kèm bảng lịch trình trả góp chi tiết hiển thị trên trang theo dõi đơn hàng `/don-hang/[id]`.

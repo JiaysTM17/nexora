@@ -59,7 +59,7 @@ export class Commerce {
       return tx.checkoutQuote.create({ data: { userId, addressId, voucherCodes: codes, data: json(data), fingerprint: hash(JSON.stringify(data)), expiresAt: new Date(Date.now() + 10 * 60000) } });
     });
   }
-  async order(userId: string, quoteId: string, key: string, refUserId?: string) {
+  async order(userId: string, quoteId: string, key: string, refUserId?: string, paymentMethod: string = 'COD') {
     return serial(this.db, async tx => {
       const existing = await tx.order.findUnique({ where: { userId_idempotencyKey: { userId, idempotencyKey: key } }, include: orderInclude });
       if (existing) {
@@ -80,7 +80,7 @@ export class Commerce {
         if (!changed) throw new ConflictException({ code: 'OUT_OF_STOCK', message: `${item.name} vừa hết hàng`, variantId: item.variantId });
       }
       const validRef = refUserId && refUserId !== userId ? (await tx.user.findUnique({ where: { id: refUserId }, select: { id: true } }))?.id : undefined;
-      const order = await tx.order.create({ data: { code: `NX-${randomUUID().slice(0, 8).toUpperCase()}`, userId, quoteId, idempotencyKey: key, total: current.total, platformDiscount: current.platformDiscount ?? 0, ...(validRef ? { affiliateUserId: validRef } : {}), address: json(current.address) } });
+      const order = await tx.order.create({ data: { code: `NX-${randomUUID().slice(0, 8).toUpperCase()}`, userId, quoteId, idempotencyKey: key, total: current.total, platformDiscount: current.platformDiscount ?? 0, paymentMethod, ...(validRef ? { affiliateUserId: validRef } : {}), address: json(current.address) } });
       if (current.tradeInCode) {
         const redeemed = await tx.tradeInRequest.updateMany({ where: { voucherCode: current.tradeInCode, userId, status: 'APPROVED', redeemedOrderId: null }, data: { redeemedOrderId: order.id } });
         if (redeemed.count !== 1) throw new ConflictException(`Mã Trade-In ${current.tradeInCode} vừa được sử dụng`);
@@ -154,8 +154,13 @@ export class CommerceController {
     return this.commerce.quote(req.user.id, data.addressId, codes);
   }
   @Post('orders') createOrder(@Req() req: Authed, @Body() body: unknown) {
-    const data = z.object({ quoteId: id, idempotencyKey: z.string().min(16).max(100), refUserId: id.optional() }).strict().parse(body);
-    return this.commerce.order(req.user.id, data.quoteId, data.idempotencyKey, data.refUserId);
+    const data = z.object({
+      quoteId: id,
+      idempotencyKey: z.string().min(16).max(100),
+      refUserId: id.optional(),
+      paymentMethod: z.enum(['COD', 'BNPL']).optional(),
+    }).strict().parse(body);
+    return this.commerce.order(req.user.id, data.quoteId, data.idempotencyKey, data.refUserId, data.paymentMethod ?? 'COD');
   }
   @Get('orders') orders(@Req() req: Authed) { return this.db.order.findMany({ where: { userId: req.user.id }, include: orderInclude, take: 50, orderBy: { createdAt: 'desc' } }); }
   @Get('orders/:id') async orderDetail(@Req() req: Authed, @Param('id') orderId: string) {

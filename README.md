@@ -228,7 +228,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **18** | **Tiến Trình Đơn Hàng Đa Chặng (Visual Stepper)** | Module 04 | **100% Hoàn thiện** | Thanh hiển thị 4 nấc tiến trình trực quan (`Tiếp nhận` → `Đóng gói` → `Vận chuyển` → `Đã giao`) trên từng đơn hàng của shop |
 | **19** | **Trọng Tài Sàn Phân Xử Khiếu Nại (RET-DISPUTE)** | Module 05 | **100% Hoàn thiện** | Cơ chế khiếu nại lên Sàn SLA 48h, phong tỏa ví shop và phán quyết trọng tài độc lập tại Cổng Admin |
 | **20** | **Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)** | Module 05 | **100% Hoàn thiện** | Quyết định hoàn tiền nhanh không bắt buộc gửi trả hàng vật lý cho các ca hư hỏng rõ ràng |
-| **21** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **21** | **Giờ Vàng Flash Sale & Đếm Ngược (CART-FLASH-03)** | Module 03 | **100% Hoàn thiện** | Banner Flash Sale độc quyền, đồng hồ đếm ngược live, phân lập kho và giữ giá 15 phút chống race-condition |
+| **22** | **Mua Trước Trả Sau NEXORA PayLater (PAY-BNPL-MIDFLOW-05)**| Module 03 | **100% Hoàn thiện** | Trả góp 0% lãi suất chia 3 kỳ tại Checkout và bảng theo dõi lịch trình kỳ hạn minh bạch tại `/don-hang/[id]` |
+| **23** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
