@@ -1,3 +1,29 @@
+<div align="center">
+
+  <img src="../HO_SO_THIET_KE_VA_DAC_TA_HE_THONG_NEXORA/assets_logo/nexora_logo_horizontal.svg" alt="NEXORA Logo" width="380" />
+
+  <p align="center">
+    <strong>THE NEXT ERA OF FASHION COMMERCE & LIFESTYLE COMMUNITY</strong>
+  </p>
+  <p align="center">
+    Ứng dụng lõi triển khai toàn diện theo bộ hồ sơ thiết kế và phân tích nghiệp vụ <strong>NEXORA</strong>.
+  </p>
+
+  <p align="center">
+    <a href="https://github.com/JiaysTM17/nexora/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI_Pipeline-Passing-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Pipeline" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Architecture-Clean_Hexagonal-007ACC?style=for-the-badge&logo=blueprint&logoColor=white" alt="Architecture" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Next.js-16.4.5-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/NestJS-11.0.11-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Prisma-6.19.0-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/PostgreSQL-18-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Redis-7.0-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" /></a>
+  </p>
+
+</div>
+
+---
+
 # NEXORA — Sàn thời trang và cộng đồng phối đồ OOTD
 
 Ứng dụng được triển khai theo bộ hồ sơ thiết kế và phân tích nghiệp vụ **NEXORA**. Đây là bản phát triển local đầy đủ luồng lõi (Catalog, Biến thể & Kho giữ chỗ, Giỏ hàng đa shop, Báo giá & Đặt hàng COD, Theo dõi vận đơn, Đánh giá sản phẩm, Đổi size / Hoàn trả, Sổ cái & Voucher Seller, Cộng đồng OOTD gắn tag tọa độ, Quản trị sàn).

@@ -21,8 +21,7 @@
     </filter>
   </defs>
 
-  <!-- Pure White Background -->
-  <rect width="100%" height="100%" fill="#FFFFFF" />
+  <!-- Transparent Background -->
 
   <!-- LOGO MARK: THE NEXUS 'X' (Left Side) -->
   <g transform="translate(40, 20)" filter="url(#softShadow)">

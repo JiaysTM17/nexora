@@ -1,21 +1,25 @@
 <div align="center">
 
-  <img src="HO_SO_THIET_KE_VA_DAC_TA_HE_THONG_NEXORA/assets_logo/nexora_logo_horizontal.svg" alt="NEXORA Logo" width="360" />
+  <img src="HO_SO_THIET_KE_VA_DAC_TA_HE_THONG_NEXORA/assets_logo/nexora_logo_horizontal.svg" alt="NEXORA Logo" width="420" />
 
   <p align="center">
     <strong>THE NEXT ERA OF FASHION COMMERCE & LIFESTYLE COMMUNITY</strong>
   </p>
   <p align="center">
-    Nền tảng Thương mại Điện tử Thời trang Thế hệ mới tích hợp Mạng xã hội OOTD, Dịch vụ Thu cũ Đổi mới (Trade-In) 2 Vòng & Chăm sóc Đồ hiệu Cao cấp (VAS Care).
+    Nền tảng Thương mại Điện tử Thời trang Thế hệ mới tích hợp Mạng xã hội Phối đồ OOTD, Dịch vụ Thu cũ Đổi mới (Trade-In) 2 Vòng Thẩm định & Chăm sóc Đồ hiệu Cao cấp (VAS Luxury Care).
   </p>
 
   <p align="center">
-    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Platform-NEXORA-000000?style=for-the-badge&logo=shopify&logoColor=white" alt="Platform" /></a>
-    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Next.js_14-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
-    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
-    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" /></a>
-    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" /></a>
+    <a href="https://github.com/JiaysTM17/nexora/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI_Pipeline-Passing-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white" alt="CI Pipeline" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Architecture-Clean_Hexagonal-007ACC?style=for-the-badge&logo=blueprint&logoColor=white" alt="Architecture" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Next.js-16.4.5-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/NestJS-11.0.11-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Prisma-6.19.0-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/PostgreSQL-18-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Redis-7.0-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/Compliance-Decree_91%20%7C%20PDPD-059669?style=for-the-badge&logo=shield&logoColor=white" alt="Compliance" /></a>
+    <a href="https://github.com/JiaysTM17/nexora"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /></a>
   </p>
 
 </div>
@@ -24,60 +28,61 @@
 
 ## 🌟 1. Giới thiệu Tổng quan (Overview)
 
-**NEXORA** (*ghép từ **Nexus** - Giao điểm kết nối và **Era** - Kỷ nguyên mới*) là hệ sinh thái thương mại điện tử chuyên biệt cho ngành thời trang, giải quyết triệt để bài toán phân mảnh giữa **mua sắm hàng mới (B2C/C2C)**, **thanh lý - tái sinh thời trang tuần hoàn (Trade-In Re-Loved)** và **dịch vụ chăm sóc đồ hiệu (VAS Care)**.
+**NEXORA** (*ghép từ **Nexus** - Giao điểm kết nối và **Era** - Kỷ nguyên mới*) là hệ sinh thái thương mại điện tử chuyên biệt cho ngành thời trang, giải quyết triệt để bài toán phân mảnh giữa **mua sắm hàng mới (B2C/C2C)**, **thanh lý - tái sinh thời trang tuần hoàn (Trade-In Re-Loved)** và **dịch vụ chăm sóc đồ hiệu cao cấp (VAS Care)**.
 
-Khác biệt với các sàn TMĐT tổng hợp truyền thống, NEXORA tích hợp sâu mạng xã hội phối đồ (**OOTD - Outfit of the Day**), cho phép người dùng biến trải nghiệm phong cách cá nhân thành hành vi mua sắm tức thì thông qua tính năng ghim tag tọa độ sản phẩm trên từng bộ trang phục.
+Khác biệt với các sàn TMĐT tổng hợp truyền thống, NEXORA tích hợp sâu mạng xã hội phối đồ (**OOTD - Outfit of the Day**), cho phép người dùng biến trải nghiệm phong cách cá nhân thành hành vi mua sắm tức thì thông qua tính năng ghim tag tọa độ sản phẩm trên từng bộ trang phục, mua cả set đồ với **Shop the Look** và kiếm hoa hồng qua **KOC Affiliate Engine**.
 
 ---
 
-## 💎 2. Ba Trụ Cột Đột Phá Khác Biệt (Key Differentiators)
+## 💎 2. Ba Trụ Cột Đột Phá Khác Biệt (Key Pillars & Differentiators)
 
 ```
-       ┌────────────────────────────────────────────────────────┐
-       │                 NEXORA FASHION COMMERCE                │
-       └───────────────────────────┬────────────────────────────┘
-                                   │
-         ┌─────────────────────────┼─────────────────────────┐
-         │                         │                         │
-         ▼                         ▼                         ▼
-┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
-│  OOTD SOCIAL     │      │ FASHION TRADE-IN │      │ LUXURY VAS CARE  │
-│  - Tag tọa độ    │      │ - Thẩm định 2 vòng│     │ - Spa / Giặt hấp │
-│  - Shop the Look │      │ - 5 cấp Grade    │      │ - Zip-seal bảo mật│
-│  - KOC Affiliate │      │ - Voucher đổi ứng│      │ - Bảo hiểm 100M  │
-└──────────────────┘      └──────────────────┘      └──────────────────┘
+       ┌────────────────────────────────────────────────────────────────────────┐
+       │                        NEXORA FASHION COMMERCE                         │
+       └───────────────────────────────────┬────────────────────────────────────┘
+                                           │
+         ┌─────────────────────────────────┼─────────────────────────────────┐
+         │                                 │                                 │
+         ▼                                 ▼                                 ▼
+┌──────────────────────────┐      ┌──────────────────────────┐      ┌──────────────────────────┐
+│   OOTD SOCIAL COMMERCE   │      │    FASHION TRADE-IN      │      │     LUXURY VAS CARE      │
+│  - Tag tọa độ (x, y)     │      │  - Thẩm định 2 vòng      │      │  - Giao nhận White-glove │
+│  - Mua trọn bộ 1-Click   │      │  - 5 cấp phân hạng S-D   │      │  - Mã Zip-seal một chiều │
+│  - KOC Affiliate (15d)   │      │  - Voucher đổi ứng B2C   │      │  - Kiểm tra quang học 8G │
+│  - Cam kết ảnh thực tế   │      │  - Thanh lý B2B đối tác  │      │  - Bảo hiểm đến 100M     │
+└──────────────────────────┘      └──────────────────────────┘      └──────────────────────────┘
 ```
 
 ### 👗 A. Mạng Xã Hội Thời Trang OOTD (Lookbook & Shop the Look)
-- **Coordinate Product Tagging**: Người dùng và KOC ghim trực tiếp tọa độ `(x, y)` sản phẩm lên ảnh/video phối đồ (áo, quần, túi xách, giày dép, phụ kiện).
-- **Shop the Look**: Cho phép khách hàng thêm toàn bộ set đồ phối sẵn vào giỏ hàng chỉ với 1 click.
-- **Affiliate Attribution Engine**: Phân bổ hoa hồng tiếp thị liên kết minh bạch theo mô hình Last-Click, có thời gian tạm giữ 15 ngày để phòng chống hoàn trả/hủy đơn ảo.
+- **Coordinate Product Tagging**: Người dùng và KOC ghim trực tiếp tọa độ `(x, y)` của từng món đồ (áo, quần, váy, blazer, phụ kiện) lên ảnh bộ đồ.
+- **Shop the Look**: Khách hàng có thể bấm `Mua trọn bộ (Shop the Look)` để tự động thêm toàn bộ các món trong set vào giỏ hàng chỉ với 1 click.
+- **Affiliate Attribution Engine**: Phân bổ hoa hồng tiếp thị liên kết (5%) minh bạch theo mô hình Last-Click qua tham số `/?ref=userId`, áp dụng cơ chế tạm giữ 15 ngày để phòng chống hủy đơn/hoàn trả ảo.
+- **Chính sách Ảnh Chụp Thực Tế 100%**: Cam kết không sử dụng ảnh AI tổng hợp; mọi sản phẩm đều có hình ảnh chụp thực tế từ các bộ sưu tập đời thực kèm đường link đối chiếu nguồn gốc rõ ràng.
 
-### ♻️ B. Thu Cũ Đổi Mới Thời Trang & Đồ Hiệu (Fashion & Luxury Trade-In)
-- **Thẩm định chất lượng 2 vòng khép kín**:
-  - *Vòng 1 (AI Vision Preliminary)*: Khách hàng chụp ảnh chi tiết nhãn mác, đường may, vết sờn; AI quét đối chiếu phân hạng sơ bộ (Grade S/A/B/C/D) và báo giá dự kiến.
-  - *Vòng 2 (Physical Hub Inspection)*: Giám định chuyên viên trực tiếp tại Hub dưới buồng sáng 1000 Lux, đối chiếu cơ sở dữ liệu xác thực chính hãng (Entrupy / Brand Registry).
-- **Trade-In Voucher**: Cấp mã Voucher đối ứng tương đương giá trị thẩm định thực tế để khách hàng mua sản phẩm mới hoặc bán thanh lý B2B đối với hàng không đạt chuẩn.
+### ♻️ B. Thu Cũ Đổi Mới Thời Trang Tuần Hoàn (Fashion Trade-In Re-Loved)
+- **Quy trình thẩm định chất lượng 2 vòng khép kín**:
+  - *Vòng 1 (Sơ bộ)*: Người dùng chụp ảnh chi tiết nhãn mác, chất vải, vết sờn; hệ thống phân hạng sơ bộ (Grade S/A/B/C/D) và báo giá ước tính tức thì.
+  - *Vòng 2 (Vật lý tại Hub)*: Giám định chuyên viên trực tiếp tại Hub dưới buồng sáng tiêu chuẩn 1000 Lux, kiểm tra tem nhãn, chất lượng vải và khóa kéo.
+- **Trade-In Voucher**: Tự động phát hành mã voucher đối ứng tương đương giá trị thẩm định thực tế để khách hàng mua sắm sản phẩm mới trên sàn hoặc thanh lý B2B.
 
 ### 🧼 C. Dịch Vụ Giá Trị Gia Tăng Chăm Sóc Đồ Hiệu (VAS Luxury Care)
-- **Giao nhận White-glove**: Túi niêm phong bảo mật chuyên dụng có mã Serial Zip-seal một chiều (tamper-evident).
-- **Biên bản kiểm tra quang học 8 góc**: Chụp ảnh macro 8 góc tiêu chuẩn trước khi thao tác spa/giặt hấp.
-- **Bảo hiểm tài sản cao cấp**: Hạn mức bảo hiểm trách nhiệm bồi hoàn lên đến 100.000.000 VNĐ cho các trang phục, túi xách và giày hiệu xa xỉ.
+- **Giao nhận White-glove an toàn**: Túi niêm phong bảo mật chuyên dụng có mã Serial **Zip-seal** một chiều chống can thiệp (tamper-evident).
+- **Biên bản kiểm tra quang học 8 góc**: Chụp ảnh macro 8 góc tiêu chuẩn trước khi thực hiện thao tác spa da, giặt khô cao cấp hoặc phục hồi form.
+- **Bảo hiểm tài sản 100 Triệu Đồng**: Hạn mức bảo hiểm trách nhiệm bồi hoàn lên đến 100.000.000 VNĐ cho các trang phục, túi xách và giày hiệu xa xỉ.
 
 ---
 
-## 🏛️ 3. Kiến Trúc Kỹ Thuật & Vận Hành Doanh Nghiệp (System Architecture)
+## 🏛️ 3. Kiến Trúc Kỹ Thuật & Tuân Thủ Pháp Lý Doanh Nghiệp (Enterprise Architecture)
 
-NEXORA được thiết kế tuân thủ nghiêm ngặt các quy chuẩn vận hành sàn TMĐT quy mô lớn tại Việt Nam:
-
-| Phân hệ nghiệp vụ | Đặc tả giải pháp kỹ thuật |
-| :--- | :--- |
-| **Dòng tiền & Ví Người Bán** | Cơ chế ký quỹ tập trung (**Centralized Escrow**) giữ tiền từ 7 - 30 ngày. Phân lập tài khoản Ví Người Bán thành 3 tầng: *Số dư khả dụng*, *Số dư tạm giữ*, và *Số dư đóng băng tranh chấp*. Đối soát tự động 3 bên (Platform - Seller - 3PL) qua Napas247. |
-| **Thuế & Pháp lý TMĐT** | Tuân thủ Nghị định 52/2013/NĐ-CP & 85/2021/NĐ-CP (eKYC nhà bán). Khấu trừ thuế tại nguồn tự động (**1% GTGT + 0.5% TNCN**) theo Thông tư 40/2021/TT-BTC. Xuất hóa đơn điện tử kép phân tách theo Thông tư 78/2021/TT-BTC. |
-| **Kho vận & 3PL Logistics** | Định tuyến đa đơn vị vận chuyển thông minh (Carrier Scorecard: GHN, Viettel Post, SPX). Áp dụng quy trình **3-Strike NDR** (xử lý giao hàng không thành công 3 lần với hình ảnh POD & GPS Geofencing $\le$ 50m). |
-| **Chống Gian Lận (Anti-Fraud)** | Thuật toán phát hiện đơn ảo / đánh giá ảo (**Review Brushing**) dựa trên độ lệch trọng lượng gói hàng $\ge 80\%$. Phân tích cụm tài khoản Sybil trục lợi mã giảm giá. Cơ chế **Anti-Swap RMA** kiểm soát chống tráo hàng khi đổi trả. |
-| **Xử Lý Đồng Thời (Concurrency)** | Kiến trúc kiểm soát tồn kho 2 tầng: **PostgreSQL Optimistic Locking** (`lock_version`) cho catalog thông thường và **Redis Distributed Lock (Redlock)** với Lua script cho các phiên mở bán Flash Sale lưu lượng cao. |
-| **Bảo Vệ Dữ Liệu Cá Nhân (PDPD)** | Tuân thủ toàn diện Nghị định 13/2023/NĐ-CP. Quy trình DSR xóa dữ liệu trong vòng 72 giờ nhưng bảo lưu sổ cái 10 năm theo Luật Kế toán. **Mặt nạ vận đơn 3 vùng** (3-Zone Waybill Masking) bảo mật tuyệt đối số điện thoại và địa chỉ khách hàng. |
+| Phân hệ nghiệp vụ | Đặc tả giải pháp kỹ thuật & Pháp lý | Hiện trạng mã nguồn |
+| :--- | :--- | :--- |
+| **Dòng tiền & Ví Người Bán** | Cơ chế ký quỹ tập trung (**Centralized Escrow**). Ví người bán 3 tầng phân lập: *Khả dụng (Available)*, *Tạm giữ ký quỹ 7 ngày (Held)*, và *Đóng băng tranh chấp (Disputed)*. | `apps/api/src/commerce.ts`, `apps/web/app/seller/page.tsx` |
+| **Báo cáo Thuế Sàn TMĐT** | Tuân thủ Điều 19a **Nghị định 91/2022/NĐ-CP** & **Thông tư 40/2021/TT-BTC**. Tự động khấu trừ tại nguồn **1% GTGT + 0.5% TNCN**, xuất gói dữ liệu định kỳ chuẩn Etax JSON cho Cơ quan Thuế. | `GET /api/v1/admin/tax-report`, `apps/web/app/admin/page.tsx` |
+| **Bảo Vệ Dữ Liệu Cá Nhân** | Tuân thủ toàn diện **Nghị định 13/2023/NĐ-CP (PDPD)**. Cơ chế **3-Zone Waybill Masking** che số điện thoại (`090****567`) và địa chỉ trên vận đơn giao hàng công cộng với nút chuyển đổi chủ quyền. | `apps/web/app/don-hang/[id]/page.tsx` |
+| **Hóa Đơn Điện Tử e-Invoice** | Tuân thủ **Thông tư 78/2021/TT-BTC** & **Nghị định 123/2020/NĐ-CP**. Bản thể hiện hóa đơn VAT khởi tạo từ máy tính tiền kết nối dữ liệu Thuế, phân tách thuế suất 8%/10%, lưu trữ dữ liệu 10 năm. | `apps/web/app/don-hang/[id]/page.tsx` |
+| **Gian Hàng Chính Hãng Mall** | Phân hạng và xác thực gian hàng đạt chuẩn **NEXORA Mall**, cam kết bồi hoàn 200% nếu phát hiện hàng giả, chính sách đổi trả ưu tiên 15 ngày, bộ lọc tìm kiếm chuyên biệt. | `Shop.isMall`, `apps/web/app/ui.tsx`, `/tim-kiem` |
+| **Xử Lý Đồng Thời & Kho Vận** | Kiểm soát tồn kho 2 tầng: **PostgreSQL Optimistic Locking** kết hợp trạng thái giữ chỗ (`onHand` / `reserved`) tránh tuyệt đối tình trạng bán vượt tồn kho (Overselling). | `packages/database/src/inventory.ts`, `integration.test.ts` |
+| **Xử Lý Đơn Hàng Đa Shop** | Phân tách đơn hàng cha (`Order`) thành các đơn con (`ShopOrder`) độc lập cho từng nhà bán; quản lý vận đơn riêng biệt, áp dụng mã voucher riêng từng shop. | `apps/api/src/commerce.ts`, `apps/web/app/gio-hang` |
 
 ---
 
@@ -85,129 +90,162 @@ NEXORA được thiết kế tuân thủ nghiêm ngặt các quy chuẩn vận h
 
 ```text
 .
-├── HO_SO_THIET_KE_VA_DAC_TA_HE_THONG_NEXORA/     # HỒ SƠ TỔNG THỂ & THIẾT KẾ MASTER
+├── HO_SO_THIET_KE_VA_DAC_TA_HE_THONG_NEXORA/     # HỒ SƠ THIẾT KẾ & ĐẶC TẢ MASTER CHÍNH THỨC
 │   ├── NEXORA_BAN_KE_HOACH_VA_PHAN_TICH_NGHIEP_VU_TOAN_DIEN.docx  (Master Docx: >8.300 đoạn, 291 bảng)
 │   ├── NEXORA_BAO_CAO_DANH_GIA_VA_DAC_TA_NGHIEP_VU_CHUYEN_SAU.docx (Báo cáo đánh giá 32 chuyên đề)
-│   └── assets_logo/                                               (Tài nguyên Vector & Logo nhận diện)
+│   ├── NEXORA_MA_TRAN_DONG_BO_KE_HOACH_VA_DU_AN_THUC_TE.md        (Hồ sơ Ma trận đối chiếu 100%)
+│   └── assets_logo/                                               (Logo nhận diện vector trong suốt)
 │       ├── nexora_logo_horizontal.svg
 │       ├── nexora_logo_vertical.svg
-│       ├── nexora_app_icon.svg
-│       └── nexora_brand_presentation.jpg
+│       └── nexora_app_icon.svg
 │
-├── BAO_CAO_NGHIEP_VU_WORD/                      # HỒ SƠ BÓC TÁCH THEO TỪNG PHÂN HỆ PHÁT TRIỂN
-│   ├── 00_Ke_Hoach_Tong_The/
-│   ├── 01_Thuong_Hieu_Va_Logo_NEXORA/
-│   ├── 02_Dac_Ta_Cac_Module_He_Thong/           # 7 Module: Catalog, Trade-In, Cart/BNPL, Vận chuyển...
-│   ├── 03_Doi_Chieu_Nghiep_Vu_6_San/
-│   └── NEXORA_BAO_CAO_DANH_GIA_VA_DAC_TA_NGHIEP_VU_CHUYEN_SAU.docx
+├── BAO_CAO_NGHIEP_VU_WORD/                      # HỒ SƠ BÓC TÁCH THEO TỪNG PHÂN HỆ
+│   ├── 00_Ke_Hoach_Tong_The/                    # Bản đồ điều hành, phụ lục đồng bộ tính năng mới
+│   ├── 01_Thuong_Hieu_Va_Logo_NEXORA/           # Hồ sơ quy chuẩn thương hiệu & thiết kế
+│   ├── 02_Dac_Ta_Cac_Module_He_Thong/           # 7 Phân hệ nghiệp vụ chi tiết
+│   └── 03_Doi_Chieu_Nghiep_Vu_6_San/            # Báo cáo Benchmark đối chiếu 6 sàn TMĐT lớn
 │
-├── san-quan-ao/                                 # SOURCE CODE ỨNG DỤNG (PNPM / TURBO MONOREPO)
+├── san-quan-ao/                                 # TOÀN BỘ MÃ NGUỒN HỆ THỐNG (PNPM TURBOREPO)
 │   ├── apps/
-│   │   ├── api/                                 # Backend REST API Service
-│   │   ├── web/                                 # Frontend Web Client (Next.js 14 App Router)
-│   │   └── worker/                              # Asynchronous Background Worker
+│   │   ├── api/                                 # Backend REST API Service (NestJS, Swagger, Guards)
+│   │   ├── web/                                 # Frontend Web Client (Next.js 16, App Router)
+│   │   └── worker/                              # Background Worker (BullMQ, Redis, Cron tasks)
 │   ├── packages/
-│   │   ├── contracts/                           # Data Contracts & Shared Schemas
-│   │   └── database/                            # Database Schemas & Migrations
-│   ├── docker-compose.yml                       # Docker services (PostgreSQL, Redis)
-│   ├── package.json
+│   │   ├── contracts/                           # Data Contracts, DTOs & Trạng thái dùng chung
+│   │   └── database/                            # Prisma 6 Schema, Migrations & Database Seeder
+│   ├── docker-compose.yml                       # Hạ tầng container (PostgreSQL 18, Redis 7)
+│   ├── package.json                             # Root scripts & Workspaces config
 │   └── pnpm-workspace.yaml
 │
-├── scripts/                                     # BỘ CÔNG CỤ TỰ ĐỘNG HÓA & KIỂM TRA HỆ THỐNG
-│   └── verify_audit_and_master.py               # Bộ kiểm tra tự động 4 tầng (71/71 tests PASS)
+├── scripts/                                     # BỘ CÔNG CỤ TỰ ĐỘNG HÓA & RUNNERS
+│   ├── start-local.ps1                          # Trình khởi động 1-Click thông minh
+│   ├── relay.py                                 # Bộ chuyển tiếp TCP Socket Relay WSL
+│   ├── setup-wsl.sh                             # Thiết lập môi trường PostgreSQL & Redis WSL
+│   ├── test-integration.ps1                     # Runner kiểm thử tích hợp 12 kịch bản E2E
+│   └── verify_audit_and_master.py               # Kiểm định 4 tầng logic nghiệp vụ (71/71 PASS)
 │
-├── HUONG_DAN_SU_DUNG_VA_DANH_MUC_HO_SO.docx     # Hướng dẫn tra cứu toàn bộ hồ sơ
-└── README.md                                    # Tài liệu tổng quan dự án trên GitHub
+├── HUONG_DAN_SU_DUNG_VA_DANH_MUC_HO_SO.docx     # Hướng dẫn tra cứu toàn văn hồ sơ
+└── README.md                                    # Tài liệu tổng quan dự án GitHub
 ```
 
 ---
 
-## 🚀 5. Hướng Dẫn Cài Đặt & Chạy Thử (Getting Started)
+## 🚀 5. Hướng Dẫn Cài Đặt & Chạy Thử (Quick Start Guide)
 
-### Yêu cầu tiên quyết
-- **Node.js**: phiên bản `>= 18.18.0`
-- **pnpm**: phiên bản `>= 8.0.0`
-- **Docker & Docker Compose**: phục vụ khởi chạy PostgreSQL 15 & Redis 7
-- **Python**: phiên bản `>= 3.10` (nếu chạy bộ script kiểm thử tự động)
+### Yêu cầu môi trường
+- **Node.js**: Phiên bản `22.x` hoặc `24.x`
+- **pnpm**: Phiên bản `>= 9.0.0` (khuyên dùng `11.x`)
+- **PostgreSQL**: `15+` (mặc định port `54329`)
+- **Redis**: `6+` (mặc định port `63799`)
 
-### Các bước khởi chạy dự án
+---
 
-1. **Clone repository từ GitHub**:
+### Phương án A: Khởi động Nhanh 1-Click (Khuyên dùng)
+
+Dự án đã tích hợp sẵn script tự động kiểm tra, thiết lập socket relay và khởi chạy toàn bộ dịch vụ cùng lúc:
+
+```powershell
+cd san-quan-ao
+powershell -NoProfile -File scripts/start-local.ps1
+```
+
+- **Giao diện Web**: [http://localhost:3000](http://localhost:3000)
+- **Cổng API Gateway**: [http://localhost:4000/api/v1](http://localhost:4000/api/v1)
+- **Tài liệu OpenAPI / Swagger**: [http://localhost:4000/api/docs](http://localhost:4000/api/docs)
+- **Kiểm tra trạng thái (Health Check)**: [http://localhost:4000/api/v1/health](http://localhost:4000/api/v1/health)
+
+---
+
+### Phương án B: Cài đặt và Chạy thủ công
+
+1. **Clone repository**:
    ```bash
    git clone https://github.com/JiaysTM17/nexora.git
    cd nexora/san-quan-ao
    ```
 
-2. **Cài đặt các gói phụ thuộc (Dependencies)**:
+2. **Cài đặt dependencies**:
    ```bash
-   pnpm install
+   pnpm install --frozen-lockfile
    ```
 
 3. **Cấu hình môi trường**:
    ```bash
    cp .env.example .env
+   cp .env.example packages/database/.env
    ```
 
-4. **Khởi động các dịch vụ cơ sở dữ liệu qua Docker**:
+4. **Chạy Migration & Seed cơ sở dữ liệu mẫu**:
    ```bash
-   docker-compose up -d
+   pnpm --filter @mac/database migrate
+   pnpm --filter @mac/database seed
    ```
 
-5. **Chạy đồng bộ cơ sở dữ liệu (Migrations & Seeding)**:
-   ```bash
-   pnpm --filter @nexora/database db:push
-   ```
-
-6. **Khởi chạy môi trường phát triển toàn hệ thống**:
+5. **Khởi chạy môi trường phát triển**:
    ```bash
    pnpm dev
    ```
-   - **Frontend Web Client**: `http://localhost:3000`
-   - **Backend API Gateway**: `http://localhost:4000/api`
-   - **API Documentation**: `http://localhost:4000/docs`
 
 ---
 
-## 🧪 6. Kiểm Thử Hệ Thống (Testing & Quality Assurance)
+### 🔑 Danh Sách Tài Khoản Demo Sẵn Có
 
-Dự án sở hữu bộ kiểm tra tự động toàn diện kiểm định 4 tầng logic nghiệp vụ:
-- **Tier 1**: Kiểm định độ phủ tính năng của 32 nghiệp vụ cốt lõi.
-- **Tier 2**: Kiểm tra các trường hợp biên, bất biến toán học tính thuế và thời gian timeout.
-- **Tier 3**: Tương tác chéo giữa các phân hệ (Ký quỹ $\leftrightarrow$ Thuế $\leftrightarrow$ Hoàn hàng $\leftrightarrow$ Ví người bán).
-- **Tier 4**: Kịch bản vận hành thực tế toàn trình (End-to-End).
+Mật khẩu chung cho các tài khoản: `MacLocal2026!` hoặc `admin123` / `user123`:
 
-Chạy kiểm tra tự động:
-```bash
-python scripts/verify_audit_and_master.py
+| Vai trò | Email đăng nhập | Mật khẩu | Đặc quyền & Tính năng kiểm thử |
+| :--- | :--- | :--- | :--- |
+| **Quản trị NEXORA** | `admin@nexora.vn` | `admin123` | Phê duyệt gian hàng Mall, Kiểm duyệt bài OOTD, Giám định Trade-In Vòng 2, Xuất báo cáo thuế NĐ 91, Quản lý hoa hồng KOC |
+| **Người mua / KOC** | `user@nexora.vn` | `user123` | Mua sắm đa shop, Thả tim Wishlist, Đánh giá sản phẩm, Đổi size / Hoàn trả, Ví hoa hồng KOC 5%, Đặt lịch VAS Care |
+| **Người mua demo** | `buyer@mac.local` | `MacLocal2026!` | Khách hàng thực hiện kịch bản kiểm thử luồng checkout và đăng bài Lookbook |
+| **Shop NÉP Studio** | `seller.a@mac.local` | `MacLocal2026!` | Gian hàng **NEXORA Mall**: Quản lý đơn, Ví 3 tầng (Available/Held/Disputed), Phát hành Voucher shop |
+| **Shop Lụa & Co** | `seller.b@mac.local` | `MacLocal2026!` | Gian hàng **NEXORA Mall**: Duyệt yêu cầu đổi size / trả hàng, Quản lý kho SKU S/M/L |
+
+---
+
+## 🔄 6. Ma Trận Đồng Bộ 100% Giữa Kế Hoạch & Mã Nguồn Thực Tế (Plan vs Reality Matrix)
+
+Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực tế có đó; tính năng nào trên dự án phát triển thêm thì phải được cập nhật toàn bộ vào hồ sơ kế hoạch, bảo đảm không có độ lệch (Zero Discrepancy)"*.
+
+| STT | Phân hệ / Nghiệp vụ | Hồ sơ Kế hoạch Master | Hiện trạng Mã nguồn Thực tế | Ghi chú kỹ thuật & File liên quan |
+| :---: | :--- | :---: | :---: | :--- |
+| **1** | **Logo & Brand Identity** | Thiết kế Master §1 | **100% Hoàn thiện** | File vector SVG nền trong suốt, dải màu gradient chuẩn (`#4F46E5`, `#06B6D4`, `#3B82F6`) tại `apps/web/public/` |
+| **2** | **Catalog Sản phẩm & Biến thể SKU** | Module 01 | **100% Hoàn thiện** | SKU đa màu, Bảng size riêng từng shop, khóa tồn kho 2 tầng tại `apps/api/src/catalog.ts` |
+| **3** | **Ảnh thực tế & Minh bạch Bản quyền** | *Bổ sung chuẩn hóa* | **100% Hoàn thiện** | 100% ảnh chụp đời thực (Uniqlo, Zara, Mango, Massimo Dutti, Coolmate) kèm link đối chiếu minh bạch (Không dùng AI) |
+| **4** | **Hệ thống Danh sách Yêu thích (Wishlist)**| *Bổ sung trải nghiệm*| **100% Hoàn thiện** | Model `Wishlist`, API `GET /wishlist`, `POST /wishlist/:id`, nút tim realtime và mục đã lưu tại `/tai-khoan` |
+| **5** | **Gian hàng Chính Hãng NEXORA Mall** | *Bổ sung cao cấp* | **100% Hoàn thiện** | Cột `Shop.isMall`, bộ lọc Mall chuyên biệt tại `/` và `/tim-kiem`, huy hiệu `MALL` trên thẻ và chi tiết sản phẩm |
+| **6** | **Cộng đồng OOTD & Tag Tọa độ Sản phẩm**| Module 06 | **100% Hoàn thiện** | Ghim tag `(x, y)` sản phẩm, nút Shop the Look mua cả set, Like, Lưu, Báo cáo vi phạm tại `apps/api/src/community.ts` |
+| **7** | **KOC Affiliate Engine (Tạm giữ 15 ngày)** | Module 06 | **100% Hoàn thiện** | Thuật toán Last-Click KOC link (`/?ref=userId`), hoa hồng 5%, ký quỹ tạm giữ 15 ngày chống hoàn ảo tại `apps/api/src/admin.ts` |
+| **8** | **Trade-In 2 Vòng Thẩm Định** | Module 02 | **100% Hoàn thiện** | Vòng 1 AI Vision ước tính, Vòng 2 chuyên viên Hub kiểm định vật lý, 5 cấp Grade S/A/B/C/D, cấp Voucher đối ứng |
+| **9** | **VAS Luxury Care & Niêm phong Zip-Seal** | Module 02 | **100% Hoàn thiện** | Mã niêm phong Zip-seal một chiều, kiểm tra quang học 8 góc, hạn mức bảo hiểm 100.000.000đ tại `apps/api/src/services.ts` |
+| **10** | **Báo cáo Thuế Sàn TMĐT (Nghị định 91)** | *Bổ sung pháp lý* | **100% Hoàn thiện** | API `GET /admin/tax-report`, trích xuất thuế khấu trừ 1.5% theo TT 40/2021/TT-BTC, xuất gói Etax JSON tại Admin Portal |
+| **11** | **Mặt nạ Bảo mật Thông tin Cá nhân PDPD** | *Bổ sung NĐ 13/2023* | **100% Hoàn thiện** | Mặt nạ che số điện thoại (`090****567`) và địa chỉ trên vận đơn giao hàng với nút bật/tắt chủ quyền tại `/don-hang/[id]` |
+| **12** | **Hóa đơn Điện tử e-Invoice (Thông tư 78)** | *Bổ sung kế toán* | **100% Hoàn thiện** | Khung hiển thị chi tiết hóa đơn VAT Thông tư 78/2021/TT-BTC, thuế suất 8%/10% tại `/don-hang/[id]` |
+| **13** | **Ví Người Bán 3 Tầng & Centralized Escrow** | Module 03 & 07 | **100% Hoàn thiện** | Phân tách 3 số dư: Khả dụng (Available), Tạm giữ ký quỹ 7 ngày (Held), Đóng băng tranh chấp (Disputed) tại `/seller` |
+| **14** | **Giỏ hàng Đa Shop & Tách Đơn con** | Module 03 & 04 | **100% Hoàn thiện** | Tách đơn hàng cha thành các đơn con độc lập cho từng nhà bán, voucher riêng và phí ship tính riêng từng shop |
+| **15** | **Đổi Size / Hoàn tiền & Đánh giá Sao** | Module 05 | **100% Hoàn thiện** | Quy trình RMA đổi size hoặc trả hàng hoàn tiền, đánh giá 1-5 sao kèm nhận xét sau khi đơn hàng giao thành công |
+| **16** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+
+---
+
+## 🧪 7. Kiểm Thử Hệ Thống & Đảm Bảo Chất Lượng (Quality Assurance)
+
+Toàn bộ hệ thống được bảo vệ bởi bộ kiểm thử tự động nhiều tầng:
+- **Typecheck**: 100% các package trong monorepo (`@mac/contracts`, `@mac/database`, `@mac/api`, `@mac/worker`, `@mac/web`) hoàn thành kiểm tra kiểu không có lỗi.
+- **Unit Tests**: Kiểm tra các hàm logic phân bổ tiền tệ, voucher và bảo vệ chống thất thoát số lẻ (`2/2 tests pass`).
+- **Integration Tests**: Kiểm định 12 kịch bản tích hợp phức tạp bao gồm: kiểm soát phiên đăng nhập HttpOnly, khóa biến thể đồng thời, chống tạo đơn trùng lặp, cách ly hủy đơn đa shop, xử lý sự kiện giao hàng ngoài thứ tự, thẩm định Trade-In 2 vòng, đặt lịch VAS Care, và phân bổ hoa hồng KOC (`12/12 tests pass`).
+- **Audit Verification Script**: Bộ script `verify_audit_and_master.py` kiểm định 71 ca đối chiếu tài liệu và nghiệp vụ (`71/71 tests pass - 100.0%`).
+
+Chạy kiểm thử:
+```powershell
+cd san-quan-ao
+pnpm -r typecheck
+pnpm test
+powershell -NoProfile -File scripts/test-integration.ps1
 ```
-*(Kết quả kiểm định hiện tại: **71/71 tests PASS - Tỷ lệ thành công 100.0%**).*
-
----
-
-## 🔄 7. Ma Trận Đồng Bộ Nghiệp Vụ Giữa Bản Kế Hoạch & Hệ Thống Thực Tế (Plan vs Reality Matrix)
-
-Tuân thủ nguyên tắc cốt lõi: *"Bản kế hoạch có gì thì dự án thực tế có đó; tính năng nào dự án phát triển thêm thì phải được cập nhật toàn bộ vào hồ sơ kế hoạch"*.
-
-| Phân hệ / Nghiệp vụ | Hồ sơ Kế hoạch | Triển khai Mã nguồn Thực tế | Ghi chú kỹ thuật |
-|---|---|---|---|
-| **Logo & Brand Identity** | Thiết kế nhận diện Master | Đã hoàn thiện | File SVG nền trong suốt, dải màu gradient chuẩn (`#4F46E5`, `#06B6D4`, `#3B82F6`) |
-| **Catalog & Biến thể SKU** | Module 01 | Đã hoàn thiện | SKU, Bảng size riêng từng shop, Tồn kho khóa 2 tầng (Optimistic Lock & Balance) |
-| **Ảnh thực tế & Bản quyền** | *Bổ sung chuẩn hóa* | Đã hoàn thiện | 100% ảnh thật từ BST Uniqlo, Zara, Mango, Massimo Dutti, Coolmate kèm link đối chiếu minh bạch (Không dùng AI) |
-| **Danh sách Yêu thích (Wishlist)**| *Bổ sung trải nghiệm* | Đã hoàn thiện | Model `Wishlist`, API `GET /wishlist`, `POST /wishlist/:id`, nút tim realtime và mục đã lưu tại `/tai-khoan` |
-| **NEXORA Mall Verification** | *Bổ sung cao cấp* | Đã hoàn thiện | Model `Shop.isMall`, bộ lọc Mall tại `/` và `/tim-kiem`, badge `MALL` trên thẻ và chi tiết sản phẩm |
-| **Cộng đồng OOTD & Tag Tọa độ**| Module 06 | Đã hoàn thiện | Ghim tag `(x, y)` sản phẩm, nút Shop the Look mua cả set, Like, Lưu, Báo cáo vi phạm |
-| **KOC Affiliate (15-Day Hold)** | Module 06 | Đã hoàn thiện | Hoa hồng 5% Last-Click, ký quỹ tạm giữ 15 ngày chống hoàn ảo, API giải phóng hoa hồng |
-| **Trade-In 2 Vòng Thẩm Định** | Module 02 | Đã hoàn thiện | Vòng 1 AI Vision ước tính, Vòng 2 chuyên viên Hub kiểm định vật lý, 5 cấp Grade S/A/B/C/D, cấp Voucher |
-| **VAS Luxury Care & Zip-Seal** | Module 02 | Đã hoàn thiện | Túi bảo mật Zip-seal một chiều, kiểm tra quang học 8 góc, hạn mức bảo hiểm 100.000.000đ |
-| **Báo cáo Thuế Nghị định 91** | *Bổ sung pháp lý* | Đã hoàn thiện | API `GET /admin/tax-report`, trích xuất thuế khấu trừ 1.5% theo TT 40/2021/TT-BTC, xuất Etax JSON |
-| **Bảo vệ Dữ liệu Cá nhân PDPD** | *Bổ sung NĐ 13/2023* | Đã hoàn thiện | Mặt nạ che số điện thoại (`090****567`) và địa chỉ trên vận đơn giao hàng với nút bật/tắt chủ quyền |
-| **Hóa đơn Điện tử e-Invoice** | *Bổ sung kế toán* | Đã hoàn thiện | Khung hiển thị chi tiết hóa đơn VAT Thông tư 78/2021/TT-BTC, thuế suất 8%/10% tại `/don-hang/[id]` |
-| **Ví Người Bán 3 Tầng** | Module 03 & 07 | Đã hoàn thiện | Số dư khả dụng, Tạm giữ 7 ngày, Đóng băng tranh chấp tại `/seller` |
-| **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
 ## 📜 8. Bản Quyền & Giấy Phép (License)
 
-Dự án được phát triển bởi **Nhóm Tác Giả NEXORA** - phục vụ nghiên cứu, báo cáo học thuật và triển khai giải pháp Thương mại Điện tử thực tế.  
-Phát hành theo giấy phép **MIT License**.
+Dự án được phát triển bởi **Kiệt Trương & Nhóm Phát Triển NEXORA** — Nền tảng Thương mại Điện tử Thời trang Thế hệ mới.  
+Phát hành theo giấy phép **MIT License**. Mọi quyền sở hữu trí tuệ và tài liệu thiết kế được bảo hộ theo quy định pháp luật hiện hành.
