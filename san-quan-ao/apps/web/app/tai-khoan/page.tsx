@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -518,6 +518,105 @@ export default function AccountPage() {
           >
             Khám phá mảnh ghép <ExternalLink size={12} />
           </Link>
+        </div>
+      </article>
+
+      {/* Rừng Xanh NEXORA & Bù Đắp Carbon Sinh Thái (NEXORA Green Forest · ECO-TREE-OFFSET-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Trees size={18} color="#166534" /> Rừng Xanh NEXORA &amp; Đóng Góp Sinh Thái (ECO-TREE-OFFSET-01)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Dự án “Một Đơn Hàng - Một Cây Xanh Bản Địa”. Mỗi lần bạn lựa chọn Đóng gói Xanh Eco Box, NEXORA trích quỹ bảo trợ và trồng cây tại các khu rừng phòng hộ Việt Nam.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '3px 10px', borderRadius: 3, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <Award size={13} /> NEXORA Eco Pioneer 2026
+          </span>
+        </div>
+
+        {/* Eco Stats Counters */}
+        <div className="stats" style={{ margin: '14px 0' }}>
+          <div>
+            <small style={{ color: '#166534' }}>CÂY XANH ĐÃ TRỒNG</small>
+            <strong style={{ color: '#166534' }}>3 cây bản địa</strong>
+          </div>
+          <div>
+            <small>CO2 ĐÃ BÙ ĐẮP</small>
+            <strong>64.5 kg CO2e</strong>
+          </div>
+          <div>
+            <small>XU THƯỞNG ECO BOX</small>
+            <strong style={{ color: 'var(--clay)' }}>+150 Xu đã nhận</strong>
+          </div>
+          <div>
+            <small>ĐÓNG GÓI XANH</small>
+            <strong>3/3 đơn gần nhất</strong>
+          </div>
+        </div>
+
+        {/* Digital Trees Registry */}
+        <div style={{ marginTop: 14 }}>
+          <strong style={{ fontSize: 13, display: 'block', marginBottom: 8, color: 'var(--ink)' }}>
+            Sổ cái cây xanh bảo trợ của bạn (Digital Tree Registry):
+          </strong>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+            {[
+              {
+                id: 'TREE-VN-CG-2401',
+                species: 'Cây Bần Trắng (Sonneratia alba)',
+                location: 'Rừng ngập mặn Cần Giờ, TP. Hồ Chí Minh',
+                date: '12/10/2026',
+                co2: '22.5 kg CO2e/năm',
+                status: 'Đang sinh trưởng tốt (Năm 1)',
+              },
+              {
+                id: 'TREE-VN-CP-2402',
+                species: 'Cây Chò Chỉ (Parashorea chinensis)',
+                location: 'Vườn quốc gia Cúc Phương, Ninh Bình',
+                date: '04/11/2026',
+                co2: '24.0 kg CO2e/năm',
+                status: 'Đang sinh trưởng tốt (Năm 1)',
+              },
+              {
+                id: 'TREE-VN-CM-2403',
+                species: 'Cây Đước Đôi (Rhizophora apiculata)',
+                location: 'Vườn quốc gia Mũi Cà Mau',
+                date: '18/11/2026',
+                co2: '18.0 kg CO2e/năm',
+                status: 'Vừa hoàn tất gieo ươm',
+              },
+            ].map((t) => (
+              <div
+                key={t.id}
+                style={{
+                  border: '1px solid var(--line)',
+                  borderRadius: 4,
+                  padding: '10px 12px',
+                  background: '#faf9f5',
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ fontWeight: 700, color: '#166534', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <TreePine size={13} /> {t.id}
+                  </span>
+                  <span style={{ fontSize: 9, background: '#eef2ed', color: '#166534', padding: '1px 5px', borderRadius: 2 }}>
+                    Verified
+                  </span>
+                </div>
+                <div style={{ fontWeight: 600, color: 'var(--ink)' }}>{t.species}</div>
+                <div style={{ color: 'var(--muted)' }}>{t.location}</div>
+                <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px dashed #e0ded6', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Ngày gieo: {t.date}</span>
+                  <span style={{ fontWeight: 600, color: '#15803d' }}>{t.co2}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </article>
 

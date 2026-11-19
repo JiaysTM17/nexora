@@ -1,7 +1,7 @@
 'use client';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -20,12 +20,92 @@ const CARE_STATUS: Record<string, string> = {
   RETURNED: 'Đã hoàn trả tận tay khách hàng',
 };
 
+type AtelierBooking = {
+  id: string;
+  code: string;
+  hub: string;
+  address: string;
+  service: string;
+  date: string;
+  slot: string;
+  notes: string;
+  createdAt: string;
+};
+
+const ATELIER_HUBS = [
+  {
+    id: 'HCM',
+    name: 'NEXORA Flagship Atelier Sài Gòn',
+    address: '128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
+    phone: '028 3822 8899',
+  },
+  {
+    id: 'HN',
+    name: 'NEXORA Heritage Atelier Hà Nội',
+    address: '68 Tràng Tiền, Phường Tràng Tiền, Quận Hoàn Kiếm, Hà Nội',
+    phone: '024 3933 6688',
+  },
+];
+
+const ATELIER_SERVICES = [
+  {
+    id: 'BESPOKE_FITTING',
+    name: 'Thử đồ Private Suite & May đo tinh chỉnh phom dáng (Bespoke Fitting)',
+    price: 0,
+    desc: 'Miễn phí cho mọi khách hàng NEXORA. Nghệ nhân may đo đo trực tiếp và điều chỉnh đường chỉ, vạt áo chuẩn xác theo phom người.',
+  },
+  {
+    id: 'VIP_STYLING',
+    name: 'Tư vấn định hình phong cách cá nhân cùng Senior Stylist',
+    price: 350000,
+    desc: 'Phiên tư vấn 1-on-1 trong 60 phút, phân tích sắc tố da (Personal Color), kiểu dáng và thiết lập bộ sưu tập Capsule 7 ngày.',
+  },
+  {
+    id: 'ATELIER_SPA',
+    name: 'Giao nhận & Trực tiếp kiểm tra quang học 8 góc tại Atelier Lounge',
+    price: 250000,
+    desc: 'Trực tiếp bàn giao trang phục, thưởng thức trà hoa thảo mộc chào mừng trong khi chuyên viên kiểm định và niêm phong.',
+  },
+];
+
 export default function VasCarePage() {
   const { user } = useUser();
   const list = useResource<CareBooking[]>(user ? '/vas-care' : null);
+  const [activeTab, setActiveTab] = useState<'COURIER' | 'ATELIER'>('COURIER');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
 
-  async function submit(e: FormEvent<HTMLFormElement>) {
+  // Atelier state
+  const [atelierBookings, setAtelierBookings] = useState<AtelierBooking[]>([]);
+  const [selectedHub, setSelectedHub] = useState('HCM');
+  const [selectedService, setSelectedService] = useState('BESPOKE_FITTING');
+  const [selectedDate, setSelectedDate] = useState('2026-11-20');
+  const [selectedSlot, setSelectedSlot] = useState('14:00 - 15:30');
+  const [atelierSuccess, setAtelierSuccess] = useState('');
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('nexora_atelier_bookings');
+      if (stored) {
+        setAtelierBookings(JSON.parse(stored));
+      } else {
+        const sample: AtelierBooking = {
+          id: 'at-1',
+          code: 'ATELIER-VIP-8899',
+          hub: 'NEXORA Flagship Atelier Sài Gòn',
+          address: '128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
+          service: 'Thử đồ Private Suite & May đo tinh chỉnh phom dáng (Bespoke Fitting)',
+          date: '2026-11-22',
+          slot: '14:00 - 15:30',
+          notes: 'Khách VIP hẹn thử áo Blazer Linen và tinh chỉnh chiều dài tay áo.',
+          createdAt: new Date().toISOString(),
+        };
+        setAtelierBookings([sample]);
+        localStorage.setItem('nexora_atelier_bookings', JSON.stringify([sample]));
+      }
+    } catch {}
+  }, []);
+
+  async function submitCourier(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const d = new FormData(form);
@@ -49,6 +129,31 @@ export default function VasCarePage() {
     }
   }
 
+  function submitAtelier(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const d = new FormData(e.currentTarget);
+    const hubObj = ATELIER_HUBS.find((h) => h.id === selectedHub) || ATELIER_HUBS[0];
+    const serviceObj = ATELIER_SERVICES.find((s) => s.id === selectedService) || ATELIER_SERVICES[0];
+    const newBooking: AtelierBooking = {
+      id: `at-${Date.now()}`,
+      code: `ATELIER-VIP-${Math.floor(1000 + Math.random() * 9000)}`,
+      hub: hubObj.name,
+      address: hubObj.address,
+      service: serviceObj.name,
+      date: selectedDate,
+      slot: selectedSlot,
+      notes: String(d.get('notes') || ''),
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [newBooking, ...atelierBookings];
+    setAtelierBookings(updated);
+    try {
+      localStorage.setItem('nexora_atelier_bookings', JSON.stringify(updated));
+    } catch {}
+    setAtelierSuccess(`Đặt lịch hẹn VIP tại ${hubObj.name} thành công! Mã xác nhận của bạn: ${newBooking.code}.`);
+    setTimeout(() => setAtelierSuccess(''), 6000);
+  }
+
   return (
     <section className="section narrow">
       <p className="eyebrow"><span />NEXORA LUXURY VAS CARE</p>
@@ -59,12 +164,54 @@ export default function VasCarePage() {
         </div>
       </div>
 
+      {/* Mode Switcher Tabs */}
+      <div style={{ display: 'flex', gap: 10, margin: '16px 0 20px', borderBottom: '1px solid var(--line)', paddingBottom: 10 }}>
+        <button
+          type="button"
+          onClick={() => setActiveTab('COURIER')}
+          style={{
+            background: activeTab === 'COURIER' ? '#111' : 'transparent',
+            color: activeTab === 'COURIER' ? '#fff' : 'var(--ink)',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: 3,
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          <ShieldCheck size={16} /> 1. Dịch Vụ Tận Nhà (White-Glove Zip-Seal)
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('ATELIER')}
+          style={{
+            background: activeTab === 'ATELIER' ? '#111' : 'transparent',
+            color: activeTab === 'ATELIER' ? '#fff' : 'var(--ink)',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: 3,
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          <Sparkles size={16} /> 2. Đặt Lịch Tại Flagship Atelier (VIP Fitting &amp; Styling)
+        </button>
+      </div>
+
       {!user ? (
-        <Notice>Vui lòng <Link href="/dang-nhap">đăng nhập</Link> để đặt lịch chăm sóc đồ hiệu và nhận mã niêm phong bảo mật.</Notice>
-      ) : (
+        <Notice>Vui lòng <Link href="/dang-nhap">đăng nhập</Link> để đặt lịch chăm sóc đồ hiệu hoặc đặt lịch hẹn VIP tại Atelier.</Notice>
+      ) : activeTab === 'COURIER' ? (
         <div className="checkout-grid">
-          <form className="panel form" onSubmit={submit}>
-            <h2><ShieldCheck size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />Đặt lịch chăm sóc đồ hiệu</h2>
+          <form className="panel form" onSubmit={submitCourier}>
+            <h2><ShieldCheck size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />Đặt lịch bưu tá niêm phong tận nhà</h2>
             {error && <Notice error>{error}</Notice>}
             {success && <Notice>{success}</Notice>}
             <label>Tên món đồ cần chăm sóc<input name="itemName" required minLength={3} placeholder="VD: Áo khoác len Cashmere / Túi da bê..." /></label>
@@ -84,7 +231,7 @@ export default function VasCarePage() {
 
           <div>
             <article className="panel">
-              <h2>Đơn chăm sóc của bạn</h2>
+              <h2>Đơn chăm sóc tận nhà của bạn</h2>
               {list.loading ? <Loading /> : !list.data?.length ? (
                 <p className="subtle">Bạn chưa có đơn chăm sóc đồ hiệu nào.</p>
               ) : list.data.map(b => (
@@ -104,6 +251,155 @@ export default function VasCarePage() {
                   </p>
                 </div>
               ))}
+            </article>
+          </div>
+        </div>
+      ) : (
+        /* Phân Hệ Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01) */
+        <div className="checkout-grid">
+          <form className="panel form" onSubmit={submitAtelier}>
+            <h2>
+              <Building size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />
+              Đặt Lịch Hẹn VIP Tại Atelier (VAS-ATELIER-BOOKING-01)
+            </h2>
+            {atelierSuccess && <Notice>{atelierSuccess}</Notice>}
+
+            <label>
+              Chọn cơ sở Flagship Atelier
+              <select value={selectedHub} onChange={(e) => setSelectedHub(e.target.value)}>
+                {ATELIER_HUBS.map((h) => (
+                  <option key={h.id} value={h.id}>
+                    {h.name} — {h.address.split(',')[0]}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div style={{ padding: '10px 14px', background: '#faf9f5', borderRadius: 3, border: '1px solid var(--line)', fontSize: 11, lineHeight: 1.6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: 'var(--ink)' }}>
+                <MapPin size={13} color="var(--clay)" /> Địa chỉ cơ sở:
+              </div>
+              <div style={{ color: 'var(--muted)', marginTop: 2 }}>
+                {ATELIER_HUBS.find((h) => h.id === selectedHub)?.address}
+              </div>
+              <div style={{ color: 'var(--muted)' }}>
+                Hotline phòng chờ: <strong>{ATELIER_HUBS.find((h) => h.id === selectedHub)?.phone}</strong>
+              </div>
+            </div>
+
+            <label>
+              Gói dịch vụ Atelier
+              <select value={selectedService} onChange={(e) => setSelectedService(e.target.value)}>
+                {ATELIER_SERVICES.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} {s.price > 0 ? `(${vnd(s.price)})` : '(0đ · Đặc quyền thành viên)'}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div style={{ fontSize: 11, color: 'var(--muted)', fontStyle: 'italic', margin: '-4px 0 8px' }}>
+              {ATELIER_SERVICES.find((s) => s.id === selectedService)?.desc}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <label>
+                Ngày hẹn
+                <input
+                  type="date"
+                  name="date"
+                  value={selectedDate}
+                  min="2026-11-20"
+                  max="2026-12-31"
+                  required
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </label>
+              <label>
+                Khung giờ VIP
+                <select value={selectedSlot} onChange={(e) => setSelectedSlot(e.target.value)}>
+                  <option value="10:00 - 11:30">10:00 - 11:30 (Sáng)</option>
+                  <option value="14:00 - 15:30">14:00 - 15:30 (Đầu chiều)</option>
+                  <option value="16:30 - 18:00">16:30 - 18:00 (Cuối chiều)</option>
+                  <option value="19:00 - 20:30">19:00 - 20:30 (Buổi tối VIP)</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Yêu cầu trang phục / Ghi chú cho Stylist
+              <textarea name="notes" placeholder="VD: Muốn thử bộ suit linen phối cùng áo sơ mi lụa tơ tằm, cần nghệ nhân may đo đo lại chiều dài ống quần..." />
+            </label>
+
+            <button className="button" type="submit">
+              Xác nhận Đặt Lịch VIP Tại Atelier
+            </button>
+          </form>
+
+          <div>
+            <article className="panel">
+              <div className="row between" style={{ marginBottom: 12 }}>
+                <h2>Thẻ Lịch Hẹn VIP Của Bạn</h2>
+                <span className="badge">{atelierBookings.length} lịch hẹn</span>
+              </div>
+
+              {!atelierBookings.length ? (
+                <p className="subtle">Bạn chưa có lịch hẹn nào tại Flagship Atelier.</p>
+              ) : (
+                atelierBookings.map((bk) => (
+                  <div
+                    key={bk.id}
+                    style={{
+                      border: '1px solid var(--line)',
+                      background: '#fff',
+                      borderRadius: 4,
+                      padding: '14px 16px',
+                      marginBottom: 12,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
+                      <div>
+                        <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clay)', fontWeight: 700 }}>
+                          VIP APPOINTMENT TICKET
+                        </span>
+                        <h3 style={{ margin: '2px 0', fontSize: 14 }}>{bk.hub}</h3>
+                      </div>
+                      <span style={{ fontSize: 11, background: '#f0fdf4', color: '#166534', padding: '3px 8px', borderRadius: 2, fontWeight: 700 }}>
+                        {bk.code}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: 12, margin: '8px 0', color: 'var(--ink)' }}>
+                      <strong>Dịch vụ:</strong> {bk.service}
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 6, fontSize: 11, color: 'var(--muted)', background: '#faf9f5', padding: '8px 10px', borderRadius: 3 }}>
+                      <div>
+                        <Clock size={11} style={{ display: 'inline', marginRight: 4 }} />
+                        <strong>Khung giờ:</strong> {bk.slot}
+                      </div>
+                      <div>
+                        <Calendar size={11} style={{ display: 'inline', marginRight: 4 }} />
+                        <strong>Ngày:</strong> {bk.date}
+                      </div>
+                    </div>
+
+                    {bk.notes && (
+                      <p style={{ margin: '8px 0 0', fontSize: 11, color: 'var(--muted)', fontStyle: 'italic' }}>
+                        &quot;{bk.notes}&quot;
+                      </p>
+                    )}
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, paddingTop: 8, borderTop: '1px solid #eee', fontSize: 11 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#166534' }}>
+                        <CheckCircle2 size={13} /> Đã chuẩn bị phòng thử Private Suite
+                      </span>
+                      <span style={{ color: 'var(--muted)' }}>Xuất trình mã khi đến</span>
+                    </div>
+                  </div>
+                ))
+              )}
             </article>
           </div>
         </div>

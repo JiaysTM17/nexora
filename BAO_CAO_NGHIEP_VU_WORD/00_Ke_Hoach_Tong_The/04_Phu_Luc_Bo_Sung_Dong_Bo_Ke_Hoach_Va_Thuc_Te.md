@@ -130,3 +130,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 31. **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)**:
    - Hồ sơ: Module 01 Tìm kiếm Sản phẩm & Trải nghiệm Giao diện Người dùng.
    - Thực tế: Hộp thoại tìm kiếm nhanh Command Palette mở bằng `Ctrl+K` hoặc biểu tượng kính lúp, tích hợp thẻ từ khóa xu hướng và gợi ý sản phẩm tự động kèm ảnh và mức giá VND thời gian thực.
+
+32. **Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01)**:
+   - Hồ sơ: Module 02 Dịch vụ Chăm sóc VAS & Trải nghiệm May đo O2O.
+   - Thực tế: Phân hệ đặt lịch trực tiếp tại Flagship Atelier (Sài Gòn/Hà Nội) tại `/vas-care`, phòng thử đồ Private Suite, may đo phom dáng bespoke (0đ thành viên), tư vấn Senior Stylist và cấp thẻ VIP Ticket điện tử lưu vết trên hệ thống.
+
+33. **Rừng Xanh NEXORA & Sổ Cái Cây Xanh Kỹ Thuật Số (ECO-TREE-OFFSET-01)**:
+   - Hồ sơ: Module 04 Bán lẻ Sàn TMĐT & Module 07 Trách nhiệm Xã hội Doanh nghiệp (CSR/ESG).
+   - Thực tế: Phân hệ Rừng Xanh NEXORA tại `/tai-khoan`, sổ cái kỹ thuật số Digital Tree Registry lưu vết mã số từng cây xanh bản địa được bảo trợ tại Cần Giờ, Cúc Phương, Cà Mau, đo lường 64.5 kg CO2e bù đắp và cấp huy hiệu danh dự NEXORA Eco Pioneer.

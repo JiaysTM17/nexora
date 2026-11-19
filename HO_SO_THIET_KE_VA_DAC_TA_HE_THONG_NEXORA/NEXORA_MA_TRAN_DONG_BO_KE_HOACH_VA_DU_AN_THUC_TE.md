@@ -53,6 +53,8 @@
 | **42** | **Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI Stylist (SOC-WARDROBE-AI-01)** | Module 01, 06 & 07 | Đã hoàn thiện | Phân hệ Capsule Wardrobe lập lịch phối đồ 7 ngày AI Stylist theo số đo Fashion Passport, chuyển đổi thời tiết Nắng ấm/Se lạnh, ghim bộ đồ hôm nay và chia sẻ Lookbook OOTD tại `/tai-khoan` |
 | **43** | **Hộ Chiếu Minh Bạch Chất Liệu & Xuất Xứ (CAT-FABRIC-TRACE-01)** | Module 01 | Đã hoàn thiện | Khung thông tin nguồn gốc sợi dệt (Lụa Bảo Lộc, Linen Normandy, GOTS Cotton), chỉ số dấu chân sinh thái Eco-Footprint (giảm 65% nước, -72% CO2e) và cẩm nang bảo quản Atelier Care tại `/san-pham/[slug]` |
 | **44** | **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)** | Module 01 & UI | Đã hoàn thiện | Command Palette tìm kiếm mở nhanh bằng Ctrl+K hoặc icon kính lúp trên Header, thẻ xu hướng thịnh hành, gợi ý sản phẩm realtime kèm thumbnail và giá tại chỗ |
+| **45** | **Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ đặt lịch trực tiếp tại Flagship Atelier (Sài Gòn/Hà Nội), thử đồ Private Suite, may đo phom dáng bespoke, tư vấn Senior Stylist và cấp thẻ VIP Ticket điện tử tại `/vas-care` |
+| **46** | **Rừng Xanh NEXORA & Bù Đắp Carbon (ECO-TREE-OFFSET-01)** | Module 04 & 07 | Đã hoàn thiện | Sổ cái cây xanh bảo trợ kỹ thuật số (Digital Tree Registry) với mã số định danh từng cây tại Cần Giờ/Cúc Phương/Cà Mau, chỉ số bù đắp CO2e và huy hiệu Eco Pioneer tại `/tai-khoan` |
 
 ---
 
@@ -282,6 +284,25 @@
   - Các thẻ từ khóa thịnh hành (Trending Search Tags): *Quiet Luxury*, *Linen Normandy*, *Lụa Tơ Tằm*, *Quần Sartorial*, *Blazer*.
   - Khả năng gợi ý sản phẩm tự động (Live Autocomplete) theo thời gian thực (debounced 200ms): Hiển thị thumbnail ảnh thật, tên gian hàng, huy hiệu MALL, chất liệu và mức giá VND thấp nhất của biến thể.
   - Điều hướng tức thời 1-chạm hoặc nhấn phím Esc để đóng nhẹ nhàng.
+
+### 29. Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01)
+- **Mục tiêu**: Nâng tầm trải nghiệm dịch vụ O2O (Online-to-Offline), mang lại không gian may đo riêng tư và tư vấn phong cách chuyên sâu cho khách hàng thời trang cao cấp.
+- **Cơ chế**:
+  - Tích hợp giao diện chuyển đổi giữa 2 chế độ tại `/vas-care`: Dịch vụ bưu tá tận nhà (White-Glove Zip-Seal) và Đặt lịch hẹn tại Flagship Atelier.
+  - Lựa chọn 2 không gian di sản:
+    - *NEXORA Flagship Atelier Sài Gòn*: 128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh.
+    - *NEXORA Heritage Atelier Hà Nội*: 68 Tràng Tiền, Phường Tràng Tiền, Quận Hoàn Kiếm, Hà Nội.
+  - Gói dịch vụ cao cấp: Thử đồ Private Suite & May đo tinh chỉnh phom dáng (0đ đặc quyền thành viên), Tư vấn định hình phong cách cá nhân cùng Senior Stylist, và Tiếp nhận kiểm định quang học trực tiếp tại Lounge.
+  - Cấp thẻ hẹn điện tử VIP Appointment Ticket với mã xác nhận bảo mật (`ATELIER-VIP-[CODE]`), định tuyến thời gian và đồng bộ trạng thái đón tiếp.
+
+### 30. Rừng Xanh NEXORA & Sổ Cái Cây Xanh Kỹ Thuật Số (ECO-TREE-OFFSET-01)
+- **Mục tiêu**: Kiến tạo mô hình kinh tế tuần hoàn và bù đắp phát thải carbon thực chất trong ngành thời trang (Fashion Carbon Offset), gắn kết hành vi mua sắm với trách nhiệm bảo vệ môi trường.
+- **Cơ chế**:
+  - Dự án "Một Đơn Hàng - Một Cây Xanh Bản Địa": Trích lập quỹ phát triển rừng phòng hộ cho mỗi đơn hàng hoặc lựa chọn bao bì tự hủy Eco Green Box.
+  - Sổ cái cây xanh kỹ thuật số (Digital Tree Registry) tích hợp tại `/tai-khoan`:
+    - Lưu vết mã định danh minh bạch từng cây: `TREE-VN-CG-2401` (Cây Bần Trắng - Rừng Cần Giờ), `TREE-VN-CP-2402` (Cây Chò Chỉ - Vườn QG Cúc Phương), `TREE-VN-CM-2403` (Cây Đước Đôi - Cà Mau).
+    - Đo lường lượng CO2e đã hấp thụ bù đắp (64.5 kg CO2e) và tích lũy xu thưởng Eco Coins (+150 Xu).
+    - Cấp chứng thư số và danh hiệu danh dự **NEXORA Eco Pioneer 2026** cho thành viên tích cực.
 
 ---
 

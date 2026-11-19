@@ -247,7 +247,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **37** | **Tủ Đồ Nhộng & Lịch Phối Đồ AI Stylist (SOC-WARDROBE-AI-01)** | Module 01, 06 & 07 | **100% Hoàn thiện** | Kế hoạch mix & match 7 ngày theo số đo Fashion Passport, chuyển đổi Nắng ấm/Se lạnh, ghim đồ hôm nay và chia sẻ OOTD tại `/tai-khoan` |
 | **38** | **Hộ Chiếu Minh Bạch Chất Liệu & Xuất Xứ (CAT-FABRIC-TRACE-01)** | Module 01 | **100% Hoàn thiện** | Khung thông tin nguồn gốc sợi dệt (Lụa Bảo Lộc, Linen Normandy, GOTS Cotton), chỉ số dấu chân sinh thái Eco-Footprint (giảm 65% nước, -72% CO2e) và cẩm nang bảo quản Atelier Care tại `/san-pham/[slug]` |
 | **39** | **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)** | Module 01 & UI | **100% Hoàn thiện** | Command Palette tìm kiếm mở nhanh bằng Ctrl+K hoặc icon kính lúp trên Header, thẻ xu hướng thịnh hành, gợi ý sản phẩm realtime kèm thumbnail và giá tại chỗ |
-| **40** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **40** | **Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01)** | Module 02 & VAS | **100% Hoàn thiện** | Đặt lịch trải nghiệm trực tiếp tại Atelier Sài Gòn/Hà Nội, phòng thử Private Suite, may đo tinh chỉnh phom dáng và cấp thẻ VIP Ticket tại `/vas-care` |
+| **41** | **Rừng Xanh NEXORA & Sổ Cái Cây Xanh Kỹ Thuật Số (ECO-TREE-OFFSET-01)** | Module 04 & 07 | **100% Hoàn thiện** | Sổ cái cây xanh bảo trợ (Digital Tree Registry) tại `/tai-khoan`, đo lường 64.5 kg CO2e bù đắp từ các đơn hàng Eco Box và huy hiệu Eco Pioneer |
+| **42** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
