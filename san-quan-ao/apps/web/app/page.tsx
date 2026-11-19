@@ -1,13 +1,14 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Check, Search, SlidersHorizontal, Zap, TrendingUp, Sparkles } from 'lucide-react';
-import { Product, useResource } from './api';
+import { ArrowRight, ArrowUpRight, Check, Search, SlidersHorizontal, Zap, TrendingUp, Sparkles, Layers, ShoppingBag, Eye } from 'lucide-react';
+import { Product, useResource, vnd } from './api';
 import { Loading, Notice, ProductCard } from './ui';
 
 export default function Home() {
   const [category, setCategory] = useState(''), [query, setQuery] = useState(''), [search, setSearch] = useState(''), [color, setColor] = useState(''), [size, setSize] = useState(''), [stock, setStock] = useState(false), [mall, setMall] = useState(false), [filters, setFilters] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 45, seconds: 18 });
+  const [activeCapsule, setActiveCapsule] = useState(0);
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -129,6 +130,195 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+
+    {/* Bộ Sưu Tập Nhộng Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01) */}
+    <section className="section" style={{ paddingTop: 20, paddingBottom: 0 }}>
+      <div style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 4, padding: '24px 28px' }}>
+        <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+          <div>
+            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--clay)' }}>
+              <Layers size={14} /> THE SEASONAL CAPSULE EDIT · STYLE STUDIO (CAT-CAPSULE-LOOKBOOK-01)
+            </p>
+            <h2 style={{ margin: '4px 0 0', fontSize: 22, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+              Bộ Sưu Tập Nhộng &amp; Gợi Ý Phối Đồ Trọn Set
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Tuyển tập 3 phong cách thiết yếu được các Senior Stylist căn chỉnh sắc độ hòa hợp và áp dụng chiết khấu Combo Saver -10%.
+            </p>
+          </div>
+          <Link href="/phoi-do" className="button" style={{ fontSize: 12, padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Sparkles size={14} /> Mở Studio Phối Đồ Tự Do →
+          </Link>
+        </div>
+
+        {/* Lookbook Tabs */}
+        <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--line)', paddingBottom: 10, marginBottom: 16, overflowX: 'auto' }}>
+          {[
+            { id: 0, name: 'The Normandy Summer Edit', tag: '100% Linen' },
+            { id: 1, name: 'The Minimal Executive Edit', tag: 'Sartorial Cut' },
+            { id: 2, name: 'Bảo Lộc Silk Atelier Edit', tag: 'Thủ Công Tơ Tằm' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveCapsule(tab.id)}
+              style={{
+                background: activeCapsule === tab.id ? '#111' : '#faf9f5',
+                color: activeCapsule === tab.id ? '#fff' : 'var(--ink)',
+                border: '1px solid var(--line)',
+                padding: '6px 14px',
+                borderRadius: 20,
+                fontSize: 12,
+                fontWeight: activeCapsule === tab.id ? 700 : 500,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {tab.name} <small style={{ opacity: 0.75, fontSize: 10 }}>({tab.tag})</small>
+            </button>
+          ))}
+        </div>
+
+        {/* Selected Capsule Lookbook Showcase */}
+        {(() => {
+          const edits = [
+            {
+              id: 'normandy',
+              title: 'The Normandy Summer Edit',
+              palette: 'Tone Cát Sa Mạc & Trắng Ngà',
+              harmony: '99/100 Tone-sur-Tone',
+              tag: 'Phóng khoáng · 100% Linen',
+              top: { name: 'Áo sơ mi cổ trụ Premium Linen', price: 420000, img: '/products/shirt.svg', shop: 'NÉP Studio' },
+              bottom: { name: 'Quần short linen mộc tự nhiên', price: 390000, img: '/products/pants.svg', shop: 'NÉP Studio' },
+              outer: { name: 'Áo khoác safari kaki đũi', price: 650000, img: '/products/jacket.svg', shop: 'NÉP Studio' },
+              originalTotal: 1460000,
+              comboTotal: 1314000,
+              desc: 'Tuyển tập sợi lanh dệt thưa thoáng khí từ vùng Normandy, kết hợp gam màu cát đất ấm và trắng ngà đem lại cảm giác dạo bước nhẹ nhõm bên bờ biển mùa hè.',
+            },
+            {
+              id: 'executive',
+              title: 'The Minimal Executive Edit',
+              palette: 'Tone Xám Melange & Đen Tuyển',
+              harmony: '98/100 Tone-sur-Tone',
+              tag: 'Chỉn chu · Sartorial Cut',
+              top: { name: 'Áo Polo dệt kim Merino sợi dài', price: 490000, img: '/products/shirt.svg', shop: 'Lụa & Co' },
+              bottom: { name: 'Quần tây xếp ly kép phom suông', price: 580000, img: '/products/pants.svg', shop: 'Lụa & Co' },
+              outer: { name: 'Áo khoác Blazer Linen hai hàng khuy', price: 890000, img: '/products/jacket.svg', shop: 'Lụa & Co' },
+              originalTotal: 1960000,
+              comboTotal: 1764000,
+              desc: 'Ngôn ngữ thiết kế Quiet Luxury tối giản, cấu trúc ve áo mềm mại không độn vai kết hợp phom quần tây Ý sartorial tôn dáng chuẩn mực trong mọi buổi đàm phán.',
+            },
+            {
+              id: 'silk-atelier',
+              title: 'Bảo Lộc Silk Atelier Edit',
+              palette: 'Tone Ngà Óng & Nâu Đất',
+              harmony: '97/100 Tone-sur-Tone',
+              tag: 'Thủ công · 100% Tơ Tằm',
+              top: { name: 'Áo sơ mi lụa tơ tằm dệt tay', price: 750000, img: '/products/shirt.svg', shop: 'NEXORA Atelier' },
+              bottom: { name: 'Quần culottes lụa cát mềm rủ', price: 680000, img: '/products/pants.svg', shop: 'NEXORA Atelier' },
+              outer: { name: 'Khăn lụa bỏ túi & Áo choàng nhẹ', price: 420000, img: '/products/jacket.svg', shop: 'NEXORA Atelier' },
+              originalTotal: 1850000,
+              comboTotal: 1665000,
+              desc: '100% sợi tơ tằm nguyên bản thủ công từ thủ phủ tơ lụa Bảo Lộc, tạo độ rủ mềm mại như làn da thứ hai với ánh óng ả tự nhiên tuyệt mỹ.',
+            },
+          ];
+
+          const cur = edits[activeCapsule];
+
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, alignItems: 'center' }}>
+              {/* 3 Pieces Visual Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                {[
+                  { role: 'Áo chính (Top)', item: cur.top },
+                  { role: 'Quần/Váy (Bottom)', item: cur.bottom },
+                  { role: 'Lớp ngoài (Outer)', item: cur.outer },
+                ].map((piece, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      border: '1px solid var(--line)',
+                      borderRadius: 3,
+                      padding: 10,
+                      background: '#faf9f5',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 700, display: 'block', marginBottom: 6 }}>
+                      {piece.role}
+                    </span>
+                    <img
+                      src={piece.item.img}
+                      alt={piece.item.name}
+                      style={{ width: '100%', height: 110, objectFit: 'contain', margin: '4px 0' }}
+                    />
+                    <div style={{ fontSize: 11, fontWeight: 600, lineHeight: 1.3, margin: '4px 0 2px', minHeight: 28, overflow: 'hidden' }}>
+                      {piece.item.name}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--clay)', fontWeight: 700 }}>
+                      {vnd(piece.item.price)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Lookbook Editorial Details */}
+              <div style={{ padding: '8px 10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 11, background: '#f5f0e8', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                    {cur.palette}
+                  </span>
+                  <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                    {cur.harmony}
+                  </span>
+                </div>
+
+                <h3 style={{ fontSize: 18, fontFamily: 'Georgia, serif', margin: '4px 0 8px' }}>
+                  {cur.title}
+                </h3>
+
+                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: '0 0 14px' }}>
+                  {cur.desc}
+                </p>
+
+                <div style={{ background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 16px', marginBottom: 14 }}>
+                  <div className="row between" style={{ fontSize: 12, color: 'var(--muted)', textDecoration: 'line-through' }}>
+                    <span>Tổng giá trị lẻ 3 món:</span>
+                    <span>{vnd(cur.originalTotal)}</span>
+                  </div>
+                  <div className="row between" style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginTop: 4 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      Giá trọn bộ Combo Style Saver:
+                      <span style={{ fontSize: 10, background: '#166534', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                        -10%
+                      </span>
+                    </span>
+                    <strong style={{ color: 'var(--clay)', fontSize: 16 }}>{vnd(cur.comboTotal)}</strong>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <Link
+                    href={`/phoi-do`}
+                    className="button"
+                    style={{ flex: 1, fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                  >
+                    <Sparkles size={15} /> Thử Phối Đồ Tại Studio
+                  </Link>
+                  <Link
+                    href={`/tim-kiem?q=${encodeURIComponent(cur.id === 'normandy' ? 'Linen' : cur.id === 'executive' ? 'Blazer' : 'Lụa')}`}
+                    className="button secondary"
+                    style={{ fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                  >
+                    <Eye size={15} /> Khám Phá
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </section>
 

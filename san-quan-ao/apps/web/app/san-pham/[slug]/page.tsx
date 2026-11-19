@@ -1,7 +1,7 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -16,6 +16,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [busy, setBusy] = useState(false);
   const [wishBusy, setWishBusy] = useState(false);
   const [carePlus, setCarePlus] = useState(false);
+  const [subscribedAlert, setSubscribedAlert] = useState(false);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const { user } = useUser();
 
@@ -363,6 +364,55 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               {notice} {!failed && <Link href="/gio-hang">Xem giỏ →</Link>}
             </Notice>
           )}
+
+          {/* Đăng Ký Thông Báo Có Hàng & Giảm Giá (USER-STOCK-ALERT-01) */}
+          <div style={{ marginTop: 10 }}>
+            {subscribedAlert ? (
+              <div
+                style={{
+                  padding: '10px 14px',
+                  background: '#f0fdf4',
+                  borderRadius: 3,
+                  border: '1px solid #bbf7d0',
+                  fontSize: 12,
+                  color: '#166534',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <CheckCheck size={16} color="#166534" />
+                <span>
+                  <strong>Đã bật chuông thông báo!</strong> NEXORA sẽ gửi thông báo đến chuông Header của bạn ngay khi mẫu này có đợt Flash Sale hoặc về thêm size mới.
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="button secondary full"
+                style={{
+                  fontSize: 12,
+                  padding: '8px 14px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                }}
+                onClick={() => {
+                  setSubscribedAlert(true);
+                  try {
+                    const existing = JSON.parse(localStorage.getItem('nexora_stock_alerts') || '[]');
+                    if (!existing.includes(p.id)) {
+                      existing.push(p.id);
+                      localStorage.setItem('nexora_stock_alerts', JSON.stringify(existing));
+                    }
+                  } catch {}
+                }}
+              >
+                <BellRing size={15} /> Nhận thông báo khi có hàng lại hoặc giảm giá (USER-STOCK-ALERT-01)
+              </button>
+            )}
+          </div>
 
           <div className="delivery-note">
             <Truck size={19} />

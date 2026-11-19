@@ -138,3 +138,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 33. **Rừng Xanh NEXORA & Sổ Cái Cây Xanh Kỹ Thuật Số (ECO-TREE-OFFSET-01)**:
    - Hồ sơ: Module 04 Bán lẻ Sàn TMĐT & Module 07 Trách nhiệm Xã hội Doanh nghiệp (CSR/ESG).
    - Thực tế: Phân hệ Rừng Xanh NEXORA tại `/tai-khoan`, sổ cái kỹ thuật số Digital Tree Registry lưu vết mã số từng cây xanh bản địa được bảo trợ tại Cần Giờ, Cúc Phương, Cà Mau, đo lường 64.5 kg CO2e bù đắp và cấp huy hiệu danh dự NEXORA Eco Pioneer.
+
+34. **Đăng Ký Nhận Thông Báo Khi Có Hàng Lại & Biến Động Giá (USER-STOCK-ALERT-01)**:
+   - Hồ sơ: Module 01 Quản trị Danh mục & Module 07 Thông báo Cá nhân hóa.
+   - Thực tế: Nút nhận thông báo khi có hàng lại hoặc giảm giá tại `/san-pham/[slug]`, đăng ký 1-chạm không cần điền form, lưu vết `nexora_stock_alerts` và tích hợp đồng bộ vào chuông Header.
+
+35. **Bộ Sưu Tập Nhộng Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Phong cách OOTD Lookbook.
+   - Thực tế: Phân hệ Capsule Lookbook 3 phong cách (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, hiển thị chi tiết 3 lớp đồ, chỉ số hòa sắc 97-99% và chiết khấu trọn bộ Combo Style Saver -10%.

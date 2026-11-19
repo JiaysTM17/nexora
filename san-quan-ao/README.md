@@ -183,5 +183,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì** | Module 01 & UI | Đã hoàn thiện | Command Palette tìm kiếm mở nhanh bằng Ctrl+K hoặc icon kính lúp trên Header, thẻ xu hướng thịnh hành, gợi ý sản phẩm realtime kèm thumbnail và giá tại chỗ (CAT-SEARCH-AUTOCOMPLETE-01) |
 | **Đặt Lịch Hẹn VIP Tại Flagship Atelier** | Module 02 & VAS | Đã hoàn thiện | Đặt lịch trải nghiệm trực tiếp tại Atelier Sài Gòn/Hà Nội, phòng thử Private Suite, may đo tinh chỉnh phom dáng và cấp thẻ VIP Ticket tại `/vas-care` (VAS-ATELIER-BOOKING-01) |
 | **Rừng Xanh NEXORA & Sổ Cái Cây Xanh Kỹ Thuật Số** | Module 04 & 07 | Đã hoàn thiện | Sổ cái cây xanh bảo trợ (Digital Tree Registry) tại `/tai-khoan`, đo lường 64.5 kg CO2e bù đắp từ các đơn hàng Eco Box và huy hiệu Eco Pioneer (ECO-TREE-OFFSET-01) |
+| **Đăng Ký Thông Báo Có Hàng Lại & Giá** | Module 01 & 07 | Đã hoàn thiện | Nút đăng ký nhận chuông thông báo tức thời khi sản phẩm hết hàng về thêm size hoặc áp dụng Flash Sale tại `/san-pham/[slug]` (USER-STOCK-ALERT-01) |
+| **Bộ Sưu Tập Nhộng Capsule Lookbook** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Lookbook 3 phong cách thiết yếu (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, chiết khấu Combo Saver -10% và kết nối Studio `/phoi-do` (CAT-CAPSULE-LOOKBOOK-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

@@ -55,6 +55,8 @@
 | **44** | **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)** | Module 01 & UI | Đã hoàn thiện | Command Palette tìm kiếm mở nhanh bằng Ctrl+K hoặc icon kính lúp trên Header, thẻ xu hướng thịnh hành, gợi ý sản phẩm realtime kèm thumbnail và giá tại chỗ |
 | **45** | **Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ đặt lịch trực tiếp tại Flagship Atelier (Sài Gòn/Hà Nội), thử đồ Private Suite, may đo phom dáng bespoke, tư vấn Senior Stylist và cấp thẻ VIP Ticket điện tử tại `/vas-care` |
 | **46** | **Rừng Xanh NEXORA & Bù Đắp Carbon (ECO-TREE-OFFSET-01)** | Module 04 & 07 | Đã hoàn thiện | Sổ cái cây xanh bảo trợ kỹ thuật số (Digital Tree Registry) với mã số định danh từng cây tại Cần Giờ/Cúc Phương/Cà Mau, chỉ số bù đắp CO2e và huy hiệu Eco Pioneer tại `/tai-khoan` |
+| **47** | **Đăng Ký Thông Báo Có Hàng Lại & Giá (USER-STOCK-ALERT-01)** | Module 01 & 07 | Đã hoàn thiện | Nút đăng ký nhận chuông thông báo tức thời khi sản phẩm hết hàng về thêm size hoặc áp dụng Flash Sale, tích hợp Trung tâm thông báo Header tại `/san-pham/[slug]` |
+| **48** | **Bộ Sưu Tập Nhộng Capsule Lookbook (CAT-CAPSULE-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Lookbook 3 phong cách thiết yếu (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, chiết khấu Combo Saver -10% và kết nối Studio `/phoi-do` |
 
 ---
 
@@ -303,6 +305,23 @@
     - Lưu vết mã định danh minh bạch từng cây: `TREE-VN-CG-2401` (Cây Bần Trắng - Rừng Cần Giờ), `TREE-VN-CP-2402` (Cây Chò Chỉ - Vườn QG Cúc Phương), `TREE-VN-CM-2403` (Cây Đước Đôi - Cà Mau).
     - Đo lường lượng CO2e đã hấp thụ bù đắp (64.5 kg CO2e) và tích lũy xu thưởng Eco Coins (+150 Xu).
     - Cấp chứng thư số và danh hiệu danh dự **NEXORA Eco Pioneer 2026** cho thành viên tích cực.
+
+### 31. Đăng Ký Nhận Thông Báo Khi Có Hàng Lại & Biến Động Giá (USER-STOCK-ALERT-01)
+- **Mục tiêu**: Tối đa hóa tỷ lệ giữ chân khách hàng (Retention) và không để mất đơn hàng khi kích thước hoặc biến thể sản phẩm tạm thời hết hàng trong kho.
+- **Cơ chế**:
+  - Tích hợp nút `[ Nhận thông báo khi có hàng lại hoặc giảm giá ]` ngay trên trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Khách hàng bấm đăng ký 1-chạm không cần điền form phức tạp; hệ thống tự động ghi nhận mã sản phẩm vào danh sách quan tâm `nexora_stock_alerts`.
+  - Hiển thị phản hồi xác nhận xanh tức thời: "Đã bật chuông thông báo! NEXORA sẽ gửi thông báo đến chuông Header của bạn ngay khi mẫu này có đợt Flash Sale hoặc về thêm size mới."
+  - Tương thích đa kênh với Trung tâm thông báo `NOTIF-CENTER-02` trên thanh Header.
+
+### 32. Bộ Sưu Tập Nhộng Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01)
+- **Mục tiêu**: Chuyển đổi mô hình hiển thị sản phẩm đơn lẻ truyền thống sang bán hàng theo gói phong cách (Curated Outfit Bundle), kích thích giá trị đơn hàng trung bình (AOV).
+- **Cơ chế**:
+  - Bổ sung phân hệ Lookbook tạp chí thời trang nổi bật trên trang chủ, giới thiệu 3 bản phối Capsule hoàn chỉnh:
+    1. *The Normandy Summer Edit*: Áo sơ mi linen cổ trụ + Quần short linen mộc + Áo khoác safari kaki đũi (Hòa sắc 99/100, tiết kiệm -10% còn 1.314.000đ).
+    2. *The Minimal Executive Edit*: Áo Polo dệt kim Merino + Quần tây xếp ly kép + Áo khoác Blazer linen hai hàng khuy (Hòa sắc 98/100, tiết kiệm -10% còn 1.764.000đ).
+    3. *Bảo Lộc Silk Atelier Edit*: Áo sơ mi lụa tơ tằm dệt tay + Quần culottes lụa cát + Khăn lụa bỏ túi & Áo choàng nhẹ (Hòa sắc 97/100, tiết kiệm -10% còn 1.665.000đ).
+  - Tương tác chuyển đổi tab mượt mà, khung hiển thị 3 lớp áo/quần/khoác trực quan và nút bấm kết nối liền mạch sang Phòng Thử Đồ Mix & Match `/phoi-do`.
 
 ---
 
