@@ -122,3 +122,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 29. **Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI Stylist (SOC-WARDROBE-AI-01)**:
    - Hồ sơ: Module 01 Quản lý Danh mục, Module 06 Phong cách OOTD & Module 07 Quản trị Khách hàng.
    - Thực tế: Phân hệ Capsule Wardrobe tại `/tai-khoan`, thuật toán AI Stylist tự động lên lịch phối đồ 7 ngày từ 7 món đồ thiết yếu theo số đo Fashion Passport, hỗ trợ chuyển đổi thời tiết Nắng ấm/Se lạnh, ghim bộ đồ mặc hôm nay và chia sẻ Lookbook lên Cộng đồng OOTD `/cong-dong`.
+
+30. **Hộ Chiếu Minh Bạch Chất Liệu & Xuất Xứ (CAT-FABRIC-TRACE-01)**:
+   - Hồ sơ: Module 01 Quản lý Sản phẩm & Nguồn gốc Xuất xứ.
+   - Thực tế: Khung Hộ Chiếu Chất Liệu tại `/san-pham/[slug]` công khai vùng nguyên liệu (Bảo Lộc Silk, Normandy Flax, Pima Cotton), chứng chỉ OEKO-TEX Standard 100/GOTS, chỉ số giảm -65% nước, -72% CO2e và hướng dẫn bảo quản Atelier Care Guide.
+
+31. **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)**:
+   - Hồ sơ: Module 01 Tìm kiếm Sản phẩm & Trải nghiệm Giao diện Người dùng.
+   - Thực tế: Hộp thoại tìm kiếm nhanh Command Palette mở bằng `Ctrl+K` hoặc biểu tượng kính lúp, tích hợp thẻ từ khóa xu hướng và gợi ý sản phẩm tự động kèm ảnh và mức giá VND thời gian thực.

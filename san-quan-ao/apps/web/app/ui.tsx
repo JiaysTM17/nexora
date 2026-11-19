@@ -12,20 +12,63 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null), [open, setOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(3);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [searching, setSearching] = useState(false);
   const path = usePathname();
   const refresh = () => { api<PublicUser>('/auth/me').then(setUser).catch(() => setUser(null)); };
   useEffect(refresh, []);
   useEffect(() => {
     setOpen(false);
+    setSearchOpen(false);
     const ref = new URLSearchParams(window.location.search).get('ref');
     if (ref && ref.length <= 100) localStorage.setItem('nexora_ref', ref);
   }, [path]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+      if (e.key === 'Escape') {
+        setSearchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      setSearching(false);
+      return;
+    }
+    setSearching(true);
+    const timer = setTimeout(() => {
+      api<Product[]>(`/products?q=${encodeURIComponent(searchQuery.trim())}`)
+        .then((res) => setSearchResults(res.slice(0, 5)))
+        .catch(() => setSearchResults([]))
+        .finally(() => setSearching(false));
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   return <UserContext.Provider value={{ user, refresh }}>
     <div className="announcement">NEXORA — HỆ SINH THÁI THỜI TRANG & CỘNG ĐỒNG PHỐI ĐỒ THẾ HỆ MỚI <span>Khám phá ngay ↗</span></div>
     <header className="header"><Link href="/" className="logo" aria-label="NEXORA, trang chủ"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '30px', width: 'auto' }} /></Link>
       <nav className={open ? 'nav open' : 'nav'} aria-label="Điều hướng chính"><Link className={path === '/' || path.startsWith('/san-pham') ? 'active' : ''} href="/">Khám phá</Link><Link className={path === '/phoi-do' ? 'active' : ''} href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link className={path === '/live' ? 'active' : ''} href="/live" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 7, height: 7, borderRadius: '50%', background: '#EF4444', display: 'inline-block', boxShadow: '0 0 6px #EF4444' }}/>Trực tiếp (Live)</Link><Link className={path === '/cong-dong' ? 'active' : ''} href="/cong-dong">Cộng đồng OOTD</Link><Link className={path === '/trade-in' ? 'active' : ''} href="/trade-in">Trade-In</Link><Link className={path === '/vas-care' ? 'active' : ''} href="/vas-care">VAS Care</Link><Link className={path === '/seller' ? 'active' : ''} href="/seller">Dành cho Shop</Link>{user?.role === 'ADMIN' && <Link className={path === '/admin' ? 'active' : ''} href="/admin">Quản trị</Link>}</nav>
       <div className="header-actions">
-        <Link href="/tim-kiem" className="icon-link" aria-label="Tìm kiếm"><Search size={20}/></Link>
+        <button
+          type="button"
+          className="icon-link"
+          aria-label="Tìm kiếm nhanh (Ctrl+K)"
+          title="Tìm kiếm nhanh (Ctrl+K)"
+          onClick={() => setSearchOpen(true)}
+        >
+          <Search size={20}/>
+        </button>
         <div style={{ position: 'relative' }}>
           <button
             className="icon-link"
@@ -119,6 +162,166 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <Link href="/gio-hang" className="icon-link" aria-label="Giỏ hàng"><ShoppingBag size={22}/></Link>
         <button className="icon-link mobile-menu" onClick={() => setOpen(!open)} aria-label="Mở menu" aria-expanded={open}>{open ? <X/> : <Menu/>}</button>
       </div>
+
+      {/* Live Search & Command Palette (CAT-SEARCH-AUTOCOMPLETE-01) */}
+      {searchOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            paddingTop: 80,
+            backdropFilter: 'blur(3px)',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSearchOpen(false);
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              width: '100%',
+              maxWidth: 580,
+              borderRadius: 6,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
+              overflow: 'hidden',
+              border: '1px solid var(--line)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid var(--line)' }}>
+              <Search size={18} color="var(--muted)" style={{ marginRight: 10 }} />
+              <input
+                autoFocus
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm trang phục, chất liệu (Linen, Lụa...), phong cách... (Esc để đóng)"
+                style={{
+                  border: 'none',
+                  outline: 'none',
+                  fontSize: 14,
+                  width: '100%',
+                  background: 'transparent',
+                }}
+              />
+              <button
+                type="button"
+                className="text-button"
+                style={{ fontSize: 11, padding: '2px 6px' }}
+                onClick={() => setSearchOpen(false)}
+              >
+                Esc
+              </button>
+            </div>
+
+            {/* Trending tags */}
+            <div style={{ padding: '8px 16px', background: '#faf9f5', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600 }}>Thịnh hành:</span>
+              {['Quiet Luxury', 'Linen Normandy', 'Lụa Tơ Tằm', 'Quần Sartorial', 'Blazer'].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  style={{
+                    background: '#fff',
+                    border: '1px solid var(--line)',
+                    padding: '2px 8px',
+                    borderRadius: 3,
+                    fontSize: 11,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setSearchQuery(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+
+            {/* Results */}
+            <div style={{ maxHeight: 360, overflowY: 'auto', padding: 8 }}>
+              {searching ? (
+                <div style={{ padding: 16, textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+                  Đang tìm kiếm sản phẩm...
+                </div>
+              ) : searchQuery.trim() && !searchResults.length ? (
+                <div style={{ padding: 20, textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+                  Không tìm thấy sản phẩm nào khớp với &quot;{searchQuery}&quot;. Thử tìm với từ khóa khác hoặc{' '}
+                  <Link href={`/tim-kiem?q=${encodeURIComponent(searchQuery)}`} onClick={() => setSearchOpen(false)} style={{ color: 'var(--clay)', fontWeight: 600 }}>
+                    tìm kiếm nâng cao &rarr;
+                  </Link>
+                </div>
+              ) : searchResults.length ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {searchResults.map((prod) => (
+                    <Link
+                      key={prod.id}
+                      href={`/san-pham/${prod.slug}`}
+                      onClick={() => setSearchOpen(false)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '8px 10px',
+                        borderRadius: 4,
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        transition: 'background 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f3ee')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <img
+                        src={prod.images[0]?.url || '/products/shirt.svg'}
+                        alt={prod.name}
+                        style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 3, background: '#eee' }}
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                        }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 10, color: 'var(--muted)' }}>{prod.shop.name}</span>
+                          {prod.shop.isMall && (
+                            <span style={{ fontSize: 9, background: '#1e3a8a', color: '#fff', padding: '1px 4px', borderRadius: 2, fontWeight: 700 }}>
+                              MALL
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {prod.name}
+                        </div>
+                        <div style={{ fontSize: 11, color: 'var(--muted)' }}>{prod.material}</div>
+                      </div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--clay)' }}>
+                        {vnd(Math.min(...prod.variants.map((v) => v.price)))}
+                      </div>
+                    </Link>
+                  ))}
+                  <div style={{ padding: '8px 10px', borderTop: '1px solid var(--line)', textAlign: 'center', marginTop: 4 }}>
+                    <Link
+                      href={`/tim-kiem?q=${encodeURIComponent(searchQuery)}`}
+                      onClick={() => setSearchOpen(false)}
+                      style={{ fontSize: 12, color: 'var(--clay)', fontWeight: 600 }}
+                    >
+                      Xem toàn bộ kết quả cho &quot;{searchQuery}&quot; &rarr;
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ padding: 16, textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+                  Gõ từ khóa để nhận gợi ý sản phẩm tức thời, hoặc nhấn vào các thẻ thịnh hành ở trên.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
     <main>{children}</main>
     <footer><div><Link href="/" className="logo"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '26px', width: 'auto' }} /></Link><p>The Next Era of Fashion Commerce & Lifestyle Community.</p><p style={{ fontSize: 10, color: 'var(--muted)', marginTop: 8 }}>Vận hành tuân thủ Nghị định 91/2022/NĐ-CP &amp; Nghị định 13/2023/NĐ-CP về Bảo vệ Dữ liệu Cá nhân (PDPD).</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục & Phụ kiện</Link><Link href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link href="/live">Sàn diễn Live (SOC-LIVE-01)</Link><Link href="/cong-dong">Cộng đồng OOTD</Link><Link href="/trade-in">Thu cũ Đổi mới (Trade-In)</Link><Link href="/vas-care">Chăm sóc đồ hiệu (VAS Care)</Link></div><div><p>HỆ SINH THÁI</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng NEXORA</Link><Link href="/dang-ky">Đăng ký tài khoản</Link></div><div className="footer-note"><strong>TIÊU CHUẨN VẬN HÀNH</strong><br/>• Đồng kiểm ngoại quan (RET-COINSPECT)<br/>• Cầu dao an ninh giá (SOC-PRICE-ERROR)<br/>• Mã PIN an ninh giao nhận (FUL-VERIF-05)<br/>• Hóa đơn điện tử VAT TT 78/2021<br/>• Bảo hành &amp; Đổi trả 7–15 ngày</div></footer>

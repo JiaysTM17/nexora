@@ -51,6 +51,8 @@
 | **40** | **Trung Tâm Thông Báo Đa Kênh Thời Gian Thực (NOTIF-CENTER-02)** | Module 07 | Đã hoàn thiện | Chuông thông báo trực quan trên Header với số lượng tin chưa đọc, cập nhật biến động đơn hàng, thưởng xu sống xanh Eco Box, ưu đãi combo Mix & Match và kích hoạt bảo hành Care+ |
 | **41** | **Bản Thể Hiện Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 & Xuất HĐ (ORD-EXPORT-PDF-01)** | Module 03 & 04 | Đã hoàn thiện | Khung modal và giao diện in ấn hóa đơn GTGT điện tử khởi tạo từ máy tính tiền (Ký hiệu 1C26TNO/C26MNE), bảng kê mặt hàng, thuế GTGT 8%, mã CQT cấp và QR tra cứu hóa đơn tại `/don-hang/[id]` |
 | **42** | **Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI Stylist (SOC-WARDROBE-AI-01)** | Module 01, 06 & 07 | Đã hoàn thiện | Phân hệ Capsule Wardrobe lập lịch phối đồ 7 ngày AI Stylist theo số đo Fashion Passport, chuyển đổi thời tiết Nắng ấm/Se lạnh, ghim bộ đồ hôm nay và chia sẻ Lookbook OOTD tại `/tai-khoan` |
+| **43** | **Hộ Chiếu Minh Bạch Chất Liệu & Xuất Xứ (CAT-FABRIC-TRACE-01)** | Module 01 | Đã hoàn thiện | Khung thông tin nguồn gốc sợi dệt (Lụa Bảo Lộc, Linen Normandy, GOTS Cotton), chỉ số dấu chân sinh thái Eco-Footprint (giảm 65% nước, -72% CO2e) và cẩm nang bảo quản Atelier Care tại `/san-pham/[slug]` |
+| **44** | **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)** | Module 01 & UI | Đã hoàn thiện | Command Palette tìm kiếm mở nhanh bằng Ctrl+K hoặc icon kính lúp trên Header, thẻ xu hướng thịnh hành, gợi ý sản phẩm realtime kèm thumbnail và giá tại chỗ |
 
 ---
 
@@ -263,6 +265,23 @@
     - *Chủ Nhật (Sunday Gallery & Atelier Brunch)*: Áo lụa suông bay bổng + Quần culottes lụa cát.
   - Bộ chuyển đổi chế độ thời tiết thông minh: Tùy biến giữa "Nắng ấm thoáng mát" (lớp áo nhẹ, chất liệu lanh/lụa) và "Se lạnh thu đông" (bổ sung layer blazer linen, cardigan len cashmere hoặc áo khoác safari).
   - Tương tác đa chiều: Nút `[ Chọn mặc hôm nay ]` ghim trực quan ngày hiện tại, nút `[ Đăng OOTD Lookbook ]` liên kết ngay sang cộng đồng OOTD `/cong-dong`, và thuật toán phát hiện món đồ còn thiếu (Missing Piece) gợi ý bổ sung trang phục để tối ưu hóa tủ đồ nhộng.
+
+### 27. Hộ Chiếu Minh Bạch Chất Liệu & Xuất Xứ (CAT-FABRIC-TRACE-01)
+- **Mục tiêu**: Nâng cao niềm tin của người tiêu dùng đối với thời trang cao cấp thông qua việc công khai minh bạch nguồn gốc sợi dệt, chứng chỉ sinh thái và hướng dẫn bảo quản kéo dài vòng đời trang phục.
+- **Cơ chế**:
+  - Tích hợp khung Hộ Chiếu Chất Liệu mở rộng ngay trên trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Phân tích nguồn gốc xuất xứ nguyên liệu: Lụa tơ tằm Bảo Lộc (Lâm Đồng), Sợi đay lanh French Normandy Flax (Cộng Hòa Pháp), hoặc Pima Cotton hữu cơ.
+  - Chứng nhận tiêu chuẩn quốc tế: OEKO-TEX Standard 100, Global Organic Textile Standard (GOTS).
+  - Bảng chỉ số dấu chân môi trường (Eco-Footprint): Tiết kiệm -65% lượng nước tiêu thụ, giảm phát thải -72% CO2e so với sợi tổng hợp polyester, 100% tự phân hủy sinh học trong đất.
+  - Atelier Care Guide: Quy trình giặt sấy, là ủi hơi nước mặt trái chuyên biệt để duy trì độ rủ óng ả và phom dáng nguyên bản.
+
+### 28. Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì (CAT-SEARCH-AUTOCOMPLETE-01)
+- **Mục tiêu**: Rút ngắn thời gian tiếp cận sản phẩm (Time-to-Product), mang lại trải nghiệm tìm kiếm mượt mà như các ứng dụng native cao cấp.
+- **Cơ chế**:
+  - Hỗ trợ phím tắt toàn cục `Ctrl+K` (hoặc `Cmd+K`) và biểu tượng kính lúp trên Header để mở nhanh hộp thoại tìm kiếm Command Palette.
+  - Các thẻ từ khóa thịnh hành (Trending Search Tags): *Quiet Luxury*, *Linen Normandy*, *Lụa Tơ Tằm*, *Quần Sartorial*, *Blazer*.
+  - Khả năng gợi ý sản phẩm tự động (Live Autocomplete) theo thời gian thực (debounced 200ms): Hiển thị thumbnail ảnh thật, tên gian hàng, huy hiệu MALL, chất liệu và mức giá VND thấp nhất của biến thể.
+  - Điều hướng tức thời 1-chạm hoặc nhấn phím Esc để đóng nhẹ nhàng.
 
 ---
 

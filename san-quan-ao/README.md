@@ -179,5 +179,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Trung Tâm Thông Báo Thời Gian Thực** | Module 07 | Đã hoàn thiện | Chuông thông báo trên Header hiển thị tin chưa đọc, biến động vận đơn 3 trạm, thưởng Xu Xanh và ưu đãi Combo Mix & Match (NOTIF-CENTER-02) |
 | **Bản Thể Hiện Hóa Đơn Điện Tử VAT TT 78** | Module 03 & 04 | Đã hoàn thiện | Nút in/xuất hóa đơn VAT điện tử (1C26TNO/C26MNE), bảng kê thuế 8%, mã CQT cấp và QR tra cứu tại `/don-hang/[id]` (ORD-EXPORT-PDF-01) |
 | **Tủ Đồ Nhộng & Lịch Phối Đồ AI Stylist** | Module 01, 06 & 07 | Đã hoàn thiện | Kế hoạch mix & match 7 ngày theo số đo Fashion Passport, chuyển đổi Nắng ấm/Se lạnh, ghim đồ hôm nay và chia sẻ OOTD tại `/tai-khoan` (SOC-WARDROBE-AI-01) |
+| **Hộ Chiếu Minh Bạch Chất Liệu & Xuất Xứ** | Module 01 | Đã hoàn thiện | Khung thông tin nguồn gốc sợi dệt (Lụa Bảo Lộc, Linen Normandy, GOTS Cotton), chỉ số dấu chân sinh thái Eco-Footprint (giảm 65% nước, -72% CO2e) và cẩm nang bảo quản Atelier Care tại `/san-pham/[slug]` (CAT-FABRIC-TRACE-01) |
+| **Thanh Tìm Kiếm Nhanh & Gợi Ý Tức Thì** | Module 01 & UI | Đã hoàn thiện | Command Palette tìm kiếm mở nhanh bằng Ctrl+K hoặc icon kính lúp trên Header, thẻ xu hướng thịnh hành, gợi ý sản phẩm realtime kèm thumbnail và giá tại chỗ (CAT-SEARCH-AUTOCOMPLETE-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
