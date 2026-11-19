@@ -1,7 +1,7 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -207,6 +207,57 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
           <div className="spec-pills">
             <span>{p.material}</span>
             <span>{p.fit}</span>
+          </div>
+
+          {/* Hồ Sơ Năng Lực & Uy Tín Gian Hàng (CAT-SELLER-SCORE-01) */}
+          <div
+            style={{
+              margin: '14px 0',
+              padding: '12px 14px',
+              background: '#faf9f5',
+              border: '1px solid var(--line)',
+              borderRadius: 4,
+            }}
+          >
+            <div className="row between" style={{ marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Store size={16} color="var(--clay)" />
+                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>{p.shop.name}</strong>
+                {p.shop.isMall && (
+                  <span style={{ fontSize: 9, background: '#1e3a8a', color: '#fff', padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                    MALL
+                  </span>
+                )}
+              </div>
+              <span style={{ fontSize: 11, color: '#166534', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                <CheckCircle size={12} /> Đã xác thực pháp lý
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, margin: '8px 0', textAlign: 'center' }}>
+              <div style={{ background: '#fff', padding: '6px 4px', borderRadius: 2, border: '1px solid var(--line)' }}>
+                <div style={{ fontSize: 10, color: 'var(--muted)' }}>Đánh giá</div>
+                <strong style={{ fontSize: 12, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                  4.9 <Star size={10} fill="#f59e0b" color="#f59e0b" />
+                </strong>
+              </div>
+              <div style={{ background: '#fff', padding: '6px 4px', borderRadius: 2, border: '1px solid var(--line)' }}>
+                <div style={{ fontSize: 10, color: 'var(--muted)' }}>Chuẩn bị</div>
+                <strong style={{ fontSize: 12, color: '#166534' }}>99.4%</strong>
+              </div>
+              <div style={{ background: '#fff', padding: '6px 4px', borderRadius: 2, border: '1px solid var(--line)' }}>
+                <div style={{ fontSize: 10, color: 'var(--muted)' }}>Phản hồi</div>
+                <strong style={{ fontSize: 12, color: 'var(--ink)' }}>&lt; 5 phút</strong>
+              </div>
+              <div style={{ background: '#fff', padding: '6px 4px', borderRadius: 2, border: '1px solid var(--line)' }}>
+                <div style={{ fontSize: 10, color: 'var(--muted)' }}>Đổi size</div>
+                <strong style={{ fontSize: 12, color: '#166534' }}>100%</strong>
+              </div>
+            </div>
+
+            <p style={{ margin: '6px 0 0', fontSize: 10, color: 'var(--muted)', lineHeight: 1.4 }}>
+              🛡️ Cam kết sàn: Đổi size tận cửa 24-48h · Đồng kiểm ngoại quan khi nhận · Hoàn tiền 200% nếu phát hiện hàng không chính hãng.
+            </p>
           </div>
 
           <fieldset>

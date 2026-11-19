@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -39,6 +39,15 @@ export default function AccountPage() {
   const [selectedDay, setSelectedDay] = useState(0);
   const [weatherMode, setWeatherMode] = useState<'WARM' | 'COOL'>('WARM');
   const [pinnedDay, setPinnedDay] = useState<number | null>(null);
+  const [archetype, setArchetype] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('nexora_style_archetype') || 'Quiet Luxury Curator';
+    }
+    return 'Quiet Luxury Curator';
+  });
+  const [quizOpen, setQuizOpen] = useState(false);
+  const [quizStep, setQuizStep] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, string>>({});
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -177,6 +186,193 @@ export default function AccountPage() {
             Cập nhật Fashion Passport
           </button>
         </form>
+      </article>
+
+      {/* Khám Phá Bản Sắc Phong Cách Thời Trang (Fashion Archetype Quiz · USER-STYLE-QUIZ-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Compass size={18} color="var(--clay)" /> Bản Sắc Phong Cách Thời Trang (Fashion Archetype)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Khám phá DNA thẩm mỹ của bạn qua 4 câu hỏi định hình phong cách độc quyền từ các Senior Stylist.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="text-button"
+            style={{ fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            onClick={() => {
+              setQuizOpen(!quizOpen);
+              setQuizStep(0);
+              setQuizAnswers({});
+            }}
+          >
+            <Palette size={14} /> {quizOpen ? 'Đóng bài trắc nghiệm' : archetype ? 'Trắc nghiệm lại' : 'Làm trắc nghiệm ngay'}
+          </button>
+        </div>
+
+        {/* Current Archetype Badge */}
+        {archetype && !quizOpen && (
+          <div
+            style={{
+              padding: '14px 18px',
+              background: '#faf8f5',
+              border: '1px solid var(--line)',
+              borderRadius: 4,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 12,
+            }}
+          >
+            <div>
+              <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clay)', fontWeight: 700 }}>
+                STYLE DNA ARCHETYPE
+              </span>
+              <h3 style={{ margin: '2px 0 4px', fontSize: 16 }}>{archetype}</h3>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+                {archetype === 'Quiet Luxury Curator' && 'Khí chất thượng lưu tinh tế, ưa chuộng lụa tơ tằm và len merino, tối giản không phô trương.'}
+                {archetype === 'Earth Sartorialist' && 'Hòa hợp cùng thiên nhiên qua chất liệu đay lanh Normandy, phom suit mềm phóng khoáng và gam màu sa mạc.'}
+                {archetype === 'Minimalist Architect' && 'Đường cắt may sắc sảo, bảng màu đơn sắc monochrome đen - trắng tạo ấn tượng thị giác hiện đại.'}
+                {archetype === 'Slow Fashion Bohemian' && 'Đũi lanh mộc tự nhiên, sợi bông hữu cơ bay bổng, tôn vinh lối sống xanh bền vững tuần hoàn.'}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 11, background: '#fff', border: '1px solid var(--line)', padding: '4px 10px', borderRadius: 3, fontWeight: 600 }}>
+                ✓ Đã đồng bộ Fashion Passport
+              </span>
+              <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '4px 10px', borderRadius: 3, fontWeight: 600 }}>
+                ✓ Tự động cá nhân hóa 7 ngày
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Quiz Steps Form */}
+        {quizOpen && (
+          <div style={{ marginTop: 14, padding: '16px 20px', background: '#fff', border: '1px solid var(--line)', borderRadius: 4 }}>
+            {(() => {
+              const questions = [
+                {
+                  title: '1. Bảng màu làm bạn cảm thấy tự tin và thư thái nhất?',
+                  options: [
+                    { label: 'Gam màu trung tính: Trắng ngà, be cát, xám khói, xanh navy', type: 'Quiet Luxury Curator' },
+                    { label: 'Màu đất mộc mạc: Nâu đất, vàng mù tạt, xanh rêu, chàm tự nhiên', type: 'Earth Sartorialist' },
+                    { label: 'Đơn sắc tối giản: Đen tuyền, trắng tinh tế, ghi đậm tương phản', type: 'Minimalist Architect' },
+                    { label: 'Màu sợi mộc: Kem tự nhiên, màu vải đũi chưa qua tẩy nhuộm', type: 'Slow Fashion Bohemian' },
+                  ],
+                },
+                {
+                  title: '2. Bối cảnh bạn thường xuyên chú trọng trang phục nhất?',
+                  options: [
+                    { label: 'Phòng họp đối tác cao cấp, dạ tiệc tối và sự kiện networking', type: 'Quiet Luxury Curator' },
+                    { label: 'Không gian sáng tạo, studio nghệ thuật và cà phê cuối tuần', type: 'Earth Sartorialist' },
+                    { label: 'Triển lãm kiến trúc, thảm đỏ nghệ thuật đương đại', type: 'Minimalist Architect' },
+                    { label: 'Các chuyến du lịch nghỉ dưỡng, dã ngoại và hòa mình với tự nhiên', type: 'Slow Fashion Bohemian' },
+                  ],
+                },
+                {
+                  title: '3. Chất liệu vải chạm vào làn da mang lại cảm xúc say đắm nhất?',
+                  options: [
+                    { label: 'Lụa tơ tằm dệt tay & Len lông cừu Merino sợi mảnh', type: 'Quiet Luxury Curator' },
+                    { label: 'Đay lanh French Normandy Flax & Cotton Compact Pima', type: 'Earth Sartorialist' },
+                    { label: 'Lụa satin cát bóng mờ & Dạ wool đanh mịn sắc nét', type: 'Minimalist Architect' },
+                    { label: 'Đũi tơ tằm thô, sợi gai dầu & cotton hữu cơ thoáng khí', type: 'Slow Fashion Bohemian' },
+                  ],
+                },
+                {
+                  title: '4. Châm ngôn thời trang miêu tả chân thực nhất gu mặc của bạn?',
+                  options: [
+                    { label: '“Sang trọng không cần phô trương, chất lượng định nghĩa đẳng cấp.”', type: 'Quiet Luxury Curator' },
+                    { label: '“Hòa mình cùng thiên nhiên, nét thanh lịch mộc mạc không gắng gượng.”', type: 'Earth Sartorialist' },
+                    { label: '“Cấu trúc hình học chuẩn mực, tối giản nhưng đậm ấn tượng thị giác.”', type: 'Minimalist Architect' },
+                    { label: '“Mặc vì cảm xúc và sự tự do, tôn vinh lối sống bền vững tuần hoàn.”', type: 'Slow Fashion Bohemian' },
+                  ],
+                },
+              ];
+
+              const currentQ = questions[quizStep];
+
+              return (
+                <div>
+                  <div className="row between" style={{ marginBottom: 12 }}>
+                    <span style={{ fontSize: 11, color: 'var(--clay)', fontWeight: 700, textTransform: 'uppercase' }}>
+                      CÂU HỎI {quizStep + 1} / 4
+                    </span>
+                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+                      Tiến độ: {Math.round(((quizStep + 1) / 4) * 100)}%
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: 15, margin: '0 0 14px' }}>{currentQ.title}</h3>
+
+                  <div style={{ display: 'grid', gap: 10 }}>
+                    {currentQ.options.map((opt, oIdx) => (
+                      <button
+                        key={oIdx}
+                        type="button"
+                        style={{
+                          textAlign: 'left',
+                          padding: '12px 16px',
+                          border: '1px solid var(--line)',
+                          borderRadius: 3,
+                          background: quizAnswers[quizStep] === opt.type ? '#faf8f3' : '#fff',
+                          borderColor: quizAnswers[quizStep] === opt.type ? 'var(--clay)' : 'var(--line)',
+                          cursor: 'pointer',
+                          fontSize: 13,
+                          lineHeight: 1.5,
+                          transition: 'all 0.15s ease',
+                        }}
+                        onClick={() => {
+                          const updated = { ...quizAnswers, [quizStep]: opt.type };
+                          setQuizAnswers(updated);
+                          if (quizStep < 3) {
+                            setQuizStep(quizStep + 1);
+                          } else {
+                            // Calculate result
+                            const counts: Record<string, number> = {};
+                            Object.values(updated).forEach((t) => {
+                              counts[t] = (counts[t] || 0) + 1;
+                            });
+                            let best = 'Quiet Luxury Curator';
+                            let max = 0;
+                            Object.entries(counts).forEach(([k, v]) => {
+                              if (v > max) {
+                                max = v;
+                                best = k;
+                              }
+                            });
+                            setArchetype(best);
+                            try {
+                              localStorage.setItem('nexora_style_archetype', best);
+                            } catch {}
+                            setQuizOpen(false);
+                          }
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {quizStep > 0 && (
+                    <button
+                      type="button"
+                      className="text-button"
+                      style={{ marginTop: 12, fontSize: 11, padding: 0 }}
+                      onClick={() => setQuizStep(quizStep - 1)}
+                    >
+                      &larr; Quay lại câu hỏi trước
+                    </button>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
       </article>
 
       {/* Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI (Capsule Wardrobe AI Stylist · SOC-WARDROBE-AI-01) */}

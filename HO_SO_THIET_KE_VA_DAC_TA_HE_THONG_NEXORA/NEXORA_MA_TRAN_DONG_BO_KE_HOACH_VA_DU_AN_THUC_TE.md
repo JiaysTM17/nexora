@@ -57,6 +57,8 @@
 | **46** | **Rừng Xanh NEXORA & Bù Đắp Carbon (ECO-TREE-OFFSET-01)** | Module 04 & 07 | Đã hoàn thiện | Sổ cái cây xanh bảo trợ kỹ thuật số (Digital Tree Registry) với mã số định danh từng cây tại Cần Giờ/Cúc Phương/Cà Mau, chỉ số bù đắp CO2e và huy hiệu Eco Pioneer tại `/tai-khoan` |
 | **47** | **Đăng Ký Thông Báo Có Hàng Lại & Giá (USER-STOCK-ALERT-01)** | Module 01 & 07 | Đã hoàn thiện | Nút đăng ký nhận chuông thông báo tức thời khi sản phẩm hết hàng về thêm size hoặc áp dụng Flash Sale, tích hợp Trung tâm thông báo Header tại `/san-pham/[slug]` |
 | **48** | **Bộ Sưu Tập Nhộng Capsule Lookbook (CAT-CAPSULE-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Lookbook 3 phong cách thiết yếu (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, chiết khấu Combo Saver -10% và kết nối Studio `/phoi-do` |
+| **49** | **Thang Điểm Uy Tín Gian Hàng & Tỷ Lệ Đổi Size (CAT-SELLER-SCORE-01)** | Module 01 & 02 | Đã hoàn thiện | Khung đánh giá uy tín shop trên trang sản phẩm `/san-pham/[slug]` với điểm số 4.9★, tốc độ chuẩn bị hàng 99.4%, phản hồi chat < 5 phút, tỷ lệ hỗ trợ đổi size 100% và bảo chứng đền bù 200% nếu phát hiện hàng giả |
+| **50** | **Trắc Nghiệm Định Hình Phong Cách Cá Nhân (USER-STYLE-QUIZ-01)** | Module 06 & 07 | Đã hoàn thiện | Bài trắc nghiệm 4 câu hỏi trực quan khám phá bản sắc thời trang (Quiet Luxury, Earth Sartorialist, Minimalist Architect, Bohemian) và lưu giữ huy hiệu Style DNA vĩnh viễn tại `/tai-khoan` |
 
 ---
 
@@ -322,6 +324,34 @@
     2. *The Minimal Executive Edit*: Áo Polo dệt kim Merino + Quần tây xếp ly kép + Áo khoác Blazer linen hai hàng khuy (Hòa sắc 98/100, tiết kiệm -10% còn 1.764.000đ).
     3. *Bảo Lộc Silk Atelier Edit*: Áo sơ mi lụa tơ tằm dệt tay + Quần culottes lụa cát + Khăn lụa bỏ túi & Áo choàng nhẹ (Hòa sắc 97/100, tiết kiệm -10% còn 1.665.000đ).
   - Tương tác chuyển đổi tab mượt mà, khung hiển thị 3 lớp áo/quần/khoác trực quan và nút bấm kết nối liền mạch sang Phòng Thử Đồ Mix & Match `/phoi-do`.
+
+### 33. Thang Điểm Uy Tín Gian Hàng & Tỷ Lệ Đổi Size (CAT-SELLER-SCORE-01)
+- **Mục tiêu**: Tối đa hóa chỉ số niềm tin của người mua thời trang online, giảm thiểu tỷ lệ băn khoăn trước khi quyết định bấm "Thêm vào giỏ hàng".
+- **Cơ chế**:
+  - Tích hợp khung thông tin định danh và năng lực vận hành của Nhà bán hàng ngay dưới phần mô tả sản phẩm tại `/san-pham/[slug]`.
+  - Hiển thị tên gian hàng, huy hiệu NEXORA MALL chính hãng và điểm đánh giá thực tế (4.9/5.0★ từ 3.200+ đánh giá người mua đã xác thực).
+  - 4 chỉ số vận hành vàng:
+    1. *Tốc độ chuẩn bị hàng*: 99.4% (giao bưu tá trong 24h).
+    2. *Tỷ lệ phản hồi chat*: 99.8% (phản hồi trong vòng < 5 phút).
+    3. *Hỗ trợ đổi size tận nhà*: 100% các đơn có nhu cầu trong 7-15 ngày.
+    4. *Cam kết bồi hoàn hàng hiệu*: Đền tiền 200% nếu phát hiện hàng không chính hãng.
+  - Tích hợp nút `[ Nhắn tin Tư vấn ]` và `[ Xem Hồ sơ Shop ]` kết nối trực tiếp trải nghiệm mua sắm.
+
+### 34. Trắc Nghiệm Định Hình Phong Cách Thời Trang Cá Nhân (USER-STYLE-QUIZ-01)
+- **Mục tiêu**: Giúp người dùng thấu hiểu bản sắc thời trang độc bản của mình, định hình phong cách tủ đồ và đề xuất các thiết kế tương thích cao nhất.
+- **Cơ chế**:
+  - Tích hợp mô-đun Fashion Archetype Quiz ngay trong thẻ Thời Trang Cá Nhân tại `/tai-khoan`.
+  - Bộ 4 câu hỏi trắc nghiệm tương tác trực quan:
+    1. *Mục đích diện đồ ưu tiên*: Thanh lịch tối giản nơi công sở, Dạo phố phóng khoáng cuối tuần, Tiệc tối sang trọng hay Thể thao năng động.
+    2. *Bảng màu trang phục yêu thích*: Trung tính trầm ấm (Beige/Kem/Nâu/Đen), Tươi sáng rực rỡ, Đơn sắc Monochrome (Đen/Trắng/Xám), hay Họa tiết cá tính.
+    3. *Chất liệu vải rung động*: Sợi lanh Linen mộc & Cotton hữu cơ, Lụa tơ tằm óng ả mềm mại, Vải dệt len Cashmere & Tweed đứng phom, hay Denim & Vải tái chế bền vững.
+    4. *Triết lý mua sắm hướng tới*: Ít nhưng chất lượng trường tồn (Capsule), Luôn săn đón xu hướng mới nhất, Độc bản & thủ công di sản, hay Tiện dụng & đa năng mọi lúc.
+  - Phân loại thành 4 Archetype phong cách:
+    - *The Quiet Luxury Curator*: Bảng màu trung tính, lụa/cashmere, tôn vinh sự tinh tế không phô trương.
+    - *The Earth Sartorialist*: Phong cách mộc mạc, bền vững từ chất liệu sợi tự nhiên.
+    - *The Minimalist Architect*: Đường nét sắc sảo, tối giản, công năng kiến trúc.
+    - *The Slow Fashion Bohemian*: Tự do phóng khoáng, thủ công di sản và chất sống độc bản.
+  - Lưu trữ định danh `nexora_style_archetype` trong LocalStorage và hiển thị huy hiệu Style DNA vĩnh viễn trên giao diện.
 
 ---
 

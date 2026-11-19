@@ -146,3 +146,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 35. **Bộ Sưu Tập Nhộng Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Phong cách OOTD Lookbook.
    - Thực tế: Phân hệ Capsule Lookbook 3 phong cách (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, hiển thị chi tiết 3 lớp đồ, chỉ số hòa sắc 97-99% và chiết khấu trọn bộ Combo Style Saver -10%.
+
+36. **Thang Điểm Uy Tín Gian Hàng & Tỷ Lệ Đổi Size (CAT-SELLER-SCORE-01)**:
+   - Hồ sơ: Module 01 Quản trị Danh mục & Module 02 Quản lý Gian hàng Nhà bán.
+   - Thực tế: Khung định danh nhà bán tại `/san-pham/[slug]` với điểm số 4.9/5.0★ từ 3.200+ đánh giá, tốc độ chuẩn bị hàng 99.4%, phản hồi chat < 5 phút, tỷ lệ hỗ trợ đổi size 100% và bảo chứng đền bù 200% nếu phát hiện hàng giả.
+
+37. **Trắc Nghiệm Định Hình Phong Cách Cá Nhân (USER-STYLE-QUIZ-01)**:
+   - Hồ sơ: Module 06 Phong cách OOTD & Module 07 Cá nhân hóa Người dùng.
+   - Thực tế: Bộ trắc nghiệm 4 câu hỏi Fashion Archetype Quiz tại `/tai-khoan` giúp người mua khám phá bản sắc độc bản (Quiet Luxury, Earth Sartorialist, Minimalist Architect, Slow Fashion Bohemian), lưu vết `nexora_style_archetype` và gắn huy hiệu Style DNA vĩnh viễn trên trang cá nhân.

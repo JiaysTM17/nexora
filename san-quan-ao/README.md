@@ -185,5 +185,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Rừng Xanh NEXORA & Sổ Cái Cây Xanh Kỹ Thuật Số** | Module 04 & 07 | Đã hoàn thiện | Sổ cái cây xanh bảo trợ (Digital Tree Registry) tại `/tai-khoan`, đo lường 64.5 kg CO2e bù đắp từ các đơn hàng Eco Box và huy hiệu Eco Pioneer (ECO-TREE-OFFSET-01) |
 | **Đăng Ký Thông Báo Có Hàng Lại & Giá** | Module 01 & 07 | Đã hoàn thiện | Nút đăng ký nhận chuông thông báo tức thời khi sản phẩm hết hàng về thêm size hoặc áp dụng Flash Sale tại `/san-pham/[slug]` (USER-STOCK-ALERT-01) |
 | **Bộ Sưu Tập Nhộng Capsule Lookbook** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Lookbook 3 phong cách thiết yếu (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, chiết khấu Combo Saver -10% và kết nối Studio `/phoi-do` (CAT-CAPSULE-LOOKBOOK-01) |
+| **Thang Điểm Uy Tín Gian Hàng & Tỷ Lệ Đổi Size** | Module 01 & 02 | Đã hoàn thiện | Khung đánh giá uy tín shop trên trang sản phẩm `/san-pham/[slug]` với điểm số 4.9★, tốc độ chuẩn bị 99.4%, phản hồi chat < 5 phút, đổi size 100% và bảo chứng đền bù 200% (CAT-SELLER-SCORE-01) |
+| **Trắc Nghiệm Định Hình Phong Cách Cá Nhân** | Module 06 & 07 | Đã hoàn thiện | Bài trắc nghiệm 4 câu hỏi Fashion Archetype Quiz khám phá bản sắc độc bản và lưu giữ huy hiệu Style DNA vĩnh viễn tại `/tai-khoan` (USER-STYLE-QUIZ-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
