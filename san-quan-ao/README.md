@@ -189,5 +189,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Trắc Nghiệm Định Hình Phong Cách Cá Nhân** | Module 06 & 07 | Đã hoàn thiện | Bài trắc nghiệm 4 câu hỏi Fashion Archetype Quiz khám phá bản sắc độc bản và lưu giữ huy hiệu Style DNA vĩnh viễn tại `/tai-khoan` (USER-STYLE-QUIZ-01) |
 | **Hộp Quà Cao Cấp Kèm Thiệp Sáp Niêm Phong** | Module 02 & 03 | Đã hoàn thiện | Tùy chọn đóng gói Haute Couture tại `/gio-hang` với hộp cứng nhung xám khói, 3 màu nơ lụa dệt, thiệp chúc mừng viết tay Calligraphy niêm phong sáp đồng (+60k hoặc 0đ đơn > 2tr) (VAS-GIFT-WRAP-01) |
 | **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng** | Module 04 & Logistics | Đã hoàn thiện | Modal bản đồ số Live GPS mô phỏng hành trình từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, đếm ngược thời gian dự kiến (12-15 phút) và liên lạc thoại/tin nhắn bảo mật PDPD tại `/don-hang/[id]` (ORD-TRACKING-MAP-01) |
+| **Mô Phỏng Phom Dáng & Độ Rủ 2D** | Module 01 & 3D/AI | Đã hoàn thiện | Phòng mô phỏng phom dáng 2D Mannequin Croquis tại `/san-pham/[slug]`, đối chiếu 3 tạng người (Petite/Athletic/Curvy), bản đồ độ căng phom và chọn size tự động (CAT-VIRTUAL-SILHOUETTE-01) |
+| **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao KOC** | Module 06 & Social | Đã hoàn thiện | Phân hệ Fit Q&A tại `/cong-dong`, thẻ lọc câu hỏi số đo cơ thể, phím tắt nhanh 1-chạm (1m58 48kg mặc size gì), huy hiệu KOC Tác giả phản hồi SLA 24h (SOC-FIT-FEEDBACK-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

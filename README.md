@@ -255,7 +255,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **45** | **Trắc Nghiệm Định Hình Phong Cách Cá Nhân (USER-STYLE-QUIZ-01)** | Module 06 & 07 | **100% Hoàn thiện** | Bài trắc nghiệm 4 câu hỏi Fashion Archetype Quiz khám phá bản sắc độc bản và lưu giữ huy hiệu Style DNA vĩnh viễn tại `/tai-khoan` |
 | **46** | **Hộp Quà Cao Cấp Kèm Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP-01)** | Module 02 & 03 | **100% Hoàn thiện** | Tùy chọn đóng gói Haute Couture tại `/gio-hang` với hộp cứng nhung xám khói, 3 màu nơ lụa dệt, thiệp chúc mừng viết tay Calligraphy niêm phong sáp đồng (+60k hoặc 0đ đơn > 2tr) |
 | **47** | **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)** | Module 04 & Logistics | **100% Hoàn thiện** | Modal bản đồ số Live GPS mô phỏng hành trình từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, đếm ngược thời gian dự kiến (12-15 phút) và liên lạc thoại/tin nhắn bảo mật PDPD tại `/don-hang/[id]` |
-| **48** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **48** | **Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE-01)** | Module 01 & 3D/AI | **100% Hoàn thiện** | Phòng mô phỏng phom dáng 2D Mannequin Croquis tại `/san-pham/[slug]`, đối chiếu 3 tạng người (Petite/Athletic/Curvy), bản đồ độ căng phom và chọn size tự động |
+| **49** | **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao KOC (SOC-FIT-FEEDBACK-01)** | Module 06 & Social | **100% Hoàn thiện** | Phân hệ Fit Q&A tại `/cong-dong`, thẻ lọc câu hỏi số đo cơ thể, phím tắt nhanh 1-chạm (1m58 48kg mặc size gì), huy hiệu KOC Tác giả phản hồi SLA 24h |
+| **50** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

@@ -162,3 +162,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 39. **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)**:
    - Hồ sơ: Module 04 Quản lý Vận hành Đơn hàng & Logistics.
    - Thực tế: Nút xem lộ trình bưu tá trực tuyến trên từng kiện hàng tại `/don-hang/[id]`, modal bản đồ số Live GPS mô phỏng hành trình từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, đếm ngược thời gian dự kiến (12-15 phút) và liên lạc thoại/tin nhắn bảo mật PDPD NĐ 13.
+
+40. **Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE-01)**:
+   - Hồ sơ: Module 01 Quản lý Danh mục & Trải nghiệm Thử đồ 3D/AI.
+   - Thực tế: Nút mô phỏng phom dáng tại `/san-pham/[slug]`, modal Mannequin Croquis 9 đầu đối chiếu 3 tạng người (Petite/Athletic/Curvy), bản đồ độ căng phom và nút chọn size tương thích tự động.
+
+41. **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao Thực Tế Cùng KOC (SOC-FIT-FEEDBACK-01)**:
+   - Hồ sơ: Module 06 Mạng xã hội OOTD & Tương tác Cộng đồng.
+   - Thực tế: Bộ lọc thẻ Fit Q&A dưới từng bài đăng `/cong-dong`, gợi ý câu hỏi chiều cao/cân nặng 1-chạm, gắn nhãn FIT Q&A và nhận diện phản hồi của KOC Tác giả cam kết SLA 24h.

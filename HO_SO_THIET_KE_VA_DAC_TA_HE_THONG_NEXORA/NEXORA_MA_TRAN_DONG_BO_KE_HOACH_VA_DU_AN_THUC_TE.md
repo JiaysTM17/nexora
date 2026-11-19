@@ -61,6 +61,8 @@
 | **50** | **Trắc Nghiệm Định Hình Phong Cách Cá Nhân (USER-STYLE-QUIZ-01)** | Module 06 & 07 | Đã hoàn thiện | Bài trắc nghiệm 4 câu hỏi trực quan khám phá bản sắc thời trang (Quiet Luxury, Earth Sartorialist, Minimalist Architect, Bohemian) và lưu giữ huy hiệu Style DNA vĩnh viễn tại `/tai-khoan` |
 | **51** | **Hộp Quà Cao Cấp Kèm Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP-01)** | Module 02 & 03 | Đã hoàn thiện | Tùy chọn đóng gói quà tặng Haute Couture tại `/gio-hang`: Hộp cứng nhung xám khói, 3 màu nơ ruy băng lụa dệt, thiệp chúc mừng viết tay Calligraphy niêm phong dấu sáp đồng độc bản (+60k hoặc 0đ đơn > 2tr) |
 | **52** | **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)** | Module 04 & Logistics | Đã hoàn thiện | Modal bản đồ trực tuyến Live GPS tại `/don-hang/[id]`: Mô phỏng tuyến đường di chuyển từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, telemetry GPS 26 km/h, gọi điện ẩn danh PDPD NĐ 13 và nhắn tin điều phối |
+| **53** | **Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE-01)** | Module 01 & 3D/AI | Đã hoàn thiện | Phòng mô phỏng phom dáng 2D Mannequin Croquis tại `/san-pham/[slug]`: Đối chiếu 3 tạng người (Petite/Athletic/Curvy), bản đồ độ căng phom (Tension Heatmap) và gợi ý cử động vai/eo/dài áo |
+| **54** | **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao Thực Tế Cùng KOC (SOC-FIT-FEEDBACK-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ Fit Q&A tại `/cong-dong`: Thẻ lọc câu hỏi số đo cơ thể, phím tắt nhanh 1-chạm (1m58 48kg mặc size gì), huy hiệu KOC Tác giả phản hồi SLA 24h |
 
 ---
 
@@ -376,6 +378,31 @@
     - Hồ sơ chuyên trách bưu tá: Họ tên, định danh đội xe GHN Luxury Fleet, loại phương tiện xe máy điện thân thiện môi trường (VinFast Feliz), biển số xe và điểm tín nhiệm (4.98★ / 1.420 chuyến giao an toàn).
     - Bộ đếm thời gian dự kiến (ETA): 12-15 phút nữa · Cách điểm giao 1.4 km.
   - Tương tác hai chiều an toàn: Nút gọi điện ẩn danh hai chiều qua tổng đài ảo tuân thủ nghiêm ngặt Nghị định 13/2023/NĐ-CP (PDPD) và nút gửi tin nhắn chỉ dẫn tức thời đến thiết bị bưu tá.
+
+### 37. Mô Phỏng Phom Dáng & Độ Rủ 2D Trên Ma-nơ-canh (CAT-VIRTUAL-SILHOUETTE-01)
+- **Mục tiêu**: Khắc phục trở ngại lớn nhất của người mua sắm thời trang trực tuyến là không hình dung được trang phục khi mặc lên người sẽ rủ xuống như thế nào so với vóc dáng thực tế của mình.
+- **Cơ chế**:
+  - Tích hợp nút `[ 👗 Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE) ]` ngay dưới bảng chọn kích cỡ trên trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Hỗ trợ chuyển đổi nhanh giữa 3 tạng người thời trang tiêu chuẩn:
+    1. *Petite / Thon Gọn*: Chiều cao 1m56, cân nặng 45kg, số đo 82-62-86 cm (tương thích Size S).
+    2. *Athletic / Cân Đối*: Chiều cao 1m66, cân nặng 52kg, số đo 86-66-92 cm (tương thích Size M).
+    3. *Curvy / Đầy Đặn*: Chiều cao 1m64, cân nặng 60kg, số đo 92-74-98 cm (tương thích Size L).
+  - Bản vẽ Ma-nơ-canh thời trang Haute Couture tỉ lệ 9 đầu (Fashion Croquis) kết hợp thuật toán tỷ lệ vector:
+    - Hiển thị các mốc định vị cơ thể then chốt: Đường ngực, Đường eo tự nhiên, Đường hạ mông và Đầu gối.
+    - Silhouette trang phục phủ lên cơ thể theo đúng phom dáng (Regular/Slim/Oversize) và chất liệu (Linen/Lụa/Cotton).
+    - Bản đồ độ căng phom (Tension Heatmap): Điểm xanh lá thể hiện độ dư cử động thoải mái (4–6cm), điểm cam đất thể hiện vùng chiết eo tôn dáng.
+    - Đánh giá độ rủ & cảm giác mặc chi tiết và nút chọn nhanh kích cỡ tương thích 1-chạm.
+
+### 38. Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao Thực Tế Cùng KOC (SOC-FIT-FEEDBACK-01)
+- **Mục tiêu**: Tạo cầu nối tư vấn kích cỡ chân thực và đáng tin cậy nhất giữa người mua tiềm năng và các nhà sáng tạo nội dung KOC đã trực tiếp diện và trải nghiệm trang phục.
+- **Cơ chế**:
+  - Tích hợp bộ lọc thẻ kép `Tất cả` và `Hỏi đáp Dáng & Size (Fit Q&A)` ngay dưới từng bài đăng phối đồ OOTD tại `/cong-dong`.
+  - Phím bấm gợi ý câu hỏi nhanh (Quick Prompts):
+    - *1m58 - 48kg mặc size gì tôn dáng?*
+    - *Vải có bị co rút sau khi giặt không?*
+    - *Áo có xẻ tà bên hông không?*
+  - Tự động điền tiền tố `[Hỏi Size & Dáng]` vào ô bình luận giúp hệ thống nhận diện và phân loại câu hỏi tư vấn kích cỡ.
+  - Nhận diện người trả lời: Khi tác giả bài viết KOC vào bình luận, hệ thống tự động gắn huy hiệu uy tín `✓ KOC Tác giả` màu xanh lá nổi bật, cam kết phản hồi trong vòng 24 giờ.
 
 ---
 

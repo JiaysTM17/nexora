@@ -1,7 +1,7 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -17,6 +17,8 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [wishBusy, setWishBusy] = useState(false);
   const [carePlus, setCarePlus] = useState(false);
   const [subscribedAlert, setSubscribedAlert] = useState(false);
+  const [showSilhouetteModal, setShowSilhouetteModal] = useState(false);
+  const [silhouetteArchetype, setSilhouetteArchetype] = useState<'PETITE' | 'ATHLETIC' | 'CURVY'>('ATHLETIC');
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const { user } = useUser();
 
@@ -343,6 +345,29 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             <small>{variant ? `Còn ${available} sản phẩm` : 'Chọn size phù hợp với số đo của bạn.'}</small>
           </fieldset>
 
+          {/* Nút Kích Hoạt Mô Phỏng Phom Dáng Silhouette 2D (CAT-VIRTUAL-SILHOUETTE) */}
+          <div style={{ margin: '10px 0' }}>
+            <button
+              type="button"
+              onClick={() => setShowSilhouetteModal(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
+                borderRadius: 3,
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#1e293b',
+                cursor: 'pointer',
+              }}
+            >
+              <Eye size={13} color="var(--clay)" /> 👗 Mô Phỏng Phom Dáng &amp; Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE)
+            </button>
+          </div>
+
           <label className="quantity">
             Số lượng
             <input
@@ -578,6 +603,275 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
           </details>
         </div>
       </div>
+
+      {/* Modal Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE-01) */}
+      {showSilhouetteModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: 16,
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 8,
+              maxWidth: 720,
+              width: '100%',
+              maxHeight: '92vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid var(--line)',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '14px 20px',
+                background: '#0f172a',
+                color: '#fff',
+                borderTopLeftRadius: 7,
+                borderTopRightRadius: 7,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Eye size={18} color="#38bdf8" />
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 15, color: '#fff' }}>
+                    Phòng Mô Phỏng Phom Dáng &amp; Độ Rủ Silhouette 2D
+                  </h3>
+                  <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                    Sản phẩm: {p.name} · Phom {p.fit} · Chất liệu {p.material}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSilhouetteModal(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: 4,
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Archetype Selector Tabs */}
+            <div style={{ padding: '14px 20px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 8, color: '#334155' }}>
+                Chọn tạng người đối chiếu phom dáng:
+              </span>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                {[
+                  { id: 'PETITE', title: 'Petite / Thon Gọn', stats: '1m56 · 45kg · 82-62-86cm', match: 'Size S chuẩn' },
+                  { id: 'ATHLETIC', title: 'Athletic / Cân Đối', stats: '1m66 · 52kg · 86-66-92cm', match: 'Size M chuẩn' },
+                  { id: 'CURVY', title: 'Curvy / Đầy Đặn', stats: '1m64 · 60kg · 92-74-98cm', match: 'Size L chuẩn' },
+                ].map(arc => (
+                  <button
+                    key={arc.id}
+                    type="button"
+                    onClick={() => setSilhouetteArchetype(arc.id as any)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: 4,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      border: silhouetteArchetype === arc.id ? '2px solid var(--clay)' : '1px solid #cbd5e1',
+                      background: silhouetteArchetype === arc.id ? '#fdfbf7' : '#fff',
+                    }}
+                  >
+                    <strong style={{ fontSize: 12, display: 'block', color: silhouetteArchetype === arc.id ? 'var(--clay)' : '#1e293b' }}>
+                      {arc.title}
+                    </strong>
+                    <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>{arc.stats}</div>
+                    <span style={{ fontSize: 9, background: silhouetteArchetype === arc.id ? 'var(--clay)' : '#e2e8f0', color: silhouetteArchetype === arc.id ? '#fff' : '#475569', padding: '1px 5px', borderRadius: 2, display: 'inline-block', marginTop: 4, fontWeight: 600 }}>
+                      {arc.match}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Mannequin Canvas & Silhouette Metrics */}
+            <div style={{ padding: 20, display: 'grid', gridTemplateColumns: '260px 1fr', gap: 20 }}>
+              {/* SVG Fashion Mannequin Croquis */}
+              <div
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 6,
+                  padding: 12,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  position: 'relative',
+                }}
+              >
+                <svg width="220" height="340" viewBox="0 0 220 340">
+                  <defs>
+                    <linearGradient id="garmentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#9a3412" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#c2410c" stopOpacity="0.65" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Body Guidelines */}
+                  <line x1="20" y1="90" x2="200" y2="90" stroke="#cbd5e1" strokeDasharray="3 3" />
+                  <text x="25" y="86" fontSize="9" fill="#94a3b8">Đường ngực</text>
+
+                  <line x1="20" y1="140" x2="200" y2="140" stroke="#cbd5e1" strokeDasharray="3 3" />
+                  <text x="25" y="136" fontSize="9" fill="#94a3b8">Đường eo tự nhiên</text>
+
+                  <line x1="20" y1="190" x2="200" y2="190" stroke="#cbd5e1" strokeDasharray="3 3" />
+                  <text x="25" y="186" fontSize="9" fill="#94a3b8">Hạ mông</text>
+
+                  <line x1="20" y1="260" x2="200" y2="260" stroke="#cbd5e1" strokeDasharray="3 3" />
+                  <text x="25" y="256" fontSize="9" fill="#94a3b8">Đầu gối</text>
+
+                  {/* Minimalist Mannequin Outline */}
+                  {/* Head */}
+                  <ellipse cx="110" cy="35" rx="14" ry="18" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
+                  {/* Neck */}
+                  <line x1="110" y1="53" x2="110" y2="65" stroke="#94a3b8" strokeWidth="2" />
+                  {/* Shoulders */}
+                  <path d="M 80 72 Q 110 65 140 72" fill="none" stroke="#94a3b8" strokeWidth="2" />
+
+                  {/* Silhouette Body Scaling based on archetype */}
+                  {silhouetteArchetype === 'PETITE' && (
+                    <>
+                      {/* Body Frame Petite */}
+                      <path d="M 80 72 L 86 140 L 92 190 L 98 260 L 100 320" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+                      <path d="M 140 72 L 134 140 L 128 190 L 122 260 L 120 320" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+                      {/* Garment Drape Petite */}
+                      <path d="M 78 72 L 72 135 L 78 200 L 110 205 L 142 200 L 148 135 L 142 72 Z" fill="url(#garmentGrad)" stroke="#9a3412" strokeWidth="1.5" />
+                    </>
+                  )}
+                  {silhouetteArchetype === 'ATHLETIC' && (
+                    <>
+                      {/* Body Frame Athletic */}
+                      <path d="M 75 72 L 84 140 L 94 190 L 100 260 L 102 320" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+                      <path d="M 145 72 L 136 140 L 126 190 L 120 260 L 118 320" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+                      {/* Garment Drape Athletic */}
+                      <path d="M 74 72 L 70 135 L 76 195 L 110 200 L 144 195 L 150 135 L 146 72 Z" fill="url(#garmentGrad)" stroke="#9a3412" strokeWidth="1.5" />
+                    </>
+                  )}
+                  {silhouetteArchetype === 'CURVY' && (
+                    <>
+                      {/* Body Frame Curvy */}
+                      <path d="M 72 72 L 82 140 L 98 190 L 102 260 L 104 320" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+                      <path d="M 148 72 L 138 140 L 122 190 L 118 260 L 116 320" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+                      {/* Garment Drape Curvy */}
+                      <path d="M 70 72 L 66 135 L 72 190 L 110 195 L 148 190 L 154 135 L 150 72 Z" fill="url(#garmentGrad)" stroke="#9a3412" strokeWidth="1.5" />
+                    </>
+                  )}
+
+                  {/* Tension markers */}
+                  <circle cx="110" cy="90" r="5" fill="#16a34a" />
+                  <circle cx="110" cy="140" r="5" fill="#ea580c" />
+                </svg>
+
+                <div style={{ marginTop: 8, display: 'flex', gap: 10, fontSize: 10 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a' }} /> Thoải mái
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ea580c' }} /> Ôm nhẹ tôn dáng
+                  </span>
+                </div>
+              </div>
+
+              {/* Analysis & Fit Evaluation */}
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 8px', fontSize: 14, color: '#0f172a' }}>
+                    Phân Tích Độ Rủ &amp; Cảm Giác Mặc (Draping Evaluation)
+                  </h4>
+                  <p style={{ margin: '0 0 14px', fontSize: 12, color: '#475569', lineHeight: 1.6 }}>
+                    Dựa trên chất liệu <strong>{p.material}</strong> và phom dáng <strong>{p.fit}</strong>:
+                  </p>
+
+                  <div style={{ display: 'grid', gap: 8, fontSize: 12 }}>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 4, borderLeft: '3px solid #16a34a' }}>
+                      <strong style={{ color: '#166534' }}>1. Vùng Ngực &amp; Cử Động Vai:</strong>
+                      <div style={{ color: '#334155', marginTop: 2 }}>
+                        Độ dư cử động 4–6cm, hoàn toàn thoải mái khi với tay, lái xe hoặc làm việc cả ngày mà không bị kích nách.
+                      </div>
+                    </div>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 4, borderLeft: '3px solid #ea580c' }}>
+                      <strong style={{ color: '#c2410c' }}>2. Vòng Eo &amp; Độ Rủ Thân Áo:</strong>
+                      <div style={{ color: '#334155', marginTop: 2 }}>
+                        Điểm rơi chiết eo tự nhiên giúp che khuyết điểm vùng bụng dưới, tạo hiệu ứng thị giác thon gọn và tôn dáng thanh thoát.
+                      </div>
+                    </div>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: 4, borderLeft: '3px solid #2563eb' }}>
+                      <strong style={{ color: '#1d4ed8' }}>3. Chiều Dài Áo / Vạt Áo:</strong>
+                      <div style={{ color: '#334155', marginTop: 2 }}>
+                        Vạt áo phủ ngang mông (khoảng 64–68cm tùy size), dễ dàng sơ vin gọn gàng với quần âu hoặc buông tà phóng khoáng.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid #e2e8f0', display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const rec = silhouetteArchetype === 'PETITE' ? 'S' : silhouetteArchetype === 'ATHLETIC' ? 'M' : 'L';
+                      setSize(rec);
+                      setShowSilhouetteModal(false);
+                      setNotice(`Đã chọn size ${rec} tương thích tối ưu với dáng người.`);
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      background: 'var(--clay)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Chọn Size {silhouetteArchetype === 'PETITE' ? 'S' : silhouetteArchetype === 'ATHLETIC' ? 'M' : 'L'} &amp; Áp Dụng Ngay
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSilhouetteModal(false)}
+                    style={{
+                      padding: '10px 14px',
+                      background: '#f1f5f9',
+                      color: '#475569',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
