@@ -202,3 +202,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 49. **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)**:
    - Hồ sơ: Module 04 Vận hành Đơn hàng & Trách nhiệm Môi trường (ESG/CSR).
    - Thực tế: Khối Chứng thư Bù đắp Carbon số tại `/don-hang/[id]` xác nhận 1.85 kg CO2e đã trung hòa từ giao hàng xe điện VinFast Feliz và bao bì Kraft tái sinh, mã blockchain xác thực và modal in chứng thư Haute Couture.
+
+50. **Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01)**:
+   - Hồ sơ: Module 07 Kinh tế tuần hoàn & Dịch vụ Trade-In.
+   - Thực tế: Bộ giả lập định giá thời gian thực tại `/trade-in` cho phép dự phóng voucher đối ứng theo 4 phân loại và 4 cấp độ Grade S/A/B/C, đo lường giảm thải 3.2 kg CO2e và điền nhanh vào form gửi đồ.
+
+51. **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Trải nghiệm Đa giác quan AI.
+   - Thực tế: Mô-đun cảm âm tại `/san-pham/[slug]` với trình phát Audio Equalizer mô phỏng âm thanh sột soạt tự nhiên của lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist hướng dẫn giặt ủi chuẩn mực.

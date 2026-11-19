@@ -199,5 +199,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12%** | Module 01 & 03 | Đã hoàn thiện | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Tự động chiết khấu -12% khi mua set 3 món và hỗ trợ thêm vào giỏ 1-chạm (CAT-BUNDLE-DISCOUNT-01) |
 | **Tiền Thưởng Tác Quyền KOC & Tặng Xu Sáng Tạo** | Module 06 & Fintech | Đã hoàn thiện | Nút thưởng cà phê/xu sáng tạo tại `/cong-dong`, ghi nhận ví Creator Wallet và tính thuế TNCN 10% theo TT 111/2013 (SOC-CREATOR-TIP-01) |
 | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh** | Module 04 & ESG/CSR | Đã hoàn thiện | Chứng thư điện tử tại `/don-hang/[id]` xác nhận 1.85 kg CO2e trung hòa từ giao hàng xe điện & hộp Kraft, mã blockchain và in chứng thư (ORD-CARBON-CERT-01) |
+| **Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì** | Module 07 & Circular | Đã hoàn thiện | Giả lập định giá voucher theo 4 cấp độ Grade S/A/B/C và danh mục, đo lường 3.2 kg CO2e giảm thải tại `/trade-in` (TRADEIN-ESTIMATE-SIMULATOR-01) |
+| **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói** | Module 01 & Audio AI | Đã hoàn thiện | Trình phát mô phỏng cảm âm sột soạt lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist tại `/san-pham/[slug]` (CAT-FABRIC-VOICE-GUIDE-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

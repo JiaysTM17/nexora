@@ -265,7 +265,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **55** | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)** | Module 01 & 03 | **100% Hoàn thiện** | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Tự động chiết khấu -12% khi mua set 3 món và hỗ trợ thêm vào giỏ 1-chạm |
 | **56** | **Tiền Thưởng Tác Quyền KOC & Tặng Xu Sáng Tạo (SOC-CREATOR-TIP-01)** | Module 06 & Fintech | **100% Hoàn thiện** | Nút thưởng cà phê/xu sáng tạo tại `/cong-dong`, ghi nhận ví Creator Wallet và tính thuế TNCN 10% theo TT 111/2013 |
 | **57** | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)** | Module 04 & ESG/CSR | **100% Hoàn thiện** | Chứng thư điện tử tại `/don-hang/[id]` xác nhận 1.85 kg CO2e trung hòa từ giao hàng xe điện & hộp Kraft, mã blockchain và in chứng thư |
-| **58** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **58** | **Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01)** | Module 07 & Circular | **100% Hoàn thiện** | Giả lập định giá voucher theo 4 cấp độ Grade S/A/B/C và danh mục, đo lường 3.2 kg CO2e giảm thải tại `/trade-in` |
+| **59** | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)** | Module 01 & Audio AI | **100% Hoàn thiện** | Trình phát mô phỏng cảm âm sột soạt lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist tại `/san-pham/[slug]` |
+| **60** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

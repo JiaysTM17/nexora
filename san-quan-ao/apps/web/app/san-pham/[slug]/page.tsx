@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -25,6 +25,9 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const [bundleItems, setBundleItems] = useState({ main: true, pants: true, belt: true });
   const [bundleBusy, setBundleBusy] = useState(false);
+  const [showVoiceGuide, setShowVoiceGuide] = useState(false);
+  const [voicePlaying, setVoicePlaying] = useState(false);
+  const [voiceMode, setVoiceMode] = useState<'ATELIER_VOICE' | 'FABRIC_SCROOP'>('ATELIER_VOICE');
   const { user } = useUser();
 
   useEffect(() => {
@@ -948,6 +951,137 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   <li>Phơi trong bóng râm thoáng mát, tránh ánh nắng mặt trời gắt làm xơ cứng sợi vải.</li>
                   <li>Ủi hơi nước mặt trái ở nhiệt độ thấp để duy trì độ rủ và bề mặt óng ả nguyên bản.</li>
                 </ul>
+              </div>
+
+              {/* Hướng Dẫn Âm Thanh & Cảm Âm Chất Liệu (CAT-FABRIC-VOICE-GUIDE-01) */}
+              <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--line)' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowVoiceGuide(!showVoiceGuide)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    background: showVoiceGuide ? '#fdf8ea' : '#fff',
+                    border: showVoiceGuide ? '1px solid var(--clay)' : '1px solid var(--line)',
+                    borderRadius: 3,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: showVoiceGuide ? 'var(--clay)' : 'var(--ink)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Headphones size={13} color="var(--clay)" />
+                  {showVoiceGuide ? 'Đóng trải nghiệm âm thanh ▲' : '🎧 Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE) ▼'}
+                </button>
+
+                {showVoiceGuide && (
+                  <div style={{ marginTop: 10, padding: 12, background: '#faf9f5', border: '1px solid #fed7aa', borderRadius: 4 }}>
+                    <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button
+                          type="button"
+                          style={{
+                            padding: '3px 8px',
+                            fontSize: 10,
+                            borderRadius: 2,
+                            border: voiceMode === 'ATELIER_VOICE' ? '1px solid var(--clay)' : '1px solid var(--line)',
+                            background: voiceMode === 'ATELIER_VOICE' ? 'var(--clay)' : '#fff',
+                            color: voiceMode === 'ATELIER_VOICE' ? '#fff' : 'var(--ink)',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setVoiceMode('ATELIER_VOICE')}
+                        >
+                          🎙️ Giọng Đọc AI Stylist
+                        </button>
+                        <button
+                          type="button"
+                          style={{
+                            padding: '3px 8px',
+                            fontSize: 10,
+                            borderRadius: 2,
+                            border: voiceMode === 'FABRIC_SCROOP' ? '1px solid var(--clay)' : '1px solid var(--line)',
+                            background: voiceMode === 'FABRIC_SCROOP' ? 'var(--clay)' : '#fff',
+                            color: voiceMode === 'FABRIC_SCROOP' ? '#fff' : 'var(--ink)',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setVoiceMode('FABRIC_SCROOP')}
+                        >
+                          🔊 Cảm Âm Sợi Dệt (Silk Scroop)
+                        </button>
+                      </div>
+
+                      <span style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>
+                        {voicePlaying ? '▶ Đang phát (00:24 / 00:58)' : '⏸ Đã tạm dừng'}
+                      </span>
+                    </div>
+
+                    {/* Audio Waveform Player Simulation */}
+                    <div
+                      style={{
+                        padding: '10px 14px',
+                        background: '#fff',
+                        border: '1px solid var(--line)',
+                        borderRadius: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 12,
+                        marginBottom: 8,
+                      }}
+                    >
+                      <button
+                        type="button"
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: '50%',
+                          background: 'var(--clay)',
+                          color: '#fff',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          flexShrink: 0,
+                        }}
+                        onClick={() => setVoicePlaying(!voicePlaying)}
+                        aria-label={voicePlaying ? 'Tạm dừng' : 'Phát âm thanh'}
+                      >
+                        {voicePlaying ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: 2 }} />}
+                      </button>
+
+                      {/* Equalizer animation bars */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 3, flexGrow: 1, height: 20 }}>
+                        {[16, 24, 12, 28, 18, 30, 14, 22, 10, 26, 15, 20].map((h, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              width: 3,
+                              height: voicePlaying ? `${Math.max(6, (h * (i % 2 === 0 ? 1 : 0.8)))}px` : '4px',
+                              background: voicePlaying ? 'var(--clay)' : '#cbd5e1',
+                              borderRadius: 2,
+                              transition: 'height 0.2s ease',
+                            }}
+                          />
+                        ))}
+                      </div>
+
+                      <span style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'monospace' }}>
+                        HD 48kHz
+                      </span>
+                    </div>
+
+                    <p style={{ margin: 0, fontSize: 11, color: '#444', fontStyle: 'italic', lineHeight: 1.5 }}>
+                      {voiceMode === 'ATELIER_VOICE'
+                        ? `“[Giọng đọc Stylist]: Chào bạn, với chất liệu ${p.material || 'sợi tự nhiên'}, hãy giặt tay với nước mát dưới 30°C và phơi râm mát. Nhiệt độ cơ thể bạn sẽ hoàn thiện phom dáng và độ rủ mềm mượt tự nhiên của trang phục.”`
+                        : `“[Cảm âm sớ vải]: Tiếng sột soạt sột soạt thanh mảnh (Silk Scroop) khi miết nhẹ bề mặt vải – minh chứng cho độ thuần khiết của sợi tơ tằm nguyên bản, không pha tạp sợi nhân tạo polyester.”`}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </details>

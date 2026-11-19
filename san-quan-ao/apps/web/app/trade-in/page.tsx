@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -16,6 +16,14 @@ export default function TradeInPage() {
   const { user } = useUser();
   const list = useResource<TradeInRequest[]>(user ? '/trade-in' : null);
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
+  const [simCategory, setSimCategory] = useState<'SHIRT' | 'BLAZER' | 'DRESS' | 'BAG'>('SHIRT');
+  const [simGrade, setSimGrade] = useState<'S' | 'A' | 'B' | 'C'>('A');
+  const [formFields, setFormFields] = useState({
+    brand: '',
+    itemName: '',
+    category: 'Áo khoác',
+    conditionNote: '',
+  });
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,55 +63,205 @@ export default function TradeInPage() {
       {!user ? (
         <Notice>Vui lòng <Link href="/dang-nhap">đăng nhập</Link> để gửi yêu cầu Trade-In và nhận Voucher đối ứng.</Notice>
       ) : (
-        <div className="checkout-grid">
-          <form className="panel form" onSubmit={submit}>
-            <h2><RefreshCw size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />Gửi đồ cần thu cũ</h2>
-            {error && <Notice error>{error}</Notice>}
-            {success && <Notice>{success}</Notice>}
-            <label>Thương hiệu<input name="brand" required minLength={2} placeholder="VD: NÉP Studio, Jacquemus, Burberry..." /></label>
-            <label>Tên sản phẩm<input name="itemName" required minLength={3} placeholder="VD: Túi da mini / Áo khoác trench..." /></label>
-            <label>Phân loại
-              <select name="category" defaultValue="Áo khoác">
-                <option value="Túi xách">Túi xách</option>
-                <option value="Áo khoác">Áo khoác</option>
-                <option value="Đầm / Váy">Đầm / Váy</option>
-                <option value="Giày dép">Giày dép</option>
-                <option value="Phụ kiện">Phụ kiện</option>
-              </select>
-            </label>
-            <label>Mô tả tình trạng thực tế<textarea name="conditionNote" required minLength={5} placeholder="VD: Mới 95%, ít sử dụng, còn hộp và tag..." /></label>
-            <label>URL ảnh chụp chi tiết (tùy chọn)<input name="imageUrl" placeholder="http://localhost:3000/products/outfit.svg" /></label>
-            <button className="button" disabled={busy}>{busy ? 'Đang định giá AI…' : 'Định giá Vòng 1 ngay'}</button>
-          </form>
+        <>
+          {/* Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01) */}
+          {(() => {
+            const simData = {
+              SHIRT: { name: 'Áo Sơ Mi Lụa / Linen Cao Cấp', basePrice: 1250000, category: 'Áo khoác', defaultBrand: 'NEXORA Atelier' },
+              BLAZER: { name: 'Áo Khoác Blazer May Đo / Sartorial', basePrice: 2850000, category: 'Áo khoác', defaultBrand: 'COS' },
+              DRESS: { name: 'Đầm Lụa Midi / Váy Thiết Kế', basePrice: 1950000, category: 'Đầm / Váy', defaultBrand: 'Gia Studios' },
+              BAG: { name: 'Túi Da Thuộc Thảo Mộc / Phụ Kiện', basePrice: 2200000, category: 'Túi xách', defaultBrand: 'NÉP Studio' },
+            };
+            const gradeRatios = { S: 0.5, A: 0.4, B: 0.3, C: 0.2 };
+            const activeItem = simData[simCategory];
+            const estimatedValue = Math.round(activeItem.basePrice * gradeRatios[simGrade]);
 
-          <div>
-            <article className="panel">
-              <h2>Hồ sơ Trade-In của bạn</h2>
-              {list.loading ? <Loading /> : !list.data?.length ? (
-                <p className="subtle">Bạn chưa có yêu cầu thu cũ đổi mới nào.</p>
-              ) : list.data.map(item => (
-                <div key={item.id} style={{ padding: '14px 0', borderBottom: '1px solid var(--line)' }}>
-                  <div className="row between">
-                    <strong>{item.brand} · {item.itemName}</strong>
-                    <span className="badge">Grade {item.grade}</span>
+            return (
+              <div
+                style={{
+                  marginBottom: 24,
+                  padding: '18px 22px',
+                  background: '#fcfbf7',
+                  border: '1px solid #fed7aa',
+                  borderRadius: 6,
+                }}
+              >
+                <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Calculator size={18} color="var(--clay)" />
+                    <strong style={{ fontSize: 14, color: '#9a3412' }}>
+                      Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR)
+                    </strong>
                   </div>
-                  <p style={{ margin: '6px 0', fontSize: 12, color: 'var(--muted)' }}>
-                    {STATUS_LABELS[item.status] ?? item.status}
-                  </p>
-                  <p style={{ margin: 0, fontSize: 13 }}>
-                    Ước tính Vòng 1: <strong>{vnd(item.estimatedValue)}</strong>
-                    {item.finalValue !== null && <> · Chốt Vòng 2: <strong>{vnd(item.finalValue)}</strong></>}
-                  </p>
-                  {item.voucherCode && (
-                    <p style={{ margin: '8px 0 0', padding: '6px 10px', background: 'var(--sage)', fontSize: 12 }}>
-                      Voucher đối ứng: <strong>{item.voucherCode}</strong>
-                    </p>
-                  )}
+                  <span style={{ fontSize: 11, background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                    CHUẨN KHẢO THÍ 1000 LUX
+                  </span>
                 </div>
-              ))}
-            </article>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 14 }}>
+                  {/* Select Category */}
+                  <div>
+                    <span style={{ fontSize: 11, color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                      1. Loại trang phục tái sinh:
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {[
+                        { id: 'SHIRT', label: 'Áo Sơ Mi Lụa / Linen (~1.25M)' },
+                        { id: 'BLAZER', label: 'Áo Khoác Blazer / Suit (~2.85M)' },
+                        { id: 'DRESS', label: 'Đầm Lụa Midi Thiết Kế (~1.95M)' },
+                        { id: 'BAG', label: 'Túi Da Thuộc / Phụ Kiện (~2.2M)' },
+                      ].map(cat => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          style={{
+                            textAlign: 'left',
+                            padding: '6px 10px',
+                            fontSize: 11,
+                            borderRadius: 3,
+                            border: simCategory === cat.id ? '1px solid var(--clay)' : '1px solid var(--line)',
+                            background: simCategory === cat.id ? '#fff' : '#fafafa',
+                            color: simCategory === cat.id ? 'var(--clay)' : 'var(--ink)',
+                            fontWeight: simCategory === cat.id ? 700 : 400,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setSimCategory(cat.id as any)}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Select Grade */}
+                  <div>
+                    <span style={{ fontSize: 11, color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                      2. Tình trạng thực tế (Grading):
+                    </span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {[
+                        { id: 'S', label: 'Grade S · Nguyên tag / Chưa mặc (50%)' },
+                        { id: 'A', label: 'Grade A · Mặc 1-2 lần, hoàn hảo (40%)' },
+                        { id: 'B', label: 'Grade B · Đã mặc, không lỗi (30%)' },
+                        { id: 'C', label: 'Grade C · Sờn mờ nhẹ (20%)' },
+                      ].map(g => (
+                        <button
+                          key={g.id}
+                          type="button"
+                          style={{
+                            textAlign: 'left',
+                            padding: '6px 10px',
+                            fontSize: 11,
+                            borderRadius: 3,
+                            border: simGrade === g.id ? '1px solid var(--clay)' : '1px solid var(--line)',
+                            background: simGrade === g.id ? '#fff' : '#fafafa',
+                            color: simGrade === g.id ? 'var(--clay)' : 'var(--ink)',
+                            fontWeight: simGrade === g.id ? 700 : 400,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => setSimGrade(g.id as any)}
+                        >
+                          {g.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Estimate Result Box */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      background: '#fff',
+                      border: '1px solid #fed7aa',
+                      borderRadius: 4,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', display: 'block' }}>
+                        Ước Tính Voucher Nhận Được:
+                      </span>
+                      <strong style={{ fontSize: 20, color: 'var(--clay)', fontFamily: 'Georgia, serif', display: 'block', margin: '4px 0' }}>
+                        {vnd(estimatedValue)}
+                      </strong>
+                      <div style={{ fontSize: 11, color: '#166534', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                        <Leaf size={13} /> Giảm phát thải: <strong>~3.2 kg CO2e</strong>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="button secondary"
+                      style={{ fontSize: 11, padding: '6px 10px', marginTop: 10, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                      onClick={() => {
+                        setFormFields({
+                          brand: activeItem.defaultBrand,
+                          itemName: activeItem.name,
+                          category: activeItem.category,
+                          conditionNote: `Tình trạng Grade ${simGrade} (Ước tính voucher: ${vnd(estimatedValue)}). Đã kiểm tra không sờn rách vải.`,
+                        });
+                      }}
+                    >
+                      <Check size={13} /> Áp dụng vào form gửi đồ ↓
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <div className="checkout-grid">
+            <form className="panel form" onSubmit={submit}>
+              <h2><RefreshCw size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />Gửi đồ cần thu cũ</h2>
+              {error && <Notice error>{error}</Notice>}
+              {success && <Notice>{success}</Notice>}
+              <label>Thương hiệu<input name="brand" value={formFields.brand} onChange={e => setFormFields({ ...formFields, brand: e.target.value })} required minLength={2} placeholder="VD: NÉP Studio, Jacquemus, Burberry..." /></label>
+              <label>Tên sản phẩm<input name="itemName" value={formFields.itemName} onChange={e => setFormFields({ ...formFields, itemName: e.target.value })} required minLength={3} placeholder="VD: Túi da mini / Áo khoác trench..." /></label>
+              <label>Phân loại
+                <select name="category" value={formFields.category} onChange={e => setFormFields({ ...formFields, category: e.target.value })}>
+                  <option value="Túi xách">Túi xách</option>
+                  <option value="Áo khoác">Áo khoác</option>
+                  <option value="Đầm / Váy">Đầm / Váy</option>
+                  <option value="Giày dép">Giày dép</option>
+                  <option value="Phụ kiện">Phụ kiện</option>
+                </select>
+              </label>
+              <label>Mô tả tình trạng thực tế<textarea name="conditionNote" value={formFields.conditionNote} onChange={e => setFormFields({ ...formFields, conditionNote: e.target.value })} required minLength={5} placeholder="VD: Mới 95%, ít sử dụng, còn hộp và tag..." /></label>
+              <label>URL ảnh chụp chi tiết (tùy chọn)<input name="imageUrl" placeholder="http://localhost:3000/products/outfit.svg" /></label>
+              <button className="button" disabled={busy}>{busy ? 'Đang định giá AI…' : 'Định giá Vòng 1 ngay'}</button>
+            </form>
+
+            <div>
+              <article className="panel">
+                <h2>Hồ sơ Trade-In của bạn</h2>
+                {list.loading ? <Loading /> : !list.data?.length ? (
+                  <p className="subtle">Bạn chưa có yêu cầu thu cũ đổi mới nào.</p>
+                ) : list.data.map(item => (
+                  <div key={item.id} style={{ padding: '14px 0', borderBottom: '1px solid var(--line)' }}>
+                    <div className="row between">
+                      <strong>{item.brand} · {item.itemName}</strong>
+                      <span className="badge">Grade {item.grade}</span>
+                    </div>
+                    <p style={{ margin: '6px 0', fontSize: 12, color: 'var(--muted)' }}>
+                      {STATUS_LABELS[item.status] ?? item.status}
+                    </p>
+                    <p style={{ margin: 0, fontSize: 13 }}>
+                      Ước tính Vòng 1: <strong>{vnd(item.estimatedValue)}</strong>
+                      {item.finalValue !== null && <> · Chốt Vòng 2: <strong>{vnd(item.finalValue)}</strong></>}
+                    </p>
+                    {item.voucherCode && (
+                      <p style={{ margin: '8px 0 0', padding: '6px 10px', background: 'var(--sage)', fontSize: 12 }}>
+                        Voucher đối ứng: <strong>{item.voucherCode}</strong>
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </article>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Cam kết Bảo chứng Thu cũ & Quyền Cân nhắc 14 ngày (VAS-TRADEIN-REQUOTE) */}

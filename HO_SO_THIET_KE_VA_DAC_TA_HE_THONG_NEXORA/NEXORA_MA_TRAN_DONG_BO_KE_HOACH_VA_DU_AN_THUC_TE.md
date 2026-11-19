@@ -71,6 +71,8 @@
 | **60** | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)** | Module 01 & 03 | Đã hoàn thiện | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Ghép trang phục chính cùng quần âu may đo và thắt lưng da, tự động chiết khấu -12% trọn gói và thêm vào giỏ 1-chạm |
 | **61** | **Tiền Thưởng Tác Quyền KOC & Ủng Hộ Phong Cách (SOC-CREATOR-TIP-01)** | Module 06 & Fintech | Đã hoàn thiện | Nút tặng xu/thưởng tiền trực tiếp cho tác giả phối đồ tại `/cong-dong`: Hạch toán ví Creator Wallet, minh bạch thuế TNCN 10% (TT 111/2013/TT-BTC) và huy hiệu Người hâm mộ |
 | **62** | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)** | Module 04 & ESG/CSR | Đã hoàn thiện | Phân hệ chứng nhận sinh thái số tại `/don-hang/[id]`: Đo lường 1.85 kg CO2e trung hòa từ giao hàng xe điện VinFast Feliz & hộp Kraft, mã blockchain tra cứu sổ cái và modal in chứng thư Haute Couture |
+| **63** | **Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01)** | Module 07 & Circular | Đã hoàn thiện | Bộ công cụ giả lập định giá thời gian thực tại `/trade-in`: Dự phóng giá trị voucher (Grade S/A/B/C) theo từng phân loại (Sơ mi, Blazer, Đầm, Túi), đo lường 3.2 kg CO2e giảm thải và điền form 1-chạm |
+| **64** | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)** | Module 01 & Audio AI | Đã hoàn thiện | Trình phát cảm âm tại `/san-pham/[slug]`: Mô phỏng âm thanh sột soạt tự nhiên của lụa (Silk Scroop/Rustle) và giọng đọc trợ lý AI Stylist hướng dẫn giặt ủi mặt trái chuẩn mực |
 
 ---
 
@@ -497,6 +499,22 @@
   - Đo lường và xác nhận 1.85 kg CO2e đã được trung hòa hoàn toàn từ quãng đường giao xe máy điện VinFast Feliz kết hợp 100% bao bì hộp giấy Kraft tái chế.
   - Cung cấp mã chứng thư số độc bản `NEX-CO2-2026-XXXX` xác thực bởi Quỹ Rừng Xanh NEXORA và Ban Quản Lý Rừng Phòng Hộ Cần Giờ.
   - Modal chứng thư Haute Couture: Hiển thị tên người nhận, con dấu xanh điện tử "NEXORA ECO VERIFIED", mã QR tra cứu sổ cái kỹ thuật số và nút in chứng thư chuẩn mực.
+
+### 47. Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01)
+- **Mục tiêu**: Giúp khách hàng nắm bắt ngay hạn mức Voucher quy đổi tương ứng với từng món đồ thời trang cũ trước khi gửi hàng tới Hub giám định, gia tăng động lực tái tuần hoàn trang phục.
+- **Cơ chế**:
+  - Tích hợp bộ giả lập định giá tức thì ngay phía trên biểu mẫu gửi đồ tại `/trade-in`.
+  - Hỗ trợ chọn danh mục (Áo sơ mi lụa, Blazer suit, Đầm thiết kế, Túi da thuộc) và phân hạng tình trạng Grade S (50%), Grade A (40%), Grade B (30%), Grade C (20%).
+  - Dự phóng giá trị Voucher đối ứng, đo lường lượng giảm phát thải sinh thái (~3.2 kg CO2e) và nút 1-chạm "Áp dụng vào form gửi đồ" tự động điền sẵn các thông số.
+
+### 48. Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)
+- **Mục tiêu**: Tái hiện trải nghiệm xúc giác và thính giác sang trọng khi mua sắm thời trang trực tuyến, giúp khách hàng cảm nhận được độ chân thực của sợi tơ tự nhiên nguyên bản.
+- **Cơ chế**:
+  - Tích hợp mô-đun cảm âm ngay trong phân hệ Hộ Chiếu Chất Liệu tại `/san-pham/[slug]`.
+  - Hai chế độ trải nghiệm:
+    1. *Giọng Đọc AI Stylist*: Giọng đọc truyền cảm hướng dẫn phương pháp giặt hấp, nhiệt độ nước (<30°C) và cách là ủi mặt trái bảo vệ cấu trúc sợi lụa.
+    2. *Cảm Âm Sợi Dệt (Silk Scroop & Rustle)*: Mô phỏng âm thanh sột soạt tự nhiên đặc trưng khi hai bề mặt lụa cọ xát vào nhau – bảo chứng 100% sợi dệt tự nhiên không pha nhựa.
+  - Trình phát mô phỏng Audio Equalizer Waveform trực quan với các thanh biên độ chuyển động linh hoạt.
 
 ---
 
