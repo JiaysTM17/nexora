@@ -43,6 +43,8 @@
 | **32** | **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)** | Module 04 | Đã hoàn thiện | Cơ chế kiểm soát biến thiên khối lượng bưu kiện qua 3 trạm (Xuất kho -> Sorting Hub -> Bưu tá giao) với dung sai quang học ΔW ≤ 50g, ngăn chặn tráo hàng và rút ruột kiện hàng tại `/don-hang/[id]` |
 | **33** | **Bảo Hiểm Thời Trang NEXORA Care+ (VAS-WARRANTY-EXT)** | Module 03 | Đã hoàn thiện | Gói dịch vụ giá trị gia tăng gia hạn bảo hành và phục hồi form trang phục cao cấp 12 tháng (+150.000đ): trọn đời đường may, thay khóa YKK, 2 lần spa đồ hiệu/năm tại NEXORA Atelier trên `/san-pham/[slug]` |
 | **34** | **Bảo Chứng Thu Cũ & SLA Cân Nhắc 14 Ngày (VAS-TRADEIN-REQUOTE)** | Module 05 | Đã hoàn thiện | Chính sách bảo chứng cam kết bảo lưu định giá 14 ngày, hoàn trả tận nhà 0đ nếu kết quả Vòng 2 chênh lệch >10%, niêm phong quang học buồng sáng 1000 Lux tại `/trade-in` |
+| **35** | **Phòng Thử Đồ Mix & Match & Ưu Đãi Combo (CAT-MIX-MATCH-01)** | Module 01 & 06 | Đã hoàn thiện | Studio phối đồ 3 tầng (Lớp ngoài + Áo chính + Quần/Váy) trên Style Canvas tại `/phoi-do`, tính toán chỉ số hài hòa tone-sur-tone và áp dụng ưu đãi Combo Style Saver -10% khi mua trọn bộ 1-click |
+| **36** | **Khung Giờ Nhận Hàng Hẹn Trước & Đóng Gói Xanh (FUL-GREEN-SLOT-02)** | Module 03 & 04 | Đã hoàn thiện | Tùy chọn 3 khung giờ giao hàng (Sáng/Chiều/Tối ngoài giờ) và đóng gói xanh hộp giấy kraft tự hủy không nilon (Eco Green Box), thưởng ngay +50 Xu NEXORA Coins tại `/gio-hang` và hiển thị trên `/don-hang/[id]` |
 
 ---
 
@@ -177,6 +179,22 @@
   - Quyền cân nhắc 14 ngày vô điều kiện: Sau khi có kết quả giám định Vòng 2 tại Hub, khách hàng có 14 ngày để chấp thuận nhận Voucher đối ứng hoặc hủy yêu cầu.
   - Bảo hiểm hoàn trả 0đ tận cửa: Nếu mức định giá Vòng 2 chênh lệch trên 10% so với Vòng 1, NEXORA chịu 100% chi phí chuyển phát hoàn trả 2 chiều.
   - Quy trình niêm phong quang học Tamper-Evident: Video unboxing 4K tại buồng sáng chuẩn 1000 Lux và đóng tem niêm phong bảo mật trước khi hoàn trả lại trang phục.
+
+### 19. Phòng Thử Đồ Mix & Match & Ưu Đãi Mua Trọn Set (CAT-MIX-MATCH-01)
+- **Mục tiêu**: Nâng cao chỉ số AOV (Average Order Value) và truyền cảm hứng phối đồ thời trang sáng tạo, giải quyết câu hỏi "Mặc gì hôm nay?" của người tiêu dùng.
+- **Cơ chế**:
+  - Phân hệ Studio tương tác tại tuyến `/phoi-do`: Khách hàng tự do chọn các lớp trang phục gồm Áo chính (Tops), Quần/Chân váy (Bottoms) và Lớp ngoài (Outerwear).
+  - Khung Style Canvas thị giác magazine: Xếp chồng trực quan các sản phẩm thực tế, tự động tính toán Điểm Hài Hòa Tone-sur-Tone (98/100).
+  - Thuật toán chiết khấu Combo Style Saver: Giảm ngay **10%** tổng giá trị khi mua trọn bộ cả set đồ.
+  - Chức năng 1-Click: Thêm tuần tự tất cả các món đồ vào giỏ hàng chỉ bằng một nút bấm duy nhất.
+
+### 20. Khung Giờ Giao Hàng Hẹn Trước & Đóng Gói Xanh Eco Box (FUL-GREEN-SLOT-02)
+- **Mục tiêu**: Cá nhân hóa dịch vụ giao vận chặng cuối cho khách hàng bận rộn và tiên phong thực hành thương mại điện tử xanh, giảm thiểu rác thải nhựa nilon.
+- **Cơ chế**:
+  - Tùy chọn 3 khung giờ nhận hàng chính xác tại Checkout `/gio-hang`: Buổi sáng (08:00 - 12:00), Buổi chiều (13:30 - 17:30) hoặc Buổi tối (18:00 - 21:00 ngoài giờ hành chính).
+  - Tùy chọn Đóng gói Xanh Eco Green Box: Sử dụng 100% hộp giấy kraft tổ ong tự phân hủy sinh học, loại bỏ hoàn toàn màng nilon bọc ngoài.
+  - Tặng thưởng xanh: Cộng ngay **+50 Xu NEXORA Coins** vào ví người dùng khi chọn đóng gói xanh.
+  - Đồng bộ hiển thị: Khung giờ hẹn và huy hiệu Eco Box được lưu vết vĩnh viễn trên vận đơn và màn hình chi tiết đơn hàng `/don-hang/[id]`.
 
 ---
 

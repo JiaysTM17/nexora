@@ -237,7 +237,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **27** | **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)** | Module 04 | **100% Hoàn thiện** | Kiểm soát trọng lượng bưu kiện qua 3 trạm (Xuất kho -> Hub -> Bưu tá) với dung sai quang học ΔW ≤ 50g chống tráo hàng tại `/don-hang/[id]` |
 | **28** | **Bảo Hiểm Thời Trang NEXORA Care+ (VAS-WARRANTY-EXT)** | Module 03/VAS | **100% Hoàn thiện** | Gói dịch vụ bảo hiểm gia hạn bảo hành và phục hồi form 12 tháng (+150.000đ): trọn đời đường may, thay khóa YKK, 2 lần Spa giặt hấp chuyên sâu tại `/san-pham/[slug]` |
 | **29** | **Bảo Chứng Thu Cũ & SLA 14 Ngày (VAS-TRADEIN-REQUOTE)** | Module 05/VAS | **100% Hoàn thiện** | Cam kết bảo lưu giá AI 14 ngày, quyền cân nhắc 14 ngày vô điều kiện và hoàn trả tận nhà 0đ nếu lệch >10%, niêm phong buồng sáng 1000 Lux tại `/trade-in` |
-| **30** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **30** | **Phòng Thử Đồ Mix & Match & Mua Trọn Set (CAT-MIX-MATCH-01)** | Module 01 & 06 | **100% Hoàn thiện** | Studio phối đồ 3 lớp (Lớp ngoài + Áo chính + Quần/Váy) tại `/phoi-do`, tính điểm hòa sắc tone-sur-tone (98/100) và chiết khấu Combo Style Saver -10% khi thêm trọn bộ vào giỏ hàng |
+| **31** | **Khung Giờ Nhận Hàng & Đóng Gói Xanh Eco Box (FUL-GREEN-SLOT-02)** | Module 03 & 04 | **100% Hoàn thiện** | Tùy chọn 3 khung giờ giao hàng hẹn trước (Sáng/Chiều/Tối ngoài giờ) và đóng gói hộp giấy kraft tự hủy không nilon, thưởng ngay +50 Xu NEXORA Coins tại `/gio-hang` |
+| **32** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

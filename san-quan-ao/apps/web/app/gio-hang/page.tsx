@@ -2,7 +2,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
@@ -11,7 +11,7 @@ type Address = { id: string; recipient: string; phone: string; line: string; pro
 type Quote = { id: string; data: QuoteData; expiresAt: string };
 export default function Cart() {
   const cart = useResource<CartLine[]>('/cart'), addresses = useResource<Address[]>('/addresses');
-  const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
+  const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
@@ -32,7 +32,13 @@ export default function Cart() {
         ...(useCoins ? { _coins: '25000' } : {}),
         ...(trimmedTi ? { _tradeIn: trimmedTi } : {}),
       };
-      const q = await api<Quote>('/checkout/quote', 'POST', { addressId: chosenAddress, vouchers: vouchersPayload, ...(trimmedTi ? { tradeInCode: trimmedTi } : {}) }); setQuote(q); key.current = crypto.randomUUID(); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+      const q = await api<Quote>('/checkout/quote', 'POST', {
+        addressId: chosenAddress,
+        vouchers: vouchersPayload,
+        deliverySlot,
+        ecoPackaging,
+        ...(trimmedTi ? { tradeInCode: trimmedTi } : {}),
+      }); setQuote(q); key.current = crypto.randomUUID(); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
   async function order() {
     if (!quote) return; setBusy(true); setError('');
@@ -43,6 +49,54 @@ export default function Cart() {
   if (!cart.data?.length) return <Empty title="Giỏ đồ đang chờ bạn." detail="Chọn một món hợp mình để bắt đầu nhé."/>;
   return <section className="section"><p className="eyebrow">TỪ CẢM HỨNG ĐẾN TỦ ĐỒ</p><h1>Giỏ hàng của bạn.</h1><p className="subtle">Một lần đặt, theo dõi đơn và phí giao riêng từng shop.</p><div className="checkout-grid"><div>{[...groups].map(([shopId, lines]) => <section key={shopId} className="panel"><h2 className="panel-title">{lines[0].variant.product.shop.name}</h2>{lines.map(line => <div className="cart-line" key={line.id}><img src={line.variant.product.images[0]?.url} alt={line.variant.product.name} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg'; }}/><div className="grow"><Link href={`/san-pham/${line.variant.product.slug}`}><strong>{line.variant.product.name}</strong></Link><p>{line.variant.color} / Size {line.variant.size}</p><div className="row"><input aria-label={`Số lượng ${line.variant.product.name}`} className="qty-input" type="number" min={1} max={20} value={line.quantity} onChange={e => { const value = Number(e.target.value); if (Number.isInteger(value) && value > 0 && value <= 20) void changeLine(line.id, value); }}/><button className="icon-link" aria-label={`Xóa ${line.variant.product.name}`} onClick={() => changeLine(line.id)}><Trash2 size={16}/></button></div></div><strong>{vnd(line.variant.price * line.quantity)}</strong></div>)}<label className="voucher">Mã giảm của shop<input value={codes[shopId] ?? ''} onChange={e => { setCodes({ ...codes, [shopId]: e.target.value }); invalidate(); }} placeholder={shopId === 'shop-nep' ? 'Thử CHAO50 cho đơn từ 400.000đ' : 'Nhập mã nếu có'}/></label></section>)}
       <section className="panel"><h2 className="panel-title"><MapPin size={18}/>Giao đến</h2>{addresses.error && <Notice error>{addresses.error}</Notice>}{addresses.data?.map(a => <label className="address-option" key={a.id}><input type="radio" name="address" checked={chosenAddress === a.id} onChange={() => { setAddressId(a.id); invalidate(); }}/><span><strong>{a.recipient} · {a.phone}</strong><br/>{a.line}, {a.province}</span></label>)}<button className="text-button" onClick={() => setNewAddress(!newAddress)}>{newAddress ? 'Đóng' : '+ Thêm địa chỉ'}</button>{newAddress && <form onSubmit={addAddress} className="form"><label>Người nhận<input name="recipient" required minLength={2}/></label><label>Số điện thoại<input name="phone" required pattern="0[0-9]{9}" inputMode="tel"/></label><label>Địa chỉ cụ thể<input name="line" required minLength={5}/></label><label>Tỉnh / thành phố<input name="province" required minLength={2}/></label><button className="button" disabled={busy}>Lưu địa chỉ</button></form>}</section>
+      <section className="panel">
+        <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Clock size={18} /> Khung Giờ Giao Hàng &amp; Đóng Gói Xanh (FUL-GREEN-SLOT)
+        </h2>
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Lựa chọn khung giờ bưu tá giao hàng phù hợp với lịch sinh hoạt và đóng gói thân thiện môi trường.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+          {[
+            { id: 'MORNING', label: 'Buổi sáng · 08:00 - 12:00', desc: 'Giao trong buổi sáng, phù hợp nhận tại nơi làm việc hoặc công ty.' },
+            { id: 'AFTERNOON', label: 'Buổi chiều · 13:30 - 17:30', desc: 'Khung giờ hành chính tiêu chuẩn, bưu tá liên hệ trước khi đến.' },
+            { id: 'EVENING', label: 'Buổi tối · 18:00 - 21:00 (Ngoài giờ)', desc: 'Giao tận cửa nhà sau giờ tan tầm, không lo vắng mặt.' },
+          ].map(slot => (
+            <label key={slot.id} className="address-option" style={{ cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="deliverySlot"
+                checked={deliverySlot === slot.id}
+                onChange={() => { setDeliverySlot(slot.id as any); invalidate(); }}
+              />
+              <span>
+                <strong>{slot.label}</strong>
+                <br />
+                <small className="subtle">{slot.desc}</small>
+              </span>
+            </label>
+          ))}
+        </div>
+        <label className="address-option" style={{ background: ecoPackaging ? 'rgba(5, 150, 105, 0.05)' : undefined, border: ecoPackaging ? '1px solid #059669' : undefined }}>
+          <input
+            type="checkbox"
+            checked={ecoPackaging}
+            onChange={e => { setEcoPackaging(e.target.checked); invalidate(); }}
+          />
+          <span>
+            <strong style={{ color: '#047857', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              🌱 Hộp Giấy Kraft Tự Hủy Eco Green Box (Không nilon)
+              <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                +50 XU
+              </span>
+            </strong>
+            <br />
+            <small className="subtle">
+              Sử dụng 100% vật liệu giấy tổ ong tái sinh tự phân hủy sinh học, tặng ngay +50 Xu NEXORA Coins vào ví sau khi nhận hàng.
+            </small>
+          </span>
+        </label>
+      </section>
       <section className="panel"><h2 className="panel-title">Ưu Đãi Đa Tầng NEXORA (CART-STACK-01)</h2><label className="address-option" style={{ marginBottom: 10 }}><input type="checkbox" checked={useFreeship} onChange={e => { setUseFreeship(e.target.checked); invalidate(); }} /><span><strong>Voucher Miễn Phí Vận Chuyển Freeship Xtra (Tầng 3)</strong><br/><small className="subtle">Tài trợ giảm trực tiếp 30.000đ phí giao hàng trên toàn sàn.</small></span></label><label className="address-option"><input type="checkbox" checked={useCoins} onChange={e => { setUseCoins(e.target.checked); invalidate(); }} /><span><strong>Dùng Xu Thưởng NEXORA Coins (Tầng 5)</strong><br/><small className="subtle">Đang có: 25.000 xu khả dụng. Cấn trừ trực tiếp 25.000đ (1 xu = 1đ).</small></span></label></section>
       <section className="panel"><h2 className="panel-title">Voucher Trade-In NEXORA (Tầng 2)</h2><label className="voucher">Mã đối ứng từ Thu cũ Đổi mới (NXTI-...)<input value={tradeInCode} onChange={e => { setTradeInCode(e.target.value); invalidate(); }} placeholder="VD: NXTI-DEMO50"/></label></section>
       <section className="panel"><h2 className="panel-title">Phương thức thanh toán</h2><label className="address-option"><input type="radio" name="paymentMethod" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')}/><span><strong>Thanh toán khi nhận hàng (COD)</strong><br/><small className="subtle">Nhận hàng, kiểm tra ngoại quan (RET-COINSPECT) và thanh toán cho shipper.</small></span></label><label className="address-option" style={{ marginTop: 8 }}><input type="radio" name="paymentMethod" checked={paymentMethod === 'BNPL'} onChange={() => setPaymentMethod('BNPL')}/><span><strong>Mua trước Trả sau (NEXORA PayLater · 0% Lãi suất)</strong><br/><small className="subtle">Chia đều 3 kỳ thanh toán 0% lãi suất và không phụ phí (PAY-BNPL-MIDFLOW-05).</small></span></label>{paymentMethod === 'BNPL' && quote && <div style={{ marginTop: 12, padding: 12, background: 'var(--sage)', borderRadius: 2, fontSize: 12 }}><strong>Kế hoạch trả góp 3 kỳ (0% lãi suất):</strong><div className="row between" style={{ marginTop: 6 }}><span>Kỳ 1 (Hôm nay lúc giao dịch):</span><strong>{vnd(Math.round(quote.data.total / 3))}</strong></div><div className="row between"><span>Kỳ 2 (Sau 30 ngày):</span><strong>{vnd(Math.round(quote.data.total / 3))}</strong></div><div className="row between"><span>Kỳ 3 (Sau 60 ngày):</span><strong>{vnd(quote.data.total - 2 * Math.round(quote.data.total / 3))}</strong></div><p className="fine-print" style={{ margin: '8px 0 0' }}>Bảo lãnh tín dụng tiêu dùng số bởi NEXORA PayLater.</p></div>}</section></div>

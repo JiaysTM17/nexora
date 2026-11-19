@@ -10,7 +10,14 @@ const orderInclude = { shops: { include: { shop: { select: { name: true } }, ite
 @Injectable()
 export class Commerce {
   constructor(@Inject(Db) private db: Db) {}
-  async price(tx: Tx, userId: string, addressId: string, codes: Record<string, string>): Promise<QuoteData> {
+  async price(
+    tx: Tx,
+    userId: string,
+    addressId: string,
+    codes: Record<string, string>,
+    deliverySlot?: string,
+    ecoPackaging?: boolean,
+  ): Promise<QuoteData> {
     const address = await tx.address.findFirst({ where: { id: addressId, userId } });
     if (!address) throw new NotFoundException('Không tìm thấy địa chỉ của bạn');
     const lines = await tx.cartLine.findMany({
@@ -74,13 +81,20 @@ export class Commerce {
       coinDiscount,
       ...(tradeInCode ? { tradeInCode } : {}),
       total: finalTotal,
-      address: { recipient: address.recipient, phone: address.phone, line: address.line, province: address.province },
+      address: {
+        recipient: address.recipient,
+        phone: address.phone,
+        line: address.line,
+        province: address.province,
+        ...(deliverySlot ? { deliverySlot } : {}),
+        ...(ecoPackaging !== undefined ? { ecoPackaging } : {}),
+      },
       provider: 'mock',
     };
   }
-  async quote(userId: string, addressId: string, codes: Record<string, string>) {
+  async quote(userId: string, addressId: string, codes: Record<string, string>, deliverySlot?: string, ecoPackaging?: boolean) {
     return serial(this.db, async tx => {
-      const data = await this.price(tx, userId, addressId, codes);
+      const data = await this.price(tx, userId, addressId, codes, deliverySlot, ecoPackaging);
       return tx.checkoutQuote.create({ data: { userId, addressId, voucherCodes: codes, data: json(data), fingerprint: hash(JSON.stringify(data)), expiresAt: new Date(Date.now() + 10 * 60000) } });
     });
   }
@@ -96,7 +110,8 @@ export class Commerce {
       if (quote.order) return tx.order.findUniqueOrThrow({ where: { id: quote.order.id }, include: orderInclude });
       if (quote.expiresAt <= new Date()) throw new ConflictException({ code: 'QUOTE_EXPIRED', message: 'Báo giá hết hạn. Vui lòng lấy báo giá mới.' });
       const codes = quote.voucherCodes as Record<string, string>;
-      const current = await this.price(tx, userId, quote.addressId, codes);
+      const quoteData = quote.data as QuoteData;
+      const current = await this.price(tx, userId, quote.addressId, codes, quoteData.address?.deliverySlot, quoteData.address?.ecoPackaging);
       if (hash(JSON.stringify(current)) !== quote.fingerprint) throw new ConflictException({ code: 'QUOTE_CHANGED', message: 'Giỏ, giá hoặc địa chỉ đã thay đổi. Vui lòng kiểm tra báo giá mới.', quote: current });
       // Conditional updates run in stable order and are committed with the order.
       const items = current.shops.flatMap(g => g.items).sort((a, b) => a.variantId.localeCompare(b.variantId));
@@ -174,9 +189,15 @@ export class CommerceController {
   }
   @Delete('cart/:id') async remove(@Req() req: Authed, @Param('id') lineId: string) { await this.db.cartLine.deleteMany({ where: { id: lineId, userId: req.user.id } }); return { ok: true }; }
   @Post('checkout/quote') quote(@Req() req: Authed, @Body() body: unknown) {
-    const data = z.object({ addressId: id, vouchers: z.record(id, z.string().max(30)).default({}), tradeInCode: z.string().trim().max(30).optional() }).strict().parse(body);
+    const data = z.object({
+      addressId: id,
+      vouchers: z.record(id, z.string().max(30)).default({}),
+      tradeInCode: z.string().trim().max(30).optional(),
+      deliverySlot: z.string().max(30).optional(),
+      ecoPackaging: z.boolean().optional(),
+    }).strict().parse(body);
     const codes = data.tradeInCode ? { ...data.vouchers, _tradeIn: data.tradeInCode } : data.vouchers;
-    return this.commerce.quote(req.user.id, data.addressId, codes);
+    return this.commerce.quote(req.user.id, data.addressId, codes, data.deliverySlot, data.ecoPackaging);
   }
   @Post('orders') createOrder(@Req() req: Authed, @Body() body: unknown) {
     const data = z.object({

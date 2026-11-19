@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -13,6 +13,12 @@ const RETURN_LABELS: Record<string, string> = {
   REJECTED: 'Shop từ chối',
   DISPUTED: 'Trọng tài Sàn thụ lý (SLA 48h)',
   COMPLETED: 'Hoàn tất',
+};
+
+const SLOT_LABELS: Record<string, string> = {
+  MORNING: 'Buổi sáng (08:00 - 12:00)',
+  AFTERNOON: 'Buổi chiều (13:30 - 17:30)',
+  EVENING: 'Buổi tối (18:00 - 21:00 · Ngoài giờ)',
 };
 
 function getSecurityPin(orderCode: string, shopId: string): string {
@@ -158,6 +164,20 @@ export default function OrderDetail() {
           <p style={{ margin: '4px 0 0', color: 'var(--muted)', fontSize: 13 }}>
             {address.line}, {address.province}
           </p>
+          {((address as any).deliverySlot || (address as any).ecoPackaging) && (
+            <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--line)', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', fontSize: 11 }}>
+              {(address as any).deliverySlot && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f5f0e8', padding: '3px 8px', borderRadius: 3, color: 'var(--ink)' }}>
+                  <Clock size={12} color="var(--clay)" /> Khung giờ hẹn: <strong>{SLOT_LABELS[(address as any).deliverySlot] ?? (address as any).deliverySlot}</strong>
+                </span>
+              )}
+              {(address as any).ecoPackaging && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#eaf5ee', padding: '3px 8px', borderRadius: 3, color: '#166534', fontWeight: 600 }}>
+                  <Leaf size={12} color="#166534" /> Đóng gói Xanh Eco Green Box (+50 Xu)
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
       {order.shops.map(shop => {

@@ -90,3 +90,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 21. **Bảo Chứng Thu Cũ & Quyền Cân Nhắc 14 Ngày (VAS-TRADEIN-REQUOTE)**:
    - Hồ sơ: Module 05 Thời trang Tuần hoàn & Giám định Thu cũ Đổi mới.
    - Thực tế: Cam kết bảo lưu giá trị định giá sơ bộ Vòng 1 trong 14 ngày, quyền cân nhắc 14 ngày vô điều kiện và cam kết hoàn trả tận nơi 0đ nếu kết quả giám định Vòng 2 chênh lệch >10%, quy trình niêm phong quang học buồng sáng 1000 Lux tại `/trade-in`.
+
+22. **Phòng Thử Đồ Mix & Match & Mua Trọn Set (CAT-MIX-MATCH-01)**:
+   - Hồ sơ: Module 01 Quản trị Danh mục & Module 06 Trải nghiệm Thời trang Tương tác.
+   - Thực tế: Studio phối đồ trực quan tại tuyến `/phoi-do` cho phép chọn 3 lớp trang phục, tự động xếp chồng trên Lookbook Canvas, đánh giá hòa sắc tone-sur-tone (98/100) và chiết khấu Combo Style Saver (-10%) khi thêm trọn bộ vào giỏ hàng 1-click.
+
+23. **Khung Giờ Giao Hàng Hẹn Trước & Đóng Gói Xanh Eco Box (FUL-GREEN-SLOT-02)**:
+   - Hồ sơ: Module 03 Giỏ hàng & Module 04 Vận chuyển Xanh Bền vững.
+   - Thực tế: Tùy chọn 3 khung giờ bưu tá giao hàng (Sáng/Chiều/Tối ngoài giờ) và đóng gói hộp giấy kraft tự hủy không nilon, thưởng ngay +50 Xu NEXORA Coins vào tài khoản tại màn hình Checkout `/gio-hang` và lưu vết tại `/don-hang/[id]`.
