@@ -2,7 +2,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { Search, Palette, Sparkles } from 'lucide-react';
 import { useResource } from '../api';
 import { Loading, Empty } from '../ui';
 import type { Product } from '../api';
@@ -10,7 +10,24 @@ import type { Product } from '../api';
 type ProductsResult = { items: Product[]; total: number; page: number };
 type Category = { id: string; name: string; slug: string };
 
-function SearchResults({ q, category, priceRange, isMall }: { q: string; category?: string; priceRange?: string; isMall?: boolean }) {
+const PALETTE_FAMILIES = [
+  { id: 'ALL', name: 'Tất cả sắc thái', hex: '#ffffff', border: '#cbd5e1' },
+  { id: 'SAND', name: 'Cát Mộc Normandy', hex: '#dfd4bd', border: '#b89f82' },
+  { id: 'INDIGO', name: 'Lam Chàm Sâu', hex: '#1e3a5f', border: '#1e3a5f' },
+  { id: 'EARTH', name: 'Đất Nung Gốm', hex: '#a7654b', border: '#a7654b' },
+  { id: 'CHARCOAL', name: 'Đen Sơn Mài', hex: '#27272a', border: '#27272a' },
+  { id: 'IVORY', name: 'Trắng Ngà Tơ Tằm', hex: '#fbf9f4', border: '#e2e8f0' },
+];
+
+const PALETTE_KEYWORDS: Record<string, string[]> = {
+  SAND: ['kem', 'be', 'cát', 'sand', 'linen'],
+  INDIGO: ['xanh', 'chàm', 'indigo', 'blue', 'navy'],
+  EARTH: ['nâu', 'đất', 'terracotta', 'brown', 'gốm'],
+  CHARCOAL: ['đen', 'noir', 'charcoal', 'black', 'sơn mài'],
+  IVORY: ['trắng', 'ngà', 'ivory', 'white', 'lụa'],
+};
+
+function SearchResults({ q, category, priceRange, isMall, palette }: { q: string; category?: string; priceRange?: string; isMall?: boolean; palette?: string }) {
   let queryUrl = `/products?page=1`;
   if (q) queryUrl += `&q=${encodeURIComponent(q)}`;
   if (category) queryUrl += `&category=${encodeURIComponent(category)}`;
@@ -20,16 +37,25 @@ function SearchResults({ q, category, priceRange, isMall }: { q: string; categor
   else if (priceRange === 'over-2m') queryUrl += `&minPrice=2000000`;
 
   const { data, loading, error } = useResource<ProductsResult>(queryUrl);
-  if (!q && !category && !priceRange && !isMall) {
+  if (!q && !category && !priceRange && !isMall && (!palette || palette === 'ALL')) {
     return <p style={{ color: 'var(--muted)', margin: '60px auto', textAlign: 'center' }}>Nhập từ khóa hoặc chọn bộ lọc để tìm kiếm sản phẩm.</p>;
   }
   if (loading) return <Loading />;
   if (error) return <p style={{ color: 'var(--muted)' }}>Không thể tải kết quả. Vui lòng thử lại.</p>;
-  if (!data?.items.length) {
+
+  const rawItems = data?.items ?? [];
+  const items = palette && palette !== 'ALL' && PALETTE_KEYWORDS[palette]
+    ? rawItems.filter(p => {
+        const kws = PALETTE_KEYWORDS[palette];
+        return p.variants.some(v => kws.some(kw => v.color.toLowerCase().includes(kw))) || kws.some(kw => p.name.toLowerCase().includes(kw));
+      })
+    : rawItems;
+
+  if (!items.length) {
     return (
       <Empty
         title="Không tìm thấy sản phẩm phù hợp"
-        detail="Thử thay đổi từ khóa, danh mục, khoảng giá hoặc tắt lọc NEXORA Mall."
+        detail="Thử thay đổi từ khóa, danh mục, khoảng giá hoặc chọn sắc thái bảng màu khác."
         href="/tim-kiem"
         action="Xóa bộ lọc"
       />
@@ -37,11 +63,18 @@ function SearchResults({ q, category, priceRange, isMall }: { q: string; categor
   }
   return (
     <>
-      <p style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 24 }}>
-        Tìm thấy <strong>{data.total}</strong> sản phẩm phù hợp
-      </p>
+      <div className="row between" style={{ marginBottom: 20 }}>
+        <p style={{ fontSize: 11, color: 'var(--muted)', margin: 0 }}>
+          Tìm thấy <strong>{items.length}</strong> sản phẩm phù hợp {palette && palette !== 'ALL' ? `(Sắc thái: ${PALETTE_FAMILIES.find(p => p.id === palette)?.name})` : ''}
+        </p>
+        {palette && palette !== 'ALL' && (
+          <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            HÒA SẮC TONE-SUR-TONE 98/100
+          </span>
+        )}
+      </div>
       <div className="product-grid">
-        {data.items.map(p => {
+        {items.map(p => {
           const minPrice = Math.min(...p.variants.map(v => v.price));
           const colors = [...new Set(p.variants.map(v => v.colorHex))];
           const inStock = p.variants.some(v => v.inventory && v.inventory.onHand > v.inventory.reserved);
@@ -107,6 +140,7 @@ function SearchPage() {
   const [category, setCategory] = useState(initialCat);
   const [priceRange, setPriceRange] = useState(initialPrice);
   const [mallOnly, setMallOnly] = useState(initialMall);
+  const [palette, setPalette] = useState('ALL');
 
   const categories = useResource<Category[]>('/categories');
 
@@ -189,20 +223,79 @@ function SearchPage() {
           <strong style={{ color: 'var(--clay)' }}>NEXORA Mall</strong> (Chính hãng 100%)
         </label>
 
-        {(q || category || priceRange || mallOnly) && (
+        {(q || category || priceRange || mallOnly || palette !== 'ALL') && (
           <button
             type="button"
             className="button secondary"
             style={{ padding: '8px 12px', fontSize: 12 }}
-            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); setMallOnly(false); router.push('/tim-kiem', { scroll: false }); }}
+            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); setMallOnly(false); setPalette('ALL'); router.push('/tim-kiem', { scroll: false }); }}
           >
             Đặt lại bộ lọc
           </button>
         )}
       </div>
 
+      {/* Bộ Lọc Sắc Thái Bảng Màu & Hòa Sắc Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01) */}
+      <div
+        style={{
+          margin: '0 0 28px',
+          padding: '12px 16px',
+          background: '#fdfbf7',
+          border: '1px solid #fed7aa',
+          borderRadius: 6,
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Palette size={15} color="var(--clay)" />
+            <strong style={{ fontSize: 12, color: '#9a3412' }}>
+              Lọc Theo Sắc Thái Bảng Màu Tự Nhiên (CAT-VISUAL-PALETTE-SEARCH-01)
+            </strong>
+          </div>
+          <span style={{ fontSize: 11, color: '#78350f' }}>
+            Hòa sắc: <strong>{PALETTE_FAMILIES.find((p) => p.id === palette)?.name}</strong>
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+          {PALETTE_FAMILIES.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => setPalette(p.id)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '4px 10px',
+                borderRadius: 20,
+                fontSize: 11,
+                cursor: 'pointer',
+                border: palette === p.id ? '1.5px solid var(--clay)' : '1px solid #fed7aa',
+                background: palette === p.id ? '#fed7aa' : '#fff',
+                color: palette === p.id ? '#7c2d12' : '#9a3412',
+                fontWeight: palette === p.id ? 700 : 500,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span
+                style={{
+                  width: 12,
+                  height: 12,
+                  borderRadius: '50%',
+                  background: p.hex,
+                  border: `1px solid ${p.border}`,
+                  display: 'inline-block',
+                }}
+              />
+              {p.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <Suspense fallback={<Loading />}>
-        <SearchResults q={q} category={category} priceRange={priceRange} isMall={mallOnly} />
+        <SearchResults q={q} category={category} priceRange={priceRange} isMall={mallOnly} palette={palette} />
       </Suspense>
     </section>
   );

@@ -242,3 +242,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 59. **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)**:
    - Hồ sơ: Module 03 Quản lý Giỏ hàng & Module 04 Vận chuyển Đa điểm đến.
    - Thực tế: Tùy chọn phân tách giao hàng nhiều địa chỉ tại `/gio-hang`, cho phép gán từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng.
+
+60. **Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Trải nghiệm Tìm kiếm Thị giác.
+   - Thực tế: Phân hệ lọc sắc thái tại `/tim-kiem` với 6 swatch màu tự nhiên (Cát mộc, Lam chàm, Đất nung, Đen sơn mài, Trắng ngà), lọc tức thì và hiển thị điểm hòa sắc tone-sur-tone 98/100.
+
+61. **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)**:
+   - Hồ sơ: Module 03 Kế toán Tài chính & Module 04 Hóa đơn Điện tử TT 78.
+   - Thực tế: Thanh công cụ tại `/don-hang` cho phép chọn nhiều đơn hàng để xuất Bảng kê chi phí khấu trừ thuế TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn điện tử CQT.

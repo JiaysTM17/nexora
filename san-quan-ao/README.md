@@ -209,5 +209,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng** | Module 06 & Social | Đã hoàn thiện | Thử thách phối đồ bền vững `#LinenInTheCity` tại `/cong-dong`, quỹ thưởng 15 triệu đồng, tặng +500 Điểm Xanh và bình chọn KOC (SOC-OOTD-CHALLENGE-01) |
 | **Thước So Sánh Trước & Sau Spa Đồ Hiệu** | Module 02 & VAS | Đã hoàn thiện | Thước kéo đối chứng quang học 1000 Lux tại `/vas-care`: So sánh Trước/Sau cho Blazer len, Đầm lụa và Túi da, đo độ phục hồi form 99.2% (VAS-BEFORE-AFTER-SLIDER-01) |
 | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng** | Module 03 & 04 | Đã hoàn thiện | Tách đơn đa điểm đến tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng (CART-SPLIT-DELIVERY-01) |
+| **Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone** | Module 01 & UI | Đã hoàn thiện | 6 swatch màu tự nhiên (Cát mộc, Lam chàm, Đất nung, Đen sơn mài, Trắng ngà) tính điểm hòa sắc 98/100 tại `/tim-kiem` (CAT-VISUAL-PALETTE-SEARCH-01) |
+| **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp** | Module 03 & 04 | Đã hoàn thiện | Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn CQT tại `/don-hang` (ORD-BULK-INVOICE-DOWNLOAD-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

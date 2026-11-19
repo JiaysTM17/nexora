@@ -275,7 +275,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **65** | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)** | Module 06 & Social | **100% Hoàn thiện** | Thử thách phối đồ bền vững `#LinenInTheCity` tại `/cong-dong`, quỹ thưởng 15 triệu đồng, tặng +500 Điểm Xanh và bình chọn KOC |
 | **66** | **Thước So Sánh Trước & Sau Spa Đồ Hiệu (VAS-BEFORE-AFTER-SLIDER-01)** | Module 02 & VAS | **100% Hoàn thiện** | Thước kéo đối chứng quang học 1000 Lux tại `/vas-care`: So sánh Trước/Sau cho Blazer len, Đầm lụa và Túi da, đo độ phục hồi form 99.2% |
 | **67** | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)** | Module 03 & 04 | **100% Hoàn thiện** | Tách đơn đa điểm đến tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng |
-| **68** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **68** | **Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01)** | Module 01 & UI | **100% Hoàn thiện** | 6 swatch màu tự nhiên (Cát mộc, Lam chàm, Đất nung, Đen sơn mài, Trắng ngà) tính điểm hòa sắc 98/100 tại `/tim-kiem` |
+| **69** | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)** | Module 03 & 04 | **100% Hoàn thiện** | Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn CQT tại `/don-hang` |
+| **70** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

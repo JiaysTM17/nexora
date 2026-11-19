@@ -81,6 +81,8 @@
 | **70** | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)** | Module 06 & Social | Đã hoàn thiện | Thử thách thời trang bền vững (#LinenInTheCity) tại `/cong-dong`: Quỹ thưởng 15.000.000đ, đăng ký nhận +500 Xu Xanh và nút bình chọn phiếu thưởng KOC trực tiếp |
 | **71** | **Thước So Sánh Trước & Sau Spa Đồ Hiệu (VAS-BEFORE-AFTER-SLIDER-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ thước kéo đối chứng quang học 1000 Lux tại `/vas-care`: So sánh Trước/Sau cho Blazer len, Đầm lụa và Túi da, đo độ phục hồi form 99.2% |
 | **72** | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)** | Module 03 & 04 | Đã hoàn thiện | Tách đơn đa điểm tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, điền thông tin người nhận riêng và phân tuyến bưu tá |
+| **73** | **Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01)** | Module 01 & UI | Đã hoàn thiện | Phân hệ lọc sắc thái tại `/tim-kiem`: 6 dòng màu tự nhiên (Cát mộc, Lam chàm, Đất nung, Đen sơn mài, Trắng ngà), tính điểm hòa sắc 98/100 |
+| **74** | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)** | Module 03 & 04 | Đã hoàn thiện | Thanh công cụ xuất gộp hóa đơn tại `/don-hang`: Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn điện tử CQT |
 
 ---
 
@@ -596,6 +598,28 @@
   - Cho phép người mua phân bổ từng dòng sản phẩm vào Điểm đến 1 (Địa chỉ mặc định nhà riêng) hoặc Điểm đến 2 (Quà tặng bạn bè / Nơi làm việc).
   - Biểu mẫu thu thập thông tin độc lập cho Kiện hàng thứ 2 gồm Họ tên, Số điện thoại và Địa chỉ chi tiết.
   - Phân luồng điều phối bưu tá và in 2 vận đơn con độc lập bảo đảm giao hàng chính xác mà không làm phát sinh thao tác đặt đơn lặp lại.
+
+### 57. Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01)
+- **Mục tiêu**: Giúp khách hàng nhanh chóng tìm kiếm và khám phá các thiết kế thời trang theo từng sắc thái thẩm mỹ đặc trưng, kích thích cảm hứng phối đồ chuẩn quy tắc hòa sắc tự nhiên.
+- **Cơ chế**:
+  - Tích hợp thanh chọn sắc thái trực quan Swatch Bar trên giao diện tìm kiếm `/tim-kiem`.
+  - Hỗ trợ 6 dải màu tự nhiên kinh điển:
+    1. *Cát Mộc Normandy (#dfd4bd)*: Tone be, cát, linen mộc mạc.
+    2. *Lam Chàm Sâu (#1e3a5f)*: Tone xanh indigo, navy cổ điển.
+    3. *Đất Nung Gốm (#a7654b)*: Tone nâu đất, terracotta trầm ấm.
+    4. *Đen Sơn Mài (#27272a)*: Tone noir, than chì sang trọng.
+    5. *Trắng Ngà Tơ Tằm (#fbf9f4)*: Tone ngà, ivory, lụa tinh khôi.
+    6. *Tất Cả Sắc Thái*: Khôi phục toàn bộ danh mục catalog.
+  - Tự động đối soát từ khóa biến thể và hiển thị chỉ số Hòa sắc Tone-sur-Tone 98/100.
+
+### 58. Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)
+- **Mục tiêu**: Hỗ trợ tối đa cho khách hàng doanh nghiệp, cơ quan và cá nhân có nhu cầu thanh quyết toán chi phí mua sắm thời trang công sở hợp lệ theo Nghị định 123/2020/NĐ-CP và Thông tư 78/2021/TT-BTC.
+- **Cơ chế**:
+  - Tích hợp thanh công cụ quản lý hóa đơn gộp ngay đầu màn hình danh sách đơn hàng `/don-hang`.
+  - Hộp kiểm đa chọn (Checkboxes) từng đơn hoặc nút 1-chạm "Chọn tất cả đơn hàng".
+  - Tự động tổng hợp doanh thu, bóc tách tiền trước thuế và thuế GTGT 8% theo quy định hiện hành.
+  - Modal Bảng kê chi phí chuẩn mực: Bảng kê chi tiết từng mã đơn, ngày mua, giá trị trước thuế, tiền thuế và tổng thanh toán, kèm thông tin chữ ký số điện tử của NEXORA (MST: 0317889988) và nút In / Lưu PDF hợp lệ.
+  - Nút tải gộp file nén `.ZIP` chứa đầy đủ các hóa đơn điện tử XML/PDF đã chọn.
 
 ---
 
