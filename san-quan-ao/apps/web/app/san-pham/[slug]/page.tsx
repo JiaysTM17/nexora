@@ -19,6 +19,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [subscribedAlert, setSubscribedAlert] = useState(false);
   const [showSilhouetteModal, setShowSilhouetteModal] = useState(false);
   const [silhouetteArchetype, setSilhouetteArchetype] = useState<'PETITE' | 'ATHLETIC' | 'CURVY'>('ATHLETIC');
+  const [showFabricComparison, setShowFabricComparison] = useState(false);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const { user } = useUser();
 
@@ -563,6 +564,75 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   <span>🌿 Phát thải: <strong>1.4 kg CO2e</strong> (-72% so với Polyester)</span>
                   <span>♻️ Tự phân hủy sinh học: <strong>100% trong 12 tháng</strong></span>
                 </div>
+              </div>
+
+              {/* Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01) */}
+              <div style={{ marginBottom: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowFabricComparison(!showFabricComparison)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    background: showFabricComparison ? '#fdf8ea' : '#f8fafc',
+                    border: showFabricComparison ? '1px solid var(--clay)' : '1px solid #cbd5e1',
+                    borderRadius: 3,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: showFabricComparison ? 'var(--clay)' : '#1e293b',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Sparkles size={13} color="var(--clay)" /> 🔬 {showFabricComparison ? 'Đóng bảng so sánh chất liệu' : 'Bảng So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON)'}
+                </button>
+
+                {showFabricComparison && (
+                  <div style={{ marginTop: 10, padding: 12, background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 4 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>
+                      Đối Chiếu Giữa Sợi Tự Nhiên Cao Cấp ({p.material}) &amp; Vải Tổng Hợp Phổ Thông:
+                    </div>
+                    <div className="table-wrap" style={{ margin: 0 }}>
+                      <table style={{ fontSize: 11 }}>
+                        <thead>
+                          <tr style={{ background: '#f1f5f9' }}>
+                            <th style={{ padding: '6px 8px' }}>Chỉ số trải nghiệm</th>
+                            <th style={{ padding: '6px 8px', color: '#166534' }}>NEXORA ({p.material})</th>
+                            <th style={{ padding: '6px 8px', color: '#991b1b' }}>Vải Polyester tổng hợp</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td style={{ padding: '6px 8px' }}><strong>1. Độ thoáng khí &amp; thấm hút</strong></td>
+                            <td style={{ padding: '6px 8px', color: '#166534' }}><strong>9.8/10</strong> · Cấu trúc sợi rỗng thoát ẩm tức thì</td>
+                            <td style={{ padding: '6px 8px', color: '#991b1b' }}><strong>3.2/10</strong> · Gây hầm bí, đọng mồ hôi</td>
+                          </tr>
+                          <tr>
+                            <td style={{ padding: '6px 8px' }}><strong>2. Độ êm dịu trên làn da</strong></td>
+                            <td style={{ padding: '6px 8px', color: '#166534' }}><strong>10/10</strong> · Sợi thuần khiết, ngừa kích ứng da</td>
+                            <td style={{ padding: '6px 8px', color: '#991b1b' }}><strong>4.5/10</strong> · Dễ ngứa, tích điện ma sát</td>
+                          </tr>
+                          <tr>
+                            <td style={{ padding: '6px 8px' }}><strong>3. Điều hòa thân nhiệt 4 mùa</strong></td>
+                            <td style={{ padding: '6px 8px', color: '#166534' }}><strong>9.6/10</strong> · Mát lạnh mùa hè, giữ ấm se lạnh</td>
+                            <td style={{ padding: '6px 8px', color: '#991b1b' }}><strong>2.8/10</strong> · Nóng bức khi ra nắng, lạnh vào mùa đông</td>
+                          </tr>
+                          <tr>
+                            <td style={{ padding: '6px 8px' }}><strong>4. Tuổi thọ &amp; Vòng đời (&gt;5 năm)</strong></td>
+                            <td style={{ padding: '6px 8px', color: '#166534' }}>Càng giặt càng mềm và đanh sợi</td>
+                            <td style={{ padding: '6px 8px', color: '#991b1b' }}>Dễ bục chỉ, xù lông vón cục sau 10 lần giặt</td>
+                          </tr>
+                          <tr>
+                            <td style={{ padding: '6px 8px' }}><strong>5. Trách nhiệm môi trường</strong></td>
+                            <td style={{ padding: '6px 8px', color: '#166534' }}>100% tự phân hủy sinh học trong đất</td>
+                            <td style={{ padding: '6px 8px', color: '#991b1b' }}>Phát tán vi nhựa, mất 200+ năm phân rã</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Atelier Care Guide */}

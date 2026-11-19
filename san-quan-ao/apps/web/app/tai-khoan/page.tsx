@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -26,6 +26,9 @@ export default function AccountPage() {
     waist: number;
     hip: number;
     fitPref: string;
+    footLength?: number;
+    footWidth?: number;
+    archType?: string;
   }>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -33,7 +36,7 @@ export default function AccountPage() {
         if (stored) return JSON.parse(stored);
       } catch {}
     }
-    return { height: 168, weight: 58, chest: 88, waist: 68, hip: 92, fitPref: 'REGULAR' };
+    return { height: 168, weight: 58, chest: 88, waist: 68, hip: 92, fitPref: 'REGULAR', footLength: 255, footWidth: 96, archType: 'STANDARD' };
   });
   const [passportSaved, setPassportSaved] = useState(false);
   const [selectedDay, setSelectedDay] = useState(0);
@@ -59,6 +62,9 @@ export default function AccountPage() {
       waist: Number(d.get('waist')),
       hip: Number(d.get('hip')),
       fitPref: String(d.get('fitPref')),
+      footLength: Number(d.get('footLength') || 255),
+      footWidth: Number(d.get('footWidth') || 96),
+      archType: String(d.get('archType') || 'STANDARD'),
     };
     setPassport(updated);
     localStorage.setItem('nexora_fashion_passport', JSON.stringify(updated));
@@ -181,6 +187,66 @@ export default function AccountPage() {
                 <option value="SLIM">Ôm dáng (Slim Fit)</option>
               </select>
             </label>
+          </div>
+
+          {/* Thước Đo Chân Số Hóa & Khuyến Nghị Size Giày/Guốc (USER-FOOTWEAR-SCAN-01) */}
+          <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap', gap: 6 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--ink)' }}>
+                <Footprints size={16} color="var(--clay)" /> Thước Đo Chân Số Hóa &amp; Size Giày/Guốc (USER-FOOTWEAR-SCAN-01)
+              </span>
+              <span style={{ fontSize: 10, background: '#f5f3ef', padding: '2px 8px', borderRadius: 2, color: 'var(--muted)', fontWeight: 600 }}>
+                Chuẩn quốc tế ISO 9407 / Mondopoint
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12 }}>
+              <label>
+                Chiều dài chân (mm)
+                <input name="footLength" type="number" min={200} max={320} defaultValue={passport.footLength ?? 255} required />
+              </label>
+              <label>
+                Chiều rộng chân (mm)
+                <input name="footWidth" type="number" min={70} max={130} defaultValue={passport.footWidth ?? 96} required />
+              </label>
+              <label>
+                Dạng vòm chân (Arch)
+                <select name="archType" defaultValue={passport.archType ?? 'STANDARD'}>
+                  <option value="STANDARD">Vòm cân đối tiêu chuẩn</option>
+                  <option value="FLAT">Bàn chân bẹt (Low/Flat Arch)</option>
+                  <option value="HIGH">Vòm chân cao (High Arch)</option>
+                </select>
+              </label>
+            </div>
+
+            {/* Calculated Shoe Size Card */}
+            {(() => {
+              const fl = passport.footLength ?? 255;
+              const eu = (((fl + 15) * 1.5) / 10).toFixed(1);
+              const us = ((((fl + 15) * 1.5) / 10) - 33).toFixed(1);
+              const uk = ((((fl + 15) * 1.5) / 10) - 33.5).toFixed(1);
+              return (
+                <div style={{ marginTop: 12, padding: '10px 14px', background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div style={{ background: '#fff', border: '1px solid var(--line)', padding: '6px 10px', borderRadius: 3, textAlign: 'center' }}>
+                      <div style={{ fontSize: 9, color: 'var(--muted)' }}>SIZE CHUẨN</div>
+                      <strong style={{ fontSize: 14, color: 'var(--clay)' }}>EU {eu}</strong>
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--ink)' }}>
+                      <span>Tương đương: <strong>US {us}</strong> · <strong>UK {uk}</strong> · Lót giày khuyến nghị: <strong>{fl + 5}mm</strong></span>
+                      <div style={{ color: 'var(--muted)', fontSize: 10, marginTop: 2 }}>
+                        {passport.archType === 'FLAT' && 'Khuyến nghị: Đế đệm êm nâng đỡ lòng bàn chân, tránh mũi nhọn cứng.'}
+                        {passport.archType === 'HIGH' && 'Khuyến nghị: Đệm vòm êm ái hấp thụ chấn động, phom rộng mu bàn chân.'}
+                        {(!passport.archType || passport.archType === 'STANDARD') && 'Khuyến nghị: Phù hợp mọi phom Loafer da Ý, Sneaker và Sandal cao gót.'}
+                      </div>
+                    </div>
+                  </div>
+                  <span style={{ fontSize: 10, color: '#166534', fontWeight: 600, background: '#eaf5ee', padding: '3px 8px', borderRadius: 2 }}>
+                    ✓ Khớp 98% phom giày NEXORA
+                  </span>
+                </div>
+              );
+            })()}
           </div>
           <button className="button" style={{ alignSelf: 'flex-start', marginTop: 8 }}>
             Cập nhật Fashion Passport

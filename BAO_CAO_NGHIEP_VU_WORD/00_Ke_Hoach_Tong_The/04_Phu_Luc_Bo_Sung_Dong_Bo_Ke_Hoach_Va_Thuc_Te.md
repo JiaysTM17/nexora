@@ -170,3 +170,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 41. **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao Thực Tế Cùng KOC (SOC-FIT-FEEDBACK-01)**:
    - Hồ sơ: Module 06 Mạng xã hội OOTD & Tương tác Cộng đồng.
    - Thực tế: Bộ lọc thẻ Fit Q&A dưới từng bài đăng `/cong-dong`, gợi ý câu hỏi chiều cao/cân nặng 1-chạm, gắn nhãn FIT Q&A và nhận diện phản hồi của KOC Tác giả cam kết SLA 24h.
+
+42. **Thước Đo Chân Số Hóa & Khuyến Nghị Size Giày/Guốc (USER-FOOTWEAR-SCAN-01)**:
+   - Hồ sơ: Module 07 Cá nhân hóa Người dùng & Công cụ Hỗ trợ Kích cỡ.
+   - Thực tế: Mở rộng phân hệ Fashion Passport tại `/tai-khoan` bổ sung chiều dài/rộng chân (mm), hình thái vòm chân (Bẹt/Chuẩn/Cao), tự động quy đổi kích cỡ chuẩn quốc tế EU/US/UK và đưa ra lời khuyên chọn phom giày cao cấp.
+
+43. **Bảng Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)**:
+   - Hồ sơ: Module 01 Quản lý Danh mục & Minh bạch Nguồn gốc Chất liệu.
+   - Thực tế: Bảng ma trận đối chiếu 5 tiêu chuẩn vàng tại `/san-pham/[slug]` giữa sợi tự nhiên cao cấp (Lụa Bảo Lộc, Linen Normandy, GOTS Cotton) và vải tổng hợp Polyester thị trường (thoáng khí 9.8/10, an toàn da 10/10, điều hòa thân nhiệt 9.6/10 và độ bền >5 năm).

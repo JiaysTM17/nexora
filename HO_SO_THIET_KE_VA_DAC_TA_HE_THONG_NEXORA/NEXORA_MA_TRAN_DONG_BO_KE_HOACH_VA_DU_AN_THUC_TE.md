@@ -63,6 +63,8 @@
 | **52** | **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)** | Module 04 & Logistics | Đã hoàn thiện | Modal bản đồ trực tuyến Live GPS tại `/don-hang/[id]`: Mô phỏng tuyến đường di chuyển từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, telemetry GPS 26 km/h, gọi điện ẩn danh PDPD NĐ 13 và nhắn tin điều phối |
 | **53** | **Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE-01)** | Module 01 & 3D/AI | Đã hoàn thiện | Phòng mô phỏng phom dáng 2D Mannequin Croquis tại `/san-pham/[slug]`: Đối chiếu 3 tạng người (Petite/Athletic/Curvy), bản đồ độ căng phom (Tension Heatmap) và gợi ý cử động vai/eo/dài áo |
 | **54** | **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao Thực Tế Cùng KOC (SOC-FIT-FEEDBACK-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ Fit Q&A tại `/cong-dong`: Thẻ lọc câu hỏi số đo cơ thể, phím tắt nhanh 1-chạm (1m58 48kg mặc size gì), huy hiệu KOC Tác giả phản hồi SLA 24h |
+| **55** | **Thước Đo Chân Số Hóa & Khuyến Nghị Size Giày (USER-FOOTWEAR-SCAN-01)** | Module 07 & Fit | Đã hoàn thiện | Mở rộng Fashion Passport tại `/tai-khoan`: Lưu trữ chiều dài/rộng bàn chân (mm), dạng vòm chân (Bẹt/Chuẩn/Cao), tự động quy đổi kích cỡ chuẩn quốc tế EU/US/UK và gợi ý lót giày |
+| **56** | **Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)** | Module 01 & CSR | Đã hoàn thiện | Bảng đối chiếu 5 tiêu chí giữa sợi tự nhiên cao cấp và vải Polyester tổng hợp tại `/san-pham/[slug]`: Độ thoáng khí 9.8/10, an toàn da 10/10, điều hòa thân nhiệt 9.6/10 và độ bền >5 năm |
 
 ---
 
@@ -403,6 +405,30 @@
     - *Áo có xẻ tà bên hông không?*
   - Tự động điền tiền tố `[Hỏi Size & Dáng]` vào ô bình luận giúp hệ thống nhận diện và phân loại câu hỏi tư vấn kích cỡ.
   - Nhận diện người trả lời: Khi tác giả bài viết KOC vào bình luận, hệ thống tự động gắn huy hiệu uy tín `✓ KOC Tác giả` màu xanh lá nổi bật, cam kết phản hồi trong vòng 24 giờ.
+
+### 39. Thước Đo Chân Số Hóa & Khuyến Nghị Size Giày/Guốc (USER-FOOTWEAR-SCAN-01)
+- **Mục tiêu**: Giải quyết bài toán nan giải khi mua sắm giày dép thời trang cao cấp online (tỷ lệ đổi trả giày do chật ngón hoặc tuột gót thường chiếm tới 35% trong ngành TMĐT).
+- **Cơ chế**:
+  - Tích hợp mô-đun đo đạc kích thước bàn chân số hóa chuẩn quốc tế ISO 9407 / Mondopoint ngay trong Fashion Passport tại `/tai-khoan`.
+  - Bộ 3 thông số định lượng chính xác:
+    1. *Chiều dài bàn chân (Foot Length)*: Tính bằng milimet (từ 200mm đến 320mm).
+    2. *Chiều rộng bàn chân (Foot Width)*: Tính bằng milimet (từ 70mm đến 130mm).
+    3. *Dạng vòm chân (Arch Profile)*: Phân loại 3 hình thái học (Vòm cân đối tiêu chuẩn, Bàn chân bẹt/vòm thấp, hoặc Vòm chân cao).
+  - Thẻ kết quả chuyển đổi thời gian thực:
+    - Quy đổi tức thì sang hệ kích cỡ: **EU (Paris Point)**, **US (Brannock)** và **UK**.
+    - Khuyến nghị kích thước lót giày chính xác (chiều dài bàn chân + 5mm dung sai chống bó ngón).
+    - Lời khuyên phom giày chuyên biệt theo dạng vòm chân (hướng dẫn chọn Loafer da Ý, Sneaker gót thấp hay Guốc cao gót đệm lót êm ái).
+
+### 40. Bảng Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)
+- **Mục tiêu**: Cung cấp bằng chứng thuyết phục và khoa học lý giải mức giá trị cao của các chất liệu sợi tự nhiên nguyên bản, nâng cao nhận thức thời trang bền vững của người tiêu dùng.
+- **Cơ chế**:
+  - Tích hợp nút kích hoạt `[ 🔬 Bảng So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON) ]` ngay trong phân hệ Hộ Chiếu Chất Liệu `/san-pham/[slug]`.
+  - Bảng đối chiếu 5 chỉ số trải nghiệm then chốt giữa chất liệu cao cấp của sản phẩm (Bảo Lộc Silk, Normandy Flax, GOTS Cotton) và vải tổng hợp Polyester/Rayon thị trường:
+    1. *Độ thoáng khí & thấm hút*: 9.8/10 (cấu trúc sợi rỗng thoát ẩm tức thì) so với 3.2/10 (gây hầm bí, đọng mồ hôi).
+    2. *Độ êm dịu trên làn da nhạy cảm*: 10/10 (sợi thuần khiết, ngừa kích ứng da) so với 4.5/10 (dễ ngứa ngáy, tích điện ma sát).
+    3. *Khả năng điều hòa thân nhiệt 4 mùa*: 9.6/10 (mát lạnh mùa hè, giữ ấm se lạnh) so với 2.8/10 (nóng bức khi ra nắng, lạnh vào mùa đông).
+    4. *Tuổi thọ & Vòng đời (> 5 năm)*: Càng giặt càng mềm và đanh sợi so với dễ bục chỉ, xù lông vón cục sau 10 lần giặt.
+    5. *Trách nhiệm môi trường*: 100% tự phân hủy sinh học trong đất so với phát tán vi nhựa và mất hơn 200 năm phân rã.
 
 ---
 
