@@ -201,5 +201,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh** | Module 04 & ESG/CSR | Đã hoàn thiện | Chứng thư điện tử tại `/don-hang/[id]` xác nhận 1.85 kg CO2e trung hòa từ giao hàng xe điện & hộp Kraft, mã blockchain và in chứng thư (ORD-CARBON-CERT-01) |
 | **Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì** | Module 07 & Circular | Đã hoàn thiện | Giả lập định giá voucher theo 4 cấp độ Grade S/A/B/C và danh mục, đo lường 3.2 kg CO2e giảm thải tại `/trade-in` (TRADEIN-ESTIMATE-SIMULATOR-01) |
 | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói** | Module 01 & Audio AI | Đã hoàn thiện | Trình phát mô phỏng cảm âm sột soạt lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist tại `/san-pham/[slug]` (CAT-FABRIC-VOICE-GUIDE-01) |
+| **Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân** | Module 06 & 07 | Đã hoàn thiện | Moodboard ghim thẻ cảm hứng cá nhân theo bảng màu tại `/tai-khoan` (USER-STYLE-MOODBOARD-01) |
+| **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường** | Module 01 & 06 | Đã hoàn thiện | Runway Lookbook chuyển đổi 3 góc quay Catwalk/Macro 4K/Backstage tại `/live` (LIVE-RUNWAY-LOOKBOOK-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

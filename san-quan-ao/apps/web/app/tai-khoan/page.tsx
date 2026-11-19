@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -54,6 +54,24 @@ export default function AccountPage() {
   const [cpwItemIndex, setCpwItemIndex] = useState(0);
   const [cpwWears, setCpwWears] = useState(28);
   const [analyticsOpen, setAnalyticsOpen] = useState(false);
+  const [moodboardPins, setMoodboardPins] = useState<Array<{ id: string; title: string; palette: string; note: string; tag: string }>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('nexora_style_moodboards');
+        if (stored) return JSON.parse(stored);
+      } catch {}
+    }
+    return [
+      { id: '1', title: 'Normandy Coastal Flax', palette: '#d6cbba', note: 'Sợi lanh thô dệt thưa, tông cát mộc mạc thư thái', tag: '#QuietLuxury' },
+      { id: '2', title: 'Sơn Mài Midnight', palette: '#1c1917', note: 'Đen tuyền sâu thẳm, đường cắt sắc sảo tương phản', tag: '#Monochrome' },
+      { id: '3', title: 'Bảo Lộc Silk Elegance', palette: '#f8fafc', note: 'Lụa tơ tằm mềm mại óng ả, độ rủ hoàn hảo', tag: '#SilkHeritage' },
+      { id: '4', title: 'Terracotta Earth', palette: '#b45309', note: 'Nâu đất ấm nồng, phóng khoáng hòa nhịp đất trời', tag: '#EarthSartorial' },
+    ];
+  });
+  const [addingPin, setAddingPin] = useState(false);
+  const [newPinTitle, setNewPinTitle] = useState('');
+  const [newPinNote, setNewPinNote] = useState('');
+  const [newPinPalette, setNewPinPalette] = useState('#d6cbba');
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -942,6 +960,158 @@ export default function AccountPage() {
               })()}
             </div>
           )}
+        </div>
+      </article>
+
+      {/* Bảng Cảm Hứng & Ghim Phong Cách Thời Trang Cá Nhân (Personal Style Moodboard · USER-STYLE-MOODBOARD-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Pin size={18} color="var(--clay)" /> Bảng Cảm Hứng Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Lưu giữ những gam màu, chất liệu và phom dáng truyền cảm hứng nhất cho bản sắc {archetype} của bạn.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              type="button"
+              className="button secondary"
+              style={{ fontSize: 11, padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+              onClick={() => setAddingPin(!addingPin)}
+            >
+              <Sparkles size={13} /> {addingPin ? 'Hủy thêm thẻ' : '+ Thêm thẻ cảm hứng'}
+            </button>
+            <Link
+              href="/cong-dong"
+              className="button"
+              style={{ fontSize: 11, padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
+              <Share2 size={13} /> Chia sẻ lên Lookbook
+            </Link>
+          </div>
+        </div>
+
+        {/* Adding Pin Form */}
+        {addingPin && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!newPinTitle.trim()) return;
+              const newPin = {
+                id: Date.now().toString(),
+                title: newPinTitle.trim(),
+                note: newPinNote.trim() || 'Cảm hứng phối đồ độc bản',
+                palette: newPinPalette,
+                tag: `#${newPinTitle.replace(/\s+/g, '')}`,
+              };
+              const updated = [newPin, ...moodboardPins];
+              setMoodboardPins(updated);
+              try {
+                localStorage.setItem('nexora_style_moodboards', JSON.stringify(updated));
+              } catch {}
+              setNewPinTitle('');
+              setNewPinNote('');
+              setAddingPin(false);
+            }}
+            style={{ marginBottom: 14, padding: 12, background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 4, fontSize: 12 }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 10 }}>
+              <label>
+                Tiêu đề cảm hứng:
+                <input
+                  type="text"
+                  required
+                  placeholder="VD: Cát Vàng Mùa Thu..."
+                  value={newPinTitle}
+                  onChange={(e) => setNewPinTitle(e.target.value)}
+                  style={{ marginTop: 4, width: '100%', fontSize: 12, padding: '6px 8px' }}
+                />
+              </label>
+              <label>
+                Mô tả chi tiết / Sợi dệt:
+                <input
+                  type="text"
+                  placeholder="VD: Áo dệt kim mịn màng phối blazer..."
+                  value={newPinNote}
+                  onChange={(e) => setNewPinNote(e.target.value)}
+                  style={{ marginTop: 4, width: '100%', fontSize: 12, padding: '6px 8px' }}
+                />
+              </label>
+              <label>
+                Tông màu chủ đạo:
+                <div style={{ display: 'flex', gap: 6, marginTop: 4, alignItems: 'center' }}>
+                  {['#d6cbba', '#1c1917', '#1e3a8a', '#b45309', '#f8fafc', '#15803d'].map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      style={{
+                        width: 22,
+                        height: 22,
+                        borderRadius: '50%',
+                        background: c,
+                        border: newPinPalette === c ? '2px solid var(--clay)' : '1px solid var(--line)',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => setNewPinPalette(c)}
+                    />
+                  ))}
+                </div>
+              </label>
+            </div>
+            <button type="submit" className="button" style={{ fontSize: 11, padding: '6px 14px' }}>
+              Ghim vào Moodboard
+            </button>
+          </form>
+        )}
+
+        {/* Moodboard Visual Pin Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+          {moodboardPins.map((pin) => (
+            <div
+              key={pin.id}
+              style={{
+                background: '#fff',
+                border: '1px solid var(--line)',
+                borderRadius: 4,
+                overflow: 'hidden',
+                position: 'relative',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.03)',
+              }}
+            >
+              <div style={{ height: 48, background: pin.palette, borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 10px' }}>
+                <span style={{ fontSize: 9, background: 'rgba(255,255,255,0.85)', padding: '1px 5px', borderRadius: 2, fontWeight: 700, color: 'var(--ink)' }}>
+                  {pin.tag}
+                </span>
+              </div>
+              <div style={{ padding: '10px 12px' }}>
+                <strong style={{ fontSize: 13, display: 'block', color: 'var(--ink)', marginBottom: 4 }}>
+                  {pin.title}
+                </strong>
+                <p style={{ margin: 0, fontSize: 11, color: 'var(--muted)', lineHeight: 1.4 }}>
+                  {pin.note}
+                </p>
+                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: 'var(--clay)' }}>
+                  <span>✓ Style Moodboard</span>
+                  <button
+                    type="button"
+                    className="text-button"
+                    style={{ fontSize: 10, padding: 0, color: 'var(--muted)' }}
+                    onClick={() => {
+                      const updated = moodboardPins.filter((p) => p.id !== pin.id);
+                      setMoodboardPins(updated);
+                      try {
+                        localStorage.setItem('nexora_style_moodboards', JSON.stringify(updated));
+                      } catch {}
+                    }}
+                  >
+                    Gỡ ghim
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </article>
 

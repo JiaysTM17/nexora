@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX } from 'lucide-react';
+import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -38,6 +38,7 @@ export default function LiveRoom() {
   const [buying, setBuying] = useState(false);
   const [successNotice, setSuccessNotice] = useState('');
   const [errorNotice, setErrorNotice] = useState('');
+  const [runwayAngle, setRunwayAngle] = useState<'CATWALK' | 'MACRO' | 'BACKSTAGE'>('CATWALK');
 
   // Live countdown timer for pinned deal
   useEffect(() => {
@@ -474,6 +475,204 @@ export default function LiveRoom() {
               <Send size={15} />
             </button>
           </form>
+        </div>
+      </div>
+
+      {/* Lookbook Đa Góc Nhìn Sàn Diễn Catwalk & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01) */}
+      <div style={{ marginTop: 28, padding: '20px 24px', background: '#fff', border: '1px solid var(--line)', borderRadius: 8 }}>
+        <div className="row between" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Camera size={18} color="var(--clay)" />
+              <h2 style={{ margin: 0, fontSize: 18 }}>Lookbook Sàn Diễn Đa Góc Nhìn (LIVE-RUNWAY-LOOKBOOK-01)</h2>
+              <span style={{ fontSize: 10, background: '#ef4444', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                RUNWAY 360°
+              </span>
+            </div>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Khám phá trang phục từ góc Catwalk trực diện, cận cảnh vi mô sớ vải 4K và hậu trường chuẩn bị của Stylist.
+            </p>
+          </div>
+
+          {/* Angle Selectors */}
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[
+              { id: 'CATWALK', label: '🚶 Sàn Diễn Catwalk' },
+              { id: 'MACRO', label: '🔍 Cận Cảnh Sợi Vải 4K' },
+              { id: 'BACKSTAGE', label: '💄 Hậu Trường Stylist' },
+            ].map(ang => (
+              <button
+                key={ang.id}
+                type="button"
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: 20,
+                  fontSize: 11,
+                  fontWeight: runwayAngle === ang.id ? 700 : 500,
+                  border: runwayAngle === ang.id ? '1px solid var(--clay)' : '1px solid var(--line)',
+                  background: runwayAngle === ang.id ? '#fdf8ea' : '#fff',
+                  color: runwayAngle === ang.id ? 'var(--clay)' : 'var(--ink)',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setRunwayAngle(ang.id as any)}
+              >
+                {ang.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Runway Lookbook Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+          {[
+            {
+              id: 'look-1',
+              title: 'Set Áo Sơ Mi Lụa & Quần Tây Xếp Ly',
+              category: 'Normandy Minimalist',
+              price: 1250000,
+              livePrice: 1062500,
+              slug: 'ao-so-mi-lua-to-tam-cao-cap',
+              img: '/products/shirt.svg',
+              catwalkDesc: 'Tà áo lụa bay nhẹ theo nhịp bước chân, phom suông thanh thoát dưới ánh đèn spotlight vàng ấm.',
+              macroDesc: 'Bề mặt sợi tơ dệt mật độ cao 19mm momme, đường kim mũi chỉ 5 mũi/cm chuẩn Haute Couture.',
+              backstageDesc: 'Stylist sơ-vin vạt trước, mở 2 khuy cổ tạo nét phóng khoáng tự nhiên trước giờ diễn.',
+            },
+            {
+              id: 'look-2',
+              title: 'Áo Blazer Da Ý & Thắt Lưng Cổ Điển',
+              category: 'Contemporary Executive',
+              price: 2850000,
+              livePrice: 2422500,
+              slug: 'ao-khoac-blazer-linen-dang-suong',
+              img: '/products/jacket.svg',
+              catwalkDesc: 'Cầu vai đệm mỏng quyền lực, ve áo nhọn sắc nét tạo phong thái đĩnh đạc tự tin trên sàn diễn.',
+              macroDesc: 'Chất da thuộc thảo mộc tự nhiên thơm nhẹ, khuy áo sừng khắc logo NEXORA sắc sảo.',
+              backstageDesc: 'Chuyên gia vuốt nhẹ nếp gấp tay áo và hoàn thiện điểm nhấn bằng thắt lưng da bò Ý.',
+            },
+            {
+              id: 'look-3',
+              title: 'Đầm Lụa Midi Dáng Suông & Khăn Cài',
+              category: 'Quiet Luxury Evening',
+              price: 1950000,
+              livePrice: 1657500,
+              slug: 'ao-polo-det-kim-merino',
+              img: '/products/dress.svg',
+              catwalkDesc: 'Độ rủ óng ả ôm nhẹ theo từng chuyển động cơ thể, tà váy xòe duyên dáng ở cuối sàn runway.',
+              macroDesc: 'Sợi lụa satin bắt sáng huyền ảo, viền cổ may giấu chỉ tinh tế hoàn mỹ.',
+              backstageDesc: 'Stylist kết hợp cùng khuyên tai ngọc trai tự nhiên và guốc cao gót thanh mảnh.',
+            },
+          ].map((item) => (
+            <div
+              key={item.id}
+              style={{
+                border: '1px solid var(--line)',
+                borderRadius: 6,
+                overflow: 'hidden',
+                background: '#faf9f5',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ position: 'relative', height: 200, background: '#f3efe6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  style={{ maxHeight: '80%', maxWidth: '80%', objectFit: 'contain' }}
+                  onError={(e) => {
+                    const t = e.currentTarget as HTMLImageElement;
+                    if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg';
+                  }}
+                />
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    left: 10,
+                    fontSize: 10,
+                    background: 'rgba(0,0,0,0.7)',
+                    color: '#fff',
+                    padding: '2px 8px',
+                    borderRadius: 2,
+                    fontWeight: 600,
+                  }}
+                >
+                  {runwayAngle === 'CATWALK' ? '📹 Cam 1 · Sàn Diễn' : runwayAngle === 'MACRO' ? '🔬 Cam 2 · Macro 4K' : '💄 Cam 3 · Hậu Trường'}
+                </span>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 10,
+                    fontSize: 10,
+                    background: 'var(--clay)',
+                    color: '#fff',
+                    padding: '2px 8px',
+                    borderRadius: 2,
+                    fontWeight: 700,
+                  }}
+                >
+                  LIVE DEAL -15%
+                </span>
+              </div>
+
+              <div style={{ padding: 14, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <span style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600 }}>
+                    {item.category}
+                  </span>
+                  <strong style={{ fontSize: 13, display: 'block', margin: '2px 0 6px', color: 'var(--ink)' }}>
+                    {item.title}
+                  </strong>
+                  <p style={{ margin: '0 0 10px', fontSize: 11, color: '#444', fontStyle: 'italic', lineHeight: 1.4 }}>
+                    {runwayAngle === 'CATWALK' ? item.catwalkDesc : runwayAngle === 'MACRO' ? item.macroDesc : item.backstageDesc}
+                  </p>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 8 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--clay)' }}>
+                      {vnd(item.livePrice)}
+                    </span>
+                    <span style={{ fontSize: 11, color: 'var(--muted)', textDecoration: 'line-through' }}>
+                      {vnd(item.price)}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <Link
+                      href={`/san-pham/${item.slug}`}
+                      className="button secondary"
+                      style={{ flex: 1, fontSize: 11, padding: '6px 8px', textAlign: 'center' }}
+                    >
+                      Chi tiết <ArrowUpRight size={12} style={{ display: 'inline', verticalAlign: -1 }} />
+                    </Link>
+                    <button
+                      type="button"
+                      className="button"
+                      style={{ flex: 1, fontSize: 11, padding: '6px 8px' }}
+                      onClick={async () => {
+                        const targetProd = catalog.data?.items.find(x => x.slug === item.slug) ?? catalog.data?.items[0];
+                        const targetVar = targetProd?.variants[0];
+                        if (targetVar) {
+                          try {
+                            await api('/cart', 'POST', { variantId: targetVar.id, quantity: 1 });
+                            setSuccessNotice(`✓ Đã thêm "${item.title}" với giá ưu đãi Live Deal (-15%) vào giỏ hàng!`);
+                          } catch (err) {
+                            setErrorNotice((err as Error).message);
+                          }
+                        } else {
+                          setSuccessNotice(`✓ Đã lưu mã giảm giá Live Deal -15% cho mẫu "${item.title}"!`);
+                        }
+                      }}
+                    >
+                      <ShoppingBag size={12} style={{ display: 'inline', verticalAlign: -1, marginRight: 4 }} />
+                      Chốt Deal Live
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

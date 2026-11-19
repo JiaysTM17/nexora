@@ -210,3 +210,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 51. **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Trải nghiệm Đa giác quan AI.
    - Thực tế: Mô-đun cảm âm tại `/san-pham/[slug]` với trình phát Audio Equalizer mô phỏng âm thanh sột soạt tự nhiên của lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist hướng dẫn giặt ủi chuẩn mực.
+
+52. **Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)**:
+   - Hồ sơ: Module 06 Phong cách OOTD & Module 07 Cá nhân hóa Người dùng.
+   - Thực tế: Phân hệ Moodboard thị giác tại `/tai-khoan` lưu giữ các thẻ cảm hứng màu sắc, chất liệu và ghi chú phối đồ cá nhân, hỗ trợ thêm mới linh hoạt và chia sẻ lên Lookbook cộng đồng.
+
+53. **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Trình diễn Livestream Runway.
+   - Thực tế: Phân hệ Runway Lookbook Studio tại `/live` cho phép chuyển đổi 3 góc quan sát (Catwalk Front-View, Macro 4K sợi dệt, Backstage Styling) và chốt deal trực tiếp ưu đãi -15% từ sàn diễn.

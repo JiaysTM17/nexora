@@ -73,6 +73,8 @@
 | **62** | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)** | Module 04 & ESG/CSR | Đã hoàn thiện | Phân hệ chứng nhận sinh thái số tại `/don-hang/[id]`: Đo lường 1.85 kg CO2e trung hòa từ giao hàng xe điện VinFast Feliz & hộp Kraft, mã blockchain tra cứu sổ cái và modal in chứng thư Haute Couture |
 | **63** | **Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01)** | Module 07 & Circular | Đã hoàn thiện | Bộ công cụ giả lập định giá thời gian thực tại `/trade-in`: Dự phóng giá trị voucher (Grade S/A/B/C) theo từng phân loại (Sơ mi, Blazer, Đầm, Túi), đo lường 3.2 kg CO2e giảm thải và điền form 1-chạm |
 | **64** | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)** | Module 01 & Audio AI | Đã hoàn thiện | Trình phát cảm âm tại `/san-pham/[slug]`: Mô phỏng âm thanh sột soạt tự nhiên của lụa (Silk Scroop/Rustle) và giọng đọc trợ lý AI Stylist hướng dẫn giặt ủi mặt trái chuẩn mực |
+| **65** | **Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ Moodboard thị giác tại `/tai-khoan`: Ghim và phân loại các thẻ cảm hứng thẩm mỹ theo tông màu cá nhân (Normandy Linen, Sơn Mài, Bảo Lộc Silk), lưu trữ cục bộ và chia sẻ Lookbook |
+| **66** | **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Runway 360° tại `/live`: Chuyển đổi 3 góc quay (Catwalk Front-View, Macro 4K sợi dệt, Backstage Styling) và chốt deal trực tiếp giảm -15% từ sàn diễn |
 
 ---
 
@@ -515,6 +517,24 @@
     1. *Giọng Đọc AI Stylist*: Giọng đọc truyền cảm hướng dẫn phương pháp giặt hấp, nhiệt độ nước (<30°C) và cách là ủi mặt trái bảo vệ cấu trúc sợi lụa.
     2. *Cảm Âm Sợi Dệt (Silk Scroop & Rustle)*: Mô phỏng âm thanh sột soạt tự nhiên đặc trưng khi hai bề mặt lụa cọ xát vào nhau – bảo chứng 100% sợi dệt tự nhiên không pha nhựa.
   - Trình phát mô phỏng Audio Equalizer Waveform trực quan với các thanh biên độ chuyển động linh hoạt.
+
+### 49. Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)
+- **Mục tiêu**: Giúp người dùng hình thành tư duy thời trang thẩm mỹ dài hạn, tổ chức không gian lưu trữ cảm hứng cá nhân đồng điệu với bản sắc Style DNA của mình.
+- **Cơ chế**:
+  - Tích hợp phân hệ Moodboard trực quan ngay trên trang cá nhân `/tai-khoan`.
+  - Bộ sưu tập thẻ cảm hứng tuyển chọn ban đầu: Normandy Coastal Flax (Be cát mộc mạc), Sơn Mài Midnight (Đen tuyền kiến trúc), Bảo Lộc Silk Elegance (Lụa óng ả mềm rủ), Terracotta Earth (Nâu đất ấm nồng).
+  - Biểu mẫu thêm thẻ cảm hứng linh hoạt: Tùy chỉnh tiêu đề, ghi chú chất liệu/sợi dệt và bảng 6 mã màu đặc trưng; lưu vết bền vững vào `localStorage` (`nexora_style_moodboards`).
+  - Nút chia sẻ trực tiếp thẻ cảm hứng lên bảng tin cộng đồng OOTD `/cong-dong`.
+
+### 50. Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)
+- **Mục tiêu**: Nâng tầm trải nghiệm Livestream trình diễn thời trang, cho phép khách hàng chiêm ngưỡng trang phục dưới mọi góc độ chuyển động trước khi đưa ra quyết định mua sắm.
+- **Cơ chế**:
+  - Tích hợp phân hệ Runway Lookbook Studio ngay bên dưới phiên phát sóng trực tiếp tại `/live`.
+  - Hỗ trợ chuyển đổi tức thì giữa 3 góc quan sát chuyên nghiệp:
+    1. *Sàn Diễn Catwalk (Catwalk Front-View)*: Quan sát độ bay rủ của tà áo và dáng di chuyển tổng thể dưới ánh đèn sân khấu.
+    2. *Cận Cảnh Sợi Vải 4K (Fabric Macro)*: Phóng đại độ tinh xảo của sớ dệt thủ công, đường kim mũi chỉ và khuy sừng khắc logo.
+    3. *Hậu Trường Stylist (Backstage Styling)*: Khám phá cách chuyên gia hoàn thiện trang phục và mẹo sơ-vin, phối lớp trước giờ diễn.
+  - Tích hợp liên kết sản phẩm chi tiết và nút chốt deal Live độc quyền chiết khấu -15% đẩy thẳng vào giỏ hàng.
 
 ---
 
