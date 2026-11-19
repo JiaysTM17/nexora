@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -51,15 +51,46 @@ export default function OrderDetail() {
   const [ecoPickupSlot, setEcoPickupSlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('MORNING');
   const [ecoMethod, setEcoMethod] = useState<'SHIPPER' | 'BOUTIQUE'>('SHIPPER');
   const [ecoCondition, setEcoCondition] = useState<'INTACT' | 'SLIGHT_CREASE' | 'DAMAGED'>('INTACT');
+  const [courierRating, setCourierRating] = useState<number>(5);
+  const [courierTags, setCourierTags] = useState<string[]>(['⚡ Giao đúng giờ hẹn', '👗 Bảo quản form trang phục cẩn thận']);
+  const [courierTip, setCourierTip] = useState<number>(10000);
+  const [courierComment, setCourierComment] = useState<string>('');
+  const [courierFeedbackDone, setCourierFeedbackDone] = useState<boolean>(false);
 
   useEffect(() => {
     try {
       if (id) {
         const saved = localStorage.getItem(`nexora_eco_box_${id}`);
         if (saved) setEcoBoxRequested(true);
+        const savedFeedback = localStorage.getItem(`nexora_courier_feedback_${id}`);
+        if (savedFeedback) {
+          const parsed = JSON.parse(savedFeedback);
+          setCourierRating(parsed.rating || 5);
+          setCourierTags(parsed.tags || []);
+          setCourierTip(parsed.tip || 0);
+          setCourierComment(parsed.comment || '');
+          setCourierFeedbackDone(true);
+        }
       }
     } catch {}
   }, [id]);
+
+  function handleCourierFeedback(e: FormEvent) {
+    e.preventDefault();
+    setCourierFeedbackDone(true);
+    setSuccess('✓ Đã gửi đánh giá bưu tá và tặng tip thành công! Cảm ơn bạn đã đồng hành cùng Đội Bưu Tá Xanh.');
+    try {
+      if (id) {
+        localStorage.setItem(`nexora_courier_feedback_${id}`, JSON.stringify({
+          rating: courierRating,
+          tags: courierTags,
+          tip: courierTip,
+          comment: courierComment,
+          submittedAt: new Date().toISOString(),
+        }));
+      }
+    } catch {}
+  }
 
   function handleRequestEcoReturn(e: FormEvent) {
     e.preventDefault();
@@ -750,6 +781,241 @@ export default function OrderDetail() {
                 }}
               >
                 <RotateCcw size={14} /> Xác Nhận Lịch Thu Hồi Thùng
+              </button>
+            </div>
+          </form>
+        )}
+      </article>
+
+      {/* Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01) */}
+      <article className="panel" style={{ marginTop: 20, background: '#fff', border: '1px solid var(--line)', borderRadius: 8 }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: '#fef3c7',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#d97706',
+                flexShrink: 0,
+              }}
+            >
+              <ThumbsUp size={20} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+                  Đánh Giá Bưu Tá Xe Điện &amp; Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)
+                </strong>
+                <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  GREEN COURIER RATING
+                </span>
+              </div>
+              <p className="subtle" style={{ margin: '2px 0 0', fontSize: 12 }}>
+                Ghi nhận chất lượng dịch vụ giao hàng thời trang White-Glove bằng xe máy điện VinFast Feliz không phát thải.
+              </p>
+            </div>
+          </div>
+          {courierFeedbackDone && (
+            <span style={{ fontSize: 11, background: '#dcfce7', color: '#166534', fontWeight: 600, padding: '4px 10px', borderRadius: 3, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <CheckCircle size={13} /> ĐÃ GỬI ĐÁNH GIÁ &amp; TIP
+            </span>
+          )}
+        </div>
+
+        {/* Courier Profile Header Banner */}
+        <div style={{ marginTop: 14, padding: 12, background: '#f8fafc', borderRadius: 6, border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 42, height: 42, borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'grid', placeItems: 'center', fontSize: 16, fontWeight: 700 }}>
+              NV
+            </div>
+            <div>
+              <strong style={{ fontSize: 13, color: '#0f172a' }}>Bưu tá chuyên trách: Nguyễn Văn Hùng</strong>
+              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                Đội xe: <strong>VinFast Feliz Green Logistics</strong> · Biển số: <strong>59-P1 889.98</strong>
+              </div>
+            </div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#d97706', fontSize: 13, fontWeight: 700 }}>
+              <Star size={15} fill="#d97706" /> 4.98 / 5.0
+            </div>
+            <span style={{ fontSize: 10, color: '#64748b' }}>1.420 chuyến giao an toàn · Bưu tá xuất sắc</span>
+          </div>
+        </div>
+
+        {courierFeedbackDone ? (
+          <div style={{ marginTop: 14, padding: 14, background: '#f0fdf4', borderRadius: 6, border: '1px solid #bbf7d0' }}>
+            <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+              <div>
+                <strong style={{ fontSize: 13, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle2 size={16} /> Cảm ơn bạn đã đánh giá dịch vụ ({courierRating} Sao)!
+                </strong>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: '#334155', lineHeight: 1.5 }}>
+                  • Tiêu chí khen ngợi: {courierTags.join(', ') || 'Dịch vụ chuẩn mực'}<br />
+                  • Tiền thưởng Tip động viên: <strong>{courierTip > 0 ? vnd(courierTip) : '0đ (Gửi lời cảm ơn chân thành)'}</strong><br />
+                  {courierComment && <span>• Lời nhắn: <em>"{courierComment}"</em></span>}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="button secondary"
+                style={{ fontSize: 11, padding: '4px 10px' }}
+                onClick={() => {
+                  setCourierFeedbackDone(false);
+                  try {
+                    localStorage.removeItem(`nexora_courier_feedback_${id}`);
+                  } catch {}
+                }}
+              >
+                Đánh giá lại
+              </button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleCourierFeedback} style={{ marginTop: 14 }}>
+            {/* Star Rating Selectors */}
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: 'var(--ink)' }}>
+                Độ hài lòng về bưu tá:
+              </label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setCourierRating(star)}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 4,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                    title={`${star} sao`}
+                  >
+                    <Star
+                      size={24}
+                      color={star <= courierRating ? '#d97706' : '#cbd5e1'}
+                      fill={star <= courierRating ? '#d97706' : 'transparent'}
+                    />
+                  </button>
+                ))}
+                <span style={{ fontSize: 12, color: '#92400e', alignSelf: 'center', marginLeft: 6, fontWeight: 600 }}>
+                  {courierRating === 5 ? 'Tuyệt vời (5/5)' : courierRating === 4 ? 'Hài lòng (4/5)' : courierRating === 3 ? 'Bình thường (3/5)' : 'Cần cải thiện'}
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Tag Pills */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', display: 'block', marginBottom: 6 }}>
+                Điểm nổi bật của bưu tá (chọn nhiều mục):
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {[
+                  '⚡ Giao đúng giờ hẹn',
+                  '👗 Bảo quản form trang phục cẩn thận',
+                  '🛵 Xe điện êm ái, thân thiện môi trường',
+                  '👔 Đồng phục bưu tá lịch sự, chuẩn mực',
+                  '🛡️ Hỗ trợ đồng kiểm ngoại quan chu đáo',
+                ].map((tag) => {
+                  const active = courierTags.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        if (active) {
+                          setCourierTags(courierTags.filter(t => t !== tag));
+                        } else {
+                          setCourierTags([...courierTags, tag]);
+                        }
+                      }}
+                      style={{
+                        padding: '4px 10px',
+                        fontSize: 11,
+                        borderRadius: 20,
+                        border: active ? '1px solid var(--clay)' : '1px solid #cbd5e1',
+                        background: active ? '#fdf8ea' : '#fff',
+                        color: active ? 'var(--clay)' : '#475569',
+                        fontWeight: active ? 600 : 400,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {active ? '✓ ' : ''}{tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Courier Tip Selection */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                <Coffee size={14} color="var(--clay)" />
+                <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>
+                  Thưởng tip động viên bưu tá xanh (tùy chọn):
+                </label>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {[
+                  { value: 0, label: 'Không tip' },
+                  { value: 10000, label: '+10.000₫ (Trà đá)' },
+                  { value: 20000, label: '+20.000₫ (Cà phê)' },
+                  { value: 50000, label: '+50.000₫ (Bữa nhẹ)' },
+                ].map((tip) => (
+                  <button
+                    key={tip.value}
+                    type="button"
+                    onClick={() => setCourierTip(tip.value)}
+                    style={{
+                      padding: '5px 12px',
+                      fontSize: 11,
+                      borderRadius: 4,
+                      border: courierTip === tip.value ? '2px solid var(--clay)' : '1px solid #cbd5e1',
+                      background: courierTip === tip.value ? '#fdf8ea' : '#fff',
+                      color: courierTip === tip.value ? 'var(--clay)' : '#334155',
+                      fontWeight: courierTip === tip.value ? 700 : 400,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {tip.label}
+                  </button>
+                ))}
+              </div>
+              {courierTip > 0 && (
+                <p className="subtle" style={{ margin: '4px 0 0', fontSize: 11, color: '#166534' }}>
+                  Tiền tip được trích từ Ví NEXORA Coins hoặc tài khoản của bạn và chuyển 100% đến bưu tá.
+                </p>
+              )}
+            </div>
+
+            {/* Comment Message */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', display: 'block', marginBottom: 4 }}>
+                Lời nhắn gửi riêng đến bưu tá:
+              </label>
+              <textarea
+                value={courierComment}
+                onChange={(e) => setCourierComment(e.target.value)}
+                placeholder="Ví dụ: Cảm ơn anh shipper đã che chắn kiện hàng rất chu đáo khi trời mưa..."
+                style={{ width: '100%', fontSize: 12, padding: '8px 10px', borderRadius: 4, border: '1px solid var(--line)', minHeight: 60 }}
+              />
+            </div>
+
+            <div>
+              <button
+                type="submit"
+                className="button"
+                style={{ fontSize: 12, padding: '6px 18px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                <ThumbsUp size={14} /> Gửi Đánh Giá &amp; Xác Nhận Tip
               </button>
             </div>
           </form>

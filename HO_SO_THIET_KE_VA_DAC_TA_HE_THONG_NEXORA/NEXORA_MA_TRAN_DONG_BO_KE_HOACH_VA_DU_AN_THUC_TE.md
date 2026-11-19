@@ -85,6 +85,8 @@
 | **74** | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)** | Module 03 & 04 | Đã hoàn thiện | Thanh công cụ xuất gộp hóa đơn tại `/don-hang`: Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn điện tử CQT |
 | **75** | **Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)** | Module 08 & Logistics | Đã hoàn thiện | Phân hệ lên lịch bưu tá tại `/trade-in`: Chọn khung giờ hẹn (Sáng, Chiều, Tối), cung cấp túi niêm phong quang học Tamper-Evident và bưu tá xe điện VinFast Green đến nhận tận cửa 0đ |
 | **76** | **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ bình chọn tương tác tại `/live`: Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% (RUNWAY20) |
+| **77** | **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)** | Module 04 & Logistics | Đã hoàn thiện | Phân hệ đánh giá bưu tá tại `/don-hang/[id]`: Đánh giá 1-5 sao, chọn 5 tiêu chí khen ngợi, thưởng tip bưu tá xe điện VinFast Feliz và lưu vết phản hồi |
+| **78** | **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)** | Module 01 & Stylist AI | Đã hoàn thiện | Phân hệ tư vấn phong cách tương tác tại `/san-pham/[slug]`: Gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size), hội thoại thời gian thực cùng Senior Stylist Elena Vũ |
 
 ---
 
@@ -644,6 +646,34 @@
     3. *Set 3: Áo Khoác Măng Tô Dạ Ép Double-Breasted* (Phong cách Winter Atelier Outerwear).
   - Thuật toán tính tỷ lệ phần trăm động thời gian thực hiển thị thanh tiến trình trực quan theo số phiếu bình chọn của toàn thể khán giả.
   - Cơ chế thưởng tương tác: Khán giả gửi phiếu bình chọn sẽ được mở khóa ngay **Voucher Flash Deal -20% (Mã `RUNWAY20`)** áp dụng trực tiếp tại bước thanh toán cho các mẫu đang diễn, kèm nút 1-chạm sao chép mã và lưu vết trên `localStorage` (`nexora_live_poll_vote`).
+
+### 61. Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)
+- **Mục tiêu**: Ghi nhận và tôn vinh nỗ lực của đội ngũ bưu tá vận chuyển chặng cuối (Last-Mile Fleet) bằng phương tiện xe điện thân thiện môi trường VinFast Feliz, tạo cầu nối gắn kết và thúc đẩy văn hóa dịch vụ giao hàng thời trang chuẩn mực White-Glove.
+- **Cơ chế**:
+  - Tích hợp phân hệ đánh giá bưu tá ngay trên màn hình chi tiết đơn hàng `/don-hang/[id]`.
+  - Thông tin bưu tá chuyên trách: Họ tên bưu tá (Nguyễn Văn Hùng), đội xe xe điện (VinFast Feliz Green Fleet), biển số xe và điểm tín nhiệm (4.98★ / 1.420 chuyến giao an toàn).
+  - Hệ thống chấm sao tương tác từ 1 đến 5 sao kèm nhãn đánh giá tương ứng.
+  - Bộ 5 tiêu chí khen ngợi đa chọn:
+    1. *⚡ Giao đúng giờ hẹn.*
+    2. *👗 Bảo quản form trang phục cẩn thận.*
+    3. *🛵 Xe điện êm ái, thân thiện môi trường.*
+    4. *👔 Đồng phục bưu tá lịch sự, chuẩn mực.*
+    5. *🛡️ Hỗ trợ đồng kiểm ngoại quan chu đáo.*
+  - Tùy chọn thưởng Tip linh hoạt: 0đ, 10.000đ (Trà đá), 20.000đ (Cà phê), 50.000đ (Bữa nhẹ) trích từ Ví Xu NEXORA Coins hoặc tài khoản thanh toán và chuyển trọn vẹn 100% đến bưu tá.
+  - Lưu vết phản hồi bền vững trên `localStorage` (`nexora_courier_feedback_[id]`).
+
+### 62. Hỏi Đáp Phong Cách Cùng AI Stylist Riêng Của Trang Phục (CAT-AI-STYLING-CONVERSATION-01)
+- **Mục tiêu**: Cung cấp trợ lý tư vấn phong cách ảo 24/7 am hiểu sâu sắc về chất liệu sợi tự nhiên và phom dáng may đo của từng thiết kế thời trang cụ thể, giúp khách hàng tự tin đưa ra quyết định phối đồ chuẩn mực.
+- **Cơ chế**:
+  - Tích hợp ngăn hội thoại phong cách tương tác chuyên biệt ngay trên trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Đại diện bởi Trợ lý phong cách AI Stylist cao cấp (Elena Vũ - Senior Stylist tại NEXORA Atelier).
+  - Bộ thẻ gợi ý câu hỏi nhanh (Prompt Chips):
+    1. *✨ Phối đi tiệc tối & Gala.*
+    2. *💼 Mặc đi làm công sở & gặp đối tác.*
+    3. *🧺 Vải có nhăn & cách bảo quản chuẩn Atelier.*
+    4. *📏 Tư vấn chọn size theo dáng người.*
+  - Hộp nhập câu hỏi tùy biến và luồng phân tích ngôn ngữ tự nhiên: Nhận diện ngữ cảnh câu hỏi của người dùng và phản hồi tức thời dựa trên chất liệu (`p.material`), phom dáng (`p.fit`) và tinh thần thiết kế may đo của sản phẩm.
+  - Lưu trữ lịch sử trao đổi vào `localStorage` (`nexora_stylist_chat_[id]`) giúp người dùng dễ dàng xem lại bất cứ lúc nào.
 
 ---
 

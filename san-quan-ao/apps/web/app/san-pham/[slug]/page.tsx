@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -30,7 +30,69 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [voiceMode, setVoiceMode] = useState<'ATELIER_VOICE' | 'FABRIC_SCROOP'>('ATELIER_VOICE');
   const [holdActive, setHoldActive] = useState(false);
   const [holdTimer, setHoldTimer] = useState(180);
+  const [showAiChat, setShowAiChat] = useState(false);
+  const [aiChatInput, setAiChatInput] = useState('');
+  const [aiChatHistory, setAiChatHistory] = useState<Array<{ id: string; sender: 'user' | 'stylist'; text: string; time: string }>>([]);
   const { user } = useUser();
+
+  useEffect(() => {
+    if (!p) return;
+    try {
+      const saved = localStorage.getItem(`nexora_stylist_chat_${p.id}`);
+      if (saved) {
+        setAiChatHistory(JSON.parse(saved));
+      } else {
+        setAiChatHistory([
+          {
+            id: 'init-1',
+            sender: 'stylist',
+            text: `Chào bạn! Mình là Elena Vũ, Senior Stylist tại NEXORA. Bạn đang quan tâm đến "${p.name}" (${p.material})? Mình có thể gợi ý cách phối đồ theo dáng người, chọn phụ kiện đi tiệc hay mẹo giữ phom vải hoàn hảo nhé!`,
+            time: 'Vừa xong',
+          },
+        ]);
+      }
+    } catch {}
+  }, [p]);
+
+  function handleSendAiStylist(customQuestion?: string) {
+    const q = (customQuestion || aiChatInput).trim();
+    if (!q || !p) return;
+
+    const userMsg = {
+      id: String(Date.now()),
+      sender: 'user' as const,
+      text: q,
+      time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    let replyText = '';
+    const lower = q.toLowerCase();
+    if (lower.includes('tiệc') || lower.includes('gala') || lower.includes('tối')) {
+      replyText = `Dạ với "${p.name}", để diện đi tiệc tối sang trọng, bạn nên phối cùng Giày Cao Gót Mũi Nhọn Da Bóng Ý hoặc Khăn Lụa Tơ Tằm Cài Cổ. Thêm một chiếc clutch cầm tay tối giản sẽ tôn trọn nét thanh lịch Quiet Luxury!`;
+    } else if (lower.includes('làm') || lower.includes('công sở') || lower.includes('văn phòng')) {
+      replyText = `Mẫu này rất phù hợp môi trường công sở hiện đại! Bạn có thể mix cùng Quần Tây Sartorial Nâu Cát và Thắt Lưng Da Thảo Mộc. Phom dáng ${p.fit} sẽ mang lại vẻ ngoài sắc sảo nhưng cử động vô cùng êm ái cả ngày dài.`;
+    } else if (lower.includes('nhăn') || lower.includes('giặt') || lower.includes('bảo quản')) {
+      replyText = `Với chất liệu ${p.material || 'sợi tự nhiên cao cấp'}, độ nhăn gãy tự nhiên tạo nên phong thái mộc mạc đẳng cấp. Bạn chỉ cần là ủi hơi nước mặt trái ở nhiệt độ thấp hoặc treo trong phòng tắm hơi nước ấm là vải sẽ tự rủ phẳng phiu!`;
+    } else if (lower.includes('size') || lower.includes('chiều cao') || lower.includes('cân nặng')) {
+      replyText = `Về thông số kích cỡ, phom dáng ${p.fit} của mẫu này may đo chuẩn Haute Couture. Nếu bạn thích mặc thoải mái phóng khoáng hãy chọn đúng size theo Bảng size hoặc thử phân hệ Mô phỏng Phom dáng 2D ở trên nhé!`;
+    } else {
+      replyText = `Thiết kế "${p.name}" (${p.material}) mang đậm tinh thần may đo bền vững. Bạn có thể diện linh hoạt cho cả ban ngày lẫn buổi tối khi chỉ cần thay đổi phụ kiện đi kèm như thắt lưng hoặc giày!`;
+    }
+
+    const stylistMsg = {
+      id: String(Date.now() + 1),
+      sender: 'stylist' as const,
+      text: replyText,
+      time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const newHistory = [...aiChatHistory, userMsg, stylistMsg];
+    setAiChatHistory(newHistory);
+    setAiChatInput('');
+    try {
+      localStorage.setItem(`nexora_stylist_chat_${p.id}`, JSON.stringify(newHistory));
+    } catch {}
+  }
 
   useEffect(() => {
     if (!holdActive || holdTimer <= 0) return;
@@ -1234,6 +1296,175 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   </div>
                 )}
               </div>
+            </div>
+          </details>
+
+          {/* Trợ Lý Phong Cách AI Stylist Riêng Cho Sản Phẩm (CAT-AI-STYLING-CONVERSATION-01) */}
+          <details open>
+            <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <MessageSquare size={18} color="var(--clay)" /> Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)
+              </span>
+              <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                24/7 INTERACTIVE STYLING
+              </span>
+            </summary>
+
+            <div style={{ marginTop: 14 }}>
+              {/* Stylist Profile Banner */}
+              <div style={{ padding: '10px 14px', background: '#faf9f5', borderRadius: 6, border: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--clay)', color: '#fff', display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
+                  EV
+                </div>
+                <div>
+                  <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Elena Vũ · Chuyên Viên Phong Cách Cao Cấp (NEXORA Atelier)</strong>
+                  <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--muted)' }}>
+                    Tư vấn trực tiếp theo chất liệu <strong>{p.material}</strong> và phom dáng <strong>{p.fit}</strong> của riêng trang phục này.
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Questions Prompt Chips */}
+              <div style={{ marginBottom: 12 }}>
+                <span style={{ fontSize: 11, color: 'var(--muted)', display: 'block', marginBottom: 6, fontWeight: 600 }}>
+                  Gợi ý câu hỏi nhanh cho Stylist:
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {[
+                    { label: '✨ Phối đi tiệc tối & Gala', q: `Đi tiệc tối hoặc Gala thì mẫu ${p.name} này nên phối phụ kiện và trang phục nào?` },
+                    { label: '💼 Mặc đi làm công sở', q: `Mặc đi làm văn phòng thì kết hợp cùng quần gì và giày túi nào thanh lịch?` },
+                    { label: '🧺 Vải có nhăn & cách bảo quản', q: `Chất liệu ${p.material} ngồi làm việc có bị nhăn không và cách là ủi thế nào?` },
+                    { label: '📏 Tư vấn size chuẩn', q: `Phom dáng ${p.fit} này chọn size thế nào để vừa vặn và cử động thoải mái nhất?` },
+                  ].map((chip, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSendAiStylist(chip.q)}
+                      style={{
+                        padding: '4px 10px',
+                        fontSize: 11,
+                        borderRadius: 14,
+                        border: '1px solid #fed7aa',
+                        background: '#fff',
+                        color: 'var(--clay)',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                    >
+                      {chip.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Chat Message History Window */}
+              <div
+                style={{
+                  maxHeight: 280,
+                  overflowY: 'auto',
+                  padding: 12,
+                  background: '#f8fafc',
+                  borderRadius: 6,
+                  border: '1px solid #e2e8f0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                  marginBottom: 10,
+                }}
+              >
+                {aiChatHistory.map((msg) => (
+                  <div
+                    key={msg.id}
+                    style={{
+                      display: 'flex',
+                      flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row',
+                      gap: 8,
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: '50%',
+                        background: msg.sender === 'user' ? 'var(--ink)' : 'var(--clay)',
+                        color: '#fff',
+                        display: 'grid',
+                        placeItems: 'center',
+                        fontSize: 10,
+                        fontWeight: 700,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {msg.sender === 'user' ? 'Bạn' : 'EV'}
+                    </div>
+
+                    <div
+                      style={{
+                        maxWidth: '82%',
+                        padding: '8px 12px',
+                        borderRadius: 8,
+                        fontSize: 12,
+                        lineHeight: 1.5,
+                        background: msg.sender === 'user' ? 'var(--ink)' : '#fff',
+                        color: msg.sender === 'user' ? '#fff' : 'var(--ink)',
+                        border: msg.sender === 'user' ? 'none' : '1px solid #e2e8f0',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                      }}
+                    >
+                      <div>{msg.text}</div>
+                      <div
+                        style={{
+                          fontSize: 9,
+                          marginTop: 4,
+                          textAlign: msg.sender === 'user' ? 'right' : 'left',
+                          opacity: 0.7,
+                        }}
+                      >
+                        {msg.time}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Chat Input Box */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSendAiStylist();
+                }}
+                style={{ display: 'flex', gap: 8 }}
+              >
+                <input
+                  type="text"
+                  value={aiChatInput}
+                  onChange={(e) => setAiChatInput(e.target.value)}
+                  placeholder={`Hỏi Stylist về cách phối "${p.name}"...`}
+                  style={{
+                    flex: 1,
+                    fontSize: 12,
+                    padding: '8px 12px',
+                    borderRadius: 4,
+                    border: '1px solid var(--line)',
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={!aiChatInput.trim()}
+                  className="button"
+                  style={{
+                    padding: '8px 14px',
+                    fontSize: 12,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    opacity: aiChatInput.trim() ? 1 : 0.6,
+                  }}
+                >
+                  <Send size={13} /> Hỏi Stylist
+                </button>
+              </form>
             </div>
           </details>
 

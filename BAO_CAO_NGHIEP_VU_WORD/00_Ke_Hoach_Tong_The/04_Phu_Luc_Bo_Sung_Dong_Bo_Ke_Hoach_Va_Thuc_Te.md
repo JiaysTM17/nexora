@@ -258,3 +258,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 63. **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Tương tác Trực tiếp Sàn diễn Runway.
    - Thực tế: Phân hệ bình chọn tương tác thời gian thực tại `/live`, khán giả bình chọn 3 set đồ để người mẫu diện lượt tiếp theo, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% (Mã `RUNWAY20`).
+
+64. **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)**:
+   - Hồ sơ: Module 04 Vận chuyển Chặng cuối & Module 07 Gắn kết Khách hàng.
+   - Thực tế: Phân hệ đánh giá bưu tá tại `/don-hang/[id]`: Chấm 1-5 sao cho bưu tá xe điện VinFast Feliz, chọn 5 tiêu chí khen ngợi, gửi tip động viên (10k/20k/50k) và ghi nhận vào hồ sơ dịch vụ.
+
+65. **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Trợ lý Tư vấn Phong cách AI.
+   - Thực tế: Phân hệ tư vấn phong cách tương tác 24/7 tại `/san-pham/[slug]` với Senior Stylist Elena Vũ, gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size) và hội thoại tự động theo chất liệu sợi dệt và phom dáng riêng của sản phẩm.

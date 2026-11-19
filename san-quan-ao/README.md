@@ -213,5 +213,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp** | Module 03 & 04 | Đã hoàn thiện | Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn CQT tại `/don-hang` (ORD-BULK-INVOICE-DOWNLOAD-01) |
 | **Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà** | Module 08 & Logistics | Đã hoàn thiện | Phân hệ lên lịch bưu tá tại `/trade-in`: Chọn khung giờ hẹn (Sáng, Chiều, Tối), cung cấp túi niêm phong quang học Tamper-Evident và bưu tá xe điện VinFast Green nhận tận nhà 0đ (TRADEIN-COURIER-SLOT-01) |
 | **Khán Giả Bình Chọn Set Trình Diễn Live** | Module 06 & Social | Đã hoàn thiện | Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% `RUNWAY20` tại `/live` (LIVE-STREAM-POLL-01) |
+| **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện** | Module 04 & Logistics | Đã hoàn thiện | Đánh giá 1-5 sao, chọn tiêu chí khen ngợi, thưởng tip bưu tá xe điện VinFast Feliz tại `/don-hang/[id]` (ORD-DELIVERY-FEEDBACK-01) |
+| **Hỏi Đáp Phong Cách Cùng AI Stylist** | Module 01 & Stylist AI | Đã hoàn thiện | Tư vấn phong cách tương tác 24/7 cùng Senior Stylist Elena Vũ, gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size) tại `/san-pham/[slug]` (CAT-AI-STYLING-CONVERSATION-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

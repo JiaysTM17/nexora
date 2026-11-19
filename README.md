@@ -279,7 +279,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **69** | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)** | Module 03 & 04 | **100% Hoàn thiện** | Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn CQT tại `/don-hang` |
 | **70** | **Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)** | Module 08 & Logistics | **100% Hoàn thiện** | Phân hệ lên lịch bưu tá tại `/trade-in`: Chọn khung giờ hẹn (Sáng, Chiều, Tối), cung cấp túi niêm phong quang học Tamper-Evident và bưu tá xe điện VinFast Green nhận tận nhà 0đ |
 | **71** | **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)** | Module 06 & Social | **100% Hoàn thiện** | Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% `RUNWAY20` tại `/live` |
-| **72** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **72** | **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)** | Module 04 & Logistics | **100% Hoàn thiện** | Đánh giá 1-5 sao, chọn 5 tiêu chí khen ngợi, thưởng tip bưu tá xe điện VinFast Feliz tại `/don-hang/[id]` |
+| **73** | **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)** | Module 01 & Stylist AI | **100% Hoàn thiện** | Tư vấn phong cách tương tác 24/7 cùng Senior Stylist Elena Vũ, gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size) tại `/san-pham/[slug]` |
+| **74** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
