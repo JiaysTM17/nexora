@@ -173,5 +173,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Bảo Chứng Thu Cũ & SLA 14 Ngày** | Module 05/VAS | Đã hoàn thiện | Cam kết bảo lưu giá AI 14 ngày, quyền cân nhắc 14 ngày vô điều kiện và hoàn trả tận nhà 0đ nếu lệch >10%, niêm phong buồng sáng 1000 Lux tại `/trade-in` (VAS-TRADEIN-REQUOTE) |
 | **Phòng Thử Đồ Mix & Match & Mua Trọn Set** | Module 01 & 06 | Đã hoàn thiện | Studio phối đồ 3 lớp (Lớp ngoài + Áo chính + Quần/Váy) tại `/phoi-do`, tính điểm hòa sắc tone-sur-tone (98/100) và chiết khấu Combo Style Saver -10% khi thêm trọn bộ vào giỏ (CAT-MIX-MATCH-01) |
 | **Khung Giờ Nhận Hàng & Đóng Gói Xanh Eco Box** | Module 03 & 04 | Đã hoàn thiện | Tùy chọn 3 khung giờ giao hàng hẹn trước (Sáng/Chiều/Tối ngoài giờ) và đóng gói hộp giấy kraft tự hủy không nilon, thưởng ngay +50 Xu NEXORA Coins tại `/gio-hang` (FUL-GREEN-SLOT-02) |
+| **Đổi Size Tốc Hành Tận Cửa 24-48h** | Module 05 | Đã hoàn thiện | Dịch vụ bưu tá đổi trực tiếp size mới và nhận lại size cũ tận nhà trong 24-48h với 0đ phụ phí tại `/don-hang/[id]` (RET-QUICK-EXCHANGE-01) |
+| **Bảng Xếp Hạng Xu Hướng Tuần Realtime** | Module 01 & 06 | Đã hoàn thiện | Radar xu hướng thời trang tính toán Sales Velocity thời gian thực (+142% Quiet Luxury, +98% Eco Linen) trên trang chủ (CAT-TRENDING-BOARD-02) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

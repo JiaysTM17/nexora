@@ -45,6 +45,8 @@
 | **34** | **Bảo Chứng Thu Cũ & SLA Cân Nhắc 14 Ngày (VAS-TRADEIN-REQUOTE)** | Module 05 | Đã hoàn thiện | Chính sách bảo chứng cam kết bảo lưu định giá 14 ngày, hoàn trả tận nhà 0đ nếu kết quả Vòng 2 chênh lệch >10%, niêm phong quang học buồng sáng 1000 Lux tại `/trade-in` |
 | **35** | **Phòng Thử Đồ Mix & Match & Ưu Đãi Combo (CAT-MIX-MATCH-01)** | Module 01 & 06 | Đã hoàn thiện | Studio phối đồ 3 tầng (Lớp ngoài + Áo chính + Quần/Váy) trên Style Canvas tại `/phoi-do`, tính toán chỉ số hài hòa tone-sur-tone và áp dụng ưu đãi Combo Style Saver -10% khi mua trọn bộ 1-click |
 | **36** | **Khung Giờ Nhận Hàng Hẹn Trước & Đóng Gói Xanh (FUL-GREEN-SLOT-02)** | Module 03 & 04 | Đã hoàn thiện | Tùy chọn 3 khung giờ giao hàng (Sáng/Chiều/Tối ngoài giờ) và đóng gói xanh hộp giấy kraft tự hủy không nilon (Eco Green Box), thưởng ngay +50 Xu NEXORA Coins tại `/gio-hang` và hiển thị trên `/don-hang/[id]` |
+| **37** | **Đổi Size Tốc Hành Tận Cửa 24-48h (RET-QUICK-EXCHANGE-01)** | Module 05 | Đã hoàn thiện | Dịch vụ shipper mang trang phục size mới đến đổi trực tiếp và thu hồi size cũ trong cùng 1 lần giao nhận tận nhà tại `/don-hang/[id]`, rút ngắn thời gian đổi size còn 24-48h với 0đ phụ phí ship |
+| **38** | **Bảng Xếp Hạng Xu Hướng Thời Trang Tuần (CAT-TRENDING-BOARD-02)** | Module 01 & 06 | Đã hoàn thiện | Radar xu hướng thời trang tính toán Realtime Sales Velocity (+142% Quiet Luxury, +98% Eco Linen, +85% Tone Đất Sartorial) trực quan trên trang chủ, kết nối trực tiếp phòng thử đồ `/phoi-do` |
 
 ---
 
@@ -195,6 +197,23 @@
   - Tùy chọn Đóng gói Xanh Eco Green Box: Sử dụng 100% hộp giấy kraft tổ ong tự phân hủy sinh học, loại bỏ hoàn toàn màng nilon bọc ngoài.
   - Tặng thưởng xanh: Cộng ngay **+50 Xu NEXORA Coins** vào ví người dùng khi chọn đóng gói xanh.
   - Đồng bộ hiển thị: Khung giờ hẹn và huy hiệu Eco Box được lưu vết vĩnh viễn trên vận đơn và màn hình chi tiết đơn hàng `/don-hang/[id]`.
+
+### 21. Đổi Size Tốc Hành Tận Cửa 24-48h (RET-QUICK-EXCHANGE-01)
+- **Mục tiêu**: Giải quyết rào cản lớn nhất của mua sắm thời trang trực tuyến là kích thước không vừa vặn, biến trải nghiệm hậu mãi thành lợi thế cạnh tranh vượt trội.
+- **Cơ chế**:
+  - Khách hàng lựa chọn hình thức `DOORSTEP_EXCHANGE` trên màn hình chi tiết đơn hàng `/don-hang/[id]`.
+  - Thay vì phải đóng gói gửi hoàn kho rồi mới chờ giao áo mới (7-10 ngày), bưu tá giao hàng mang trực tiếp áo size mới đến tận cửa nhà khách hàng trong vòng 24–48 giờ.
+  - Khách hàng kiểm tra đối chứng sản phẩm mới và giao lại sản phẩm ban đầu cho bưu tá trong cùng một lần gặp mặt duy nhất với chi phí vận chuyển hoàn trả 0đ.
+  - API nghiệp vụ hỗ trợ ghi nhận và điều phối trực tiếp qua `POST /returns` và `POST /orders/shops/:id/returns`.
+
+### 22. Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime (CAT-TRENDING-BOARD-02)
+- **Mục tiêu**: Định hướng phong cách mua sắm cho khách hàng dựa trên dữ liệu tiêu dùng thực tế và tốc độ tăng trưởng doanh số (Sales Velocity).
+- **Cơ chế**:
+  - Khung Radar Xu Hướng nổi bật ngay trên trang chủ, phân tích và xếp hạng 3 xu hướng dẫn đầu:
+    1. *Top 1*: Quiet Luxury & Phom Rộng Phóng Khoáng (+142% tăng trưởng).
+    2. *Top 2*: Chất Liệu Tự Nhiên & Dệt Thô Mộc Premium Linen (+98% tăng trưởng).
+    3. *Top 3*: Gam Màu Đất & Phong Cách Sartorial Sang Trọng (+85% tăng trưởng).
+  - Tích hợp liên kết chuyển tiếp 1-click vào Phòng Thử Đồ Mix & Match `/phoi-do` để trải nghiệm trực quan cách phối đồ của xu hướng thịnh hành.
 
 ---
 

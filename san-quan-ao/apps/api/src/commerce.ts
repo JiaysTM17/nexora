@@ -281,9 +281,22 @@ export class CommerceController {
     return this.db.returnRequest.findMany({ where: { userId: req.user.id }, include: { items: { include: { orderItem: true } } }, orderBy: { createdAt: 'desc' }, take: 50 });
   }
 
+  @Post('returns') async createReturnDirect(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      shopId: id.optional(),
+      shopOrderId: id.optional(),
+      kind: z.enum(['EXCHANGE', 'REFUND', 'DOORSTEP_EXCHANGE']),
+      reason: z.string().trim().min(5).max(500),
+      items: z.array(z.object({ orderItemId: id, quantity: z.number().int().min(1).max(20), replacementVariantId: id.optional() }).strict()).min(1).max(20),
+    }).strict().parse(body);
+    const targetShopOrderId = data.shopOrderId || data.shopId;
+    if (!targetShopOrderId) throw new NotFoundException('Thiếu thông tin đơn hàng');
+    return this.createReturn(req, targetShopOrderId, { kind: data.kind, reason: data.reason, items: data.items });
+  }
+
   @Post('orders/shops/:id/returns') async createReturn(@Req() req: Authed, @Param('id') shopOrderId: string, @Body() body: unknown) {
     const data = z.object({
-      kind: z.enum(['EXCHANGE', 'REFUND']),
+      kind: z.enum(['EXCHANGE', 'REFUND', 'DOORSTEP_EXCHANGE']),
       reason: z.string().trim().min(5).max(500),
       items: z.array(z.object({ orderItemId: id, quantity: z.number().int().min(1).max(20), replacementVariantId: id.optional() }).strict()).min(1).max(20),
     }).strict().parse(body);
@@ -308,7 +321,7 @@ export class CommerceController {
         returnItems.push({
           orderItemId: orderItem.id,
           quantity: reqItem.quantity,
-          replacementVariantId: data.kind === 'EXCHANGE' ? reqItem.replacementVariantId : undefined,
+          replacementVariantId: ['EXCHANGE', 'DOORSTEP_EXCHANGE'].includes(data.kind) ? reqItem.replacementVariantId : undefined,
           refundAmount: data.kind === 'REFUND' ? unitNet * reqItem.quantity : 0,
         });
       }

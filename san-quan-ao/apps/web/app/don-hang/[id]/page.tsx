@@ -327,7 +327,7 @@ export default function OrderDetail() {
               {shopReturns.map(r => (
                 <div key={r.id} style={{ margin: '8px 0 0', padding: '6px 0', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
                   <p style={{ margin: 0 }}>
-                    {r.kind === 'EXCHANGE' ? 'Đổi size' : 'Hoàn trả'} · <strong className={`badge ${r.status.toLowerCase()}`}>{RETURN_LABELS[r.status] ?? r.status}</strong> — {r.reason}
+                    {r.kind === 'DOORSTEP_EXCHANGE' ? 'Đổi size tốc hành tận cửa' : r.kind === 'EXCHANGE' ? 'Đổi size' : 'Hoàn trả'} · <strong className={`badge ${r.status.toLowerCase()}`}>{RETURN_LABELS[r.status] ?? r.status}</strong> — {r.reason}
                   </p>
                   {r.status === 'REJECTED' && (
                     <div style={{ marginTop: 6 }}>
@@ -383,7 +383,17 @@ export default function OrderDetail() {
               </button>
               {returningShop === shop.id && (
                 <form className="form" style={{ marginTop: 12 }} onSubmit={e => submitReturn(e, shop.id, shop.items)}>
-                  <label>Hình thức<select name="kind"><option value="EXCHANGE">Đổi size / mẫu</option><option value="REFUND">Hoàn trả & hoàn tiền</option></select></label>
+                  <label>
+                    Hình thức
+                    <select name="kind">
+                      <option value="DOORSTEP_EXCHANGE">Đổi Size Tốc Hành Tận Cửa 24-48h (Shipper đổi tận nhà - RET-QUICK-EXCHANGE-01)</option>
+                      <option value="EXCHANGE">Đổi size tiêu chuẩn (Gửi bưu điện hoàn kho)</option>
+                      <option value="REFUND">Hoàn trả hàng &amp; hoàn tiền</option>
+                    </select>
+                  </label>
+                  <div style={{ padding: '8px 12px', background: '#f5f0e8', borderRadius: 3, fontSize: 11, lineHeight: 1.5, border: '1px solid var(--line)', marginBottom: 8 }}>
+                    <strong style={{ color: 'var(--ink)' }}>★ Đặc quyền Đổi Size Tận Cửa (RET-QUICK-EXCHANGE-01):</strong> Bưu tá mang áo size mới đến tận nhà, bạn kiểm tra đối chứng và gửi lại áo cũ trong cùng 1 lần giao nhận với chi phí chuyển phát 0đ.
+                  </div>
                   <label>Lý do đổi/trả<textarea name="reason" required minLength={5} placeholder="Mô tả tình trạng hoặc size cần đổi..." /></label>
                   <button className="button" disabled={busy === `return:${shop.id}`}>{busy === `return:${shop.id}` ? 'Đang gửi…' : 'Gửi yêu cầu cho shop'}</button>
                 </form>

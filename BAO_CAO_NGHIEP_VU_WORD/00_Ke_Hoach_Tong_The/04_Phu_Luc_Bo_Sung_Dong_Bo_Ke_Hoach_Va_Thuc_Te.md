@@ -98,3 +98,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 23. **Khung Giờ Giao Hàng Hẹn Trước & Đóng Gói Xanh Eco Box (FUL-GREEN-SLOT-02)**:
    - Hồ sơ: Module 03 Giỏ hàng & Module 04 Vận chuyển Xanh Bền vững.
    - Thực tế: Tùy chọn 3 khung giờ bưu tá giao hàng (Sáng/Chiều/Tối ngoài giờ) và đóng gói hộp giấy kraft tự hủy không nilon, thưởng ngay +50 Xu NEXORA Coins vào tài khoản tại màn hình Checkout `/gio-hang` và lưu vết tại `/don-hang/[id]`.
+
+24. **Đổi Size Tốc Hành Tận Cửa 24-48h (RET-QUICK-EXCHANGE-01)**:
+   - Hồ sơ: Module 05 Hậu mãi & Xử lý Khiếu nại/Đổi hàng.
+   - Thực tế: Lựa chọn `DOORSTEP_EXCHANGE` trên đơn hàng đã giao tại `/don-hang/[id]`, shipper mang trực tiếp trang phục size mới đến tận nhà đổi và nhận lại sản phẩm ban đầu trong cùng 1 lần giao nhận, giảm thời gian đổi hàng còn 24-48h với 0đ phụ phí.
+
+25. **Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime (CAT-TRENDING-BOARD-02)**:
+   - Hồ sơ: Module 01 Catalog & Module 06 Khám phá Xu hướng Thời trang.
+   - Thực tế: Phân hệ Trend Radar tính toán Sales Velocity thời gian thực trên trang chủ (+142% Quiet Luxury, +98% Eco Linen, +85% Tone Đất Sartorial), kết nối trực quan sang Phòng Thử Đồ `/phoi-do`.

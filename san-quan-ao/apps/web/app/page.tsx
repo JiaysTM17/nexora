@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Check, Search, SlidersHorizontal, Zap } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Search, SlidersHorizontal, Zap, TrendingUp, Sparkles } from 'lucide-react';
 import { Product, useResource } from './api';
 import { Loading, Notice, ProductCard } from './ui';
 
@@ -58,6 +58,80 @@ export default function Home() {
         </Link>
       </div>
     </section>
+
+    {/* Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime (CAT-TRENDING-BOARD-02) */}
+    <section className="section" style={{ paddingTop: 20, paddingBottom: 0 }}>
+      <div style={{ padding: '24px 28px', background: '#faf8f5', border: '1px solid var(--line)', borderRadius: 4 }}>
+        <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+          <div>
+            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--clay)' }}>
+              <TrendingUp size={14} /> NEXORA TREND RADAR · REALTIME SALES VELOCITY (CAT-TRENDING-BOARD-02)
+            </p>
+            <h2 style={{ margin: '4px 0 0', fontSize: 20, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+              Bảng Xếp Hạng Xu Hướng Tuần Này
+            </h2>
+          </div>
+          <Link href="/phoi-do" className="button subtle" style={{ fontSize: 12, padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Sparkles size={14} /> Phòng Thử Đồ Mix &amp; Match →
+          </Link>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+          {[
+            {
+              rank: '#1',
+              title: 'Quiet Luxury & Phom Rộng Phóng Khoáng',
+              growth: '+142%',
+              desc: 'Áo khoác blazer linen cấu trúc nhẹ phối quần tây ống suông cạp cao xếp ly nhẹ.',
+              tag: 'Thịnh hành nhất',
+            },
+            {
+              rank: '#2',
+              title: 'Chất Liệu Tự Nhiên & Dệt Thô Mộc',
+              growth: '+98%',
+              desc: 'Sơ mi 100% Premium Linen & Cotton Compact Pima mềm mát bền màu.',
+              tag: 'Tăng trưởng nhanh',
+            },
+            {
+              rank: '#3',
+              title: 'Tone Màu Đất & Phong Cách Sartorial',
+              growth: '+85%',
+              desc: 'Trench coat dạ wool dệt chéo màu nâu cát ấm cổ điển thượng lưu.',
+              tag: 'Được yêu thích',
+            },
+          ].map(trend => (
+            <div
+              key={trend.rank}
+              style={{
+                padding: '16px 18px',
+                background: '#fff',
+                border: '1px solid var(--line)',
+                borderRadius: 4,
+              }}
+            >
+              <div className="row between" style={{ marginBottom: 6 }}>
+                <span style={{ fontSize: 18, fontWeight: 700, fontFamily: 'Georgia, serif', color: 'var(--clay)' }}>
+                  {trend.rank}
+                </span>
+                <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                  {trend.growth}
+                </span>
+              </div>
+              <h4 style={{ margin: '0 0 6px', fontSize: 14, lineHeight: 1.4, color: 'var(--ink)' }}>
+                {trend.title}
+              </h4>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+                {trend.desc}
+              </p>
+              <span style={{ display: 'inline-block', marginTop: 10, fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--clay)', fontWeight: 600 }}>
+                • {trend.tag}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <section className="section" id="trang-phuc"><div className="section-heading"><div><p className="eyebrow">CHỌN ÍT HƠN, YÊU NHIỀU HƠN</p><h2>Thêm một món <em>hợp mình.</em></h2></div><span className="subtle">{data ? `${data.total} thiết kế đang chờ bạn` : 'Tìm thiết kế dành cho bạn'}</span></div>
       <div className="catalog-toolbar"><div className="tabs" aria-label="Danh mục">{[['', 'Tất cả'], ['ao', 'Áo'], ['quan', 'Quần'], ['vay', 'Váy & đầm'], ['ao-khoac', 'Áo khoác & Blazer']].map(([id, name]) => <button key={id} className={category === id ? 'selected' : ''} onClick={() => setCategory(id)}>{name}</button>)}</div><div className="toolbar-right"><form className="search" onSubmit={e => { e.preventDefault(); setSearch(query); }}><Search size={17}/><input aria-label="Tìm tên sản phẩm" placeholder="Tìm món bạn thích…" value={query} onChange={e => setQuery(e.target.value)}/><button type="submit" aria-label="Tìm kiếm"><ArrowRight size={17}/></button></form><button className="filter-button" onClick={() => setFilters(!filters)} aria-expanded={filters}><SlidersHorizontal size={17}/>Bộ lọc</button></div></div>
       {filters && <div className="filters"><label>Màu sắc<select value={color} onChange={e => setColor(e.target.value)}><option value="">Mọi màu</option>{['Đen', 'Trắng', 'Kem', 'Nâu', 'Xanh'].map(c => <option key={c}>{c}</option>)}</select></label><label>Kích cỡ<select value={size} onChange={e => setSize(e.target.value)}><option value="">Mọi size</option>{['S', 'M', 'L'].map(s => <option key={s}>{s}</option>)}</select></label><label className="check"><input type="checkbox" checked={stock} onChange={e => setStock(e.target.checked)}/>Chỉ món còn hàng</label><label className="check"><input type="checkbox" checked={mall} onChange={e => setMall(e.target.checked)}/>Chỉ NEXORA Mall (Chính hãng)</label><button className="text-button" onClick={() => { setColor(''); setSize(''); setStock(false); setMall(false); setSearch(''); setQuery(''); }}>Xóa bộ lọc</button></div>}
