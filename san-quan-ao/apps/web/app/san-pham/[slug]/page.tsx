@@ -1,7 +1,7 @@
 'use client';
 import { use, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShoppingBag, Truck } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Truck } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -15,6 +15,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [wishBusy, setWishBusy] = useState(false);
+  const [carePlus, setCarePlus] = useState(false);
   const { user } = useUser();
 
   if (loading) return <Loading />;
@@ -40,7 +41,11 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
     try {
       await api('/cart', 'POST', { variantId: variant.id, quantity });
       setFailed(false);
-      setNotice('Đã thêm vào giỏ. Bạn có thể tiếp tục chọn đồ hoặc xem giỏ hàng.');
+      setNotice(
+        carePlus
+          ? 'Đã thêm vào giỏ kèm Gói Bảo hiểm Thời trang NEXORA Care+ (12 tháng). Bạn có thể tiếp tục chọn đồ hoặc xem giỏ hàng.'
+          : 'Đã thêm vào giỏ. Bạn có thể tiếp tục chọn đồ hoặc xem giỏ hàng.'
+      );
     } catch (e) {
       setFailed(true);
       setNotice((e as Error).message);
@@ -239,6 +244,46 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               onChange={(e) => setQuantity(Number(e.target.value))}
             />
           </label>
+
+          {/* NEXORA Care+ Fashion Warranty Extension (VAS-WARRANTY-EXT) */}
+          <div
+            style={{
+              margin: '16px 0',
+              padding: '12px 14px',
+              borderRadius: 6,
+              border: carePlus ? '1.5px solid var(--clay)' : '1px solid var(--line)',
+              background: carePlus ? 'rgba(180, 83, 9, 0.04)' : '#faf8f5',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onClick={() => setCarePlus(!carePlus)}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <input
+                  type="checkbox"
+                  checked={carePlus}
+                  onChange={(e) => setCarePlus(e.target.checked)}
+                  style={{ marginTop: 3, accentColor: 'var(--clay)', cursor: 'pointer' }}
+                />
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <ShieldCheck size={16} color="var(--clay)" />
+                    <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Bảo hiểm Thời trang Toàn diện NEXORA Care+</strong>
+                    <span style={{ fontSize: 10, background: 'var(--clay)', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                      12 THÁNG
+                    </span>
+                  </div>
+                  <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+                    Bảo hành đường may trọn đời, phục hồi form dáng sau giặt, thay khóa YKK chính hãng &amp; miễn phí Spa đồ hiệu 2 lần/năm tại NEXORA Atelier.
+                  </p>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--clay)' }}>+150.000₫</span>
+              </div>
+            </div>
+          </div>
 
           {user ? (
             <button

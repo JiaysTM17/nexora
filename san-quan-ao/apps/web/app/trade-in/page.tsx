@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
-import { RefreshCw } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -105,6 +105,76 @@ export default function TradeInPage() {
           </div>
         </div>
       )}
+
+      {/* Cam kết Bảo chứng Thu cũ & Quyền Cân nhắc 14 ngày (VAS-TRADEIN-REQUOTE) */}
+      <div
+        style={{
+          marginTop: 32,
+          padding: '24px 28px',
+          background: '#fcfaf6',
+          border: '1px solid var(--line)',
+          borderRadius: 8,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <ShieldCheck size={22} color="var(--clay)" />
+          <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+            Chính sách Bảo chứng Thu cũ &amp; Quyền Cân nhắc 14 Ngày (NEXORA SLA Guarantee)
+          </h3>
+          <span
+            style={{
+              background: 'var(--clay)',
+              color: '#fff',
+              fontSize: 11,
+              fontWeight: 700,
+              padding: '2px 8px',
+              borderRadius: 3,
+            }}
+          >
+            HOÀN TRẢ 0Đ
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: 20,
+            fontSize: 13,
+            lineHeight: 1.6,
+          }}
+        >
+          <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--line)', borderRadius: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
+              <RotateCcw size={16} color="var(--clay)" />
+              <span>Quyền cân nhắc 14 ngày vô điều kiện</span>
+            </div>
+            <p style={{ margin: 0, color: 'var(--muted)' }}>
+              Sau khi có định giá Vòng 2 tại Hub, bạn có 14 ngày để đồng ý đổi voucher hoặc yêu cầu hoàn trả lại trang phục ban đầu.
+            </p>
+          </div>
+
+          <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--line)', borderRadius: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
+              <CheckCircle2 size={16} color="#059669" />
+              <span>Bảo hiểm hoàn trả 0đ tận cửa</span>
+            </div>
+            <p style={{ margin: 0, color: 'var(--muted)' }}>
+              Nếu mức định giá Vòng 2 chênh lệch trên 10% so với AI Vòng 1, NEXORA miễn phí hoàn toàn cước vận chuyển hoàn trả 2 chiều.
+            </p>
+          </div>
+
+          <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--line)', borderRadius: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
+              <ShieldCheck size={16} color="#2563eb" />
+              <span>Niêm phong quang học Tamper-Evident</span>
+            </div>
+            <p style={{ margin: 0, color: 'var(--muted)' }}>
+              Trang phục được quay video unboxing 4K tại buồng sáng 1000 Lux và đóng tem niêm phong bảo mật trước khi gửi trả lại.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

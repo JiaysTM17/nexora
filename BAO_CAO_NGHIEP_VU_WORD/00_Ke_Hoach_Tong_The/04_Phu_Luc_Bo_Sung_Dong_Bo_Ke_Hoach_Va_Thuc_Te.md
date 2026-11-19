@@ -82,3 +82,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 19. **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)**:
    - Hồ sơ: Module 04 Vận chuyển, Giao nhận & Chống Gian lận Vận đơn.
    - Thực tế: Khung kiểm soát biến thiên khối lượng kiện hàng quang học qua 3 trạm bưu tá (Xuất kho -> Sorting Hub -> Bưu tá phát) với dung sai an toàn ΔW ≤ 50g, bảo vệ người mua và nhà bán hàng khỏi nạn tráo hàng tại màn hình `/don-hang/[id]`.
+
+20. **Bảo Hiểm Thời Trang NEXORA Care+ (VAS-WARRANTY-EXT)**:
+   - Hồ sơ: Module 03 Giỏ hàng & Dịch vụ Giá trị Gia tăng (VAS).
+   - Thực tế: Khối tùy chọn gia hạn bảo hành và phục hồi form trang phục cao cấp 12 tháng (+150.000đ) tích hợp trên trang chi tiết sản phẩm `/san-pham/[slug]`, bao gồm bảo hành đường may trọn đời, thay thế khóa kéo YKK chính hãng và miễn phí 2 lần Spa giặt hấp đồ hiệu chuyên sâu tại NEXORA Atelier.
+
+21. **Bảo Chứng Thu Cũ & Quyền Cân Nhắc 14 Ngày (VAS-TRADEIN-REQUOTE)**:
+   - Hồ sơ: Module 05 Thời trang Tuần hoàn & Giám định Thu cũ Đổi mới.
+   - Thực tế: Cam kết bảo lưu giá trị định giá sơ bộ Vòng 1 trong 14 ngày, quyền cân nhắc 14 ngày vô điều kiện và cam kết hoàn trả tận nơi 0đ nếu kết quả giám định Vòng 2 chênh lệch >10%, quy trình niêm phong quang học buồng sáng 1000 Lux tại `/trade-in`.

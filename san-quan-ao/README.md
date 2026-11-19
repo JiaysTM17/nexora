@@ -169,5 +169,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Mẫu Thử KOC & Điểm Tín Nhiệm**| Module 06 | Đã hoàn thiện | Creator Trust Score (0-100: Hạng Kim Cương/Vàng/Bạc) trên bài OOTD, phân hệ xin mẫu thử tại `/cong-dong` (SOC-CREATOR-SAMPLE) cam kết SLA duyệt 48h |
 | **Động Cơ Xếp Chồng 5 Tầng Voucher & Xu**| Module 03 | Đã hoàn thiện | Xếp chồng 5 tầng ưu đãi (CART-STACK-COIN): Voucher Shop + Voucher Sàn/Trade-In + Freeship Xtra (-30k) + PayLater 0% + Xu thưởng NEXORA Coins (1 xu = 1đ) |
 | **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm**| Module 04 | Đã hoàn thiện | Kiểm soát trọng lượng kiện hàng qua 3 trạm bưu tá (FUL-WEIGHT-AUDIT) với dung sai quang học ΔW ≤ 50g chống tráo hàng tại `/don-hang/[id]` |
+| **Bảo Hiểm Thời Trang NEXORA Care+** | Module 03/VAS | Đã hoàn thiện | Gói dịch vụ bảo hiểm gia hạn bảo hành và phục hồi form 12 tháng (+150.000đ): trọn đời đường may, thay khóa YKK, 2 lần Spa giặt hấp chuyên sâu tại `/san-pham/[slug]` (VAS-WARRANTY-EXT) |
+| **Bảo Chứng Thu Cũ & SLA 14 Ngày** | Module 05/VAS | Đã hoàn thiện | Cam kết bảo lưu giá AI 14 ngày, quyền cân nhắc 14 ngày vô điều kiện và hoàn trả tận nhà 0đ nếu lệch >10%, niêm phong buồng sáng 1000 Lux tại `/trade-in` (VAS-TRADEIN-REQUOTE) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

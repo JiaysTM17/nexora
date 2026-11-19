@@ -41,6 +41,8 @@
 | **30** | **Trung Tâm Mẫu Thử KOC & Điểm Tín Nhiệm (SOC-CREATOR-SAMPLE)** | Module 06 | Đã hoàn thiện | Hệ thống cấp bậc Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score: Kim Cương/Vàng/Bạc 0-100), huy hiệu định danh trên bài đăng OOTD, tab Trung tâm Mẫu thử KOC tại `/cong-dong` hỗ trợ KOC xin mẫu thử miễn phí với cam kết duyệt trong SLA 48h |
 | **31** | **Động Cơ Xếp Chồng 5 Tầng Voucher & Xu Thưởng (CART-STACK-COIN)** | Module 03 | Đã hoàn thiện | Thuật toán xếp chồng 5 tầng ưu đãi không suy hao: Voucher Shop + Voucher Sàn/Trade-In + Freeship Xtra (-30.000đ) + PayLater 0% + Cấn trừ Xu thưởng NEXORA Coins (1 xu = 1đ) tại Checkout Giỏ hàng |
 | **32** | **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)** | Module 04 | Đã hoàn thiện | Cơ chế kiểm soát biến thiên khối lượng bưu kiện qua 3 trạm (Xuất kho -> Sorting Hub -> Bưu tá giao) với dung sai quang học ΔW ≤ 50g, ngăn chặn tráo hàng và rút ruột kiện hàng tại `/don-hang/[id]` |
+| **33** | **Bảo Hiểm Thời Trang NEXORA Care+ (VAS-WARRANTY-EXT)** | Module 03 | Đã hoàn thiện | Gói dịch vụ giá trị gia tăng gia hạn bảo hành và phục hồi form trang phục cao cấp 12 tháng (+150.000đ): trọn đời đường may, thay khóa YKK, 2 lần spa đồ hiệu/năm tại NEXORA Atelier trên `/san-pham/[slug]` |
+| **34** | **Bảo Chứng Thu Cũ & SLA Cân Nhắc 14 Ngày (VAS-TRADEIN-REQUOTE)** | Module 05 | Đã hoàn thiện | Chính sách bảo chứng cam kết bảo lưu định giá 14 ngày, hoàn trả tận nhà 0đ nếu kết quả Vòng 2 chênh lệch >10%, niêm phong quang học buồng sáng 1000 Lux tại `/trade-in` |
 
 ---
 
@@ -159,6 +161,22 @@
     3. Trạm 3: Cân đối soát cầm tay của bưu tá giao hàng chặng cuối trước khi bấm mã PIN ($W_3$).
   - Thuật toán kiểm soát dung sai quang học: $\Delta W = |W_1 - W_2| \le 50\text{g}$. Nếu vượt ngưỡng, hệ thống kích hoạt báo động gian lận và tạm giữ tiền hàng để thanh tra.
   - Bảng nhật ký cân nặng 3 trạm hiển thị minh bạch cho khách hàng và tài xế tại Cổng chi tiết đơn hàng `/don-hang/[id]`.
+
+### 17. Bảo Hiểm Thời Trang & Gia Hạn Bảo Hành NEXORA Care+ (VAS-WARRANTY-EXT)
+- **Mục tiêu**: Nâng tầm giá trị vòng đời trang phục thiết kế, giải tỏa nỗi lo phai màu, sờn chỉ hay biến dạng form dáng sau khi giặt là đối với các sản phẩm may mặc cao cấp.
+- **Cơ chế**:
+  - Tích hợp khối tùy chọn Dịch vụ Giá trị Gia tăng (VAS) "NEXORA Care+ 12 Tháng (+150.000đ)" ngay trên màn hình chi tiết sản phẩm `/san-pham/[slug]`.
+  - Quyền lợi toàn diện: Bảo hành đường may trọn đời, phục hồi form dáng sau giặt, thay thế phụ kiện/khóa kéo YKK chính hãng miễn phí.
+  - Tặng kèm 02 lần dịch vụ Giặt hấp Spa đồ hiệu chuyên sâu tại NEXORA Atelier.
+  - Tự động đóng gói kèm dòng sản phẩm vào giỏ hàng và cập nhật thông báo giỏ hàng tương ứng.
+
+### 18. Chính Sách Bảo Chứng Thu Cũ & Quyền Cân Nhắc 14 Ngày (VAS-TRADEIN-REQUOTE)
+- **Mục tiêu**: Loại bỏ triệt để rào cản e ngại của khách hàng khi tham gia chương trình Thời trang Tuần hoàn (Circular Fashion) khi lo sợ sản phẩm gửi đi bị ép giá hoặc tổn hại.
+- **Cơ chế**:
+  - Cam kết bảo lưu giá trị định giá sơ bộ Vòng 1 trong thời hạn 14 ngày kể từ ngày duyệt AI.
+  - Quyền cân nhắc 14 ngày vô điều kiện: Sau khi có kết quả giám định Vòng 2 tại Hub, khách hàng có 14 ngày để chấp thuận nhận Voucher đối ứng hoặc hủy yêu cầu.
+  - Bảo hiểm hoàn trả 0đ tận cửa: Nếu mức định giá Vòng 2 chênh lệch trên 10% so với Vòng 1, NEXORA chịu 100% chi phí chuyển phát hoàn trả 2 chiều.
+  - Quy trình niêm phong quang học Tamper-Evident: Video unboxing 4K tại buồng sáng chuẩn 1000 Lux và đóng tem niêm phong bảo mật trước khi hoàn trả lại trang phục.
 
 ---
 

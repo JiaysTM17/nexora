@@ -235,7 +235,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **25** | **Trung Tâm Mẫu Thử KOC & Điểm Tín Nhiệm (SOC-CREATOR-SAMPLE)** | Module 06 | **100% Hoàn thiện** | Creator Trust Score (0-100: Hạng Kim Cương/Vàng/Bạc) trên bài đăng OOTD, phân hệ xin mẫu thử miễn phí tại `/cong-dong` cam kết SLA duyệt 48h và hậu kiểm 14 ngày |
 | **26** | **Động Cơ Xếp Chồng 5 Tầng Voucher & Xu (CART-STACK-COIN)** | Module 03 | **100% Hoàn thiện** | Xếp chồng 5 tầng ưu đãi không suy hao: Voucher Shop + Voucher Sàn/Trade-In + Freeship Xtra (-30k) + PayLater 0% + Xu thưởng NEXORA Coins (1 xu = 1đ) |
 | **27** | **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)** | Module 04 | **100% Hoàn thiện** | Kiểm soát trọng lượng bưu kiện qua 3 trạm (Xuất kho -> Hub -> Bưu tá) với dung sai quang học ΔW ≤ 50g chống tráo hàng tại `/don-hang/[id]` |
-| **28** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **28** | **Bảo Hiểm Thời Trang NEXORA Care+ (VAS-WARRANTY-EXT)** | Module 03/VAS | **100% Hoàn thiện** | Gói dịch vụ bảo hiểm gia hạn bảo hành và phục hồi form 12 tháng (+150.000đ): trọn đời đường may, thay khóa YKK, 2 lần Spa giặt hấp chuyên sâu tại `/san-pham/[slug]` |
+| **29** | **Bảo Chứng Thu Cũ & SLA 14 Ngày (VAS-TRADEIN-REQUOTE)** | Module 05/VAS | **100% Hoàn thiện** | Cam kết bảo lưu giá AI 14 ngày, quyền cân nhắc 14 ngày vô điều kiện và hoàn trả tận nhà 0đ nếu lệch >10%, niêm phong buồng sáng 1000 Lux tại `/trade-in` |
+| **30** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
