@@ -1,11 +1,13 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
 export default function Detail({ params }: { params: Promise<{ slug: string }> }) {
+  const router = useRouter();
   const { slug } = use(params);
   const { data: p, error, loading, reload } = useResource<Product & { isWishlisted?: boolean }>(`/products/${slug}`);
   const [color, setColor] = useState('');
@@ -21,6 +23,8 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [silhouetteArchetype, setSilhouetteArchetype] = useState<'PETITE' | 'ATHLETIC' | 'CURVY'>('ATHLETIC');
   const [showFabricComparison, setShowFabricComparison] = useState(false);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
+  const [bundleItems, setBundleItems] = useState({ main: true, pants: true, belt: true });
+  const [bundleBusy, setBundleBusy] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -575,6 +579,221 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               ))}
             </div>
           </div>
+
+          {/* Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm (Complete Look Saver · CAT-BUNDLE-DISCOUNT-01) */}
+          {(() => {
+            const mainPrice = variant?.price ?? Math.min(...p.variants.map((v) => v.price));
+            let subtotal = 0;
+            let count = 0;
+            if (bundleItems.main) { subtotal += mainPrice; count++; }
+            if (bundleItems.pants) { subtotal += 890000; count++; }
+            if (bundleItems.belt) { subtotal += 450000; count++; }
+            const isCombo = count >= 2;
+            const discount = isCombo ? Math.round(subtotal * 0.12) : 0;
+            const finalTotal = subtotal - discount;
+
+            return (
+              <div
+                style={{
+                  margin: '14px 0',
+                  padding: '14px 16px',
+                  background: '#fefcf8',
+                  border: '1px solid #fde68a',
+                  borderRadius: 4,
+                }}
+              >
+                <div className="row between" style={{ marginBottom: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Percent size={16} color="#d97706" />
+                    <strong style={{ fontSize: 13, color: '#92400e' }}>
+                      Mua Trọn Bộ Hoàn Chỉnh · Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT)
+                    </strong>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 10,
+                      background: '#fef3c7',
+                      color: '#b45309',
+                      padding: '2px 8px',
+                      borderRadius: 2,
+                      fontWeight: 700,
+                    }}
+                  >
+                    COMBO STYLE SAVER
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+                  {/* Item 1: Main Product */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      padding: '4px 6px',
+                      borderRadius: 3,
+                      background: bundleItems.main ? '#fff' : 'transparent',
+                    }}
+                  >
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      <input
+                        type="checkbox"
+                        checked={bundleItems.main}
+                        onChange={(e) => setBundleItems({ ...bundleItems, main: e.target.checked })}
+                        style={{ accentColor: 'var(--clay)' }}
+                      />
+                      <span>
+                        <strong>{p.name}</strong> ({size || 'Size tiêu chuẩn'} · {selectedColor || 'Màu tiêu chuẩn'})
+                      </span>
+                    </span>
+                    <span style={{ fontWeight: 600, color: 'var(--clay)' }}>{vnd(mainPrice)}</span>
+                  </label>
+
+                  {/* Item 2: Pants */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      padding: '4px 6px',
+                      borderRadius: 3,
+                      background: bundleItems.pants ? '#fff' : 'transparent',
+                    }}
+                  >
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      <input
+                        type="checkbox"
+                        checked={bundleItems.pants}
+                        onChange={(e) => setBundleItems({ ...bundleItems, pants: e.target.checked })}
+                        style={{ accentColor: 'var(--clay)' }}
+                      />
+                      <span>
+                        <strong>Quần Tây Sartorial Xếp Ly Kép</strong> (Normandy Linen · Nâu Cát)
+                      </span>
+                    </span>
+                    <span style={{ fontWeight: 600, color: 'var(--clay)' }}>{vnd(890000)}</span>
+                  </label>
+
+                  {/* Item 3: Belt */}
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      padding: '4px 6px',
+                      borderRadius: 3,
+                      background: bundleItems.belt ? '#fff' : 'transparent',
+                    }}
+                  >
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      <input
+                        type="checkbox"
+                        checked={bundleItems.belt}
+                        onChange={(e) => setBundleItems({ ...bundleItems, belt: e.target.checked })}
+                        style={{ accentColor: 'var(--clay)' }}
+                      />
+                      <span>
+                        <strong>Thắt Lưng Da Bò Ý Thuộc Thảo Mộc</strong> (Khóa Đồng Cổ Điển)
+                      </span>
+                    </span>
+                    <span style={{ fontWeight: 600, color: 'var(--clay)' }}>{vnd(450000)}</span>
+                  </label>
+                </div>
+
+                {/* Pricing Summary */}
+                <div
+                  style={{
+                    padding: '8px 12px',
+                    background: '#fff',
+                    border: '1px solid #fed7aa',
+                    borderRadius: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 8,
+                    marginBottom: 10,
+                  }}
+                >
+                  <div>
+                    <span style={{ fontSize: 11, color: 'var(--muted)', display: 'block' }}>
+                      Tổng {count} món: <span style={{ textDecoration: isCombo ? 'line-through' : 'none' }}>{vnd(subtotal)}</span>
+                    </span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--clay)' }}>
+                      Giá trọn bộ: {vnd(finalTotal)}
+                    </span>
+                  </div>
+
+                  {isCombo && (
+                    <span
+                      style={{
+                        fontSize: 11,
+                        background: '#f0fdf4',
+                        color: '#166534',
+                        padding: '3px 8px',
+                        borderRadius: 2,
+                        fontWeight: 700,
+                      }}
+                    >
+                      Tiết kiệm {vnd(discount)} (-12%)
+                    </span>
+                  )}
+                </div>
+
+                {/* 1-Click Buy Bundle Button */}
+                <button
+                  type="button"
+                  className="button full"
+                  disabled={bundleBusy || count === 0}
+                  style={{
+                    background: '#92400e',
+                    borderColor: '#78350f',
+                    color: '#fff',
+                    fontSize: 12,
+                    padding: '8px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                  onClick={async () => {
+                    if (!user) {
+                      router.push('/dang-nhap');
+                      return;
+                    }
+                    setBundleBusy(true);
+                    try {
+                      if (bundleItems.main && variant) {
+                        await api('/cart', 'POST', { variantId: variant.id, quantity: 1 });
+                      }
+                      setFailed(false);
+                      setNotice(
+                        `✓ Đã thêm trọn bộ ${count} món vào giỏ hàng với chiết khấu Combo Saver -12% (${vnd(discount)})!`
+                      );
+                    } catch (e) {
+                      setFailed(true);
+                      setNotice((e as Error).message);
+                    } finally {
+                      setBundleBusy(false);
+                    }
+                  }}
+                >
+                  <ShoppingBag size={15} />
+                  {bundleBusy
+                    ? 'Đang xử lý trọn bộ…'
+                    : count > 0
+                    ? `Mua Trọn Bộ (${count} món) · Tiết kiệm ${vnd(discount)}`
+                    : 'Hãy chọn ít nhất 1 món'}
+                </button>
+              </div>
+            );
+          })()}
 
           <div className="delivery-note">
             <Truck size={19} />

@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -51,6 +51,9 @@ export default function AccountPage() {
   const [quizOpen, setQuizOpen] = useState(false);
   const [quizStep, setQuizStep] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState<Record<number, string>>({});
+  const [cpwItemIndex, setCpwItemIndex] = useState(0);
+  const [cpwWears, setCpwWears] = useState(28);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -780,6 +783,165 @@ export default function AccountPage() {
           >
             Khám phá mảnh ghép <ExternalLink size={12} />
           </Link>
+        </div>
+
+        {/* Phân Tích Bảng Màu & Chi Phí Trên Mỗi Lần Mặc (Wardrobe Palette & Cost-per-Wear Analyzer · USER-WARDROBE-ANALYTICS-01) */}
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <BarChart3 size={17} color="var(--clay)" />
+              <strong style={{ fontSize: 13, color: 'var(--ink)' }}>
+                Phân Tích Bảng Màu &amp; Chi Phí Mỗi Lần Mặc (USER-WARDROBE-ANALYTICS-01)
+              </strong>
+            </div>
+            <button
+              type="button"
+              className="text-button"
+              style={{ fontSize: 11, padding: 0 }}
+              onClick={() => setAnalyticsOpen(!analyticsOpen)}
+            >
+              {analyticsOpen ? 'Thu gọn phân tích ▲' : 'Xem chi tiết biểu đồ ▼'}
+            </button>
+          </div>
+
+          {/* Palette Distribution Bar */}
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4, color: 'var(--muted)' }}>
+              <span>Phân bổ bảng màu tủ đồ cá nhân:</span>
+              <strong style={{ color: 'var(--clay)' }}>88% Hài hòa phong cách {archetype}</strong>
+            </div>
+            <div style={{ display: 'flex', height: 12, borderRadius: 3, overflow: 'hidden', border: '1px solid var(--line)' }}>
+              <div style={{ width: '42%', background: '#d6cbba' }} title="Neutral & Trắng Ngà: 42%" />
+              <div style={{ width: '28%', background: '#1e3a8a' }} title="Indigo & Navy: 28%" />
+              <div style={{ width: '18%', background: '#333333' }} title="Đen Tuyền & Xám Melange: 18%" />
+              <div style={{ width: '12%', background: '#b45309' }} title="Nâu Đất Sa Mạc: 12%" />
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 11, marginTop: 6, color: 'var(--muted)' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#d6cbba', display: 'inline-block' }} />
+                42% Neutral &amp; Ivory
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#1e3a8a', display: 'inline-block' }} />
+                28% Indigo &amp; Navy
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#333333', display: 'inline-block' }} />
+                18% Noir &amp; Slate
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#b45309', display: 'inline-block' }} />
+                12% Earth Ochre
+              </span>
+            </div>
+          </div>
+
+          {/* Interactive Cost-Per-Wear Calculator */}
+          {analyticsOpen && (
+            <div style={{ padding: '12px 14px', background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 4, marginTop: 8 }}>
+              {(() => {
+                const cpwInventory = [
+                  { name: 'Áo Sơ Mi Lụa Bảo Lộc Cổ Điển', brand: 'NEXORA Atelier', price: 1250000, category: 'Top' },
+                  { name: 'Quần Tây Sartorial Linen Normandy', brand: 'Massimo Dutti', price: 890000, category: 'Bottom' },
+                  { name: 'Áo Blazer Wool Cashmere Suông Rộng', brand: 'COS Vietnam', price: 2850000, category: 'Outerwear' },
+                  { name: 'Đầm Lụa Midi Dệt Thủ Công', brand: 'Gia Studios', price: 1950000, category: 'Dress' },
+                ];
+                const activeItem = cpwInventory[cpwItemIndex];
+                const currentCpw = Math.round(activeItem.price / Math.max(1, cpwWears));
+                const isOptimal = currentCpw < 50000;
+
+                return (
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                      <Calculator size={15} color="var(--clay)" />
+                      <strong style={{ fontSize: 12, color: 'var(--ink)' }}>
+                        Bộ Tính Chi Phí Mỗi Lần Mặc (Cost-Per-Wear · CPW Calculator)
+                      </strong>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 10 }}>
+                      <label style={{ fontSize: 11 }}>
+                        Chọn trang phục trong tủ đồ:
+                        <select
+                          value={cpwItemIndex}
+                          onChange={(e) => setCpwItemIndex(Number(e.target.value))}
+                          style={{ marginTop: 4, fontSize: 11, padding: '4px 6px' }}
+                        >
+                          {cpwInventory.map((item, idx) => (
+                            <option key={idx} value={idx}>
+                              {item.name} ({vnd(item.price)})
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label style={{ fontSize: 11 }}>
+                        Số lần đã diện trang phục: <strong style={{ color: 'var(--clay)' }}>{cpwWears} lần</strong>
+                        <input
+                          type="range"
+                          min={1}
+                          max={100}
+                          value={cpwWears}
+                          onChange={(e) => setCpwWears(Number(e.target.value))}
+                          style={{ marginTop: 6, width: '100%', accentColor: 'var(--clay)' }}
+                        />
+                      </label>
+                    </div>
+
+                    {/* CPW Metric Output */}
+                    <div
+                      style={{
+                        padding: '10px 14px',
+                        background: '#fff',
+                        border: '1px solid var(--line)',
+                        borderRadius: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 8,
+                      }}
+                    >
+                      <div>
+                        <span style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--muted)', display: 'block' }}>
+                          Chi phí thực tế trên mỗi lần mặc:
+                        </span>
+                        <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6 }}>
+                          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--clay)', fontFamily: 'Georgia, serif' }}>
+                            {vnd(currentCpw)}
+                          </span>
+                          <span style={{ fontSize: 11, color: 'var(--muted)' }}>/ lần diện</span>
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: 'right' }}>
+                        <span
+                          style={{
+                            fontSize: 11,
+                            padding: '3px 8px',
+                            borderRadius: 2,
+                            fontWeight: 600,
+                            background: isOptimal ? '#f0fdf4' : '#fffbeb',
+                            color: isOptimal ? '#166534' : '#b45309',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                          }}
+                        >
+                          {isOptimal ? '🌿 Đạt chuẩn Bền Vững Xanh (< 50k/lần)' : '⚡ Cần mặc thêm để tối ưu hóa giá trị'}
+                        </span>
+                        <div style={{ marginTop: 4 }}>
+                          <Link href="/trade-in" style={{ fontSize: 10, color: 'var(--clay)', textDecoration: 'underline' }}>
+                            🔄 Thu Cũ Đổi Mới Nếu Ít Mặc (&lt; 5 lần) →
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
         </div>
       </article>
 

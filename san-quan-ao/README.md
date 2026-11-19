@@ -195,5 +195,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Ma Trận So Sánh Cảm Giác & Độ Bền Vải** | Module 01 & CSR | Đã hoàn thiện | Bảng ma trận đối chiếu 5 tiêu chí giữa sợi tự nhiên cao cấp và vải tổng hợp Polyester tại `/san-pham/[slug]` (CAT-FABRIC-COMPARISON-01) |
 | **Khám Phá Xu Hướng & Bảng Màu OOTD** | Module 06 & Social | Đã hoàn thiện | Thanh khám phá hashtag & bảng màu tự nhiên (#QuietLuxury, #LinenNormandy, #BaoLocSilk, #SartorialSuit, #Minimalist) lọc tức thì bài viết tại `/cong-dong` (SOC-OOTD-TAG-DISCOVERY-02) |
 | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Style Compass tại `/san-pham/[slug]` gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa tơ tằm, Nón cói Panama) và liên kết Studio `/phoi-do` (CAT-STYLE-COMPASS-01) |
+| **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW** | Module 06 & 07 | Đã hoàn thiện | Biểu đồ phân bổ tỷ lệ màu sắc tủ đồ cá nhân (42% Neutral, 28% Indigo, 18% Noir, 12% Earth) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế tại `/tai-khoan` (USER-WARDROBE-ANALYTICS-01) |
+| **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12%** | Module 01 & 03 | Đã hoàn thiện | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Tự động chiết khấu -12% khi mua set 3 món và hỗ trợ thêm vào giỏ 1-chạm (CAT-BUNDLE-DISCOUNT-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

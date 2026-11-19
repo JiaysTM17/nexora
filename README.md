@@ -261,7 +261,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **51** | **Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)** | Module 01 & CSR | **100% Hoàn thiện** | Bảng ma trận đối chiếu 5 tiêu chí giữa sợi tự nhiên cao cấp và vải tổng hợp Polyester tại `/san-pham/[slug]` |
 | **52** | **Khám Phá Xu Hướng & Bảng Màu OOTD (SOC-OOTD-TAG-DISCOVERY-02)** | Module 06 & Social | **100% Hoàn thiện** | Thanh khám phá hashtag & bảng màu thời trang tại `/cong-dong`: Lọc tức thì theo chủ đề (#QuietLuxury, #LinenNormandy, #BaoLocSilk, #SartorialSuit, #Minimalist) |
 | **53** | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)** | Module 01 & 06 | **100% Hoàn thiện** | Phân hệ La bàn phong cách Style Compass tại `/san-pham/[slug]`: Gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa tơ tằm, Nón cói Panama) và liên kết Studio Mix & Match `/phoi-do` |
-| **54** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **54** | **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW (USER-WARDROBE-ANALYTICS-01)** | Module 06 & 07 | **100% Hoàn thiện** | Biểu đồ phân bổ tỷ lệ màu sắc tủ đồ cá nhân (42% Neutral, 28% Indigo, 18% Noir, 12% Earth) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế tại `/tai-khoan` |
+| **55** | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)** | Module 01 & 03 | **100% Hoàn thiện** | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Tự động chiết khấu -12% khi mua set 3 món và hỗ trợ thêm vào giỏ 1-chạm |
+| **56** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

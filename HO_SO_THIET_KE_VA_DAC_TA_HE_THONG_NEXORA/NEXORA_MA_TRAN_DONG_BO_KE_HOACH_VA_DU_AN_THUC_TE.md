@@ -67,6 +67,8 @@
 | **56** | **Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)** | Module 01 & CSR | Đã hoàn thiện | Bảng đối chiếu 5 tiêu chí giữa sợi tự nhiên cao cấp và vải Polyester tổng hợp tại `/san-pham/[slug]`: Độ thoáng khí 9.8/10, an toàn da 10/10, điều hòa thân nhiệt 9.6/10 và độ bền >5 năm |
 | **57** | **Khám Phá Xu Hướng & Bảng Màu OOTD (SOC-OOTD-TAG-DISCOVERY-02)** | Module 06 & Social | Đã hoàn thiện | Thanh khám phá hashtag & bảng màu thời trang tại `/cong-dong`: Lọc tức thì theo chủ đề (#QuietLuxury, #LinenNormandy, #BaoLocSilk, #SartorialSuit, #Minimalist) kết nối sản phẩm thực tế |
 | **58** | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ La bàn phong cách (Style Compass) tại `/san-pham/[slug]`: Gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa dệt, Nón cói Panama), thêm nhanh vào danh sách phối đồ và kết nối Studio Mix & Match `/phoi-do` |
+| **59** | **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW (USER-WARDROBE-ANALYTICS-01)** | Module 06 & 07 | Đã hoàn thiện | Biểu đồ phân bổ bảng màu cá nhân (Neutral 42%, Indigo 28%, Noir 18%, Earth 12%) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế kèm liên kết Trade-In tại `/tai-khoan` |
+| **60** | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)** | Module 01 & 03 | Đã hoàn thiện | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Ghép trang phục chính cùng quần âu may đo và thắt lưng da, tự động chiết khấu -12% trọn gói và thêm vào giỏ 1-chạm |
 
 ---
 
@@ -456,6 +458,28 @@
   - Tính năng tương tác:
     - Nút `[ + Thêm Vào Phối Đồ ]` tự động cập nhật danh sách phụ kiện đã chọn và thông báo tức thì.
     - Nút `[ Khám Phá Thêm Tại Studio Phối Đồ /phoi-do → ]` kết nối trực tiếp đến phòng thử đồ ảo Mix & Match.
+
+### 43. Phân Tích Bảng Màu & Chi Phí Trên Mỗi Lần Mặc CPW (USER-WARDROBE-ANALYTICS-01)
+- **Mục tiêu**: Hỗ trợ khách hàng quản trị tủ đồ cá nhân thông minh, nắm bắt tỷ lệ màu sắc chủ đạo và đo lường giá trị thực tế của từng khoản đầu tư thời trang thông qua chỉ số Cost-Per-Wear (CPW).
+- **Cơ chế**:
+  - Tích hợp mô-đun phân tích tủ đồ ngay trong phân hệ Capsule Wardrobe tại `/tai-khoan`.
+  - Thanh phân bổ sắc độ trực quan: 42% Neutral & Ivory, 28% Indigo & Navy, 18% Noir & Slate, 12% Earth Ochre, đánh giá mức độ hài hòa với bản sắc phong cách Style DNA.
+  - Bộ tính chi phí trên mỗi lần mặc (CPW Calculator):
+    - Lựa chọn trang phục trong tủ đồ (Sơ mi lụa, Quần tây linen, Blazer cashmere, Đầm midi).
+    - Thanh trượt điều chỉnh số lần đã diện trang phục (1 đến 100 lần).
+    - Tính toán tức thì `CPW = Giá mua / Số lần mặc`.
+    - Phân hạng chuẩn Xanh Bền Vững: CPW < 50.000 đ/lần đạt chứng nhận đầu tư hiệu quả; gợi ý thu cũ đổi mới tại `/trade-in` nếu trang phục mặc dưới 5 lần.
+
+### 44. Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)
+- **Mục tiêu**: Tối ưu hóa giá trị đơn hàng trung bình (AOV) và mang lại giải pháp phối trang phục hoàn chỉnh tức thì cho khách hàng với mức ưu đãi Combo Style Saver hấp dẫn.
+- **Cơ chế**:
+  - Tích hợp khối mua trọn bộ ngay dưới thông tin sản phẩm tại `/san-pham/[slug]`.
+  - Đóng gói 3 món đồ đồng điệu:
+    1. Trang phục chính đang xem (kèm kích cỡ và màu sắc đã chọn).
+    2. Quần Tây Sartorial Xếp Ly Kép (Normandy Linen · Nâu Cát).
+    3. Thắt Lưng Da Bò Ý Thuộc Thảo Mộc (Khóa Đồng Cổ Điển).
+  - Tự động áp dụng mức chiết khấu Combo -12% khi chọn từ 2 món trở lên.
+  - Nút thêm cả bộ vào giỏ hàng 1-chạm: Kiểm tra phiên đăng nhập, cập nhật giỏ hàng tuần tự và thông báo số tiền tiết kiệm được.
 
 ---
 

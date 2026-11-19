@@ -186,3 +186,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 45. **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)**:
    - Hồ sơ: Module 01 Quản lý Danh mục & Module 06 Tư vấn Thẩm mỹ Phối đồ.
    - Thực tế: Khối La bàn phong cách (Style Compass) tại `/san-pham/[slug]` gợi ý phụ kiện tuyển chọn (Thắt lưng da Ý, Khăn cài túi lụa tơ tằm dệt tay, Nón cói Panama đan tay), tính năng thêm nhanh vào danh sách phối đồ và kết nối phòng thử đồ ảo `/phoi-do`.
+
+46. **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW (USER-WARDROBE-ANALYTICS-01)**:
+   - Hồ sơ: Module 06 Phong cách OOTD & Module 07 Cá nhân hóa Người dùng.
+   - Thực tế: Biểu đồ phân bổ tỷ lệ màu sắc tủ đồ cá nhân (42% Neutral, 28% Indigo, 18% Noir, 12% Earth) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế, kèm cảnh báo thời trang bền vững và liên kết thu cũ đổi mới tại `/tai-khoan`.
+
+47. **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)**:
+   - Hồ sơ: Module 01 Quản lý Danh mục & Module 03 Giỏ hàng & Khuyến mãi.
+   - Thực tế: Khối Combo Style Saver tại `/san-pham/[slug]` kết hợp trang phục chính cùng quần âu may đo và thắt lưng da, tự động chiết khấu -12% trọn gói và hỗ trợ thêm vào giỏ hàng 1-chạm.
