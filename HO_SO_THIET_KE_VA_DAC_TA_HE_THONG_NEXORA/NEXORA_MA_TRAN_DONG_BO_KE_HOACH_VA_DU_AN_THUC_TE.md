@@ -59,6 +59,8 @@
 | **48** | **Bộ Sưu Tập Nhộng Capsule Lookbook (CAT-CAPSULE-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Lookbook 3 phong cách thiết yếu (Normandy Summer, Minimal Executive, Bảo Lộc Silk) trên trang chủ, chiết khấu Combo Saver -10% và kết nối Studio `/phoi-do` |
 | **49** | **Thang Điểm Uy Tín Gian Hàng & Tỷ Lệ Đổi Size (CAT-SELLER-SCORE-01)** | Module 01 & 02 | Đã hoàn thiện | Khung đánh giá uy tín shop trên trang sản phẩm `/san-pham/[slug]` với điểm số 4.9★, tốc độ chuẩn bị hàng 99.4%, phản hồi chat < 5 phút, tỷ lệ hỗ trợ đổi size 100% và bảo chứng đền bù 200% nếu phát hiện hàng giả |
 | **50** | **Trắc Nghiệm Định Hình Phong Cách Cá Nhân (USER-STYLE-QUIZ-01)** | Module 06 & 07 | Đã hoàn thiện | Bài trắc nghiệm 4 câu hỏi trực quan khám phá bản sắc thời trang (Quiet Luxury, Earth Sartorialist, Minimalist Architect, Bohemian) và lưu giữ huy hiệu Style DNA vĩnh viễn tại `/tai-khoan` |
+| **51** | **Hộp Quà Cao Cấp Kèm Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP-01)** | Module 02 & 03 | Đã hoàn thiện | Tùy chọn đóng gói quà tặng Haute Couture tại `/gio-hang`: Hộp cứng nhung xám khói, 3 màu nơ ruy băng lụa dệt, thiệp chúc mừng viết tay Calligraphy niêm phong dấu sáp đồng độc bản (+60k hoặc 0đ đơn > 2tr) |
+| **52** | **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)** | Module 04 & Logistics | Đã hoàn thiện | Modal bản đồ trực tuyến Live GPS tại `/don-hang/[id]`: Mô phỏng tuyến đường di chuyển từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, telemetry GPS 26 km/h, gọi điện ẩn danh PDPD NĐ 13 và nhắn tin điều phối |
 
 ---
 
@@ -352,6 +354,28 @@
     - *The Minimalist Architect*: Đường nét sắc sảo, tối giản, công năng kiến trúc.
     - *The Slow Fashion Bohemian*: Tự do phóng khoáng, thủ công di sản và chất sống độc bản.
   - Lưu trữ định danh `nexora_style_archetype` trong LocalStorage và hiển thị huy hiệu Style DNA vĩnh viễn trên giao diện.
+
+### 35. Hộp Quà Tặng Cao Cấp & Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP-01)
+- **Mục tiêu**: Nâng tầm trải nghiệm đóng gói thời trang cao cấp thành một tác phẩm nghệ thuật, phục vụ nhu cầu quà tặng tinh tế cho đối tác, người thân hoặc các dịp kỷ niệm quan trọng.
+- **Cơ chế**:
+  - Tích hợp mô-đun tùy chọn dịch vụ đóng gói Haute Couture ngay tại giao diện giỏ hàng `/gio-hang`.
+  - Quy chuẩn đóng gói xa xỉ:
+    - Hộp cứng nắp gập bọc vải nhung xám khói cao cấp dập chìm logo thương hiệu NEXORA.
+    - 3 lựa chọn màu ruy băng lụa dệt thủ công: Vàng Champagne Ánh Kim, Xanh Ngọc Lục Bảo (Emerald Green), hoặc Xanh Navy Hoàng Gia.
+    - Thiệp chúc mừng mỹ thuật viết tay phong cách Calligraphy cá nhân hóa (nhập lời chúc tùy biến tối đa 120 ký tự).
+    - Con dấu sáp đồng nóng khắc nổi biểu tượng NEXORA niêm phong một chiều (Tamper-evident Wax Seal).
+  - Chính sách giá: Thu phí dịch vụ gia tăng 60.000đ/đơn hoặc tự động miễn phí 0đ cho các đơn hàng thời trang trên 2.000.000đ. Lưu vết lựa chọn quà tặng vào dữ liệu đơn hàng.
+
+### 36. Bản Đồ Bưu Tá Vận Chuyển Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)
+- **Mục tiêu**: Loại bỏ hoàn toàn sự sốt ruột của khách hàng khi chờ đợi kiện hàng thời trang cao cấp, cung cấp trải nghiệm theo dõi giao vận thời gian thực sống động.
+- **Cơ chế**:
+  - Tích hợp nút `[ 📍 Xem Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01) ]` trên từng kiện hàng có vận đơn tại trang chi tiết đơn hàng `/don-hang/[id]`.
+  - Modal bản đồ số vector trực quan:
+    - Mô phỏng tuyến đường di chuyển thực tế từ Hub phân loại Logistics (Tân Bình) đến địa chỉ nhận hàng của khách.
+    - Điểm đánh dấu bưu tá thời gian thực (Pulsing GPS Marker) hiển thị vận tốc di chuyển (26 km/h) và tọa độ kinh độ/vĩ độ.
+    - Hồ sơ chuyên trách bưu tá: Họ tên, định danh đội xe GHN Luxury Fleet, loại phương tiện xe máy điện thân thiện môi trường (VinFast Feliz), biển số xe và điểm tín nhiệm (4.98★ / 1.420 chuyến giao an toàn).
+    - Bộ đếm thời gian dự kiến (ETA): 12-15 phút nữa · Cách điểm giao 1.4 km.
+  - Tương tác hai chiều an toàn: Nút gọi điện ẩn danh hai chiều qua tổng đài ảo tuân thủ nghiêm ngặt Nghị định 13/2023/NĐ-CP (PDPD) và nút gửi tin nhắn chỉ dẫn tức thời đến thiết bị bưu tá.
 
 ---
 

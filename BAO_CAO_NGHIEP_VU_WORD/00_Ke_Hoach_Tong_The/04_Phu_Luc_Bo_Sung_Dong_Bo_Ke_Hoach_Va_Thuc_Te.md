@@ -154,3 +154,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 37. **Trắc Nghiệm Định Hình Phong Cách Cá Nhân (USER-STYLE-QUIZ-01)**:
    - Hồ sơ: Module 06 Phong cách OOTD & Module 07 Cá nhân hóa Người dùng.
    - Thực tế: Bộ trắc nghiệm 4 câu hỏi Fashion Archetype Quiz tại `/tai-khoan` giúp người mua khám phá bản sắc độc bản (Quiet Luxury, Earth Sartorialist, Minimalist Architect, Slow Fashion Bohemian), lưu vết `nexora_style_archetype` và gắn huy hiệu Style DNA vĩnh viễn trên trang cá nhân.
+
+38. **Hộp Quà Cao Cấp Kèm Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP-01)**:
+   - Hồ sơ: Module 02 Dịch vụ Chăm sóc VAS & Module 03 Giỏ hàng & Thanh toán.
+   - Thực tế: Tùy chọn đóng gói Haute Couture tại `/gio-hang` với hộp cứng nhung xám khói, 3 màu nơ lụa dệt (Champagne, Emerald, Navy), thiệp chúc mừng viết tay Calligraphy niêm phong sáp đồng (+60.000đ hoặc 0đ cho đơn hàng > 2.000.000đ).
+
+39. **Bản Đồ Bưu Tá Trực Tuyến & Định Vị Kiện Hàng (ORD-TRACKING-MAP-01)**:
+   - Hồ sơ: Module 04 Quản lý Vận hành Đơn hàng & Logistics.
+   - Thực tế: Nút xem lộ trình bưu tá trực tuyến trên từng kiện hàng tại `/don-hang/[id]`, modal bản đồ số Live GPS mô phỏng hành trình từ Hub Tân Bình, bưu tá xe điện VinFast Feliz, đếm ngược thời gian dự kiến (12-15 phút) và liên lạc thoại/tin nhắn bảo mật PDPD NĐ 13.

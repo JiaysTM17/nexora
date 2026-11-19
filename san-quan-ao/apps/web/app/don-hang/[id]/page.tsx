@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -42,6 +42,9 @@ export default function OrderDetail() {
   const [returningShop, setReturningShop] = useState<string | null>(null);
   const [maskedPhone, setMaskedPhone] = useState(true);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showTrackingMap, setShowTrackingMap] = useState<string | null>(null);
+  const [courierCallAlert, setCourierCallAlert] = useState(false);
+  const [courierMsgSent, setCourierMsgSent] = useState(false);
 
   async function cancel(shopOrderId: string) {
     setBusy(shopOrderId);
@@ -316,6 +319,27 @@ export default function OrderDetail() {
                   ✓ Đạt chuẩn an ninh quang học &amp; nguyên vẹn niêm phong
                 </span>
               </div>
+              <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowTrackingMap(shop.id)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    background: '#0f172a',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 3,
+                    fontSize: 11,
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  <Navigation size={13} color="#38bdf8" /> 📍 Xem Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01)
+                </button>
+              </div>
             </div>
           ) : (
             <p className="subtle" style={{ fontSize: 11, margin: '8px 0 0' }}>
@@ -492,6 +516,313 @@ export default function OrderDetail() {
           </p>
         </div>
       </details>
+
+      {/* Modal Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01) */}
+      {showTrackingMap && (() => {
+        const targetShop = order.shops.find(s => s.id === showTrackingMap);
+        const trackingNum = targetShop?.shipment?.tracking ?? `NX-EXP-2026-${showTrackingMap.slice(0, 6)}`;
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(15, 23, 42, 0.75)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: 16,
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            <div
+              style={{
+                background: '#ffffff',
+                borderRadius: 8,
+                maxWidth: 680,
+                width: '100%',
+                maxHeight: '92vh',
+                overflowY: 'auto',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                border: '1px solid var(--line)',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+              }}
+            >
+              {/* Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '14px 20px',
+                  background: '#0f172a',
+                  color: '#fff',
+                  borderTopLeftRadius: 7,
+                  borderTopRightRadius: 7,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Compass size={18} color="#38bdf8" />
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: 15, color: '#fff' }}>
+                      Lộ Trình Bưu Tá Giao Hàng Trực Tuyến (Live GPS)
+                    </h3>
+                    <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                      Vận đơn: {trackingNum} · {targetShop?.shop?.name}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTrackingMap(null)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    padding: 4,
+                  }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Simulated Map View Canvas */}
+              <div
+                style={{
+                  position: 'relative',
+                  height: 260,
+                  background: '#0f172a',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {/* SVG Map Lines & Landmarks */}
+                <svg
+                  width="100%"
+                  height="100%"
+                  viewBox="0 0 600 260"
+                  style={{ position: 'absolute', top: 0, left: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
+                      <stop offset="65%" stopColor="#10b981" stopOpacity="0.9" />
+                      <stop offset="100%" stopColor="#d97706" stopOpacity="0.8" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  {/* Grid Lines */}
+                  <line x1="0" y1="65" x2="600" y2="65" stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
+                  <line x1="0" y1="130" x2="600" y2="130" stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
+                  <line x1="0" y1="195" x2="600" y2="195" stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
+                  <line x1="150" y1="0" x2="150" y2="260" stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
+                  <line x1="300" y1="0" x2="300" y2="260" stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
+                  <line x1="450" y1="0" x2="450" y2="260" stroke="#1e293b" strokeWidth="1" strokeDasharray="4 4" />
+
+                  {/* Street Polyline */}
+                  <path
+                    d="M 60 210 Q 180 190 240 140 T 380 90 T 520 70"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                  />
+                  {/* Active Route Path */}
+                  <path
+                    d="M 60 210 Q 180 190 240 140 T 380 90"
+                    fill="none"
+                    stroke="url(#routeGradient)"
+                    strokeWidth="5"
+                    strokeDasharray="6 3"
+                    strokeLinecap="round"
+                  />
+
+                  {/* Origin Hub */}
+                  <circle cx="60" cy="210" r="8" fill="#38bdf8" />
+                  <text x="75" y="215" fill="#94a3b8" fontSize="11" fontWeight="600">Hub Phân Loại Tân Bình</text>
+
+                  {/* Shipper Live Location Marker */}
+                  <circle cx="380" cy="90" r="14" fill="rgba(16, 185, 129, 0.25)" filter="url(#glow)">
+                    <animate attributeName="r" values="10;18;10" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="380" cy="90" r="8" fill="#10b981" />
+                  <text x="350" y="70" fill="#34d399" fontSize="11" fontWeight="700">🛵 Bưu tá Nam (1.4 km)</text>
+
+                  {/* Destination Pin */}
+                  <circle cx="520" cy="70" r="8" fill="#ef4444" />
+                  <text x="470" y="50" fill="#f87171" fontSize="11" fontWeight="600">📍 Điểm Giao Hàng</text>
+                </svg>
+
+                {/* HUD Live Telemetry Badge */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    background: 'rgba(15, 23, 42, 0.85)',
+                    padding: '6px 12px',
+                    borderRadius: 4,
+                    border: '1px solid #334155',
+                    fontSize: 11,
+                    color: '#e2e8f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                  <span>GPS Trực Tuyến: <strong>10.7769° N, 106.7009° E</strong> · Vận tốc: <strong>26 km/h</strong></span>
+                </div>
+              </div>
+
+              {/* Body: Shipper Details & Actions */}
+              <div style={{ padding: 20 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: 12,
+                    background: '#f8fafc',
+                    borderRadius: 6,
+                    border: '1px solid #e2e8f0',
+                    marginBottom: 16,
+                    flexWrap: 'wrap',
+                    gap: 10,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: '50%',
+                        background: '#047857',
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 700,
+                        fontSize: 16,
+                      }}
+                    >
+                      VN
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <strong style={{ fontSize: 14 }}>Nguyễn Văn Nam</strong>
+                        <span style={{ fontSize: 10, background: '#dcfce7', color: '#166534', padding: '1px 6px', borderRadius: 2, fontWeight: 600 }}>
+                          ✓ GHN Luxury Fleet
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                        Phương tiện: <strong>VinFast Feliz điện tử</strong> · Biển số: <strong>59-E2 889.26</strong>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#f59e0b', marginTop: 2 }}>
+                        ★ 4.98 (1.420 chuyến giao an toàn) · Tỷ lệ thành công: 99.8%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Dự kiến giao hàng:</div>
+                    <strong style={{ fontSize: 16, color: '#047857' }}>12 - 15 Phút nữa</strong>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>Khoảng cách: 1.4 km</div>
+                  </div>
+                </div>
+
+                {/* Interaction Actions */}
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCourierCallAlert(true);
+                      setTimeout(() => setCourierCallAlert(false), 4000);
+                    }}
+                    style={{
+                      flex: 1,
+                      minWidth: 160,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                      padding: '10px 14px',
+                      background: '#047857',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <PhoneCall size={15} /> Gọi Điện (Bảo Mật PDPD)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCourierMsgSent(true);
+                      setTimeout(() => setCourierMsgSent(false), 4000);
+                    }}
+                    style={{
+                      flex: 1,
+                      minWidth: 160,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                      padding: '10px 14px',
+                      background: '#1e293b',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <MessageSquare size={15} /> Nhắn Tin Chỉ Dẫn
+                  </button>
+                </div>
+
+                {courierCallAlert && (
+                  <div style={{ padding: '8px 12px', background: '#dcfce7', color: '#166534', borderRadius: 4, fontSize: 11, marginBottom: 12 }}>
+                    ✓ Đang kết nối cuộc gọi thoại hai chiều ẩn danh qua Tổng đài ảo NEXORA (Bảo vệ thông tin cá nhân NĐ 13/2023/NĐ-CP). Bưu tá sẽ nghe máy ngay!
+                  </div>
+                )}
+                {courierMsgSent && (
+                  <div style={{ padding: '8px 12px', background: '#e0f2fe', color: '#0369a1', borderRadius: 4, fontSize: 11, marginBottom: 12 }}>
+                    ✓ Đã gửi tin nhắn chỉ dẫn tới máy tính bảng bưu tá: &quot;Tôi đang ở địa chỉ giao hàng, quý bưu tá vui lòng gọi chuông khi tới nơi.&quot;
+                  </div>
+                )}
+
+                {/* Safe Delivery Tips */}
+                <div style={{ padding: 12, background: '#fafaf9', border: '1px solid var(--line)', borderRadius: 4, fontSize: 11, color: '#44403c' }}>
+                  <strong>Quy tắc nhận hàng an toàn NEXORA:</strong>
+                  <ul style={{ margin: '4px 0 0', paddingLeft: 16, lineHeight: 1.5 }}>
+                    <li>Đọc mã PIN bảo mật <strong>{getSecurityPin(order.code, targetShop?.id ?? '')}</strong> cho bưu tá trước khi nhận hàng.</li>
+                    <li>Được quyền đồng kiểm ngoại quan (RET-COINSPECT) quy cách hộp và tem niêm phong.</li>
+                    <li>Kiểm tra cân nặng bưu kiện đúng dung sai đã đăng ký (450g ± 2g).</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Modal Xuất / In Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 (ORD-EXPORT-PDF-01) */}
       {showInvoiceModal && (

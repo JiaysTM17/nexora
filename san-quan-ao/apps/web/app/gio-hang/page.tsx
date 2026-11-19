@@ -2,7 +2,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin, Clock, Leaf } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
@@ -11,7 +11,7 @@ type Address = { id: string; recipient: string; phone: string; line: string; pro
 type Quote = { id: string; data: QuoteData; expiresAt: string };
 export default function Cart() {
   const cart = useResource<CartLine[]>('/cart'), addresses = useResource<Address[]>('/addresses');
-  const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
+  const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [giftWrap, setGiftWrap] = useState(false), [giftRibbon, setGiftRibbon] = useState<'CHAMPAGNE' | 'EMERALD' | 'NAVY'>('CHAMPAGNE'), [giftMessage, setGiftMessage] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
@@ -96,6 +96,105 @@ export default function Cart() {
             </small>
           </span>
         </label>
+      </section>
+      <section className="panel">
+        <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={18} /> Hộp Quà Tặng Cao Cấp &amp; Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP)
+        </h2>
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Đặc quyền dành riêng cho các dịp kỷ niệm hoặc quà tặng tinh tế với quy chuẩn đóng gói Haute Couture.
+        </p>
+        <label className="address-option" style={{ background: giftWrap ? 'rgba(217, 119, 6, 0.05)' : undefined, border: giftWrap ? '1px solid #d97706' : undefined, marginBottom: 12 }}>
+          <input
+            type="checkbox"
+            checked={giftWrap}
+            onChange={e => {
+              setGiftWrap(e.target.checked);
+              if (e.target.checked) {
+                localStorage.setItem('nexora_gift_wrap', JSON.stringify({ ribbon: giftRibbon, message: giftMessage }));
+              } else {
+                localStorage.removeItem('nexora_gift_wrap');
+              }
+            }}
+          />
+          <span>
+            <strong style={{ color: '#b45309', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Gift size={15} /> Đóng gói Hộp Quà Nhung &amp; Thiệp Viết Tay Sáp Đồng
+              <span style={{ fontSize: 10, background: '#d97706', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                +60.000đ (0đ khi đơn &gt; 2 triệu)
+              </span>
+            </strong>
+            <br />
+            <small className="subtle">
+              Hộp cứng nắp gập phủ vải nhung xám khói, thắt nơ ruy băng lụa dệt và thiệp chúc mừng viết tay Calligraphy niêm phong dấu sáp đồng độc bản.
+            </small>
+          </span>
+        </label>
+        {giftWrap && (
+          <div style={{ padding: 14, background: '#fdfbf7', border: '1px dashed #d97706', borderRadius: 4, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div>
+              <span style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6 }}>
+                1. Chọn màu ruy băng lụa dệt thủ công:
+              </span>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                {[
+                  { id: 'CHAMPAGNE', label: 'Vàng Champagne Ánh Kim', color: '#d97706', bg: '#fef3c7' },
+                  { id: 'EMERALD', label: 'Xanh Ngọc Lục Bảo', color: '#047857', bg: '#d1fae5' },
+                  { id: 'NAVY', label: 'Xanh Navy Hoàng Gia', color: '#1d4ed8', bg: '#dbeafe' },
+                ].map(rb => (
+                  <button
+                    key={rb.id}
+                    type="button"
+                    onClick={() => {
+                      setGiftRibbon(rb.id as any);
+                      localStorage.setItem('nexora_gift_wrap', JSON.stringify({ ribbon: rb.id, message: giftMessage }));
+                    }}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: 3,
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      border: giftRibbon === rb.id ? `2px solid ${rb.color}` : '1px solid var(--line)',
+                      background: giftRibbon === rb.id ? rb.bg : '#fff',
+                      color: giftRibbon === rb.id ? rb.color : 'var(--ink)',
+                      fontWeight: giftRibbon === rb.id ? 700 : 500,
+                    }}
+                  >
+                    ● {rb.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6 }}>
+                2. Lời chúc viết tay trên thiệp giấy mỹ thuật (Tối đa 120 ký tự):
+              </span>
+              <textarea
+                value={giftMessage}
+                maxLength={120}
+                rows={2}
+                placeholder="VD: Chúc mừng sinh nhật Minh Anh! Chúc em luôn rạng rỡ và hạnh phúc trong từng khoảnh khắc..."
+                onChange={e => {
+                  setGiftMessage(e.target.value);
+                  localStorage.setItem('nexora_gift_wrap', JSON.stringify({ ribbon: giftRibbon, message: e.target.value }));
+                }}
+                style={{
+                  width: '100%',
+                  padding: 8,
+                  fontSize: 12,
+                  fontFamily: 'inherit',
+                  border: '1px solid var(--line)',
+                  borderRadius: 2,
+                  resize: 'none',
+                }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--muted)', marginTop: 2 }}>
+                <span>Niêm phong bằng sáp nóng khắc biểu tượng thương hiệu NEXORA</span>
+                <span>{giftMessage.length}/120 ký tự</span>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
       <section className="panel"><h2 className="panel-title">Ưu Đãi Đa Tầng NEXORA (CART-STACK-01)</h2><label className="address-option" style={{ marginBottom: 10 }}><input type="checkbox" checked={useFreeship} onChange={e => { setUseFreeship(e.target.checked); invalidate(); }} /><span><strong>Voucher Miễn Phí Vận Chuyển Freeship Xtra (Tầng 3)</strong><br/><small className="subtle">Tài trợ giảm trực tiếp 30.000đ phí giao hàng trên toàn sàn.</small></span></label><label className="address-option"><input type="checkbox" checked={useCoins} onChange={e => { setUseCoins(e.target.checked); invalidate(); }} /><span><strong>Dùng Xu Thưởng NEXORA Coins (Tầng 5)</strong><br/><small className="subtle">Đang có: 25.000 xu khả dụng. Cấn trừ trực tiếp 25.000đ (1 xu = 1đ).</small></span></label></section>
       <section className="panel"><h2 className="panel-title">Voucher Trade-In NEXORA (Tầng 2)</h2><label className="voucher">Mã đối ứng từ Thu cũ Đổi mới (NXTI-...)<input value={tradeInCode} onChange={e => { setTradeInCode(e.target.value); invalidate(); }} placeholder="VD: NXTI-DEMO50"/></label></section>
