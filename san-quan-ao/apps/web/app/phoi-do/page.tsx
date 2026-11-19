@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, ShoppingBag, ArrowRight, Share2, Check, RefreshCw, Layers } from 'lucide-react';
+import { Sparkles, ShoppingBag, ArrowRight, Share2, Check, RefreshCw, Layers, Sun, Cloud, Wind, Thermometer, MapPin, Compass } from 'lucide-react';
 import { api, vnd } from '../api';
 import { Notice, useUser } from '../ui';
 
@@ -119,6 +119,38 @@ export default function MixMatchPage() {
   const [bottomSize, setBottomSize] = useState('M');
   const [outerSize, setOuterSize] = useState('M');
 
+  const [weatherCity, setWeatherCity] = useState<'SAIGON' | 'HANOI' | 'DALAT'>('SAIGON');
+  const [occasion, setOccasion] = useState<'OFFICE' | 'STREET' | 'GALA'>('OFFICE');
+
+  function applyWeatherFormula(city: 'SAIGON' | 'HANOI' | 'DALAT', occ: 'OFFICE' | 'STREET' | 'GALA') {
+    setWeatherCity(city);
+    setOccasion(occ);
+    if (city === 'SAIGON') {
+      setTopId('linen-shirt');
+      setTopColor('Kem');
+      setBottomId('wide-trousers');
+      setBottomColor('Nâu');
+      setOuterId(null);
+      setNotice('☀️ Đã áp dụng công thức thời tiết Sài Gòn (32°C): Linen 100% thoáng khí + Quần suông nếp nhẹ, tối ưu giải nhiệt và giữ độ thanh lịch.');
+    } else if (city === 'HANOI') {
+      setTopId('linen-shirt');
+      setTopColor('Kem');
+      setBottomId('wide-trousers');
+      setBottomColor('Nâu');
+      setOuterId('linen-blazer');
+      setOuterColor('Kem');
+      setNotice('⛅ Đã áp dụng công thức thời tiết Hà Nội (19°C): Phối lớp Smart Layering với Blazer Linen Tailored và Sơ mi linen.');
+    } else {
+      setTopId('everyday-tee');
+      setTopColor('Trắng');
+      setBottomId('wide-trousers');
+      setBottomColor('Đen');
+      setOuterId('wool-trench-coat');
+      setOuterColor('Nâu cát');
+      setNotice('🌧️ Đã áp dụng công thức thời tiết Đà Lạt (14°C): Áo măng tô Trench Coat dạ mỏng cao cấp + Cotton compact giữ ấm cơ thể.');
+    }
+  }
+
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
@@ -190,6 +222,83 @@ export default function MixMatchPage() {
           <Notice error>{error}</Notice>
         </div>
       )}
+
+      {/* Bộ Lọc Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01) */}
+      <div
+        style={{
+          marginTop: 20,
+          padding: '14px 18px',
+          background: '#fdfbf7',
+          border: '1px solid #fed7aa',
+          borderRadius: 6,
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Thermometer size={16} color="var(--clay)" />
+            <strong style={{ fontSize: 13, color: '#9a3412' }}>
+              Gợi Ý Phối Đồ Theo Thời Tiết &amp; Dịp Xuất Hiện (CAT-OUTFIT-WEATHER-SYNC-01)
+            </strong>
+            <span style={{ fontSize: 10, background: '#ffedd5', color: '#9a3412', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+              AI WEATHER SYNC
+            </span>
+          </div>
+          <span style={{ fontSize: 11, color: '#78350f' }}>
+            Khí hậu địa phương: <strong>{weatherCity === 'SAIGON' ? 'Nhiệt đới nắng ấm (32°C)' : weatherCity === 'HANOI' ? 'Gió mùa Đông Bắc (19°C)' : 'Cao nguyên sương lạnh (14°C)'}</strong>
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>Thành phố / Khí hậu:</span>
+          {[
+            { id: 'SAIGON' as const, label: '☀️ Sài Gòn 32°C (Nắng ấm)', tip: 'Linen & Lụa thoáng khí' },
+            { id: 'HANOI' as const, label: '⛅ Hà Nội 19°C (Se lạnh)', tip: 'Layering với Blazer' },
+            { id: 'DALAT' as const, label: '🌧️ Đà Lạt 14°C (Sương gió)', tip: 'Trench coat dạ mỏng' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => applyWeatherFormula(item.id, occasion)}
+              style={{
+                fontSize: 11,
+                padding: '5px 12px',
+                borderRadius: 20,
+                border: weatherCity === item.id ? '1.5px solid var(--clay)' : '1px solid #fed7aa',
+                background: weatherCity === item.id ? '#fed7aa' : '#fff',
+                color: weatherCity === item.id ? '#7c2d12' : '#9a3412',
+                fontWeight: weatherCity === item.id ? 700 : 500,
+                cursor: 'pointer',
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)', marginLeft: 12 }}>Ngữ cảnh:</span>
+          {[
+            { id: 'OFFICE' as const, label: '🏢 Công sở' },
+            { id: 'STREET' as const, label: '☕ Dạo phố' },
+            { id: 'GALA' as const, label: '🍷 Dạ tiệc' },
+          ].map((occ) => (
+            <button
+              key={occ.id}
+              type="button"
+              onClick={() => setOccasion(occ.id)}
+              style={{
+                fontSize: 11,
+                padding: '4px 10px',
+                borderRadius: 4,
+                border: occasion === occ.id ? '1px solid var(--ink)' : '1px solid var(--line)',
+                background: occasion === occ.id ? 'var(--ink)' : '#fff',
+                color: occasion === occ.id ? '#fff' : 'var(--muted)',
+                cursor: 'pointer',
+              }}
+            >
+              {occ.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Main Studio Grid */}
       <div

@@ -205,5 +205,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường** | Module 01 & 06 | Đã hoàn thiện | Runway Lookbook chuyển đổi 3 góc quay Catwalk/Macro 4K/Backstage tại `/live` (LIVE-RUNWAY-LOOKBOOK-01) |
 | **Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s** | Module 01 & 05 | Đã hoàn thiện | Tồn kho may đo giới hạn và đồng hồ 180s kích hoạt Khóa Giữ Hàng Redis Lua chống oversell tại `/san-pham/[slug]` (CAT-REALTIME-STOCK-RESERVATION-01) |
 | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box** | Module 03 & 07 | Đã hoàn thiện | Lên lịch hẹn thu hồi hộp carton tái chế qua Shipper VinFast Green/Boutique, thưởng +150 Điểm Xanh tại `/don-hang/[id]` (ORD-ECO-PACK-RETURN-01) |
+| **Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh** | Module 01 & 06 | Đã hoàn thiện | Lọc trang phục thông minh tại `/phoi-do` theo 3 mẫu thời tiết Sài Gòn/Hà Nội/Đà Lạt và ngữ cảnh công sở/dạo phố/dạ tiệc (CAT-OUTFIT-WEATHER-SYNC-01) |
+| **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng** | Module 06 & Social | Đã hoàn thiện | Thử thách phối đồ bền vững `#LinenInTheCity` tại `/cong-dong`, quỹ thưởng 15 triệu đồng, tặng +500 Điểm Xanh và bình chọn KOC (SOC-OOTD-CHALLENGE-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

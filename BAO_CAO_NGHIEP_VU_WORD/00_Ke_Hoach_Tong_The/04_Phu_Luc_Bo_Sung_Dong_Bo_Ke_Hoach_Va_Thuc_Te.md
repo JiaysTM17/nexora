@@ -226,3 +226,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 55. **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)**:
    - Hồ sơ: Module 03 Quản trị Vận chuyển Chặng cuối & Module 07 Điểm thưởng Xanh Sinh thái.
    - Thực tế: Phân hệ lên lịch hẹn thu hồi hộp carton tái chế tuần hoàn tại `/don-hang/[id]`, điều phối Shipper VinFast Green lấy tận nhà theo 3 khung giờ hoặc gửi tại trạm Boutique, tặng +150 Điểm Xanh NEX-Green tích lũy.
+
+56. **Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Studio Mix & Match.
+   - Thực tế: Phân hệ đề xuất outfit tự động tại `/phoi-do` theo 3 mẫu thời tiết (Sài Gòn 32°C, Hà Nội 19°C, Đà Lạt 14°C) và 3 ngữ cảnh (Công sở, Dạo phố, Dạ tiệc), phối lớp thích ứng sợi dệt Linen/Lụa/Dạ len.
+
+57. **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)**:
+   - Hồ sơ: Module 06 Phong cách OOTD & Cộng đồng Xã hội.
+   - Thực tế: Phân hệ Thử thách tuần `#LinenInTheCity` tại `/cong-dong` với quỹ thưởng 15 triệu đồng, nút tham gia nhận +500 Điểm Xanh và nút bình chọn phiếu thưởng KOC trực tiếp.

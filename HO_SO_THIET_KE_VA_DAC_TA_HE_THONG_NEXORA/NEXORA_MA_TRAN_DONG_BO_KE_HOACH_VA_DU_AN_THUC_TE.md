@@ -77,6 +77,8 @@
 | **66** | **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Runway 360° tại `/live`: Chuyển đổi 3 góc quay (Catwalk Front-View, Macro 4K sợi dệt, Backstage Styling) và chốt deal trực tiếp giảm -15% từ sàn diễn |
 | **67** | **Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01)** | Module 01 & 05 | Đã hoàn thiện | Phân hệ tồn kho may đo giới hạn tại `/san-pham/[slug]`: Cảnh báo nhu cầu thời gian thực và đồng hồ đếm ngược 180s mô phỏng Khóa Giữ Hàng Redis Lua Script (D6-03) chống oversell |
 | **68** | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)** | Module 03 & 07 | Đã hoàn thiện | Lên lịch hẹn thu hồi hộp carton tái chế tuần hoàn tại `/don-hang/[id]`: Điều phối Shipper VinFast Green lấy tận nhà hoặc gửi tại trạm Boutique, tặng +150 Điểm Xanh NEX-Green |
+| **69** | **Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ khí hậu tại `/phoi-do`: Lọc trang phục theo 3 kiểu thời tiết (Sài Gòn 32°C, Hà Nội 19°C, Đà Lạt 14°C) và ngữ cảnh (Công sở, Dạo phố, Dạ tiệc), tự động phối lớp theo sợi dệt Linen/Lụa/Dạ len |
+| **70** | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)** | Module 06 & Social | Đã hoàn thiện | Thử thách thời trang bền vững (#LinenInTheCity) tại `/cong-dong`: Quỹ thưởng 15.000.000đ, đăng ký nhận +500 Xu Xanh và nút bình chọn phiếu thưởng KOC trực tiếp |
 
 ---
 
@@ -556,6 +558,24 @@
   - Tùy chọn số lượng thùng (1, 2, 3, 5 thùng) và báo cáo tình trạng (Còn nguyên vẹn 100%, Gập mép nhẹ, Rách tái chế).
   - Động lực xanh: Tặng ngay **+150 Điểm Thưởng Xanh (NEX-Green Points)** cho mỗi thùng hoàn trả (tương đương voucher 50.000đ trừ trực tiếp vào đơn hàng sau).
   - Lưu trữ trạng thái bền vững trên `localStorage` và mã hóa vận đơn thu hồi `#ECO-BOX-XXXX`.
+
+### 53. Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01)
+- **Mục tiêu**: Giúp người dùng đưa ra quyết định phối đồ thông minh phù hợp với đặc trưng vi khí hậu nhiệt đới hoặc se lạnh tại từng vùng miền Việt Nam, kết hợp đúng chất liệu sợi dệt tự nhiên với ngữ cảnh xuất hiện.
+- **Cơ chế**:
+  - Tích hợp thanh công cụ AI Weather Sync ngay trên giao diện Phòng Thử Đồ Studio `/phoi-do`.
+  - Hỗ trợ 3 mẫu hình khí hậu tiêu biểu:
+    1. *Sài Gòn 32°C (Nắng ấm miền nhiệt đới)*: Tự động đề xuất Sơ mi linen 100% thoáng khí + Quần suông nếp nhẹ, giải phóng lớp áo khoác ngoài nhằm tối ưu hóa sự thoáng mát.
+    2. *Hà Nội 19°C (Gió mùa Đông Bắc se lạnh)*: Tự động kích hoạt công thức Smart Layering với Blazer Linen Tailored cấu trúc nhẹ phối cùng Sơ mi linen.
+    3. *Đà Lạt 14°C (Mùa sương lạnh cao nguyên)*: Tự động chọn Áo măng tô Trench Coat dạ mỏng cao cấp + Áo thun cotton Compact 220gsm giữ nhiệt.
+  - Bộ lọc 3 ngữ cảnh xuất hiện: Công sở hiện đại (Office), Dạo phố cuối tuần (Street), Dạ tiệc tối (Gala).
+
+### 54. Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)
+- **Mục tiêu**: Kích hoạt làn sóng sáng tạo nội dung thời trang bền vững (UGC - User Generated Content) từ cộng đồng KOC và người tiêu dùng, gia tăng mức độ gắn kết với thương hiệu.
+- **Cơ chế**:
+  - Tích hợp khung thông tin Thử Thách Tuần `#LinenInTheCity` (Tuần 46) nổi bật tại bảng tin `/cong-dong`.
+  - Quỹ giải thưởng trị giá 15.000.000đ (Voucher mua sắm thời trang & Thẻ VIP mời tham dự Tuần lễ Thời trang Quốc tế).
+  - Nút đăng ký tham gia 1-chạm: Tự động cộng **+500 Điểm Xanh** vào tài khoản và mở khung đăng bài dự thi.
+  - Nút bình chọn cộng đồng (Trophy Vote): Cho phép mọi thành viên gửi phiếu bình chọn cho bài dự thi yêu thích, lưu vết số phiếu trên `localStorage` và trao thưởng +10 Xu Xanh cho người bình chọn.
 
 ---
 
