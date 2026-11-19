@@ -274,3 +274,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 67. **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)**:
    - Hồ sơ: Module 01 Quản trị Danh mục & Module 04 Bán lẻ Sàn TMĐT Bền Vững (ESG/CSR).
    - Thực tế: Tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier Verified.
+
+68. **Đối Soát & Thẩm Định Chứng Chỉ Xanh ESG Sàn (ADMIN-ESG-AUDIT-DASHBOARD-01)**:
+   - Hồ sơ: Module 04 Quản trị Sàn TMĐT & Module 07 Kiểm toán Môi trường ESG.
+   - Thực tế: Tab Thẩm định ESG tại Cổng Quản Trị `/admin`: Bảng đối soát chứng chỉ xanh xưởng may, giám sát 142.8 tấn CO2e trung hòa, tỷ lệ giao xe điện 88.6%, xuất báo cáo ESG kiểm toán.
+
+69. **Masterclass Thời Trang Bền Vững & Workshop Trực Tuyến (SOC-STYLING-WORKSHOP-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Cộng đồng Tương tác Sáng tạo OOTD.
+   - Thực tế: Phân hệ workshop stylist trực tuyến tại `/cong-dong`: Đăng ký giữ chỗ Workshop Smart Layering cùng Master Tailor Hoàng Nam, tặng +200 Điểm Xanh và nhận mã vé VIP.

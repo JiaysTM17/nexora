@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
-import { Bookmark, Heart, MessageCircle, Plus, Flag, ArrowUpRight, ShoppingBag, Share2, HelpCircle, CheckCircle2, Sparkles, Filter, Hash, Compass, Coffee, Coins, Gift, Trophy, Flame, Award, ThumbsUp } from 'lucide-react';
+import { Bookmark, Heart, MessageCircle, Plus, Flag, ArrowUpRight, ShoppingBag, Share2, HelpCircle, CheckCircle2, Sparkles, Filter, Hash, Compass, Coffee, Coins, Gift, Trophy, Flame, Award, ThumbsUp, Calendar, Video, Users } from 'lucide-react';
 import { api, FeedPost, Product, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 export default function Community() {
@@ -9,6 +9,7 @@ export default function Community() {
   const { user } = useUser(); const [compose, setCompose] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [tagIds, setTagIds] = useState<string[]>([]), [reportId, setReportId] = useState(''), [filter, setFilter] = useState<'all' | 'saved' | 'samples'>('all'), [fitTab, setFitTab] = useState<Record<string, 'all' | 'fit'>>({}), [commentInputs, setCommentInputs] = useState<Record<string, string>>({}), [trendTag, setTrendTag] = useState<string>('ALL'), [tipPostId, setTipPostId] = useState<string | null>(null), [tipAmount, setTipAmount] = useState<number>(20000), [tippedPosts, setTippedPosts] = useState<Record<string, number>>({});
   const [challengeVotes, setChallengeVotes] = useState<Record<string, number>>({});
   const [joinedChallenge, setJoinedChallenge] = useState(false);
+  const [workshopRsvp, setWorkshopRsvp] = useState(false);
 
   useEffect(() => {
     try {
@@ -16,6 +17,8 @@ export default function Community() {
       if (storedVotes) setChallengeVotes(JSON.parse(storedVotes));
       const storedJoined = localStorage.getItem('nexora_challenge_joined');
       if (storedJoined) setJoinedChallenge(true);
+      const storedRsvp = localStorage.getItem('nexora_workshop_rsvp');
+      if (storedRsvp) setWorkshopRsvp(true);
     } catch {}
   }, []);
 
@@ -119,6 +122,64 @@ export default function Community() {
         >
           Lọc bài dự thi #Linen
         </button>
+      </div>
+    </div>
+
+    {/* Masterclass Thời Trang Bền Vững & Workshop Trực Tuyến Hàng Tuần (SOC-STYLING-WORKSHOP-01) */}
+    <div
+      style={{
+        marginBottom: 16,
+        padding: '14px 18px',
+        background: '#fff',
+        border: '1px solid var(--line)',
+        borderRadius: 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 12,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 40, height: 40, borderRadius: 8, background: '#fdf8ea', display: 'grid', placeItems: 'center', color: 'var(--clay)', flexShrink: 0 }}>
+          <Video size={20} />
+        </div>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <strong style={{ fontSize: 13, color: 'var(--ink)' }}>
+              Styling Masterclass: "Nghệ Thuật Xếp Lớp Smart Layering &amp; Giữ Phom Lụa" (SOC-STYLING-WORKSHOP-01)
+            </strong>
+            <span style={{ fontSize: 9, background: '#fee2e2', color: '#dc2626', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+              LIVE WORKSHOP
+            </span>
+          </div>
+          <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11, lineHeight: 1.4 }}>
+            Dẫn dắt bởi Master Tailor Hoàng Nam &amp; Senior Stylist Elena Vũ · <strong>Thứ 7 tuần này · 19:30 - 21:00</strong> (Live Zoom &amp; Sàn Diễn /live)
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {workshopRsvp ? (
+          <span style={{ fontSize: 11, background: '#dcfce7', color: '#166534', fontWeight: 600, padding: '5px 12px', borderRadius: 4, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <CheckCircle2 size={13} /> ĐÃ GIỮ CHỖ VIP #WS-LAYER-26
+          </span>
+        ) : (
+          <button
+            type="button"
+            className="button"
+            style={{ fontSize: 11, padding: '6px 14px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            onClick={() => {
+              setWorkshopRsvp(true);
+              try {
+                localStorage.setItem('nexora_workshop_rsvp', 'true');
+              } catch {}
+              setNotice('✓ Đã đăng ký giữ chỗ Workshop thành công! Mã vé mời VIP đã gửi vào ứng dụng và cộng +200 Điểm Xanh.');
+            }}
+          >
+            <Calendar size={13} /> Đăng Ký Giữ Chỗ (+200 Điểm Xanh)
+          </button>
+        )}
       </div>
     </div>
 

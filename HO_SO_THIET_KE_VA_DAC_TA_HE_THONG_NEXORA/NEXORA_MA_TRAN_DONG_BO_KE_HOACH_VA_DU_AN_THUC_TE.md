@@ -89,6 +89,8 @@
 | **78** | **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)** | Module 01 & Stylist AI | Đã hoàn thiện | Phân hệ tư vấn phong cách tương tác tại `/san-pham/[slug]`: Gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size), hội thoại thời gian thực cùng Senior Stylist Elena Vũ |
 | **79** | **Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ lịch trình sự kiện thời trang tại `/tai-khoan`: Lên kế hoạch outfit theo ngày/giờ, đồng bộ dự báo thời tiết và tự động nhắc hẹn giặt ủi đồ hiệu VAS Care trước 48h |
 | **80** | **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier |
+| **81** | **Đối Soát & Thẩm Định Chứng Chỉ Xanh ESG Sàn (ADMIN-ESG-AUDIT-DASHBOARD-01)** | Module 04 & Admin ESG | Đã hoàn thiện | Tab Thẩm định ESG tại Cổng Quản Trị `/admin`: Đối soát chứng chỉ xanh xưởng may, giám sát 142.8 tấn CO2e trung hòa, tỷ lệ giao xe điện 88.6% |
+| **82** | **Workshop Trực Tuyến & Masterclass Hàng Tuần (SOC-STYLING-WORKSHOP-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ workshop stylist tại `/cong-dong`: Đăng ký giữ chỗ trực tuyến cùng Master Tailor Hoàng Nam, tặng +200 Điểm Xanh và nhận mã vé VIP |
 
 ---
 
@@ -697,6 +699,26 @@
     4. *Cắt vải rác thải tối thiểu (Zero-Waste Pattern)*: Tối ưu giác sơ đồ cắt, giảm 14% vải vụn dư thừa.
   - Danh mục 4 chứng nhận xanh đã được Sàn xác minh độc lập: GOTS Organic Textile Standard, OEKO-TEX Standard 100 Class I, CO Vùng nguyên liệu Lâm Đồng và Xử lý nước thải đạt chuẩn QCVN 40:2011/BTNMT.
   - Huy hiệu bảo chứng danh dự: Cấp chứng nhận `🌱 GREEN ATELIER VERIFIED` hiển thị nổi bật trên gian hàng và trang chi tiết sản phẩm.
+
+### 65. Đối Soát & Thẩm Định Chứng Chỉ Xanh ESG Sàn (ADMIN-ESG-AUDIT-DASHBOARD-01)
+- **Mục tiêu**: Giúp Ban Quản trị Sàn kiểm soát chặt chẽ tính trung thực của các tuyên bố môi trường (Green Claims), ngăn chặn hành vi tẩy xanh (Greenwashing) và đối soát các chứng chỉ sinh thái của đối tác.
+- **Cơ chế**:
+  - Tích hợp Tab Thẩm Định ESG & Xanh tại Cổng Quản Trị Trung Tâm `/admin`.
+  - Bảng tổng hợp các chỉ số phát triển bền vững toàn sàn:
+    - 142.8 tấn CO2e đã được trung hòa từ đội xe điện VinFast Feliz và bao bì Kraft.
+    - 88.6% tỷ lệ các đơn hàng nội đô được chuyển phát bằng phương tiện xe điện.
+    - 100% gian hàng đạt chứng nhận Green Atelier đã qua đối soát độc lập.
+    - 420 cây xanh bản địa được bảo trợ và trồng tại các khu rừng phòng hộ Cần Giờ, Cúc Phương.
+  - Bảng tra cứu và thẩm định chứng chỉ xanh: Danh sách mã hồ sơ chứng chỉ của các gian hàng (GOTS, OEKO-TEX, CO Lụa Bảo Lộc, QCVN 40), ngày hết hạn, trạng thái đã xác minh (`VERIFIED`) và nút kích hoạt tái thẩm định định kỳ.
+  - Nút trích xuất Báo cáo Kiểm toán ESG Toàn Sàn Q4/2026 phục vụ kiểm toán độc lập và công bố thông tin minh bạch.
+
+### 66. Masterclass Thời Trang Bền Vững & Workshop Trực Tuyến (SOC-STYLING-WORKSHOP-01)
+- **Mục tiêu**: Nâng cao kiến thức và gu thẩm mỹ của cộng đồng người tiêu dùng, phổ cập các kỹ thuật chăm sóc, bảo dưỡng trang phục may đo cao cấp để kéo dài tối đa vòng đời của sản phẩm.
+- **Cơ chế**:
+  - Tích hợp thẻ sự kiện Workshop Trực Tuyến định kỳ ngay trên đầu bảng tin Cộng đồng OOTD `/cong-dong`.
+  - Giới thiệu các buổi Masterclass chuyên sâu: "Nghệ Thuật Xếp Lớp Smart Layering & Giữ Phom Lụa", dẫn dắt bởi Master Tailor Hoàng Nam và Senior Stylist Elena Vũ.
+  - Lịch trình phát sóng trực tiếp: Thứ 7 hàng tuần từ 19:30 - 21:00 kết nối đồng thời qua Zoom Studio và luồng phát sóng `/live`.
+  - Nút 1-chạm "Đăng Ký Giữ Chỗ Miễn Phí": Tự động cấp mã vé VIP độc bản `#WS-LAYER-XX`, tặng ngay **+200 Điểm Thưởng Xanh (NEX-Green Points)** vào tài khoản và lưu vết trên `localStorage` (`nexora_workshop_rsvp`).
 
 ---
 
