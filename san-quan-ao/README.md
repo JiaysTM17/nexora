@@ -197,5 +197,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Style Compass tại `/san-pham/[slug]` gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa tơ tằm, Nón cói Panama) và liên kết Studio `/phoi-do` (CAT-STYLE-COMPASS-01) |
 | **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW** | Module 06 & 07 | Đã hoàn thiện | Biểu đồ phân bổ tỷ lệ màu sắc tủ đồ cá nhân (42% Neutral, 28% Indigo, 18% Noir, 12% Earth) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế tại `/tai-khoan` (USER-WARDROBE-ANALYTICS-01) |
 | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12%** | Module 01 & 03 | Đã hoàn thiện | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Tự động chiết khấu -12% khi mua set 3 món và hỗ trợ thêm vào giỏ 1-chạm (CAT-BUNDLE-DISCOUNT-01) |
+| **Tiền Thưởng Tác Quyền KOC & Tặng Xu Sáng Tạo** | Module 06 & Fintech | Đã hoàn thiện | Nút thưởng cà phê/xu sáng tạo tại `/cong-dong`, ghi nhận ví Creator Wallet và tính thuế TNCN 10% theo TT 111/2013 (SOC-CREATOR-TIP-01) |
+| **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh** | Module 04 & ESG/CSR | Đã hoàn thiện | Chứng thư điện tử tại `/don-hang/[id]` xác nhận 1.85 kg CO2e trung hòa từ giao hàng xe điện & hộp Kraft, mã blockchain và in chứng thư (ORD-CARBON-CERT-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

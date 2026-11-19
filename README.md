@@ -263,7 +263,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **53** | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)** | Module 01 & 06 | **100% Hoàn thiện** | Phân hệ La bàn phong cách Style Compass tại `/san-pham/[slug]`: Gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa tơ tằm, Nón cói Panama) và liên kết Studio Mix & Match `/phoi-do` |
 | **54** | **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW (USER-WARDROBE-ANALYTICS-01)** | Module 06 & 07 | **100% Hoàn thiện** | Biểu đồ phân bổ tỷ lệ màu sắc tủ đồ cá nhân (42% Neutral, 28% Indigo, 18% Noir, 12% Earth) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế tại `/tai-khoan` |
 | **55** | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)** | Module 01 & 03 | **100% Hoàn thiện** | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Tự động chiết khấu -12% khi mua set 3 món và hỗ trợ thêm vào giỏ 1-chạm |
-| **56** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **56** | **Tiền Thưởng Tác Quyền KOC & Tặng Xu Sáng Tạo (SOC-CREATOR-TIP-01)** | Module 06 & Fintech | **100% Hoàn thiện** | Nút thưởng cà phê/xu sáng tạo tại `/cong-dong`, ghi nhận ví Creator Wallet và tính thuế TNCN 10% theo TT 111/2013 |
+| **57** | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)** | Module 04 & ESG/CSR | **100% Hoàn thiện** | Chứng thư điện tử tại `/don-hang/[id]` xác nhận 1.85 kg CO2e trung hòa từ giao hàng xe điện & hộp Kraft, mã blockchain và in chứng thư |
+| **58** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

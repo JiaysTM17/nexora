@@ -69,6 +69,8 @@
 | **58** | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ La bàn phong cách (Style Compass) tại `/san-pham/[slug]`: Gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa dệt, Nón cói Panama), thêm nhanh vào danh sách phối đồ và kết nối Studio Mix & Match `/phoi-do` |
 | **59** | **Phân Tích Bảng Màu & Chi Phí Mỗi Lần Mặc CPW (USER-WARDROBE-ANALYTICS-01)** | Module 06 & 07 | Đã hoàn thiện | Biểu đồ phân bổ bảng màu cá nhân (Neutral 42%, Indigo 28%, Noir 18%, Earth 12%) và bộ tính chỉ số Cost-Per-Wear (CPW) theo số lần mặc thực tế kèm liên kết Trade-In tại `/tai-khoan` |
 | **60** | **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)** | Module 01 & 03 | Đã hoàn thiện | Khối mua trọn bộ Combo Style Saver tại `/san-pham/[slug]`: Ghép trang phục chính cùng quần âu may đo và thắt lưng da, tự động chiết khấu -12% trọn gói và thêm vào giỏ 1-chạm |
+| **61** | **Tiền Thưởng Tác Quyền KOC & Ủng Hộ Phong Cách (SOC-CREATOR-TIP-01)** | Module 06 & Fintech | Đã hoàn thiện | Nút tặng xu/thưởng tiền trực tiếp cho tác giả phối đồ tại `/cong-dong`: Hạch toán ví Creator Wallet, minh bạch thuế TNCN 10% (TT 111/2013/TT-BTC) và huy hiệu Người hâm mộ |
+| **62** | **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)** | Module 04 & ESG/CSR | Đã hoàn thiện | Phân hệ chứng nhận sinh thái số tại `/don-hang/[id]`: Đo lường 1.85 kg CO2e trung hòa từ giao hàng xe điện VinFast Feliz & hộp Kraft, mã blockchain tra cứu sổ cái và modal in chứng thư Haute Couture |
 
 ---
 
@@ -480,6 +482,21 @@
     3. Thắt Lưng Da Bò Ý Thuộc Thảo Mộc (Khóa Đồng Cổ Điển).
   - Tự động áp dụng mức chiết khấu Combo -12% khi chọn từ 2 món trở lên.
   - Nút thêm cả bộ vào giỏ hàng 1-chạm: Kiểm tra phiên đăng nhập, cập nhật giỏ hàng tuần tự và thông báo số tiền tiết kiệm được.
+
+### 45. Tiền Thưởng Tác Quyền KOC & Ủng Hộ Phong Cách (SOC-CREATOR-TIP-01)
+- **Mục tiêu**: Xây dựng nền kinh tế sáng tạo (Creator Economy) lành mạnh và bền vững, tạo động lực tài chính trực tiếp cho các nhà sáng tạo nội dung OOTD.
+- **Cơ chế**:
+  - Tích hợp nút `[ ☕ Thưởng KOC / Tặng Xu ]` ngay trong thanh tác vụ của từng bài viết tại `/cong-dong`.
+  - Hộp thoại tặng thưởng tích hợp 4 mức quà tặng: 10.000₫ (Trà Xanh), 20.000₫ (Cà Phê), 50.000₫ (Bánh Ngọt) và 100.000₫ (Bó Hoa).
+  - Tự động ghi nhận khoản thưởng vào ví Creator Wallet của tác giả bài viết, tuân thủ nghiêm ngặt quy định khấu trừ thuế TNCN 10% theo Thông tư 111/2013/TT-BTC (đồng bộ Domain D2-04 trong kiến trúc tài chính Sàn).
+
+### 46. Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)
+- **Mục tiêu**: Cung cấp bằng chứng minh bạch và tôn vinh cam kết bảo vệ môi trường của khách hàng sau mỗi đơn hàng thời trang bền vững.
+- **Cơ chế**:
+  - Tích hợp khối Chứng Thư Bù Đắp Carbon ngay trên trang chi tiết đơn hàng `/don-hang/[id]`.
+  - Đo lường và xác nhận 1.85 kg CO2e đã được trung hòa hoàn toàn từ quãng đường giao xe máy điện VinFast Feliz kết hợp 100% bao bì hộp giấy Kraft tái chế.
+  - Cung cấp mã chứng thư số độc bản `NEX-CO2-2026-XXXX` xác thực bởi Quỹ Rừng Xanh NEXORA và Ban Quản Lý Rừng Phòng Hộ Cần Giờ.
+  - Modal chứng thư Haute Couture: Hiển thị tên người nhận, con dấu xanh điện tử "NEXORA ECO VERIFIED", mã QR tra cứu sổ cái kỹ thuật số và nút in chứng thư chuẩn mực.
 
 ---
 

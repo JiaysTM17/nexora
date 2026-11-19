@@ -194,3 +194,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 47. **Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT-01)**:
    - Hồ sơ: Module 01 Quản lý Danh mục & Module 03 Giỏ hàng & Khuyến mãi.
    - Thực tế: Khối Combo Style Saver tại `/san-pham/[slug]` kết hợp trang phục chính cùng quần âu may đo và thắt lưng da, tự động chiết khấu -12% trọn gói và hỗ trợ thêm vào giỏ hàng 1-chạm.
+
+48. **Tiền Thưởng Tác Quyền KOC & Ủng Hộ Phong Cách (SOC-CREATOR-TIP-01)**:
+   - Hồ sơ: Module 06 Mạng xã hội OOTD & Nền kinh tế Sáng tạo (Creator Economy).
+   - Thực tế: Nút tặng quà cà phê/xu sáng tạo tại `/cong-dong` hỗ trợ chuyển tiền thưởng trực tiếp vào ví Creator Wallet của tác giả bài viết, tuân thủ khấu trừ thuế TNCN 10% theo Thông tư 111/2013/TT-BTC.
+
+49. **Chứng Thư Bù Đắp Carbon Đơn Hàng Chuẩn Xanh (ORD-CARBON-CERT-01)**:
+   - Hồ sơ: Module 04 Vận hành Đơn hàng & Trách nhiệm Môi trường (ESG/CSR).
+   - Thực tế: Khối Chứng thư Bù đắp Carbon số tại `/don-hang/[id]` xác nhận 1.85 kg CO2e đã trung hòa từ giao hàng xe điện VinFast Feliz và bao bì Kraft tái sinh, mã blockchain xác thực và modal in chứng thư Haute Couture.

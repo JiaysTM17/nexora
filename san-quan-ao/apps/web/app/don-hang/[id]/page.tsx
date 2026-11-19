@@ -42,6 +42,7 @@ export default function OrderDetail() {
   const [returningShop, setReturningShop] = useState<string | null>(null);
   const [maskedPhone, setMaskedPhone] = useState(true);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [showCarbonCertModal, setShowCarbonCertModal] = useState(false);
   const [showTrackingMap, setShowTrackingMap] = useState<string | null>(null);
   const [courierCallAlert, setCourierCallAlert] = useState(false);
   const [courierMsgSent, setCourierMsgSent] = useState(false);
@@ -516,6 +517,56 @@ export default function OrderDetail() {
           </p>
         </div>
       </details>
+
+      {/* Chứng Thư Bù Đắp Carbon Đơn Hàng (Digital Carbon Offset Certificate · ORD-CARBON-CERT-01) */}
+      <article className="panel" style={{ marginTop: 20, background: '#fcfdfa', border: '1px solid #dcfce7' }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Leaf size={20} color="#166534" />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <strong style={{ fontSize: 14, color: '#166534' }}>
+                  Chứng Thư Bù Đắp Carbon Đơn Hàng (ORD-CARBON-CERT-01)
+                </strong>
+                <span style={{ fontSize: 10, background: '#166534', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  100% ECO NEUTRAL
+                </span>
+              </div>
+              <p className="subtle" style={{ margin: '2px 0 0', fontSize: 12 }}>
+                Đơn hàng được vận chuyển bằng đội xe điện VinFast Feliz Courier &amp; đóng gói 100% hộp giấy Kraft sinh thái.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="button"
+            style={{ fontSize: 12, padding: '6px 14px', background: '#166534', borderColor: '#14532d', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            onClick={() => setShowCarbonCertModal(true)}
+          >
+            <Download size={14} /> Xem &amp; In Chứng Thư Xanh
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 14, paddingTop: 12, borderTop: '1px dashed #bbf7d0', fontSize: 12 }}>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Mã chứng thư số:</span>
+            <strong style={{ fontFamily: 'monospace', color: 'var(--ink)' }}>
+              NEX-CO2-2026-{order.code.slice(0, 8).toUpperCase()}
+            </strong>
+          </div>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Lượng CO2e đã trung hòa:</span>
+            <strong style={{ color: '#166534' }}>1.85 kg CO2e</strong>
+          </div>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Đơn vị bảo chứng:</span>
+            <span>Quỹ Rừng Xanh NEXORA &amp; Rừng Phòng Hộ Cần Giờ</span>
+          </div>
+        </div>
+      </article>
 
       {/* Modal Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01) */}
       {showTrackingMap && (() => {
@@ -1043,6 +1094,108 @@ export default function OrderDetail() {
                     <div>MST: 0109988776-001</div>
                     <div>Ngày ký: {new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Chứng Thư Bù Đắp Carbon Chuẩn Haute Couture (ORD-CARBON-CERT-01) */}
+      {showCarbonCertModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.7)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+            backdropFilter: 'blur(4px)',
+            overflowY: 'auto',
+          }}
+        >
+          <div
+            style={{
+              background: '#fdfbf7',
+              maxWidth: 640,
+              width: '100%',
+              borderRadius: 6,
+              boxShadow: '0 25px 50px rgba(0,0,0,0.3)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '2px solid #bbf7d0',
+              position: 'relative',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', borderBottom: '1px solid #e5e5e5', background: '#f0fdf4' }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Leaf size={16} /> NEXORA GREEN INITIATIVE · CERTIFICATE OF CLIMATE ACTION
+              </span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  type="button"
+                  className="button"
+                  style={{ fontSize: 11, padding: '4px 10px', background: '#166534', color: '#fff' }}
+                  onClick={() => window.print()}
+                >
+                  <Printer size={13} /> In Chứng Thư
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  style={{ fontSize: 11, padding: '4px 10px' }}
+                  onClick={() => setShowCarbonCertModal(false)}
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+
+            {/* Haute Couture Certificate Layout */}
+            <div style={{ padding: '36px 32px', textAlign: 'center', color: '#1c1917', fontFamily: 'Georgia, serif' }}>
+              <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#166534', fontWeight: 700, marginBottom: 8 }}>
+                CHỨNG NHẬN ĐÓNG GÓP SINH THÁI
+              </div>
+              <h1 style={{ fontSize: 24, margin: '0 0 10px', color: '#0f172a', fontWeight: 400 }}>
+                Chứng Thư Bù Đắp Carbon Kỹ Thuật Số
+              </h1>
+              <p style={{ fontSize: 13, color: '#64748b', fontStyle: 'italic', margin: '0 auto 24px', maxWidth: 460 }}>
+                Chứng nhận kiện hàng của Quý khách đã được bảo trợ và trung hòa hoàn toàn dấu chân phát thải thông qua vận hành Logistics xanh và phục hồi rừng bản địa.
+              </p>
+
+              <div style={{ padding: '20px', background: '#fff', border: '1px solid #d1fae5', borderRadius: 4, margin: '0 auto 24px', maxWidth: 480 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 8, textAlign: 'left' }}>
+                  <span style={{ color: '#64748b' }}>Chủ sở hữu chứng thư:</span>
+                  <strong style={{ color: '#0f172a' }}>{order.address?.recipient ?? 'Quý Khách Hàng NEXORA'}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 8, textAlign: 'left' }}>
+                  <span style={{ color: '#64748b' }}>Mã đơn hàng:</span>
+                  <strong style={{ fontFamily: 'monospace' }}>{order.code}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 8, textAlign: 'left' }}>
+                  <span style={{ color: '#64748b' }}>Mã chứng nhận Blockchain:</span>
+                  <strong style={{ fontFamily: 'monospace', color: '#166534' }}>NEX-CO2-2026-{order.code.slice(0, 8).toUpperCase()}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, borderTop: '1px dashed #e2e8f0', paddingTop: 8, textAlign: 'left' }}>
+                  <span style={{ color: '#64748b' }}>Tổng lượng phát thải đã triệt tiêu:</span>
+                  <strong style={{ color: '#166534', fontSize: 14 }}>1.85 kg CO2e</strong>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', margin: '20px auto 0', maxWidth: 460 }}>
+                <div style={{ textAlign: 'center' }}>
+                  <QrCode size={48} color="#0f172a" style={{ margin: '0 auto 4px' }} />
+                  <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Quét tra cứu sổ cái</span>
+                </div>
+                <div style={{ width: 100, height: 100, borderRadius: '50%', border: '2px double #16a34a', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#166534' }}>
+                  <CheckCircle size={20} />
+                  <strong style={{ fontSize: 9, letterSpacing: '0.05em', marginTop: 2 }}>NEXORA ECO</strong>
+                  <span style={{ fontSize: 8 }}>VERIFIED</span>
                 </div>
               </div>
             </div>
