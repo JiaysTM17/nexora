@@ -218,3 +218,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 53. **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Trình diễn Livestream Runway.
    - Thực tế: Phân hệ Runway Lookbook Studio tại `/live` cho phép chuyển đổi 3 góc quan sát (Catwalk Front-View, Macro 4K sợi dệt, Backstage Styling) và chốt deal trực tiếp ưu đãi -15% từ sàn diễn.
+
+54. **Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 05 Quản lý Tồn kho Độc quyền (D6-02/D6-03).
+   - Thực tế: Phân hệ tồn kho may đo giới hạn tại `/san-pham/[slug]` với đồng hồ đếm ngược 180s mô phỏng Khóa Giữ Hàng Redis Lua Script chống oversell, cảnh báo nhu cầu thời gian thực và tự động giải phóng/gia hạn.
+
+55. **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)**:
+   - Hồ sơ: Module 03 Quản trị Vận chuyển Chặng cuối & Module 07 Điểm thưởng Xanh Sinh thái.
+   - Thực tế: Phân hệ lên lịch hẹn thu hồi hộp carton tái chế tuần hoàn tại `/don-hang/[id]`, điều phối Shipper VinFast Green lấy tận nhà theo 3 khung giờ hoặc gửi tại trạm Boutique, tặng +150 Điểm Xanh NEX-Green tích lũy.

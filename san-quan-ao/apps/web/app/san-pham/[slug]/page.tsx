@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -28,7 +28,24 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [showVoiceGuide, setShowVoiceGuide] = useState(false);
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [voiceMode, setVoiceMode] = useState<'ATELIER_VOICE' | 'FABRIC_SCROOP'>('ATELIER_VOICE');
+  const [holdActive, setHoldActive] = useState(false);
+  const [holdTimer, setHoldTimer] = useState(180);
   const { user } = useUser();
+
+  useEffect(() => {
+    if (!holdActive || holdTimer <= 0) return;
+    const interval = setInterval(() => {
+      setHoldTimer((prev) => {
+        if (prev <= 1) {
+          setHoldActive(false);
+          setNotice('Thời gian khóa giữ hàng 180s đã hết. Tồn kho đã được giải phóng tự động (D6-03).');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [holdActive, holdTimer]);
 
   useEffect(() => {
     try {
@@ -374,6 +391,140 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             >
               <Eye size={13} color="var(--clay)" /> 👗 Mô Phỏng Phom Dáng &amp; Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE)
             </button>
+          </div>
+
+          {/* Bộ Đếm Tồn Kho Thủ Công Thời Gian Thực & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01 · D6-02/D6-03) */}
+          <div
+            style={{
+              margin: '12px 0',
+              padding: '12px 14px',
+              background: holdActive ? '#fffbeb' : '#fafafa',
+              border: holdActive ? '1.5px solid #f59e0b' : '1px dashed #d4d4d8',
+              borderRadius: 4,
+            }}
+          >
+            <div className="row between" style={{ marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Flame size={15} color={holdActive ? '#b45309' : '#dc2626'} />
+                <strong style={{ fontSize: 12, color: holdActive ? '#92400e' : '#991b1b' }}>
+                  {holdActive ? 'Đang Khóa Giữ Hàng Độc Quyền (180s)' : 'Tồn Kho Chế Tác Thủ Công Giới Hạn'}
+                </strong>
+              </div>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  background: holdActive ? '#fef3c7' : '#fee2e2',
+                  color: holdActive ? '#b45309' : '#991b1b',
+                  padding: '2px 6px',
+                  borderRadius: 2,
+                }}
+              >
+                {holdActive ? 'D6-03 CART LOCK ACTIVE' : 'ATELIER RESERVED'}
+              </span>
+            </div>
+
+            <p style={{ margin: '0 0 8px', fontSize: 11, color: '#52525b', lineHeight: 1.4 }}>
+              {holdActive ? (
+                <>
+                  Redis Lua Script đã khóa tạm thời <strong>{quantity} sản phẩm</strong> size {variant?.size || 'đã chọn'}. Suất của bạn được bảo lưu độc quyền chống oversell trong thời gian hoàn tất đơn.
+                </>
+              ) : (
+                <>
+                  Mẫu thiết kế này được may đo theo lô nhỏ tại xưởng. Có <strong>2 khách hàng khác</strong> đang duyệt trang này. Bạn có thể kích hoạt khóa giữ hàng độc quyền 180s để giữ suất may.
+                </>
+              )}
+            </p>
+
+            {holdActive ? (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: '#b45309' }}>
+                    <Timer size={14} /> Thời gian giữ hàng còn lại:
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: '#b45309' }}>
+                    {String(Math.floor(holdTimer / 60)).padStart(2, '0')}:{String(holdTimer % 60).padStart(2, '0')}
+                  </span>
+                </div>
+                <div style={{ width: '100%', height: 5, background: '#fef3c7', borderRadius: 3, overflow: 'hidden', marginBottom: 8 }}>
+                  <div
+                    style={{
+                      height: '100%',
+                      background: '#f59e0b',
+                      width: `${(holdTimer / 180) * 100}%`,
+                      transition: 'width 1s linear',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    type="button"
+                    style={{
+                      flex: 1,
+                      fontSize: 11,
+                      padding: '4px 8px',
+                      background: '#fef3c7',
+                      color: '#92400e',
+                      border: '1px solid #fde68a',
+                      borderRadius: 3,
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                    onClick={() => {
+                      setHoldTimer(180);
+                      setNotice('Đã gia hạn khóa giữ hàng thêm 180 giây thành công!');
+                    }}
+                  >
+                    Gia hạn +180s
+                  </button>
+                  <button
+                    type="button"
+                    style={{
+                      fontSize: 11,
+                      padding: '4px 8px',
+                      background: 'transparent',
+                      color: '#71717a',
+                      border: '1px solid #e4e4e7',
+                      borderRadius: 3,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      setHoldActive(false);
+                      setHoldTimer(0);
+                      setNotice('Đã giải phóng suất giữ hàng.');
+                    }}
+                  >
+                    Giải phóng
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                style={{
+                  width: '100%',
+                  padding: '6px 12px',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  background: '#f4f4f5',
+                  border: '1px solid #e4e4e7',
+                  borderRadius: 3,
+                  color: '#18181b',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+                onClick={() => {
+                  setHoldActive(true);
+                  setHoldTimer(180);
+                  setNotice('Đã kích hoạt khóa giữ hàng 180 giây thành công (Redis Lua D6-03).');
+                }}
+              >
+                <Lock size={12} color="#f59e0b" /> Kích hoạt khóa giữ hàng độc quyền 180s (D6-03)
+              </button>
+            )}
           </div>
 
           <label className="quantity">

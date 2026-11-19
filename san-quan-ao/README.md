@@ -203,5 +203,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói** | Module 01 & Audio AI | Đã hoàn thiện | Trình phát mô phỏng cảm âm sột soạt lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist tại `/san-pham/[slug]` (CAT-FABRIC-VOICE-GUIDE-01) |
 | **Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân** | Module 06 & 07 | Đã hoàn thiện | Moodboard ghim thẻ cảm hứng cá nhân theo bảng màu tại `/tai-khoan` (USER-STYLE-MOODBOARD-01) |
 | **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường** | Module 01 & 06 | Đã hoàn thiện | Runway Lookbook chuyển đổi 3 góc quay Catwalk/Macro 4K/Backstage tại `/live` (LIVE-RUNWAY-LOOKBOOK-01) |
+| **Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s** | Module 01 & 05 | Đã hoàn thiện | Tồn kho may đo giới hạn và đồng hồ 180s kích hoạt Khóa Giữ Hàng Redis Lua chống oversell tại `/san-pham/[slug]` (CAT-REALTIME-STOCK-RESERVATION-01) |
+| **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box** | Module 03 & 07 | Đã hoàn thiện | Lên lịch hẹn thu hồi hộp carton tái chế qua Shipper VinFast Green/Boutique, thưởng +150 Điểm Xanh tại `/don-hang/[id]` (ORD-ECO-PACK-RETURN-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

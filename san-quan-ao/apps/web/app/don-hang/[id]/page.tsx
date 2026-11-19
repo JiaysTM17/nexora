@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { FormEvent, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X } from 'lucide-react';
+import { FormEvent, useEffect, useState } from 'react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -46,6 +46,37 @@ export default function OrderDetail() {
   const [showTrackingMap, setShowTrackingMap] = useState<string | null>(null);
   const [courierCallAlert, setCourierCallAlert] = useState(false);
   const [courierMsgSent, setCourierMsgSent] = useState(false);
+  const [ecoBoxRequested, setEcoBoxRequested] = useState(false);
+  const [ecoBoxCount, setEcoBoxCount] = useState(1);
+  const [ecoPickupSlot, setEcoPickupSlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('MORNING');
+  const [ecoMethod, setEcoMethod] = useState<'SHIPPER' | 'BOUTIQUE'>('SHIPPER');
+  const [ecoCondition, setEcoCondition] = useState<'INTACT' | 'SLIGHT_CREASE' | 'DAMAGED'>('INTACT');
+
+  useEffect(() => {
+    try {
+      if (id) {
+        const saved = localStorage.getItem(`nexora_eco_box_${id}`);
+        if (saved) setEcoBoxRequested(true);
+      }
+    } catch {}
+  }, [id]);
+
+  function handleRequestEcoReturn(e: FormEvent) {
+    e.preventDefault();
+    setEcoBoxRequested(true);
+    setSuccess(`Đã lập lịch thu hồi ${ecoBoxCount} Thùng Tuần Hoàn Eco-Box! Bạn nhận ngay +${ecoBoxCount * 150} Điểm Thưởng Xanh NEX-Green.`);
+    try {
+      if (id) {
+        localStorage.setItem(`nexora_eco_box_${id}`, JSON.stringify({
+          count: ecoBoxCount,
+          slot: ecoPickupSlot,
+          method: ecoMethod,
+          condition: ecoCondition,
+          requestedAt: new Date().toISOString(),
+        }));
+      }
+    } catch {}
+  }
 
   async function cancel(shopOrderId: string) {
     setBusy(shopOrderId);
@@ -566,6 +597,163 @@ export default function OrderDetail() {
             <span>Quỹ Rừng Xanh NEXORA &amp; Rừng Phòng Hộ Cần Giờ</span>
           </div>
         </div>
+      </article>
+
+      {/* Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (Reusable Circular Box Return · ORD-ECO-PACK-RETURN-01) */}
+      <article className="panel" style={{ marginTop: 20, background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: '#dcfce7',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#166534',
+                flexShrink: 0,
+              }}
+            >
+              <RotateCcw size={20} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <strong style={{ fontSize: 14, color: '#166534' }}>
+                  Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)
+                </strong>
+                <span style={{ fontSize: 10, background: '#166534', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  ZERO WASTE
+                </span>
+              </div>
+              <p className="subtle" style={{ margin: '2px 0 0', fontSize: 12, color: '#15803d' }}>
+                Đóng góp vào vòng lặp tuần hoàn sinh thái. Shipper VinFast Green thu hồi tận nhà miễn phí hoặc gửi tại trạm NEXORA Boutique.
+              </p>
+            </div>
+          </div>
+          {ecoBoxRequested && (
+            <span style={{ fontSize: 11, background: '#dcfce7', color: '#166534', fontWeight: 600, padding: '4px 10px', borderRadius: 3, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <CheckCircle size={13} /> ĐÃ HẸN THU HỒI THÀNH CÔNG
+            </span>
+          )}
+        </div>
+
+        {ecoBoxRequested ? (
+          <div style={{ marginTop: 14, padding: 12, background: '#fff', borderRadius: 4, border: '1px solid #dcfce7' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+              <div>
+                <strong style={{ fontSize: 13, color: '#166534' }}>Lịch Hẹn Thu Hồi Thùng #ECO-BOX-{id.slice(-6).toUpperCase()}</strong>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: '#334155', lineHeight: 1.5 }}>
+                  • Hình thức: {ecoMethod === 'SHIPPER' ? 'Shipper VinFast Green đến lấy tận nơi (Miễn phí)' : 'Gửi tại trạm tiếp nhận NEXORA Boutique'} <br />
+                  • Khung giờ: {SLOT_LABELS[ecoPickupSlot]} <br />
+                  • Số lượng: <strong>{ecoBoxCount} thùng tuần hoàn</strong> · Tình trạng: {ecoCondition === 'INTACT' ? 'Còn nguyên vẹn 100%' : ecoCondition === 'SLIGHT_CREASE' ? 'Trầy xước nhẹ' : 'Rách nếp gấp'} <br />
+                  • Phần thưởng tích lũy: <strong style={{ color: '#166534' }}>+{ecoBoxCount * 150} Điểm Xanh NEX-Green</strong> (đã ghi có vào Ví thành viên)
+                </p>
+              </div>
+              <button
+                type="button"
+                className="button secondary"
+                style={{ fontSize: 11, padding: '4px 10px' }}
+                onClick={() => {
+                  setEcoBoxRequested(false);
+                  try {
+                    localStorage.removeItem(`nexora_eco_box_${id}`);
+                  } catch {}
+                  setNotice('Đã hủy lịch hẹn thu hồi thùng. Quý khách có thể thiết lập lịch hẹn mới bất cứ lúc nào.');
+                }}
+              >
+                Thay đổi / Hủy hẹn
+              </button>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleRequestEcoReturn} style={{ marginTop: 14, paddingTop: 12, borderTop: '1px dashed #bbf7d0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#166534', display: 'block', marginBottom: 4 }}>
+                  Phương thức thu hồi
+                </label>
+                <select
+                  value={ecoMethod}
+                  onChange={(e) => setEcoMethod(e.target.value as any)}
+                  style={{ width: '100%', fontSize: 12, padding: '6px 8px', borderRadius: 3, border: '1px solid #86efac' }}
+                >
+                  <option value="SHIPPER">Shipper VinFast Green lấy tận nhà (Miễn phí)</option>
+                  <option value="BOUTIQUE">Gửi tại NEXORA Lounge / Boutique đối tác</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#166534', display: 'block', marginBottom: 4 }}>
+                  Khung giờ thuận tiện
+                </label>
+                <select
+                  value={ecoPickupSlot}
+                  onChange={(e) => setEcoPickupSlot(e.target.value as any)}
+                  style={{ width: '100%', fontSize: 12, padding: '6px 8px', borderRadius: 3, border: '1px solid #86efac' }}
+                >
+                  <option value="MORNING">Buổi sáng (08:00 - 12:00)</option>
+                  <option value="AFTERNOON">Buổi chiều (13:30 - 17:30)</option>
+                  <option value="EVENING">Buổi tối (18:00 - 21:00 · Ngoài giờ)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#166534', display: 'block', marginBottom: 4 }}>
+                  Số thùng gửi lại
+                </label>
+                <select
+                  value={ecoBoxCount}
+                  onChange={(e) => setEcoBoxCount(Number(e.target.value))}
+                  style={{ width: '100%', fontSize: 12, padding: '6px 8px', borderRadius: 3, border: '1px solid #86efac' }}
+                >
+                  <option value={1}>1 thùng (+150 Điểm Xanh)</option>
+                  <option value={2}>2 thùng (+300 Điểm Xanh)</option>
+                  <option value={3}>3 thùng (+450 Điểm Xanh)</option>
+                  <option value={5}>5 thùng (+750 Điểm Xanh · Đại sứ Tuần Hoàn)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#166534', display: 'block', marginBottom: 4 }}>
+                  Tình trạng thùng
+                </label>
+                <select
+                  value={ecoCondition}
+                  onChange={(e) => setEcoCondition(e.target.value as any)}
+                  style={{ width: '100%', fontSize: 12, padding: '6px 8px', borderRadius: 3, border: '1px solid #86efac' }}
+                >
+                  <option value="INTACT">Còn nguyên vẹn 100%</option>
+                  <option value="SLIGHT_CREASE">Trầy xước / gập mép nhẹ</option>
+                  <option value="DAMAGED">Rách nhẹ (tái chế nghiền bột giấy)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+              <span style={{ fontSize: 12, color: '#15803d' }}>
+                🌱 Thưởng ngay: <strong style={{ color: '#166534' }}>+{ecoBoxCount * 150} Điểm NEX-Green</strong> (tương đương voucher {vnd(ecoBoxCount * 50000)} giảm trừ cho đơn tới).
+              </span>
+              <button
+                type="submit"
+                className="button"
+                style={{
+                  fontSize: 12,
+                  padding: '6px 16px',
+                  background: '#166534',
+                  borderColor: '#14532d',
+                  color: '#fff',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <RotateCcw size={14} /> Xác Nhận Lịch Thu Hồi Thùng
+              </button>
+            </div>
+          </form>
+        )}
       </article>
 
       {/* Modal Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01) */}

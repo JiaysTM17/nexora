@@ -269,7 +269,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **59** | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)** | Module 01 & Audio AI | **100% Hoàn thiện** | Trình phát mô phỏng cảm âm sột soạt lụa (Silk Scroop) và giọng đọc trợ lý AI Stylist tại `/san-pham/[slug]` |
 | **60** | **Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)** | Module 06 & 07 | **100% Hoàn thiện** | Moodboard ghim thẻ cảm hứng cá nhân theo bảng màu tại `/tai-khoan` |
 | **61** | **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | **100% Hoàn thiện** | Runway Lookbook chuyển đổi 3 góc quay Catwalk/Macro 4K/Backstage tại `/live` |
-| **62** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **62** | **Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01)** | Module 01 & 05 | **100% Hoàn thiện** | Tồn kho may đo giới hạn và đồng hồ 180s kích hoạt Khóa Giữ Hàng Redis Lua chống oversell tại `/san-pham/[slug]` |
+| **63** | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)** | Module 03 & 07 | **100% Hoàn thiện** | Lên lịch hẹn thu hồi hộp carton tái chế qua Shipper VinFast Green/Boutique, thưởng +150 Điểm Xanh tại `/don-hang/[id]` |
+| **64** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

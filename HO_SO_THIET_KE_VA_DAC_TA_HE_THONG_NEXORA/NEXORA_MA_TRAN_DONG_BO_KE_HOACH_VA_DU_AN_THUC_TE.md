@@ -75,6 +75,8 @@
 | **64** | **Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE-01)** | Module 01 & Audio AI | Đã hoàn thiện | Trình phát cảm âm tại `/san-pham/[slug]`: Mô phỏng âm thanh sột soạt tự nhiên của lụa (Silk Scroop/Rustle) và giọng đọc trợ lý AI Stylist hướng dẫn giặt ủi mặt trái chuẩn mực |
 | **65** | **Bảng Cảm Hứng & Ghim Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ Moodboard thị giác tại `/tai-khoan`: Ghim và phân loại các thẻ cảm hứng thẩm mỹ theo tông màu cá nhân (Normandy Linen, Sơn Mài, Bảo Lộc Silk), lưu trữ cục bộ và chia sẻ Lookbook |
 | **66** | **Lookbook Sàn Diễn Đa Góc Nhìn & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ Runway 360° tại `/live`: Chuyển đổi 3 góc quay (Catwalk Front-View, Macro 4K sợi dệt, Backstage Styling) và chốt deal trực tiếp giảm -15% từ sàn diễn |
+| **67** | **Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01)** | Module 01 & 05 | Đã hoàn thiện | Phân hệ tồn kho may đo giới hạn tại `/san-pham/[slug]`: Cảnh báo nhu cầu thời gian thực và đồng hồ đếm ngược 180s mô phỏng Khóa Giữ Hàng Redis Lua Script (D6-03) chống oversell |
+| **68** | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)** | Module 03 & 07 | Đã hoàn thiện | Lên lịch hẹn thu hồi hộp carton tái chế tuần hoàn tại `/don-hang/[id]`: Điều phối Shipper VinFast Green lấy tận nhà hoặc gửi tại trạm Boutique, tặng +150 Điểm Xanh NEX-Green |
 
 ---
 
@@ -535,6 +537,25 @@
     2. *Cận Cảnh Sợi Vải 4K (Fabric Macro)*: Phóng đại độ tinh xảo của sớ dệt thủ công, đường kim mũi chỉ và khuy sừng khắc logo.
     3. *Hậu Trường Stylist (Backstage Styling)*: Khám phá cách chuyên gia hoàn thiện trang phục và mẹo sơ-vin, phối lớp trước giờ diễn.
   - Tích hợp liên kết sản phẩm chi tiết và nút chốt deal Live độc quyền chiết khấu -15% đẩy thẳng vào giỏ hàng.
+
+### 51. Bộ Đếm Tồn Kho Thủ Công & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01)
+- **Mục tiêu**: Nâng cao tính khẩn cấp (Urgency) và bảo vệ trải nghiệm của người mua đối với các trang phục thời trang may đo số lượng giới hạn, minh bạch hóa cơ chế quản lý tồn kho nguyên tử theo chuẩn Domain D6-02 và D6-03.
+- **Cơ chế**:
+  - Tích hợp phân hệ hiển thị trạng thái tồn kho thời gian thực trên trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Cảnh báo nhu cầu xã hội: "Có 2 khách hàng khác đang xem trang phục này".
+  - Bộ đếm thời gian thực 180 giây: Khách hàng kích hoạt nút "Khóa giữ hàng độc quyền 180s", giao diện khởi chạy đồng hồ đếm ngược với thanh tiến trình trực quan.
+  - Tương thích nghiệp vụ: Trực quan hóa nguyên lý khóa tồn kho bằng Redis Lua Script chống bán vượt (Anti-Oversell Cart Lock) theo đặc tả D6-03. Tự động giải phóng hoặc cho phép gia hạn +180s linh hoạt.
+
+### 52. Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)
+- **Mục tiêu**: Khép kín vòng tròn kinh tế tuần hoàn (Circular Economy) trong quy trình Logistics chặng cuối, triệt tiêu rác thải bao bì carton và nilon thông qua chương trình thu hồi hộp đóng gói tái chế chuẩn Haute Couture.
+- **Cơ chế**:
+  - Tích hợp phân hệ Lên lịch hẹn thu hồi thùng Eco-Box trực tiếp trên màn hình chi tiết đơn hàng `/don-hang/[id]`.
+  - Hai kênh tiếp nhận linh hoạt:
+    1. *Shipper VinFast Green*: Bưu tá xe máy điện đến thu hồi tận cửa nhà khách hàng miễn phí theo 3 khung giờ hẹn (Sáng, Chiều, Tối).
+    2. *Trạm NEXORA Boutique*: Khách hàng trực tiếp mang thùng gửi lại hệ thống Boutique & Lounge đối tác.
+  - Tùy chọn số lượng thùng (1, 2, 3, 5 thùng) và báo cáo tình trạng (Còn nguyên vẹn 100%, Gập mép nhẹ, Rách tái chế).
+  - Động lực xanh: Tặng ngay **+150 Điểm Thưởng Xanh (NEX-Green Points)** cho mỗi thùng hoàn trả (tương đương voucher 50.000đ trừ trực tiếp vào đơn hàng sau).
+  - Lưu trữ trạng thái bền vững trên `localStorage` và mã hóa vận đơn thu hồi `#ECO-BOX-XXXX`.
 
 ---
 
