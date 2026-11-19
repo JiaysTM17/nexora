@@ -79,6 +79,8 @@
 | **68** | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)** | Module 03 & 07 | Đã hoàn thiện | Lên lịch hẹn thu hồi hộp carton tái chế tuần hoàn tại `/don-hang/[id]`: Điều phối Shipper VinFast Green lấy tận nhà hoặc gửi tại trạm Boutique, tặng +150 Điểm Xanh NEX-Green |
 | **69** | **Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ khí hậu tại `/phoi-do`: Lọc trang phục theo 3 kiểu thời tiết (Sài Gòn 32°C, Hà Nội 19°C, Đà Lạt 14°C) và ngữ cảnh (Công sở, Dạo phố, Dạ tiệc), tự động phối lớp theo sợi dệt Linen/Lụa/Dạ len |
 | **70** | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)** | Module 06 & Social | Đã hoàn thiện | Thử thách thời trang bền vững (#LinenInTheCity) tại `/cong-dong`: Quỹ thưởng 15.000.000đ, đăng ký nhận +500 Xu Xanh và nút bình chọn phiếu thưởng KOC trực tiếp |
+| **71** | **Thước So Sánh Trước & Sau Spa Đồ Hiệu (VAS-BEFORE-AFTER-SLIDER-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ thước kéo đối chứng quang học 1000 Lux tại `/vas-care`: So sánh Trước/Sau cho Blazer len, Đầm lụa và Túi da, đo độ phục hồi form 99.2% |
+| **72** | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)** | Module 03 & 04 | Đã hoàn thiện | Tách đơn đa điểm tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, điền thông tin người nhận riêng và phân tuyến bưu tá |
 
 ---
 
@@ -576,6 +578,24 @@
   - Quỹ giải thưởng trị giá 15.000.000đ (Voucher mua sắm thời trang & Thẻ VIP mời tham dự Tuần lễ Thời trang Quốc tế).
   - Nút đăng ký tham gia 1-chạm: Tự động cộng **+500 Điểm Xanh** vào tài khoản và mở khung đăng bài dự thi.
   - Nút bình chọn cộng đồng (Trophy Vote): Cho phép mọi thành viên gửi phiếu bình chọn cho bài dự thi yêu thích, lưu vết số phiếu trên `localStorage` và trao thưởng +10 Xu Xanh cho người bình chọn.
+
+### 55. Thước So Sánh Trước & Sau Spa Đồ Hiệu (VAS-BEFORE-AFTER-SLIDER-01)
+- **Mục tiêu**: Xóa tan tâm lý lo âu của khách hàng khi gửi trang phục và phụ kiện cao cấp đi phục hồi bằng việc trực quan hóa bằng chứng đối chứng thực tế dưới buồng sáng quang học 1000 Lux.
+- **Cơ chế**:
+  - Tích hợp thước kéo tương tác Before & After Lens tại `/vas-care`.
+  - Hỗ trợ xem đối chứng cho 3 danh mục thời trang đặc trưng:
+    1. *Áo Blazer Dạ Len Ý*: Phục hồi form vai 3D (99.2%), xóa gãy nếp ve áo bằng hơi nước áp suất thấp.
+    2. *Đầm Lụa Tơ Tằm Bảo Lộc*: Tẩy điểm ố trà hữu cơ bằng enzyme sinh học pH 6.5, giữ 100% ánh xà cừ tự nhiên (Delta E: 0.2).
+    3. *Túi Da Bò Thảo Mộc Patina*: Khử nấm mốc, dưỡng dầu chồn Mink Oil và đánh bóng viền thủ công bằng sáp ong rừng (+10 năm tuổi thọ).
+  - Thanh kéo tương tác cho phép người dùng trượt từ 5% đến 95% để quan sát chi tiết sự khác biệt bề mặt sợi dệt.
+
+### 56. Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)
+- **Mục tiêu**: Tối ưu hóa trải nghiệm mua sắm trong một đơn hàng duy nhất cho các khách hàng có nhu cầu phân bổ trang phục về nhiều địa điểm khác nhau hoặc gửi quà tặng đối tác/người thân.
+- **Cơ chế**:
+  - Tích hợp tùy chọn "Giao Nhiều Địa Chỉ Riêng Biệt (Split Delivery)" ngay tại màn hình thanh toán `/gio-hang`.
+  - Cho phép người mua phân bổ từng dòng sản phẩm vào Điểm đến 1 (Địa chỉ mặc định nhà riêng) hoặc Điểm đến 2 (Quà tặng bạn bè / Nơi làm việc).
+  - Biểu mẫu thu thập thông tin độc lập cho Kiện hàng thứ 2 gồm Họ tên, Số điện thoại và Địa chỉ chi tiết.
+  - Phân luồng điều phối bưu tá và in 2 vận đơn con độc lập bảo đảm giao hàng chính xác mà không làm phát sinh thao tác đặt đơn lặp lại.
 
 ---
 

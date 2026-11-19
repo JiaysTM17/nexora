@@ -273,7 +273,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **63** | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)** | Module 03 & 07 | **100% Hoàn thiện** | Lên lịch hẹn thu hồi hộp carton tái chế qua Shipper VinFast Green/Boutique, thưởng +150 Điểm Xanh tại `/don-hang/[id]` |
 | **64** | **Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01)** | Module 01 & 06 | **100% Hoàn thiện** | Lọc trang phục thông minh tại `/phoi-do` theo 3 mẫu thời tiết Sài Gòn/Hà Nội/Đà Lạt và ngữ cảnh công sở/dạo phố/dạ tiệc |
 | **65** | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)** | Module 06 & Social | **100% Hoàn thiện** | Thử thách phối đồ bền vững `#LinenInTheCity` tại `/cong-dong`, quỹ thưởng 15 triệu đồng, tặng +500 Điểm Xanh và bình chọn KOC |
-| **66** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **66** | **Thước So Sánh Trước & Sau Spa Đồ Hiệu (VAS-BEFORE-AFTER-SLIDER-01)** | Module 02 & VAS | **100% Hoàn thiện** | Thước kéo đối chứng quang học 1000 Lux tại `/vas-care`: So sánh Trước/Sau cho Blazer len, Đầm lụa và Túi da, đo độ phục hồi form 99.2% |
+| **67** | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)** | Module 03 & 04 | **100% Hoàn thiện** | Tách đơn đa điểm đến tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng |
+| **68** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

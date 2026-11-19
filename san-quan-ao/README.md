@@ -207,5 +207,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box** | Module 03 & 07 | Đã hoàn thiện | Lên lịch hẹn thu hồi hộp carton tái chế qua Shipper VinFast Green/Boutique, thưởng +150 Điểm Xanh tại `/don-hang/[id]` (ORD-ECO-PACK-RETURN-01) |
 | **Gợi Ý Phối Đồ Theo Thời Tiết & Ngữ Cảnh** | Module 01 & 06 | Đã hoàn thiện | Lọc trang phục thông minh tại `/phoi-do` theo 3 mẫu thời tiết Sài Gòn/Hà Nội/Đà Lạt và ngữ cảnh công sở/dạo phố/dạ tiệc (CAT-OUTFIT-WEATHER-SYNC-01) |
 | **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng** | Module 06 & Social | Đã hoàn thiện | Thử thách phối đồ bền vững `#LinenInTheCity` tại `/cong-dong`, quỹ thưởng 15 triệu đồng, tặng +500 Điểm Xanh và bình chọn KOC (SOC-OOTD-CHALLENGE-01) |
+| **Thước So Sánh Trước & Sau Spa Đồ Hiệu** | Module 02 & VAS | Đã hoàn thiện | Thước kéo đối chứng quang học 1000 Lux tại `/vas-care`: So sánh Trước/Sau cho Blazer len, Đầm lụa và Túi da, đo độ phục hồi form 99.2% (VAS-BEFORE-AFTER-SLIDER-01) |
+| **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng** | Module 03 & 04 | Đã hoàn thiện | Tách đơn đa điểm đến tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng (CART-SPLIT-DELIVERY-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

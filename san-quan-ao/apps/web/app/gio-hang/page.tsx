@@ -2,7 +2,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
@@ -12,6 +12,11 @@ type Quote = { id: string; data: QuoteData; expiresAt: string };
 export default function Cart() {
   const cart = useResource<CartLine[]>('/cart'), addresses = useResource<Address[]>('/addresses');
   const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [giftWrap, setGiftWrap] = useState(false), [giftRibbon, setGiftRibbon] = useState<'CHAMPAGNE' | 'EMERALD' | 'NAVY'>('CHAMPAGNE'), [giftMessage, setGiftMessage] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
+  const [splitDelivery, setSplitDelivery] = useState(false);
+  const [itemDestinations, setItemDestinations] = useState<Record<string, 'HOME' | 'OFFICE_GIFT'>>({});
+  const [giftRecipientName, setGiftRecipientName] = useState('');
+  const [giftRecipientPhone, setGiftRecipientPhone] = useState('');
+  const [giftRecipientAddress, setGiftRecipientAddress] = useState('');
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
@@ -49,6 +54,80 @@ export default function Cart() {
   if (!cart.data?.length) return <Empty title="Giỏ đồ đang chờ bạn." detail="Chọn một món hợp mình để bắt đầu nhé."/>;
   return <section className="section"><p className="eyebrow">TỪ CẢM HỨNG ĐẾN TỦ ĐỒ</p><h1>Giỏ hàng của bạn.</h1><p className="subtle">Một lần đặt, theo dõi đơn và phí giao riêng từng shop.</p><div className="checkout-grid"><div>{[...groups].map(([shopId, lines]) => <section key={shopId} className="panel"><h2 className="panel-title">{lines[0].variant.product.shop.name}</h2>{lines.map(line => <div className="cart-line" key={line.id}><img src={line.variant.product.images[0]?.url} alt={line.variant.product.name} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg'; }}/><div className="grow"><Link href={`/san-pham/${line.variant.product.slug}`}><strong>{line.variant.product.name}</strong></Link><p>{line.variant.color} / Size {line.variant.size}</p><div className="row"><input aria-label={`Số lượng ${line.variant.product.name}`} className="qty-input" type="number" min={1} max={20} value={line.quantity} onChange={e => { const value = Number(e.target.value); if (Number.isInteger(value) && value > 0 && value <= 20) void changeLine(line.id, value); }}/><button className="icon-link" aria-label={`Xóa ${line.variant.product.name}`} onClick={() => changeLine(line.id)}><Trash2 size={16}/></button></div></div><strong>{vnd(line.variant.price * line.quantity)}</strong></div>)}<label className="voucher">Mã giảm của shop<input value={codes[shopId] ?? ''} onChange={e => { setCodes({ ...codes, [shopId]: e.target.value }); invalidate(); }} placeholder={shopId === 'shop-nep' ? 'Thử CHAO50 cho đơn từ 400.000đ' : 'Nhập mã nếu có'}/></label></section>)}
       <section className="panel"><h2 className="panel-title"><MapPin size={18}/>Giao đến</h2>{addresses.error && <Notice error>{addresses.error}</Notice>}{addresses.data?.map(a => <label className="address-option" key={a.id}><input type="radio" name="address" checked={chosenAddress === a.id} onChange={() => { setAddressId(a.id); invalidate(); }}/><span><strong>{a.recipient} · {a.phone}</strong><br/>{a.line}, {a.province}</span></label>)}<button className="text-button" onClick={() => setNewAddress(!newAddress)}>{newAddress ? 'Đóng' : '+ Thêm địa chỉ'}</button>{newAddress && <form onSubmit={addAddress} className="form"><label>Người nhận<input name="recipient" required minLength={2}/></label><label>Số điện thoại<input name="phone" required pattern="0[0-9]{9}" inputMode="tel"/></label><label>Địa chỉ cụ thể<input name="line" required minLength={5}/></label><label>Tỉnh / thành phố<input name="province" required minLength={2}/></label><button className="button" disabled={busy}>Lưu địa chỉ</button></form>}</section>
+
+      {/* Phân Tách Địa Chỉ Giao Nhiều Điểm & Tặng Quà (CART-SPLIT-DELIVERY-01) */}
+      <section className="panel" style={{ background: splitDelivery ? '#fefce8' : undefined, border: splitDelivery ? '1px solid #fef08a' : undefined }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+          <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <Split size={18} color={splitDelivery ? '#b45309' : undefined} /> Giao Nhiều Địa Chỉ Riêng Biệt (CART-SPLIT-DELIVERY-01)
+          </h2>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+            <input
+              type="checkbox"
+              checked={splitDelivery}
+              onChange={(e) => {
+                setSplitDelivery(e.target.checked);
+                invalidate();
+              }}
+              style={{ accentColor: 'var(--clay)' }}
+            />
+            Bật phân tách địa chỉ
+          </label>
+        </div>
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Tách đơn hàng thành nhiều kiện gửi đến các địa chỉ khác nhau (VD: Giao áo sơ mi về văn phòng công ty, đầm quà tặng gửi trực tiếp đến bạn bè).
+        </p>
+
+        {splitDelivery && (
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed #fde047' }}>
+            <h3 style={{ fontSize: 13, color: '#854d0e', margin: '0 0 8px' }}>Phân bổ điểm đến cho từng món đồ:</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+              {cart.data?.map((line) => (
+                <div key={line.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 10px', background: '#fff', borderRadius: 4, border: '1px solid #fef08a', fontSize: 12 }}>
+                  <div style={{ maxWidth: '60%' }}>
+                    <strong>{line.variant.product.name}</strong>
+                    <span className="subtle" style={{ display: 'block', fontSize: 11 }}>Size {line.variant.size} · SL: {line.quantity}</span>
+                  </div>
+                  <select
+                    value={itemDestinations[line.id] ?? 'HOME'}
+                    onChange={(e) => setItemDestinations({ ...itemDestinations, [line.id]: e.target.value as any })}
+                    style={{ fontSize: 11, padding: '4px 8px', borderRadius: 3, border: '1px solid #ca8a04' }}
+                  >
+                    <option value="HOME">Điểm 1: Địa chỉ mặc định</option>
+                    <option value="OFFICE_GIFT">Điểm 2: Quà tặng / Văn phòng</option>
+                  </select>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding: 12, background: '#fff', borderRadius: 6, border: '1px solid #fde047' }}>
+              <strong style={{ fontSize: 12, color: '#854d0e', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <Send size={14} /> Thông Tin Điểm Đến Thứ 2 (Quà Tặng / Văn Phòng):
+              </strong>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+                <input
+                  placeholder="Họ tên người nhận quà"
+                  value={giftRecipientName}
+                  onChange={(e) => setGiftRecipientName(e.target.value)}
+                  style={{ fontSize: 12, padding: '6px 8px', border: '1px solid var(--line)', borderRadius: 3 }}
+                />
+                <input
+                  placeholder="Số điện thoại người nhận"
+                  value={giftRecipientPhone}
+                  onChange={(e) => setGiftRecipientPhone(e.target.value)}
+                  style={{ fontSize: 12, padding: '6px 8px', border: '1px solid var(--line)', borderRadius: 3 }}
+                />
+                <input
+                  placeholder="Địa chỉ cụ thể (Số nhà, đường, quận...)"
+                  value={giftRecipientAddress}
+                  onChange={(e) => setGiftRecipientAddress(e.target.value)}
+                  style={{ fontSize: 12, padding: '6px 8px', border: '1px solid var(--line)', borderRadius: 3 }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
       <section className="panel">
         <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Clock size={18} /> Khung Giờ Giao Hàng &amp; Đóng Gói Xanh (FUL-GREEN-SLOT)

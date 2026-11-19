@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -73,6 +73,35 @@ export default function VasCarePage() {
   const list = useResource<CareBooking[]>(user ? '/vas-care' : null);
   const [activeTab, setActiveTab] = useState<'COURIER' | 'ATELIER'>('COURIER');
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
+  const [sliderPos, setSliderPos] = useState(50);
+  const [sampleKey, setSampleKey] = useState<'BLAZER' | 'SILK' | 'LEATHER'>('BLAZER');
+
+  const RESTORATION_SAMPLES = {
+    BLAZER: {
+      title: 'Áo Blazer Dạ Len Ý (Super 130s Wool)',
+      beforeDesc: 'Trũng đệm vai, gãy nếp ve áo, xơ cứng bề mặt sợi dạ do ẩm mốc môi trường',
+      afterDesc: 'Đứng phom nguyên bản 100%, nếp ve áo sắc nét, sợi len bồng bềnh tự nhiên',
+      stats: 'Phục hồi form 3D: 99.2% · Khôi phục độ nảy sợi: 100%',
+      beforeImg: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=800&q=80',
+      afterImg: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=800&q=95',
+    },
+    SILK: {
+      title: 'Đầm Lụa Tơ Tằm Bảo Lộc (Mulberry Silk)',
+      beforeDesc: 'Vệt ố trà loang lổ, xỉn màu ánh xà cừ, co rút mép tà sau giặt sai quy cách',
+      afterDesc: 'Tẩy điểm ố bằng enzyme sinh học pH 6.5, tà áo bay rủ mềm mại như mới',
+      stats: 'Giữ ánh xà cừ: 100% · Độ lệch màu Delta E: 0.2 (Hoàn hảo)',
+      beforeImg: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
+      afterImg: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=95',
+    },
+    LEATHER: {
+      title: 'Túi Xách Da Bò Thảo Mộc Patina (Veg-Tan Leather)',
+      beforeDesc: 'Mốc trắng lỗ chân lông da, khô ráp nứt nẻ, viền cạnh sờn chỉ mất bóng',
+      afterDesc: 'Khử khuẩn ozone, dưỡng tinh dầu chồn Mink Oil, đánh bóng viền thủ công bằng sáp ong',
+      stats: 'Gia hạn tuổi thọ da: +10 năm · Chống thấm giọt sen: Cấp 4',
+      beforeImg: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
+      afterImg: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=95',
+    },
+  };
 
   // Atelier state
   const [atelierBookings, setAtelierBookings] = useState<AtelierBooking[]>([]);
@@ -161,6 +190,197 @@ export default function VasCarePage() {
         <div>
           <h1>Chăm sóc Đồ hiệu <em>White-Glove</em></h1>
           <p className="subtle">Túi niêm phong Serial Zip-seal một chiều · Biên bản kiểm tra quang học 8 góc · Bảo hiểm tài sản lên đến 100.000.000 VNĐ.</p>
+        </div>
+      </div>
+
+      {/* Thước So Sánh Đối Chứng Trước & Sau Spa 1000 Lux (VAS-BEFORE-AFTER-SLIDER-01) */}
+      <div
+        style={{
+          margin: '20px 0',
+          padding: 20,
+          background: '#fff',
+          border: '1px solid var(--line)',
+          borderRadius: 8,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Sliders size={18} color="var(--clay)" />
+            <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+              Biên Bản Đối Chứng Trước &amp; Sau Spa Chuẩn 1000 Lux (VAS-BEFORE-AFTER-SLIDER-01)
+            </strong>
+          </div>
+          <span style={{ fontSize: 11, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            {RESTORATION_SAMPLES[sampleKey].stats}
+          </span>
+        </div>
+
+        {/* Garment Selector */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+          {[
+            { id: 'BLAZER' as const, label: 'Áo Blazer Dạ Len Ý' },
+            { id: 'SILK' as const, label: 'Đầm Lụa Tơ Tằm Bảo Lộc' },
+            { id: 'LEATHER' as const, label: 'Túi Da Bò Thảo Mộc' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setSampleKey(item.id)}
+              style={{
+                fontSize: 11,
+                padding: '5px 12px',
+                borderRadius: 20,
+                border: sampleKey === item.id ? '1.5px solid var(--clay)' : '1px solid var(--line)',
+                background: sampleKey === item.id ? '#fdf8ea' : '#fff',
+                color: sampleKey === item.id ? 'var(--clay)' : 'var(--ink)',
+                fontWeight: sampleKey === item.id ? 700 : 500,
+                cursor: 'pointer',
+              }}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Interactive Comparison Split Lens */}
+        <div
+          style={{
+            position: 'relative',
+            height: 240,
+            borderRadius: 6,
+            overflow: 'hidden',
+            background: '#18181b',
+            display: 'flex',
+          }}
+        >
+          {/* Before side (Left) */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: `${sliderPos}%`,
+              overflow: 'hidden',
+              borderRight: '2px solid #fff',
+              zIndex: 2,
+              background: '#27272a',
+            }}
+          >
+            <img
+              src={RESTORATION_SAMPLES[sampleKey].beforeImg}
+              alt="Before"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                filter: 'grayscale(60%) contrast(90%)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                background: 'rgba(0,0,0,0.7)',
+                color: '#f87171',
+                padding: '2px 8px',
+                borderRadius: 3,
+                fontSize: 11,
+                fontWeight: 700,
+              }}
+            >
+              TRƯỚC KHI SPA (BEFORE)
+            </div>
+          </div>
+
+          {/* After side (Right) */}
+          <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <img
+              src={RESTORATION_SAMPLES[sampleKey].afterImg}
+              alt="After"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                background: 'rgba(22, 101, 52, 0.85)',
+                color: '#fff',
+                padding: '2px 8px',
+                borderRadius: 3,
+                fontSize: 11,
+                fontWeight: 700,
+              }}
+            >
+              SAU KHI HOÀN TẤT (AFTER)
+            </div>
+          </div>
+
+          {/* Draggable Divider Handle */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: `${sliderPos}%`,
+              transform: 'translate(-50%, -50%)',
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              background: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              fontWeight: 700,
+              color: 'var(--ink)',
+              zIndex: 3,
+              pointerEvents: 'none',
+            }}
+          >
+            ⟷
+          </div>
+        </div>
+
+        {/* Range Slider Controller */}
+        <div style={{ marginTop: 12 }}>
+          <div className="row between" style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 4 }}>
+            <span>← Kéo sang trái xem Trước Spa</span>
+            <span>Kéo sang phải xem Sau Phục hồi →</span>
+          </div>
+          <input
+            type="range"
+            min={5}
+            max={95}
+            value={sliderPos}
+            onChange={(e) => setSliderPos(Number(e.target.value))}
+            style={{ width: '100%', accentColor: 'var(--clay)', cursor: 'ew-resize' }}
+          />
+        </div>
+
+        {/* Technical Description Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 12,
+            marginTop: 14,
+            paddingTop: 12,
+            borderTop: '1px dashed var(--line)',
+            fontSize: 12,
+          }}
+        >
+          <div>
+            <span style={{ fontSize: 11, color: '#dc2626', fontWeight: 600, display: 'block' }}>Tình trạng ban đầu:</span>
+            <span style={{ color: 'var(--muted)', lineHeight: 1.4 }}>{RESTORATION_SAMPLES[sampleKey].beforeDesc}</span>
+          </div>
+          <div>
+            <span style={{ fontSize: 11, color: '#166534', fontWeight: 600, display: 'block' }}>Kỹ thuật phục hồi Atelier:</span>
+            <span style={{ color: 'var(--ink)', lineHeight: 1.4 }}>{RESTORATION_SAMPLES[sampleKey].afterDesc}</span>
+          </div>
         </div>
       </div>
 

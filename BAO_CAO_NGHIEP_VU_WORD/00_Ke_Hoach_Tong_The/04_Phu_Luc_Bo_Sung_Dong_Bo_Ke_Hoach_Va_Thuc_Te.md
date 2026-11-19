@@ -234,3 +234,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 57. **Thử Thách Phối Đồ Tuần & Bình Chọn Cộng Đồng (SOC-OOTD-CHALLENGE-01)**:
    - Hồ sơ: Module 06 Phong cách OOTD & Cộng đồng Xã hội.
    - Thực tế: Phân hệ Thử thách tuần `#LinenInTheCity` tại `/cong-dong` với quỹ thưởng 15 triệu đồng, nút tham gia nhận +500 Điểm Xanh và nút bình chọn phiếu thưởng KOC trực tiếp.
+
+58. **Thước So Sánh Trước & Sau Spa Đồ Hiệu (VAS-BEFORE-AFTER-SLIDER-01)**:
+   - Hồ sơ: Module 02 Dịch vụ Hậu mãi & Module 04 Thẩm định Bảo hiểm VAS Care.
+   - Thực tế: Thước kéo đối chứng quang học 1000 Lux tại `/vas-care` cho phép so sánh Trước/Sau cho 3 dòng đồ hiệu (Blazer dạ, Đầm lụa, Túi da), đo độ phục hồi form 99.2% và bảo chứng 100 triệu VND.
+
+59. **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)**:
+   - Hồ sơ: Module 03 Quản lý Giỏ hàng & Module 04 Vận chuyển Đa điểm đến.
+   - Thực tế: Tùy chọn phân tách giao hàng nhiều địa chỉ tại `/gio-hang`, cho phép gán từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng.
