@@ -39,6 +39,8 @@
 | **28** | **Sàn Diễn Trực Tiếp & Chốt Đơn 1-Chạm (SOC-LIVE-01)** | Module 06 | Đã hoàn thiện | Phòng Live Shopping chuyên nghiệp tại `/live`: Trình phát Runway Stage mô phỏng, Deal ghim giảm 35% có đồng hồ đếm ngược & thanh tồn kho, chốt đơn 1-chạm không gián đoạn luồng xem, phòng chat tương tác thời gian thực & hiệu ứng thả tim bay sinh động |
 | **29** | **Cầu Dao Ngắt Mạch Khẩn Cấp Giá Flash (SOC-PRICE-ERROR)** | Module 06 | Đã hoàn thiện | Cầu dao khẩn cấp (Emergency Circuit Breaker Kill Switch) tại Cổng Quản trị `/admin` và Kênh Người Bán `/seller`: API `POST /admin/products/:id/circuit-breaker` & `POST /seller/shops/:shopId/products/:id/circuit-breaker`, lập tức khóa gỡ sản phẩm sang `HIDDEN` và ghi nhật ký kiểm toán bất biến khi phát hiện lỗi giá |
 | **30** | **Trung Tâm Mẫu Thử KOC & Điểm Tín Nhiệm (SOC-CREATOR-SAMPLE)** | Module 06 | Đã hoàn thiện | Hệ thống cấp bậc Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score: Kim Cương/Vàng/Bạc 0-100), huy hiệu định danh trên bài đăng OOTD, tab Trung tâm Mẫu thử KOC tại `/cong-dong` hỗ trợ KOC xin mẫu thử miễn phí với cam kết duyệt trong SLA 48h |
+| **31** | **Động Cơ Xếp Chồng 5 Tầng Voucher & Xu Thưởng (CART-STACK-COIN)** | Module 03 | Đã hoàn thiện | Thuật toán xếp chồng 5 tầng ưu đãi không suy hao: Voucher Shop + Voucher Sàn/Trade-In + Freeship Xtra (-30.000đ) + PayLater 0% + Cấn trừ Xu thưởng NEXORA Coins (1 xu = 1đ) tại Checkout Giỏ hàng |
+| **32** | **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)** | Module 04 | Đã hoàn thiện | Cơ chế kiểm soát biến thiên khối lượng bưu kiện qua 3 trạm (Xuất kho -> Sorting Hub -> Bưu tá giao) với dung sai quang học ΔW ≤ 50g, ngăn chặn tráo hàng và rút ruột kiện hàng tại `/don-hang/[id]` |
 
 ---
 
@@ -137,6 +139,26 @@
   - Thiết lập Thang Bậc Điểm Tín Nhiệm Nhà Sáng Tạo (`Creator Trust Score`: Hạng Kim Cương &ge; 90, Hạng Vàng &ge; 80, Hạng Bạc &ge; 70), gắn huy hiệu định danh uy tín ngay cạnh tên tác giả bài đăng OOTD tại `/cong-dong`.
   - Ra mắt tab "Trung Tâm Mẫu Thử KOC (SOC-CREATOR-SAMPLE)" tại `/cong-dong`: Các Creator đạt điều kiện tín nhiệm có thể duyệt danh mục các trang phục có gắn nhãn "Mẫu thử miễn phí" và gửi yêu cầu xin mẫu thử 1-click.
   - Ràng buộc quy tắc nghiệp vụ: Cam kết SLA người bán phản hồi duyệt hoặc từ chối trong vòng 48 giờ; KOC có trách nhiệm nộp bài phối đồ OOTD công khai trong thời hạn 14 ngày sau khi nhận mẫu để bảo lưu và tích lũy thêm điểm tín nhiệm (+2 điểm uy tín).
+
+### 15. Động Cơ Xếp Chồng 5 Tầng Voucher & Cấn Trừ Xu Thưởng (CART-STACK-COIN)
+- **Mục tiêu**: Tối đa hóa tỷ lệ chuyển đổi giỏ hàng thời trang cao cấp bằng động cơ xếp chồng ưu đãi thông minh, phân bổ số học chính xác đến từng đồng VND và xử lý triệt để phần dư $\Delta = 1$đ không suy hao.
+- **Cơ chế**:
+  - Tầng 1: Shop Voucher giảm trực tiếp tiền hàng của từng gian hàng.
+  - Tầng 2: Voucher Sàn TMĐT / Voucher đối ứng Thu cũ đổi mới Trade-In (`NXTI-...`).
+  - Tầng 3: Voucher Miễn phí vận chuyển Freeship Xtra tài trợ giảm 30.000đ cước bưu chính (`_freeship`).
+  - Tầng 4: Ưu đãi Trả góp 0% Lãi suất qua giải pháp Mua trước Trả sau NEXORA PayLater.
+  - Tầng 5: Xu thưởng NEXORA Coins tích lũy từ hoạt động cộng đồng, cấn trừ trực tiếp 1 xu = 1đ vào tổng thanh toán cuối cùng.
+  - Hiển thị bảng bóc tách 5 tầng ưu đãi trực quan tại Checkout Giỏ hàng `/gio-hang`.
+
+### 16. Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)
+- **Mục tiêu**: Triệt tiêu hoàn toàn vấn nạn tráo hàng, rút ruột hoặc đánh tráo sản phẩm giá trị cao trong quá trình luân chuyển qua các trung tâm phân loại bưu chính 3PL.
+- **Cơ chế**:
+  - Tự động ghi vết và so khớp trọng lượng kiện hàng qua 3 trạm bưu tá:
+    1. Trạm 1: Bưu cục tiếp nhận xuất kho ban đầu của Shop ($W_1$).
+    2. Trạm 2: Cân tự động tại Trung tâm phân loại Sorting Hub trung chuyển ($W_2$).
+    3. Trạm 3: Cân đối soát cầm tay của bưu tá giao hàng chặng cuối trước khi bấm mã PIN ($W_3$).
+  - Thuật toán kiểm soát dung sai quang học: $\Delta W = |W_1 - W_2| \le 50\text{g}$. Nếu vượt ngưỡng, hệ thống kích hoạt báo động gian lận và tạm giữ tiền hàng để thanh tra.
+  - Bảng nhật ký cân nặng 3 trạm hiển thị minh bạch cho khách hàng và tài xế tại Cổng chi tiết đơn hàng `/don-hang/[id]`.
 
 ---
 

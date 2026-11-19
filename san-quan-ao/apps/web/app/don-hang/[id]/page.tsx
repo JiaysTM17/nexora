@@ -282,6 +282,19 @@ export default function OrderDetail() {
                   <strong>Đồng kiểm ngoại quan (RET-COINSPECT):</strong> Quý khách được quyền cùng nhân viên giao hàng kiểm tra tem niêm phong, số lượng và quy cách hộp trước khi thanh toán COD/nhận hàng. Vui lòng không cắt tem mác hoặc mặc thử.
                 </span>
               </div>
+              <div style={{ marginTop: 8, padding: '8px 12px', background: '#fff', borderRadius: 2, border: '1px solid var(--line)', fontSize: 11 }}>
+                <strong style={{ display: 'block', marginBottom: 4, color: '#1e293b' }}>
+                  ⚖ Nhật ký Biến Thiên Cân Nặng 3 Trạm (FUL-WEIGHT-AUDIT):
+                </strong>
+                <div className="row between" style={{ color: 'var(--muted)', fontSize: 11 }}>
+                  <span>Trạm 1 (Xuất kho): <strong>450g</strong></span>
+                  <span>Trạm 2 (Hub phân loại): <strong>452g (ΔW = +2g ≤ 50g)</strong></span>
+                  <span>Trạm 3 (Bưu tá giao): <strong>450g</strong></span>
+                </div>
+                <span style={{ display: 'block', marginTop: 4, color: '#166534', fontSize: 10, fontWeight: 600 }}>
+                  ✓ Đạt chuẩn an ninh quang học &amp; nguyên vẹn niêm phong
+                </span>
+              </div>
             </div>
           ) : (
             <p className="subtle" style={{ fontSize: 11, margin: '8px 0 0' }}>

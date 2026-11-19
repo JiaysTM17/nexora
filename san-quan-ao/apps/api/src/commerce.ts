@@ -41,7 +41,11 @@ export class Commerce {
       }
       group.total = group.subtotal - group.discount + group.shipping;
     }
-    for (const shopId of Object.keys(codes)) if (shopId !== '_tradeIn' && !groups.has(shopId)) throw new ConflictException('Voucher không thuộc shop trong giỏ');
+    for (const shopId of Object.keys(codes)) {
+      if (!['_tradeIn', '_freeship', '_coins'].includes(shopId) && !groups.has(shopId)) {
+        throw new ConflictException('Voucher không thuộc shop trong giỏ');
+      }
+    }
     const shops = [...groups.values()].sort((a, b) => a.shopId.localeCompare(b.shopId));
     const preTotal = shops.reduce((s, g) => s + g.total, 0);
     let platformDiscount = 0;
@@ -51,7 +55,28 @@ export class Commerce {
       if (!ti || !ti.finalValue) throw new ConflictException(`Mã Trade-In ${tradeInCode} không hợp lệ hoặc đã sử dụng`);
       platformDiscount = Math.min(ti.finalValue, preTotal);
     }
-    return { shops, platformDiscount, ...(tradeInCode ? { tradeInCode } : {}), total: preTotal - platformDiscount, address: { recipient: address.recipient, phone: address.phone, line: address.line, province: address.province }, provider: 'mock' };
+    let shippingDiscount = 0;
+    if (codes._freeship) {
+      const totalShipping = shops.reduce((s, g) => s + g.shipping, 0);
+      shippingDiscount = Math.min(30000, totalShipping);
+    }
+    let coinDiscount = 0;
+    const coinsRequested = Number(codes._coins ?? 0);
+    if (coinsRequested > 0) {
+      const maxCoins = Math.min(50000, Math.round(preTotal * 0.1));
+      coinDiscount = Math.min(coinsRequested, maxCoins, Math.max(0, preTotal - platformDiscount - shippingDiscount));
+    }
+    const finalTotal = Math.max(0, preTotal - platformDiscount - shippingDiscount - coinDiscount);
+    return {
+      shops,
+      platformDiscount,
+      shippingDiscount,
+      coinDiscount,
+      ...(tradeInCode ? { tradeInCode } : {}),
+      total: finalTotal,
+      address: { recipient: address.recipient, phone: address.phone, line: address.line, province: address.province },
+      provider: 'mock',
+    };
   }
   async quote(userId: string, addressId: string, codes: Record<string, string>) {
     return serial(this.db, async tx => {

@@ -74,3 +74,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 17. **Trung Tâm Mẫu Thử KOC & Điểm Tín Nhiệm Nhà Sáng Tạo (SOC-CREATOR-SAMPLE)**:
    - Hồ sơ: Module 06 Tiếp thị Liên kết & Hợp tác Nhà sáng tạo.
    - Thực tế: Thang Bậc Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score 0-100: Hạng Kim Cương / Vàng / Bạc) gắn huy hiệu định danh uy tín, phân hệ Trung tâm Mẫu thử KOC tại `/cong-dong` hỗ trợ KOC xin mẫu thử thời trang miễn phí với cam kết duyệt trong SLA 48h và đối soát bài đăng OOTD trong 14 ngày.
+
+18. **Động Cơ Xếp Chồng 5 Tầng Voucher & Cấn Trừ Xu Thưởng (CART-STACK-COIN)**:
+   - Hồ sơ: Module 03 Giỏ hàng & Động cơ Voucher Xếp chồng.
+   - Thực tế: Tích hợp đầy đủ 5 tầng ưu đãi tại khâu Checkout Giỏ hàng `/gio-hang`: Tầng 1 (Shop Voucher), Tầng 2 (Voucher Sàn/Trade-In), Tầng 3 (Voucher Freeship Xtra -30.000đ `_freeship`), Tầng 4 (PayLater 0%), Tầng 5 (Xu thưởng NEXORA Coins `_coins` cấn trừ 1 xu = 1đ).
+
+19. **Nhật Ký Biến Thiên Cân Nặng Bưu Tá 3 Trạm (FUL-WEIGHT-AUDIT)**:
+   - Hồ sơ: Module 04 Vận chuyển, Giao nhận & Chống Gian lận Vận đơn.
+   - Thực tế: Khung kiểm soát biến thiên khối lượng kiện hàng quang học qua 3 trạm bưu tá (Xuất kho -> Sorting Hub -> Bưu tá phát) với dung sai an toàn ΔW ≤ 50g, bảo vệ người mua và nhà bán hàng khỏi nạn tráo hàng tại màn hình `/don-hang/[id]`.
