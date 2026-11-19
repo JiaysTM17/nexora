@@ -241,7 +241,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **31** | **Khung Giờ Nhận Hàng & Đóng Gói Xanh Eco Box (FUL-GREEN-SLOT-02)** | Module 03 & 04 | **100% Hoàn thiện** | Tùy chọn 3 khung giờ giao hàng hẹn trước (Sáng/Chiều/Tối ngoài giờ) và đóng gói hộp giấy kraft tự hủy không nilon, thưởng ngay +50 Xu NEXORA Coins tại `/gio-hang` |
 | **32** | **Đổi Size Tốc Hành Tận Cửa 24-48h (RET-QUICK-EXCHANGE-01)** | Module 05 | **100% Hoàn thiện** | Bưu tá mang áo size mới đổi trực tiếp và thu hồi size cũ tận nhà trong 24-48h với 0đ phụ phí tại `/don-hang/[id]` |
 | **33** | **Bảng Xếp Hạng Xu Hướng Tuần Realtime (CAT-TRENDING-BOARD-02)** | Module 01 & 06 | **100% Hoàn thiện** | Radar xu hướng thời trang tính toán Sales Velocity thời gian thực (+142% Quiet Luxury, +98% Eco Linen) trực quan trên trang chủ |
-| **34** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **34** | **Hồ Sơ Số Đo & Gợi Ý Smart Fit (USER-PASSPORT-01)** | Module 01 & 07 | **100% Hoàn thiện** | Phân hệ Fashion Passport lưu số đo cơ thể tại `/tai-khoan`, thuật toán Smart Fit tự động gợi ý size chuẩn xác (Khớp 96%) tại `/san-pham/[slug]` |
+| **35** | **Trung Tâm Thông Báo Thời Gian Thực (NOTIF-CENTER-02)** | Module 07 | **100% Hoàn thiện** | Chuông thông báo trên Header hiển thị tin chưa đọc, biến động vận đơn 3 trạm, thưởng Xu Xanh và ưu đãi Combo Mix & Match |
+| **36** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

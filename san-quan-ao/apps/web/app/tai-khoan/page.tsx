@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -19,6 +19,40 @@ export default function AccountPage() {
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [passport, setPassport] = useState<{
+    height: number;
+    weight: number;
+    chest: number;
+    waist: number;
+    hip: number;
+    fitPref: string;
+  }>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('nexora_fashion_passport');
+        if (stored) return JSON.parse(stored);
+      } catch {}
+    }
+    return { height: 168, weight: 58, chest: 88, waist: 68, hip: 92, fitPref: 'REGULAR' };
+  });
+  const [passportSaved, setPassportSaved] = useState(false);
+
+  function savePassport(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const d = new FormData(e.currentTarget);
+    const updated = {
+      height: Number(d.get('height')),
+      weight: Number(d.get('weight')),
+      chest: Number(d.get('chest')),
+      waist: Number(d.get('waist')),
+      hip: Number(d.get('hip')),
+      fitPref: String(d.get('fitPref')),
+    };
+    setPassport(updated);
+    localStorage.setItem('nexora_fashion_passport', JSON.stringify(updated));
+    setPassportSaved(true);
+    setTimeout(() => setPassportSaved(false), 3000);
+  }
 
   async function addAddress(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -82,6 +116,65 @@ export default function AccountPage() {
           <strong>{wishlist.data?.length ?? 0} món</strong>
         </div>
       </div>
+
+      {/* Hồ Sơ Số Đo Thời Trang Cá Nhân (NEXORA Fashion Passport · USER-PASSPORT-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Sparkles size={18} color="var(--clay)" /> Hồ Sơ Số Đo Thời Trang (Fashion Passport)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Lưu số đo cơ thể cá nhân để nhận gợi ý size thông minh (Smart Fit) tự động trên từng sản phẩm.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '3px 8px', borderRadius: 2, fontWeight: 600 }}>
+            Smart Fit Active
+          </span>
+        </div>
+
+        {passportSaved && (
+          <div style={{ marginBottom: 12 }}>
+            <Notice>Đã lưu Fashion Passport thành công! Hệ thống sẽ tự động so khớp và gợi ý size khi bạn xem trang phục.</Notice>
+          </div>
+        )}
+
+        <form onSubmit={savePassport} className="form" style={{ marginTop: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12 }}>
+            <label>
+              Chiều cao (cm)
+              <input name="height" type="number" min={120} max={220} defaultValue={passport.height} required />
+            </label>
+            <label>
+              Cân nặng (kg)
+              <input name="weight" type="number" min={35} max={150} defaultValue={passport.weight} required />
+            </label>
+            <label>
+              Vòng 1 / Ngực (cm)
+              <input name="chest" type="number" min={60} max={140} defaultValue={passport.chest} required />
+            </label>
+            <label>
+              Vòng 2 / Eo (cm)
+              <input name="waist" type="number" min={50} max={130} defaultValue={passport.waist} required />
+            </label>
+            <label>
+              Vòng 3 / Mông (cm)
+              <input name="hip" type="number" min={60} max={150} defaultValue={passport.hip} required />
+            </label>
+            <label>
+              Gu mặc ưu tiên
+              <select name="fitPref" defaultValue={passport.fitPref}>
+                <option value="REGULAR">Vừa vặn (Regular Fit)</option>
+                <option value="OVERSIZED">Rộng rãi (Oversized / Relaxed)</option>
+                <option value="SLIM">Ôm dáng (Slim Fit)</option>
+              </select>
+            </label>
+          </div>
+          <button className="button" style={{ alignSelf: 'flex-start', marginTop: 8 }}>
+            Cập nhật Fashion Passport
+          </button>
+        </form>
+      </article>
 
       <article className="panel">
         <div className="row between" style={{ marginBottom: 12 }}>

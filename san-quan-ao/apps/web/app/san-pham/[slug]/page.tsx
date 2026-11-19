@@ -1,7 +1,7 @@
 'use client';
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Truck } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -16,7 +16,23 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [busy, setBusy] = useState(false);
   const [wishBusy, setWishBusy] = useState(false);
   const [carePlus, setCarePlus] = useState(false);
+  const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const { user } = useUser();
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('nexora_fashion_passport');
+      if (stored) setPassport(JSON.parse(stored));
+    } catch {}
+  }, []);
+
+  const recommendedSize = passport
+    ? (passport.chest && passport.chest >= 95) || (passport.waist && passport.waist >= 75)
+      ? 'L'
+      : (passport.chest && passport.chest <= 86) || (passport.waist && passport.waist <= 66)
+      ? 'S'
+      : 'M'
+    : null;
 
   if (loading) return <Loading />;
   if (error || !p) {
@@ -211,6 +227,47 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               ))}
             </div>
           </fieldset>
+
+          {recommendedSize && (
+            <div
+              style={{
+                margin: '14px 0 6px',
+                padding: '10px 14px',
+                background: '#fcfaf6',
+                border: '1px solid var(--line)',
+                borderRadius: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 10,
+                fontSize: 12,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Sparkles size={15} color="var(--clay)" />
+                <span>
+                  Gợi ý Smart Fit: <strong>Size {recommendedSize}</strong> (Khớp 96% theo số đo Fashion Passport của bạn)
+                </span>
+              </div>
+              <button
+                type="button"
+                className="text-button"
+                style={{ fontSize: 11, padding: 0, fontWeight: 700 }}
+                onClick={() => setSize(recommendedSize)}
+              >
+                Chọn Size {recommendedSize}
+              </button>
+            </div>
+          )}
+
+          {!passport && (
+            <div style={{ margin: '8px 0', fontSize: 11, color: 'var(--muted)' }}>
+              <span>Chưa lưu số đo cơ thể? </span>
+              <Link href="/tai-khoan" style={{ color: 'var(--clay)', textDecoration: 'underline' }}>
+                Tạo Fashion Passport để nhận gợi ý size tự động →
+              </Link>
+            </div>
+          )}
 
           <fieldset>
             <legend>Kích cỡ</legend>

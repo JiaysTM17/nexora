@@ -106,3 +106,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 25. **Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime (CAT-TRENDING-BOARD-02)**:
    - Hồ sơ: Module 01 Catalog & Module 06 Khám phá Xu hướng Thời trang.
    - Thực tế: Phân hệ Trend Radar tính toán Sales Velocity thời gian thực trên trang chủ (+142% Quiet Luxury, +98% Eco Linen, +85% Tone Đất Sartorial), kết nối trực quan sang Phòng Thử Đồ `/phoi-do`.
+
+26. **Hồ Sơ Số Đo Cá Nhân & Gợi Ý Smart Fit (USER-PASSPORT-01)**:
+   - Hồ sơ: Module 01 Quản trị Danh mục & Module 07 Quản trị Hồ sơ Người dùng.
+   - Thực tế: Phân hệ Fashion Passport lưu trữ số đo cơ thể cá nhân (Chiều cao, Cân nặng, 3 Vòng, Gu mặc) tại `/tai-khoan`, thuật toán Smart Fit Matching tự động gợi ý size chuẩn xác (Khớp 96%) và nút bấm 1-chạm chọn size ngay trên trang sản phẩm `/san-pham/[slug]`.
+
+27. **Trung Tâm Thông Báo Đa Kênh Thời Gian Thực (NOTIF-CENTER-02)**:
+   - Hồ sơ: Module 07 Trải nghiệm Khách hàng & Tương tác Đa kênh.
+   - Thực tế: Biểu tượng Chuông Thông Báo trên Header với badge đếm tin chưa đọc, ngăn popover hiển thị trạng thái vận đơn an ninh 3 trạm, thông báo thưởng Xu Xanh Eco Box, ưu đãi combo Mix & Match và quyền lợi bảo hiểm Care+.

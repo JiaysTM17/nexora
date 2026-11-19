@@ -47,6 +47,8 @@
 | **36** | **Khung Giờ Nhận Hàng Hẹn Trước & Đóng Gói Xanh (FUL-GREEN-SLOT-02)** | Module 03 & 04 | Đã hoàn thiện | Tùy chọn 3 khung giờ giao hàng (Sáng/Chiều/Tối ngoài giờ) và đóng gói xanh hộp giấy kraft tự hủy không nilon (Eco Green Box), thưởng ngay +50 Xu NEXORA Coins tại `/gio-hang` và hiển thị trên `/don-hang/[id]` |
 | **37** | **Đổi Size Tốc Hành Tận Cửa 24-48h (RET-QUICK-EXCHANGE-01)** | Module 05 | Đã hoàn thiện | Dịch vụ shipper mang trang phục size mới đến đổi trực tiếp và thu hồi size cũ trong cùng 1 lần giao nhận tận nhà tại `/don-hang/[id]`, rút ngắn thời gian đổi size còn 24-48h với 0đ phụ phí ship |
 | **38** | **Bảng Xếp Hạng Xu Hướng Thời Trang Tuần (CAT-TRENDING-BOARD-02)** | Module 01 & 06 | Đã hoàn thiện | Radar xu hướng thời trang tính toán Realtime Sales Velocity (+142% Quiet Luxury, +98% Eco Linen, +85% Tone Đất Sartorial) trực quan trên trang chủ, kết nối trực tiếp phòng thử đồ `/phoi-do` |
+| **39** | **Hồ Sơ Số Đo Cá Nhân & Gợi Ý Smart Fit (USER-PASSPORT-01)** | Module 01 & 07 | Đã hoàn thiện | Phân hệ Fashion Passport lưu trữ số đo cơ thể cá nhân (Chiều cao, Cân nặng, 3 Vòng, Gu mặc) tại `/tai-khoan`, tự động so khớp và gợi ý size thông minh (Khớp 96%) kèm nút chọn 1-chạm trên trang sản phẩm `/san-pham/[slug]` |
+| **40** | **Trung Tâm Thông Báo Đa Kênh Thời Gian Thực (NOTIF-CENTER-02)** | Module 07 | Đã hoàn thiện | Chuông thông báo trực quan trên Header với số lượng tin chưa đọc, cập nhật biến động đơn hàng, thưởng xu sống xanh Eco Box, ưu đãi combo Mix & Match và kích hoạt bảo hành Care+ |
 
 ---
 
@@ -214,6 +216,23 @@
     2. *Top 2*: Chất Liệu Tự Nhiên & Dệt Thô Mộc Premium Linen (+98% tăng trưởng).
     3. *Top 3*: Gam Màu Đất & Phong Cách Sartorial Sang Trọng (+85% tăng trưởng).
   - Tích hợp liên kết chuyển tiếp 1-click vào Phòng Thử Đồ Mix & Match `/phoi-do` để trải nghiệm trực quan cách phối đồ của xu hướng thịnh hành.
+
+### 23. Hồ Sơ Số Đo Cá Nhân & Gợi Ý Smart Fit (USER-PASSPORT-01)
+- **Mục tiêu**: Loại bỏ triệt để rủi ro chọn sai kích cỡ trang phục, nâng cao tỷ lệ hài lòng và giảm tỷ lệ hoàn trả hàng (Return Rate) trong ngành may mặc.
+- **Cơ chế**:
+  - Phân hệ Fashion Passport tích hợp tại Cổng tài khoản cá nhân `/tai-khoan`, cho phép người dùng lưu trữ 6 thông số: Chiều cao, Cân nặng, Vòng 1 (Ngực), Vòng 2 (Eo), Vòng 3 (Mông) và Gu mặc ưu tiên (Vừa vặn, Rộng rãi, Ôm dáng).
+  - Thuật toán Smart Fit Matching: Tự động tính toán và đối chiếu số đo cơ thể với bảng size (SizeChart) của từng sản phẩm khi duyệt trang chi tiết `/san-pham/[slug]`.
+  - Hiển thị huy hiệu trực quan: "Gợi ý Smart Fit: Size M (Khớp 96% theo số đo Fashion Passport của bạn)" kèm nút bấm 1-chạm chọn ngay size phù hợp.
+
+### 24. Trung Tâm Thông Báo Đa Kênh Thời Gian Thực (NOTIF-CENTER-02)
+- **Mục tiêu**: Tối ưu hóa tính tương tác và giữ chân khách hàng (Retention), cập nhật trạng thái đơn hàng và các quyền lợi thành viên kịp thời.
+- **Cơ chế**:
+  - Biểu tượng Chuông Thông Báo (Notification Bell) tích hợp trên thanh Header chính, hiển thị số lượng tin mới chưa đọc.
+  - Ngăn thông báo đa kênh hiển thị các luồng tin nổi bật:
+    1. *Cập nhật vận đơn*: Trạng thái đóng gói kiểm định cân nặng 3 trạm và mã PIN giao nhận.
+    2. *Thưởng Xu Xanh*: Thông báo cộng +50 Xu NEXORA Coins từ đóng gói hộp giấy tự hủy Eco Box.
+    3. *Ưu đãi Combo*: Thông báo chiết khấu 10% tại Phòng thử đồ Mix & Match `/phoi-do`.
+    4. *Bảo hiểm Care+*: Kích hoạt chính sách bảo hành thời trang 12 tháng tại NEXORA Atelier.
 
 ---
 
