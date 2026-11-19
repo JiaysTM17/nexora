@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -36,6 +36,9 @@ export default function AccountPage() {
     return { height: 168, weight: 58, chest: 88, waist: 68, hip: 92, fitPref: 'REGULAR' };
   });
   const [passportSaved, setPassportSaved] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(0);
+  const [weatherMode, setWeatherMode] = useState<'WARM' | 'COOL'>('WARM');
+  const [pinnedDay, setPinnedDay] = useState<number | null>(null);
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -174,6 +177,348 @@ export default function AccountPage() {
             Cập nhật Fashion Passport
           </button>
         </form>
+      </article>
+
+      {/* Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI (Capsule Wardrobe AI Stylist · SOC-WARDROBE-AI-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Layers size={18} color="var(--clay)" /> Tủ Đồ Nhộng &amp; Trợ Lý AI Stylist (Capsule Wardrobe)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Thuật toán AI Stylist tự động lập lịch phối đồ 7 ngày từ 7 món đồ thiết yếu, đồng bộ theo số đo ({passport.height}cm / {passport.weight}kg · {passport.fitPref}) của bạn.
+            </p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 11, color: 'var(--muted)', fontWeight: 600 }}>Thời tiết:</span>
+            <button
+              type="button"
+              className={`text-button ${weatherMode === 'WARM' ? 'primary' : ''}`}
+              style={{
+                fontSize: 11,
+                padding: '3px 8px',
+                background: weatherMode === 'WARM' ? '#fdf8ea' : 'transparent',
+                border: '1px solid var(--line)',
+                borderRadius: 2,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontWeight: weatherMode === 'WARM' ? 700 : 500,
+              }}
+              onClick={() => setWeatherMode('WARM')}
+            >
+              <Sun size={12} color={weatherMode === 'WARM' ? '#d97706' : 'currentColor'} /> Nắng ấm thoáng mát
+            </button>
+            <button
+              type="button"
+              className={`text-button ${weatherMode === 'COOL' ? 'primary' : ''}`}
+              style={{
+                fontSize: 11,
+                padding: '3px 8px',
+                background: weatherMode === 'COOL' ? '#eff6ff' : 'transparent',
+                border: '1px solid var(--line)',
+                borderRadius: 2,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontWeight: weatherMode === 'COOL' ? 700 : 500,
+              }}
+              onClick={() => setWeatherMode('COOL')}
+            >
+              <CloudRain size={12} color={weatherMode === 'COOL' ? '#2563eb' : 'currentColor'} /> Se lạnh thu đông
+            </button>
+          </div>
+        </div>
+
+        {/* 7-Day Day Selector Tabs */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, margin: '14px 0' }}>
+          {[
+            { day: 'Thứ 2', title: 'Work Minimal' },
+            { day: 'Thứ 3', title: 'Executive' },
+            { day: 'Thứ 4', title: 'Creative' },
+            { day: 'Thứ 5', title: 'Chic Mono' },
+            { day: 'Thứ 6', title: 'Smart Denim' },
+            { day: 'Thứ 7', title: 'Eco Weekend' },
+            { day: 'Chủ Nhật', title: 'Gallery Vibe' },
+          ].map((item, idx) => {
+            const isSelected = selectedDay === idx;
+            const isPinned = pinnedDay === idx;
+            return (
+              <button
+                key={item.day}
+                type="button"
+                onClick={() => setSelectedDay(idx)}
+                style={{
+                  padding: '8px 4px',
+                  borderRadius: 3,
+                  border: isSelected ? '2px solid var(--clay)' : '1px solid var(--line)',
+                  background: isSelected ? '#faf8f3' : '#fff',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ fontSize: 11, fontWeight: isSelected ? 700 : 500, color: isSelected ? 'var(--clay)' : 'var(--ink)' }}>
+                  {item.day}
+                </div>
+                <div style={{ fontSize: 9, color: 'var(--muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {item.title}
+                </div>
+                {isPinned && (
+                  <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#16a34a', marginTop: 3 }} />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Day Outfit Card */}
+        {(() => {
+          const weeklySets = [
+            {
+              dayName: 'Thứ 2',
+              concept: 'Quiet Luxury Minimalist',
+              harmony: '99/100 (Tone-sur-Tone Hoàn Hảo)',
+              warm: {
+                top: 'Áo sơ mi lụa tơ tằm dệt thủ công (Trắng Ngà)',
+                bottom: 'Quần tây sartorial xếp ly kép (Nâu Cát)',
+                layer: 'Khăn lụa bỏ túi atelier',
+                shoes: 'Loafer da lộn thuộc thảo mộc',
+              },
+              cool: {
+                top: 'Áo sơ mi lụa tơ tằm dệt thủ công (Trắng Ngà)',
+                bottom: 'Quần tây sartorial xếp ly kép (Nâu Cát)',
+                layer: 'Áo khoác Blazer Linen hai hàng khuy dáng suông (Xám Melange)',
+                shoes: 'Derby da bò Ý nguyên tấm',
+              },
+              tags: ['#OfficeChic', '#QuietLuxury', '#NEXORA_Atelier'],
+              rationale: `Phom dáng ${passport.fitPref === 'SLIM' ? 'ôm gọn tôn đường nét' : 'suông vừa vặn phóng khoáng'} tạo phong thái chỉn chu, quyền lực nhưng thanh thoát cho ngày khởi đầu tuần mới.`,
+            },
+            {
+              dayName: 'Thứ 3',
+              concept: 'Contemporary Executive',
+              harmony: '96/100 (Hài Hòa Thanh Lịch)',
+              warm: {
+                top: 'Áo Polo dệt kim Merino sợi dài (Xám Khói)',
+                bottom: 'Quần âu may đo phom phẳng (Đen Tuyển)',
+                layer: 'Thắt lưng da thủ công',
+                shoes: 'Sneaker da thuộc tối giản',
+              },
+              cool: {
+                top: 'Áo Polo dệt kim Merino sợi dài (Xám Khói)',
+                bottom: 'Quần âu may đo phom phẳng (Đen Tuyển)',
+                layer: 'Cardigan len cashmere cổ tim mỏng',
+                shoes: 'Chelsea boots da thuộc thảo mộc',
+              },
+              tags: ['#Executive', '#MerinoWool', '#SmartCasual'],
+              rationale: 'Chất liệu len Merino thoáng khí tự nhiên, cân bằng hoàn hảo giữa tính trang trọng công sở và sự mềm mại thoải mái.',
+            },
+            {
+              dayName: 'Thứ 4',
+              concept: 'Mid-week Earth Sartorial',
+              harmony: '97/100 (Gam Màu Tự Nhiên)',
+              warm: {
+                top: 'Áo sơ mi cổ trụ linen cát sa mạc',
+                bottom: 'Quần jeans ống suông organic wash nhẹ',
+                layer: 'Đồng hồ dây da thủ công',
+                shoes: 'Loafer penny da mộc',
+              },
+              cool: {
+                top: 'Áo sơ mi cổ trụ linen cát sa mạc',
+                bottom: 'Quần jeans ống suông organic wash nhẹ',
+                layer: 'Áo khoác safari kaki đũi',
+                shoes: 'Boots cổ lửng da lộn',
+              },
+              tags: ['#EarthTone', '#OrganicDenim', '#MidWeek'],
+              rationale: 'Tông màu cát sa mạc kết hợp denim organic giúp giải tỏa áp lực giữa tuần, mang lại năng lượng sáng tạo.',
+            },
+            {
+              dayName: 'Thứ 5',
+              concept: 'High Monochrome Aesthetics',
+              harmony: '98/100 (Đơn Sắc Sang Trọng)',
+              warm: {
+                top: 'Áo dệt kim cổ lọ ngắn tay đen tuyền',
+                bottom: 'Quần xếp ly ống rộng monochrome',
+                layer: 'Trâm cài bạc đúc tối giản',
+                shoes: 'Mule gót thấp bọc da',
+              },
+              cool: {
+                top: 'Áo dệt kim cổ lọ len cừu đen tuyền',
+                bottom: 'Quần xếp ly ống rộng monochrome',
+                layer: 'Áo măng-tô dáng dài hai lớp lót lụa',
+                shoes: 'Giày bốt cao gót đen mờ',
+              },
+              tags: ['#Monochrome', '#TotalBlack', '#HighEditorial'],
+              rationale: 'Nguyên tắc đơn sắc monochrome tôn chiều cao tối đa, phù hợp các buổi thuyết trình và dạ tiệc tối.',
+            },
+            {
+              dayName: 'Thứ 6',
+              concept: 'Smart Denim & Casual Friday',
+              harmony: '95/100 (Tự Do Tinh Tế)',
+              warm: {
+                top: 'Áo thun Pima Cotton chải kỹ không đường may',
+                bottom: 'Quần jeans suông vintage wash',
+                layer: 'Áo sơ mi oxford khoác ngoài mở cúc',
+                shoes: 'Giày vải canvas đế lưu hóa',
+              },
+              cool: {
+                top: 'Áo thun Pima Cotton chải kỹ',
+                bottom: 'Quần jeans suông vintage wash',
+                layer: 'Áo nỉ chui đầu dệt cotton 420gsm',
+                shoes: 'Sneaker retro da lộn',
+              },
+              tags: ['#CasualFriday', '#PimaCotton', '#Effortless'],
+              rationale: 'Chuyển giao mượt mà từ giờ làm việc chiều thứ 6 sang buổi hẹn hò cuối tuần mà không cần thay trang phục.',
+            },
+            {
+              dayName: 'Thứ 7',
+              concept: 'Eco Linen Weekend Escape',
+              harmony: '98/100 (Hơi Thở Thiên Nhiên)',
+              warm: {
+                top: 'Áo đũi lanh cộc tay nâu đất thảo mộc',
+                bottom: 'Quần short linen mộc tự nhiên',
+                layer: 'Nón cói panama đan tay',
+                shoes: 'Sandals da quai chéo thủ công',
+              },
+              cool: {
+                top: 'Áo sơ mi đũi lanh dài tay',
+                bottom: 'Quần lanh ống đứng nhuộm chàm tự nhiên',
+                layer: 'Khăn quàng đũi tơ tằm thô',
+                shoes: 'Espadrilles đế cói Tây Ban Nha',
+              },
+              tags: ['#EcoLinen', '#WeekendEscape', '#SlowFashion'],
+              rationale: '100% sợi tự nhiên phân hủy sinh học, nâng niu làn da trong các chuyến dã ngoại và nghỉ dưỡng.',
+            },
+            {
+              dayName: 'Chủ Nhật',
+              concept: 'Sunday Gallery & Atelier Brunch',
+              harmony: '96/100 (Cảm Hứng Nghệ Thuật)',
+              warm: {
+                top: 'Áo lụa dáng suông cổ thuyền bay bổng',
+                bottom: 'Quần culottes lụa cát mềm rủ',
+                layer: 'Túi tote canvas mộc dập logo dập chìm',
+                shoes: 'Giày búp bê da cừu siêu mềm',
+              },
+              cool: {
+                top: 'Áo len dệt thưa phom oversized',
+                bottom: 'Chân váy xếp ly lụa satin mờ',
+                layer: 'Áo choàng poncho len lông cừu',
+                shoes: 'Ankle boots da thuộc',
+              },
+              tags: ['#ArtGallery', '#SundayBrunch', '#PureComfort'],
+              rationale: 'Tạo hình nghệ thuật phóng khoáng, hoàn hảo cho những buổi ghé thăm triển lãm nghệ thuật và cà phê nhẹ nhàng.',
+            },
+          ];
+
+          const current = weeklySets[selectedDay];
+          const outfit = weatherMode === 'WARM' ? current.warm : current.cool;
+          const isCurrentPinned = pinnedDay === selectedDay;
+
+          return (
+            <div
+              style={{
+                border: '1px solid var(--line)',
+                borderRadius: 4,
+                padding: '16px 20px',
+                background: '#fff',
+                position: 'relative',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
+                <div>
+                  <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clay)', fontWeight: 700 }}>
+                    LỊCH PHỐI ĐỒ {current.dayName.toUpperCase()} · AI STYLIST
+                  </span>
+                  <h3 style={{ margin: '2px 0', fontSize: 16 }}>{current.concept}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
+                    <span>Chỉ số hòa sắc: <strong style={{ color: '#166534' }}>{current.harmony}</strong></span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    style={{
+                      fontSize: 12,
+                      padding: '6px 12px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      background: isCurrentPinned ? '#f0fdf4' : undefined,
+                      borderColor: isCurrentPinned ? '#16a34a' : undefined,
+                      color: isCurrentPinned ? '#166534' : undefined,
+                    }}
+                    onClick={() => setPinnedDay(isCurrentPinned ? null : selectedDay)}
+                  >
+                    {isCurrentPinned ? <Check size={14} /> : <Calendar size={14} />}
+                    {isCurrentPinned ? 'Đã ghim hôm nay' : 'Chọn mặc hôm nay'}
+                  </button>
+                  <Link
+                    href={`/cong-dong`}
+                    className="button"
+                    style={{ fontSize: 12, padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                  >
+                    <Share2 size={14} /> Đăng OOTD Lookbook
+                  </Link>
+                </div>
+              </div>
+
+              {/* Outfit Layers Detail */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, margin: '14px 0', padding: '12px 14px', background: '#faf9f5', borderRadius: 3 }}>
+                <div>
+                  <small style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase' }}>Áo chính (Top)</small>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{outfit.top}</div>
+                </div>
+                <div>
+                  <small style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase' }}>Quần / Chân váy (Bottom)</small>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{outfit.bottom}</div>
+                </div>
+                <div>
+                  <small style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase' }}>Áo khoác / Layer (Outerwear)</small>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{outfit.layer}</div>
+                </div>
+                <div>
+                  <small style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase' }}>Giày &amp; Phụ kiện (Footwear)</small>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{outfit.shoes}</div>
+                </div>
+              </div>
+
+              <p style={{ margin: '8px 0', fontSize: 12, color: 'var(--muted)', fontStyle: 'italic', lineHeight: 1.6 }}>
+                💡 <strong>Ghi chú AI Stylist:</strong> {current.rationale}
+              </p>
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
+                {current.tags.map(tag => (
+                  <span key={tag} style={{ fontSize: 11, background: '#f5f0e8', color: 'var(--ink)', padding: '2px 8px', borderRadius: 3 }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Capsule Wardrobe Missing Piece Recommender */}
+        <div style={{ marginTop: 14, padding: '12px 16px', background: '#fcfcfc', border: '1px dashed var(--line)', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Shirt size={22} color="var(--clay)" />
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 600 }}>Mảnh Ghép Capsule Hoàn Hảo (Missing Piece Suggestion)</div>
+              <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--muted)' }}>
+                Tủ đồ của bạn đang thiếu 1 chiếc <strong>Áo khoác Linen dáng suông</strong> để mở khóa thêm 4 công thức phối đồ đa tầng mùa này.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/san-pham/ao-khoac-linen-dang-suong"
+            className="text-button"
+            style={{ fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+          >
+            Khám phá mảnh ghép <ExternalLink size={12} />
+          </Link>
+        </div>
       </article>
 
       <article className="panel">

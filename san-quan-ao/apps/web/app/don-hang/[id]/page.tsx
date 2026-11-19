@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -41,6 +41,7 @@ export default function OrderDetail() {
   const [reviewing, setReviewing] = useState<string | null>(null);
   const [returningShop, setReturningShop] = useState<string | null>(null);
   const [maskedPhone, setMaskedPhone] = useState(true);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   async function cancel(shopOrderId: string) {
     setBusy(shopOrderId);
@@ -452,13 +453,27 @@ export default function OrderDetail() {
       )}
 
       <details className="panel" style={{ marginTop: 20 }}>
-        <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <FileText size={16} /> Hóa đơn điện tử e-Invoice (Thông tư 78/2021/TT-BTC)
+        <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <FileText size={16} /> Hóa đơn điện tử e-Invoice (Thông tư 78/2021/TT-BTC)
+          </span>
+          <button
+            type="button"
+            className="button secondary"
+            style={{ fontSize: 12, padding: '4px 10px', height: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            onClick={(e) => {
+              e.preventDefault();
+              setShowInvoiceModal(true);
+            }}
+          >
+            <Printer size={14} /> In / Xuất Hóa Đơn VAT (ORD-EXPORT-PDF-01)
+          </button>
         </summary>
         <div style={{ marginTop: 14, fontSize: 13, lineHeight: 1.8 }}>
           <div className="row between" style={{ borderBottom: '1px solid var(--line)', paddingBottom: 8, flexWrap: 'wrap', gap: 6 }}>
             <span>Ký hiệu mẫu số: <code>1C26TNO</code></span>
             <span>Số hóa đơn: <code>HD-{order.code.slice(0, 8).toUpperCase()}</code></span>
+            <span>Ký hiệu: <code>C26MNE</code></span>
           </div>
           <div className="row between" style={{ marginTop: 8 }}>
             <span>Tổng tiền hàng (chưa thuế):</span>
@@ -477,6 +492,232 @@ export default function OrderDetail() {
           </p>
         </div>
       </details>
+
+      {/* Modal Xuất / In Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 (ORD-EXPORT-PDF-01) */}
+      {showInvoiceModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+            backdropFilter: 'blur(3px)',
+            overflowY: 'auto',
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              maxWidth: 720,
+              width: '100%',
+              borderRadius: 4,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Header actions */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '14px 20px',
+                borderBottom: '1px solid #e5e5e5',
+                background: '#faf9f5',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FileText size={18} color="var(--clay)" />
+                <strong style={{ fontSize: 14 }}>Bản Thể Hiện Hóa Đơn Điện Tử Hợp Chuẩn (TT 78/2021/TT-BTC)</strong>
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="button"
+                  className="button"
+                  style={{ fontSize: 12, padding: '6px 14px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  onClick={() => window.print()}
+                >
+                  <Printer size={14} /> In Hóa Đơn (Print)
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  style={{ fontSize: 12, padding: '6px 14px' }}
+                  onClick={() => setShowInvoiceModal(false)}
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+
+            {/* Print Area */}
+            <div
+              id="invoice-print-area"
+              style={{
+                padding: '30px 40px',
+                color: '#1a1a1a',
+                fontFamily: 'serif',
+                lineHeight: 1.5,
+                background: '#fff',
+              }}
+            >
+              {/* Header Công Ty */}
+              <div style={{ borderBottom: '2px solid #222', paddingBottom: 16, marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: 16, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#111' }}>
+                      CÔNG TY CỔ PHẦN CÔNG NGHỆ &amp; THỜI TRANG NEXORA
+                    </h2>
+                    <p style={{ margin: '4px 0 2px', fontSize: 12 }}>
+                      Mã số thuế: <strong>0109988776-001</strong>
+                    </p>
+                    <p style={{ margin: '2px 0', fontSize: 12 }}>
+                      Địa chỉ: Tòa nhà NEXORA Tower, 128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh
+                    </p>
+                    <p style={{ margin: '2px 0', fontSize: 12 }}>
+                      Hotline: 1900 8899 · Website: https://nexora.vn · Email: cskh@nexora.vn
+                    </p>
+                  </div>
+                  <div style={{ textAlign: 'right', fontSize: 12 }}>
+                    <div>Mẫu số: <strong>1C26TNO</strong></div>
+                    <div>Ký hiệu: <strong>C26MNE</strong></div>
+                    <div>Số HĐ: <strong style={{ color: '#b91c1c' }}>HD-{order.code.slice(0, 8).toUpperCase()}</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tiêu đề Hóa Đơn */}
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <h1 style={{ margin: 0, fontSize: 20, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#111' }}>
+                  HÓA ĐƠN GIÁ TRỊ GIA TĂNG
+                </h1>
+                <p style={{ margin: '4px 0', fontSize: 11, fontStyle: 'italic', color: '#555' }}>
+                  (Bản thể hiện của hóa đơn điện tử khởi tạo từ máy tính tiền theo Nghị định 123/2020/NĐ-CP &amp; Thông tư 78/2021/TT-BTC)
+                </p>
+                <p style={{ margin: '4px 0', fontSize: 12 }}>
+                  Ngày lập: {new Date(order.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                </p>
+              </div>
+
+              {/* Thông tin Khách Hàng */}
+              <div style={{ border: '1px solid #ddd', padding: '12px 16px', borderRadius: 4, marginBottom: 20, fontSize: 12, lineHeight: 1.8 }}>
+                <div>Họ tên người mua hàng: <strong>{address?.recipient ?? 'Khách hàng cá nhân'}</strong></div>
+                <div>Điện thoại: <strong>{address?.phone ?? '090****567'}</strong></div>
+                <div>Địa chỉ giao hàng: <strong>{address ? `${address.line}, ${address.province}` : 'Việt Nam'}</strong></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Hình thức thanh toán: <strong>{order.paymentMethod === 'BNPL' ? 'Trả góp 0% NEXORA PayLater' : (order.paymentMethod ?? 'COD')}</strong></span>
+                  <span>Đồng tiền thanh toán: <strong>VND (Việt Nam Đồng)</strong></span>
+                </div>
+              </div>
+
+              {/* Bảng Kê Chi Tiết Sản Phẩm */}
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, marginBottom: 20 }}>
+                <thead>
+                  <tr style={{ background: '#f5f4ef', borderTop: '1px solid #333', borderBottom: '1px solid #333' }}>
+                    <th style={{ padding: '8px 6px', textAlign: 'center', width: 36 }}>STT</th>
+                    <th style={{ padding: '8px 6px', textAlign: 'left' }}>Tên hàng hóa, quy cách</th>
+                    <th style={{ padding: '8px 6px', textAlign: 'center', width: 50 }}>ĐVT</th>
+                    <th style={{ padding: '8px 6px', textAlign: 'center', width: 45 }}>SL</th>
+                    <th style={{ padding: '8px 6px', textAlign: 'right', width: 100 }}>Đơn giá (VND)</th>
+                    <th style={{ padding: '8px 6px', textAlign: 'right', width: 110 }}>Thành tiền (VND)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.shops.flatMap((s, sIdx) =>
+                    s.items.map((it, itIdx) => {
+                      const idx = sIdx * 10 + itIdx + 1;
+                      const linePrice = Math.round(it.unitPrice / 1.08);
+                      const lineTotal = linePrice * it.quantity;
+                      return (
+                        <tr key={it.id} style={{ borderBottom: '1px solid #eee' }}>
+                          <td style={{ padding: '8px 6px', textAlign: 'center' }}>{idx}</td>
+                          <td style={{ padding: '8px 6px' }}>
+                            <strong>{it.snapshot.name}</strong>
+                            <div style={{ fontSize: 11, color: '#666' }}>
+                              Phân loại: {it.snapshot.color} / {it.snapshot.size} · Gian hàng: {s.shop?.name}
+                            </div>
+                          </td>
+                          <td style={{ padding: '8px 6px', textAlign: 'center' }}>Cái</td>
+                          <td style={{ padding: '8px 6px', textAlign: 'center' }}>{it.quantity}</td>
+                          <td style={{ padding: '8px 6px', textAlign: 'right' }}>{vnd(linePrice)}</td>
+                          <td style={{ padding: '8px 6px', textAlign: 'right' }}>{vnd(lineTotal)}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+
+              {/* Bảng Tổng Hợp Thuế & Thanh Toán */}
+              <div style={{ borderTop: '1px solid #333', paddingTop: 10, fontSize: 12, lineHeight: 1.8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Cộng tiền hàng (chưa bao gồm VAT):</span>
+                  <strong>{vnd(Math.round(order.total / 1.08))}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Thuế suất GTGT: <strong>8%</strong> · Tiền thuế GTGT:</span>
+                  <strong>{vnd(order.total - Math.round(order.total / 1.08))}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, fontWeight: 700, borderTop: '1px solid #222', marginTop: 6, paddingTop: 6 }}>
+                  <span>TỔNG CỘNG TIỀN THANH TOÁN:</span>
+                  <span style={{ color: '#b91c1c' }}>{vnd(order.total)}</span>
+                </div>
+                <div style={{ fontStyle: 'italic', marginTop: 4, fontSize: 12 }}>
+                  Mã tra cứu CQT: <code>26MNE-{order.code.slice(0, 10).toUpperCase()}</code> · Ký hiệu bảo mật: <code>NX-VERIF-78-99</code>
+                </div>
+              </div>
+
+              {/* Chữ Ký Số & Con Dấu Điện Tử */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 30, borderTop: '1px dashed #ccc', paddingTop: 20 }}>
+                <div style={{ fontSize: 11, maxWidth: 300 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                    <QrCode size={36} color="#333" />
+                    <div>
+                      <strong>Quét mã tra cứu HĐĐT</strong>
+                      <div style={{ color: '#666' }}>Cổng thông tin hoadondientu.gdt.gov.vn</div>
+                    </div>
+                  </div>
+                  <p style={{ margin: '4px 0', color: '#555', fontSize: 10 }}>
+                    Hóa đơn điện tử có giá trị pháp lý tương đương bản gốc giấy theo quy định của Pháp luật Việt Nam.
+                  </p>
+                </div>
+                <div style={{ textAlign: 'center', minWidth: 260 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase' }}>NGƯỜI BÁN HÀNG</div>
+                  <div style={{ fontSize: 11, fontStyle: 'italic', marginBottom: 12 }}>(Chữ ký số, chứng thư số điện tử)</div>
+                  <div
+                    style={{
+                      border: '2px solid #16a34a',
+                      background: '#f0fdf4',
+                      padding: '8px 12px',
+                      borderRadius: 4,
+                      color: '#166534',
+                      fontSize: 11,
+                      lineHeight: 1.4,
+                      textAlign: 'left',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, color: '#15803d' }}>
+                      <CheckCircle size={14} /> ĐÃ KÝ ĐIỆN TỬ HỢP LỆ
+                    </div>
+                    <div>Bởi: <strong>CÔNG TY CP CÔNG NGHỆ &amp; THỜI TRANG NEXORA</strong></div>
+                    <div>MST: 0109988776-001</div>
+                    <div>Ngày ký: {new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

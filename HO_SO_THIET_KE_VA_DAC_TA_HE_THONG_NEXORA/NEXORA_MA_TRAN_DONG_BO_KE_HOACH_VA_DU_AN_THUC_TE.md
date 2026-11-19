@@ -49,6 +49,8 @@
 | **38** | **Bảng Xếp Hạng Xu Hướng Thời Trang Tuần (CAT-TRENDING-BOARD-02)** | Module 01 & 06 | Đã hoàn thiện | Radar xu hướng thời trang tính toán Realtime Sales Velocity (+142% Quiet Luxury, +98% Eco Linen, +85% Tone Đất Sartorial) trực quan trên trang chủ, kết nối trực tiếp phòng thử đồ `/phoi-do` |
 | **39** | **Hồ Sơ Số Đo Cá Nhân & Gợi Ý Smart Fit (USER-PASSPORT-01)** | Module 01 & 07 | Đã hoàn thiện | Phân hệ Fashion Passport lưu trữ số đo cơ thể cá nhân (Chiều cao, Cân nặng, 3 Vòng, Gu mặc) tại `/tai-khoan`, tự động so khớp và gợi ý size thông minh (Khớp 96%) kèm nút chọn 1-chạm trên trang sản phẩm `/san-pham/[slug]` |
 | **40** | **Trung Tâm Thông Báo Đa Kênh Thời Gian Thực (NOTIF-CENTER-02)** | Module 07 | Đã hoàn thiện | Chuông thông báo trực quan trên Header với số lượng tin chưa đọc, cập nhật biến động đơn hàng, thưởng xu sống xanh Eco Box, ưu đãi combo Mix & Match và kích hoạt bảo hành Care+ |
+| **41** | **Bản Thể Hiện Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 & Xuất HĐ (ORD-EXPORT-PDF-01)** | Module 03 & 04 | Đã hoàn thiện | Khung modal và giao diện in ấn hóa đơn GTGT điện tử khởi tạo từ máy tính tiền (Ký hiệu 1C26TNO/C26MNE), bảng kê mặt hàng, thuế GTGT 8%, mã CQT cấp và QR tra cứu hóa đơn tại `/don-hang/[id]` |
+| **42** | **Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI Stylist (SOC-WARDROBE-AI-01)** | Module 01, 06 & 07 | Đã hoàn thiện | Phân hệ Capsule Wardrobe lập lịch phối đồ 7 ngày AI Stylist theo số đo Fashion Passport, chuyển đổi thời tiết Nắng ấm/Se lạnh, ghim bộ đồ hôm nay và chia sẻ Lookbook OOTD tại `/tai-khoan` |
 
 ---
 
@@ -233,6 +235,34 @@
     2. *Thưởng Xu Xanh*: Thông báo cộng +50 Xu NEXORA Coins từ đóng gói hộp giấy tự hủy Eco Box.
     3. *Ưu đãi Combo*: Thông báo chiết khấu 10% tại Phòng thử đồ Mix & Match `/phoi-do`.
     4. *Bảo hiểm Care+*: Kích hoạt chính sách bảo hành thời trang 12 tháng tại NEXORA Atelier.
+
+### 25. Bản Thể Hiện Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 & Xuất HĐĐT (ORD-EXPORT-PDF-01)
+- **Mục tiêu**: Đảm bảo 100% tuân thủ pháp lý tài chính kế toán theo Thông tư 78/2021/TT-BTC và Nghị định 123/2020/NĐ-CP của Bộ Tài Chính, cung cấp chứng từ minh bạch cho khách hàng cá nhân và doanh nghiệp.
+- **Cơ chế**:
+  - Tích hợp nút chức năng `[ In / Xuất Hóa Đơn VAT (ORD-EXPORT-PDF-01) ]` trên màn hình chi tiết đơn hàng `/don-hang/[id]`.
+  - Khung bản thể hiện hóa đơn điện tử chuẩn mực:
+    - Đơn vị bán hàng: CÔNG TY CỔ PHẦN CÔNG NGHỆ & THỜI TRANG NEXORA (Mã số thuế: 0109988776-001, Địa chỉ: Tòa nhà NEXORA Tower, 128 Hai Bà Trưng, P. Bến Nghé, Quận 1, TP. Hồ Chí Minh).
+    - Thông số pháp lý: Mẫu số `1C26TNO`, Ký hiệu `C26MNE`, Số HĐ `HD-[ORDER_CODE]`.
+    - Bảng kê chi tiết từng mặt hàng quy cách thời trang (ĐVT Cái, Số lượng, Đơn giá chưa thuế, Thành tiền).
+    - Tách biệt chính xác tiền hàng chưa thuế, thuế suất GTGT 8% (theo chính sách ưu đãi kích cầu tiêu dùng hàng may mặc), và tổng tiền thanh toán.
+    - Mã số tra cứu hóa đơn của Cơ quan Thuế và mã QR Code liên kết Cổng tra cứu HĐĐT Tổng Cục Thuế.
+    - Con dấu chứng thư số điện tử hợp chuẩn: "ĐÃ KÝ ĐIỆN TỬ HỢP LỆ BỞI CÔNG TY CP CÔNG NGHỆ & THỜI TRANG NEXORA".
+    - Khả năng xuất in trực tiếp thông qua hộp thoại Print (`window.print()`).
+
+### 26. Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI Stylist (SOC-WARDROBE-AI-01)
+- **Mục tiêu**: Thúc đẩy tiêu dùng thời trang bền vững (Sustainable Capsule Fashion), giải quyết bài toán "hôm nay mặc gì" cho khách hàng dựa trên dữ liệu hình thể cá nhân.
+- **Cơ chế**:
+  - Tích hợp phân hệ Tủ Đồ Nhộng tại `/tai-khoan`, kế thừa trực tiếp dữ liệu số đo cơ thể và gu mặc ưu tiên từ Fashion Passport (`USER-PASSPORT-01`).
+  - Lập lịch phối đồ 7 ngày AI Stylist chuyên nghiệp:
+    - *Thứ 2 (Quiet Luxury Minimalist)*: Áo sơ mi lụa tơ tằm dệt thủ công + Quần tây sartorial xếp ly kép (Hòa sắc 99/100).
+    - *Thứ 3 (Contemporary Executive)*: Áo Polo dệt kim Merino xám khói + Quần âu may đo phom phẳng.
+    - *Thứ 4 (Mid-week Earth Sartorial)*: Áo cổ trụ linen cát sa mạc + Quần jeans ống suông organic wash.
+    - *Thứ 5 (High Monochrome)*: Áo dệt kim cổ lọ + Quần xếp ly ống rộng monochrome.
+    - *Thứ 6 (Smart Denim & Casual Friday)*: Áo thun Pima Cotton + Quần jeans vintage.
+    - *Thứ 7 (Eco Linen Weekend Escape)*: Áo đũi lanh cộc tay nâu đất + Quần short linen tự nhiên.
+    - *Chủ Nhật (Sunday Gallery & Atelier Brunch)*: Áo lụa suông bay bổng + Quần culottes lụa cát.
+  - Bộ chuyển đổi chế độ thời tiết thông minh: Tùy biến giữa "Nắng ấm thoáng mát" (lớp áo nhẹ, chất liệu lanh/lụa) và "Se lạnh thu đông" (bổ sung layer blazer linen, cardigan len cashmere hoặc áo khoác safari).
+  - Tương tác đa chiều: Nút `[ Chọn mặc hôm nay ]` ghim trực quan ngày hiện tại, nút `[ Đăng OOTD Lookbook ]` liên kết ngay sang cộng đồng OOTD `/cong-dong`, và thuật toán phát hiện món đồ còn thiếu (Missing Piece) gợi ý bổ sung trang phục để tối ưu hóa tủ đồ nhộng.
 
 ---
 

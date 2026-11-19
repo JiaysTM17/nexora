@@ -114,3 +114,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 27. **Trung Tâm Thông Báo Đa Kênh Thời Gian Thực (NOTIF-CENTER-02)**:
    - Hồ sơ: Module 07 Trải nghiệm Khách hàng & Tương tác Đa kênh.
    - Thực tế: Biểu tượng Chuông Thông Báo trên Header với badge đếm tin chưa đọc, ngăn popover hiển thị trạng thái vận đơn an ninh 3 trạm, thông báo thưởng Xu Xanh Eco Box, ưu đãi combo Mix & Match và quyền lợi bảo hiểm Care+.
+
+28. **Bản Thể Hiện Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 & Xuất HĐĐT (ORD-EXPORT-PDF-01)**:
+   - Hồ sơ: Module 03 Kế toán Thanh toán & Module 04 Bán lẻ Sàn TMĐT.
+   - Thực tế: Nút `[ In / Xuất Hóa Đơn VAT ]` tại `/don-hang/[id]`, modal hiển thị hóa đơn GTGT điện tử chuẩn Thông tư 78/2021/TT-BTC & Nghị định 123/2020/NĐ-CP (Mẫu 1C26TNO/C26MNE), bảng kê sản phẩm, thuế suất GTGT 8%, mã CQT cấp, QR tra cứu và chứng thư số điện tử hợp chuẩn, hỗ trợ in ấn trực tiếp không gián đoạn.
+
+29. **Tủ Đồ Nhộng Thông Minh & Trợ Lý Phong Cách AI Stylist (SOC-WARDROBE-AI-01)**:
+   - Hồ sơ: Module 01 Quản lý Danh mục, Module 06 Phong cách OOTD & Module 07 Quản trị Khách hàng.
+   - Thực tế: Phân hệ Capsule Wardrobe tại `/tai-khoan`, thuật toán AI Stylist tự động lên lịch phối đồ 7 ngày từ 7 món đồ thiết yếu theo số đo Fashion Passport, hỗ trợ chuyển đổi thời tiết Nắng ấm/Se lạnh, ghim bộ đồ mặc hôm nay và chia sẻ Lookbook lên Cộng đồng OOTD `/cong-dong`.

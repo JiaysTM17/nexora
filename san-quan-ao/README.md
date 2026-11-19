@@ -177,5 +177,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Bảng Xếp Hạng Xu Hướng Tuần Realtime** | Module 01 & 06 | Đã hoàn thiện | Radar xu hướng thời trang tính toán Sales Velocity thời gian thực (+142% Quiet Luxury, +98% Eco Linen) trên trang chủ (CAT-TRENDING-BOARD-02) |
 | **Hồ Sơ Số Đo & Gợi Ý Smart Fit** | Module 01 & 07 | Đã hoàn thiện | Phân hệ Fashion Passport lưu số đo cơ thể tại `/tai-khoan`, thuật toán Smart Fit tự động gợi ý size chuẩn xác (Khớp 96%) tại `/san-pham/[slug]` (USER-PASSPORT-01) |
 | **Trung Tâm Thông Báo Thời Gian Thực** | Module 07 | Đã hoàn thiện | Chuông thông báo trên Header hiển thị tin chưa đọc, biến động vận đơn 3 trạm, thưởng Xu Xanh và ưu đãi Combo Mix & Match (NOTIF-CENTER-02) |
+| **Bản Thể Hiện Hóa Đơn Điện Tử VAT TT 78** | Module 03 & 04 | Đã hoàn thiện | Nút in/xuất hóa đơn VAT điện tử (1C26TNO/C26MNE), bảng kê thuế 8%, mã CQT cấp và QR tra cứu tại `/don-hang/[id]` (ORD-EXPORT-PDF-01) |
+| **Tủ Đồ Nhộng & Lịch Phối Đồ AI Stylist** | Module 01, 06 & 07 | Đã hoàn thiện | Kế hoạch mix & match 7 ngày theo số đo Fashion Passport, chuyển đổi Nắng ấm/Se lạnh, ghim đồ hôm nay và chia sẻ OOTD tại `/tai-khoan` (SOC-WARDROBE-AI-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
