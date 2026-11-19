@@ -1,7 +1,7 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -489,6 +489,91 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 <BellRing size={15} /> Nhận thông báo khi có hàng lại hoặc giảm giá (USER-STOCK-ALERT-01)
               </button>
             )}
+          </div>
+
+          {/* La Bàn Phong Cách & Phụ Kiện Gợi Ý Phối Cùng (CAT-STYLE-COMPASS-01) */}
+          <div
+            style={{
+              margin: '14px 0',
+              padding: '12px 14px',
+              background: '#fdfbf7',
+              border: '1px solid #fed7aa',
+              borderRadius: 4,
+            }}
+          >
+            <div className="row between" style={{ marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Compass size={16} color="var(--clay)" />
+                <strong style={{ fontSize: 13, color: '#9a3412' }}>
+                  La Bàn Phong Cách · Phụ Kiện Hoàn Thiện Set Đồ (CAT-STYLE-COMPASS)
+                </strong>
+              </div>
+              <Link
+                href="/phoi-do"
+                style={{ fontSize: 11, color: 'var(--clay)', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                Phòng Thử Đồ →
+              </Link>
+            </div>
+            <p className="subtle" style={{ margin: '0 0 10px', fontSize: 11 }}>
+              Gợi ý 3 phụ kiện Haute Couture từ các Atelier đối tác hoàn hảo với trang phục này:
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {[
+                { name: 'Thắt Lưng Da Bò Ý Khóa Đồng', brand: 'Massimo Dutti', price: 450000, img: '/products/jacket.svg' },
+                { name: 'Khăn Lụa Bỏ Túi Dệt Tay', brand: 'Bảo Lộc Silk', price: 220000, img: '/products/scarf.svg' },
+                { name: 'Mũ Cói Đan Tay Panama', brand: 'Normandy', price: 380000, img: '/products/shoes.svg' },
+              ].map((acc, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    background: '#fff',
+                    border: '1px solid var(--line)',
+                    borderRadius: 3,
+                    padding: 8,
+                    textAlign: 'center',
+                    fontSize: 11,
+                  }}
+                >
+                  <img
+                    src={acc.img}
+                    alt={acc.name}
+                    style={{ width: '100%', height: 60, objectFit: 'contain', marginBottom: 4 }}
+                    onError={(e) => {
+                      const t = e.currentTarget as HTMLImageElement;
+                      if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg';
+                    }}
+                  />
+                  <strong style={{ fontSize: 11, display: 'block', lineHeight: 1.3, color: 'var(--ink)' }}>
+                    {acc.name}
+                  </strong>
+                  <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block' }}>{acc.brand}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--clay)', marginTop: 2, display: 'block' }}>
+                    {vnd(acc.price)}
+                  </span>
+                  <button
+                    type="button"
+                    style={{
+                      marginTop: 4,
+                      padding: '2px 8px',
+                      fontSize: 10,
+                      background: 'var(--clay)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      width: '100%',
+                    }}
+                    onClick={() => {
+                      setNotice(`Đã thêm "${acc.name}" vào danh sách gợi ý phối đồ của bạn!`);
+                    }}
+                  >
+                    + Phối cùng
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="delivery-note">

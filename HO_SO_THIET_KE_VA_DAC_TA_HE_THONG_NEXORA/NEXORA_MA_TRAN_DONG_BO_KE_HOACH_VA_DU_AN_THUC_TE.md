@@ -65,6 +65,8 @@
 | **54** | **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao Thực Tế Cùng KOC (SOC-FIT-FEEDBACK-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ Fit Q&A tại `/cong-dong`: Thẻ lọc câu hỏi số đo cơ thể, phím tắt nhanh 1-chạm (1m58 48kg mặc size gì), huy hiệu KOC Tác giả phản hồi SLA 24h |
 | **55** | **Thước Đo Chân Số Hóa & Khuyến Nghị Size Giày (USER-FOOTWEAR-SCAN-01)** | Module 07 & Fit | Đã hoàn thiện | Mở rộng Fashion Passport tại `/tai-khoan`: Lưu trữ chiều dài/rộng bàn chân (mm), dạng vòm chân (Bẹt/Chuẩn/Cao), tự động quy đổi kích cỡ chuẩn quốc tế EU/US/UK và gợi ý lót giày |
 | **56** | **Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)** | Module 01 & CSR | Đã hoàn thiện | Bảng đối chiếu 5 tiêu chí giữa sợi tự nhiên cao cấp và vải Polyester tổng hợp tại `/san-pham/[slug]`: Độ thoáng khí 9.8/10, an toàn da 10/10, điều hòa thân nhiệt 9.6/10 và độ bền >5 năm |
+| **57** | **Khám Phá Xu Hướng & Bảng Màu OOTD (SOC-OOTD-TAG-DISCOVERY-02)** | Module 06 & Social | Đã hoàn thiện | Thanh khám phá hashtag & bảng màu thời trang tại `/cong-dong`: Lọc tức thì theo chủ đề (#QuietLuxury, #LinenNormandy, #BaoLocSilk, #SartorialSuit, #Minimalist) kết nối sản phẩm thực tế |
+| **58** | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ La bàn phong cách (Style Compass) tại `/san-pham/[slug]`: Gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa dệt, Nón cói Panama), thêm nhanh vào danh sách phối đồ và kết nối Studio Mix & Match `/phoi-do` |
 
 ---
 
@@ -429,6 +431,31 @@
     3. *Khả năng điều hòa thân nhiệt 4 mùa*: 9.6/10 (mát lạnh mùa hè, giữ ấm se lạnh) so với 2.8/10 (nóng bức khi ra nắng, lạnh vào mùa đông).
     4. *Tuổi thọ & Vòng đời (> 5 năm)*: Càng giặt càng mềm và đanh sợi so với dễ bục chỉ, xù lông vón cục sau 10 lần giặt.
     5. *Trách nhiệm môi trường*: 100% tự phân hủy sinh học trong đất so với phát tán vi nhựa và mất hơn 200 năm phân rã.
+
+### 41. Khám Phá Xu Hướng & Bảng Màu OOTD (SOC-OOTD-TAG-DISCOVERY-02)
+- **Mục tiêu**: Giúp người dùng dễ dàng định hướng phong cách sống và tìm kiếm các bản phối OOTD thực tế theo các xu hướng thời trang bền vững và bảng màu tự nhiên đang thịnh hành nhất.
+- **Cơ chế**:
+  - Tích hợp thanh khám phá xu hướng thời trang (Trend Tag & Palette Discovery) ngay trên đầu trang Cộng đồng `/cong-dong`.
+  - Bộ 6 thẻ xu hướng tuyển chọn:
+    1. *#Tất cả (All)*: Toàn bộ bảng tin cộng đồng.
+    2. *#QuietLuxury*: Phong cách sang trọng thầm lặng, chất liệu cao cấp không phô trương logo.
+    3. *#LinenNormandy*: Sợi lanh mộc mạc thoáng mát từ vùng Normandie Pháp.
+    4. *#BaoLocSilk*: Lụa tơ tằm dệt thủ công Bảo Lộc óng ả mềm mại.
+    5. *#SartorialSuit*: May đo âu phục cổ điển chỉn chu lịch lãm.
+    6. *#Minimalist*: Tối giản kiến trúc đường nét tinh gọn bền vững.
+  - Tự động lọc các bài viết OOTD trong nháy mắt (Real-time Instant Filter) dựa trên hashtag, nội dung bài đăng và danh mục sản phẩm gắn kèm.
+
+### 42. La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)
+- **Mục tiêu**: Nâng cao giá trị giỏ hàng (AOV) và tư vấn thẩm mỹ đồng điệu cho khách hàng bằng cách gợi ý các món phụ kiện thủ công chuẩn xác cho từng trang phục.
+- **Cơ chế**:
+  - Tích hợp khối La Bàn Phối Đồ (Style Compass & Curated Accessory Matcher) ngay dưới thông tin sản phẩm tại `/san-pham/[slug]`.
+  - Giới thiệu 3 món phụ kiện thiết yếu hoàn thiện tổng thể trang phục:
+    1. *Thắt Lưng Da Bò Ý Thuộc Thảo Mộc (Artisan Italian Leather Belt)*: Khóa đồng cổ điển, tạo điểm nhấn vòng eo tinh tế.
+    2. *Khăn Cài Túi Áo Lụa Tơ Tằm Dệt Tay (Hand-woven Silk Pocket Square)*: Họa tiết chìm Bảo Lộc sang trọng.
+    3. *Nón Cói Panama Đan Thủ Công (Montecristi Fine Straw Hat)*: Vành nón che nắng tự nhiên phóng khoáng.
+  - Tính năng tương tác:
+    - Nút `[ + Thêm Vào Phối Đồ ]` tự động cập nhật danh sách phụ kiện đã chọn và thông báo tức thì.
+    - Nút `[ Khám Phá Thêm Tại Studio Phối Đồ /phoi-do → ]` kết nối trực tiếp đến phòng thử đồ ảo Mix & Match.
 
 ---
 

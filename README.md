@@ -259,7 +259,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **49** | **Hỏi Đáp Tỉ Lệ Dáng & Chiều Cao KOC (SOC-FIT-FEEDBACK-01)** | Module 06 & Social | **100% Hoàn thiện** | Phân hệ Fit Q&A tại `/cong-dong`, thẻ lọc câu hỏi số đo cơ thể, phím tắt nhanh 1-chạm (1m58 48kg mặc size gì), huy hiệu KOC Tác giả phản hồi SLA 24h |
 | **50** | **Thước Đo Chân Số Hóa & Size Giày (USER-FOOTWEAR-SCAN-01)** | Module 07 & Fit | **100% Hoàn thiện** | Mở rộng Fashion Passport tại `/tai-khoan` với số đo chiều dài/rộng chân (mm), vòm chân, quy đổi EU/US/UK và gợi ý lót giày |
 | **51** | **Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)** | Module 01 & CSR | **100% Hoàn thiện** | Bảng ma trận đối chiếu 5 tiêu chí giữa sợi tự nhiên cao cấp và vải tổng hợp Polyester tại `/san-pham/[slug]` |
-| **52** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **52** | **Khám Phá Xu Hướng & Bảng Màu OOTD (SOC-OOTD-TAG-DISCOVERY-02)** | Module 06 & Social | **100% Hoàn thiện** | Thanh khám phá hashtag & bảng màu thời trang tại `/cong-dong`: Lọc tức thì theo chủ đề (#QuietLuxury, #LinenNormandy, #BaoLocSilk, #SartorialSuit, #Minimalist) |
+| **53** | **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)** | Module 01 & 06 | **100% Hoàn thiện** | Phân hệ La bàn phong cách Style Compass tại `/san-pham/[slug]`: Gợi ý phụ kiện cao cấp (Thắt lưng da Ý, Khăn túi lụa tơ tằm, Nón cói Panama) và liên kết Studio Mix & Match `/phoi-do` |
+| **54** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

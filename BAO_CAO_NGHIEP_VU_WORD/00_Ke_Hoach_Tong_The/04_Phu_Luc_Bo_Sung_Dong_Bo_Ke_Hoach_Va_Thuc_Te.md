@@ -178,3 +178,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 43. **Bảng Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01)**:
    - Hồ sơ: Module 01 Quản lý Danh mục & Minh bạch Nguồn gốc Chất liệu.
    - Thực tế: Bảng ma trận đối chiếu 5 tiêu chuẩn vàng tại `/san-pham/[slug]` giữa sợi tự nhiên cao cấp (Lụa Bảo Lộc, Linen Normandy, GOTS Cotton) và vải tổng hợp Polyester thị trường (thoáng khí 9.8/10, an toàn da 10/10, điều hòa thân nhiệt 9.6/10 và độ bền >5 năm).
+
+44. **Khám Phá Xu Hướng & Bảng Màu OOTD (SOC-OOTD-TAG-DISCOVERY-02)**:
+   - Hồ sơ: Module 06 Mạng xã hội OOTD & Khám phá Phong cách Sống.
+   - Thực tế: Thanh khám phá hashtag và bảng màu thời trang tại `/cong-dong` hỗ trợ lọc tức thì các bài viết OOTD theo chủ đề (#QuietLuxury, #LinenNormandy, #BaoLocSilk, #SartorialSuit, #Minimalist) kết nối các sản phẩm thực tế.
+
+45. **La Bàn Phối Đồ & Gợi Ý Phụ Kiện Tương Thích (CAT-STYLE-COMPASS-01)**:
+   - Hồ sơ: Module 01 Quản lý Danh mục & Module 06 Tư vấn Thẩm mỹ Phối đồ.
+   - Thực tế: Khối La bàn phong cách (Style Compass) tại `/san-pham/[slug]` gợi ý phụ kiện tuyển chọn (Thắt lưng da Ý, Khăn cài túi lụa tơ tằm dệt tay, Nón cói Panama đan tay), tính năng thêm nhanh vào danh sách phối đồ và kết nối phòng thử đồ ảo `/phoi-do`.
