@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2 } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -72,6 +72,26 @@ export default function AccountPage() {
   const [newPinTitle, setNewPinTitle] = useState('');
   const [newPinNote, setNewPinNote] = useState('');
   const [newPinPalette, setNewPinPalette] = useState('#d6cbba');
+  const [fashionEvents, setFashionEvents] = useState<Array<{ id: string; title: string; date: string; time: string; occasion: string; outfit: string; weather: string; vasReminder: boolean }>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('nexora_fashion_events');
+        if (stored) return JSON.parse(stored);
+      } catch {}
+    }
+    return [
+      { id: 'ev-1', title: 'Họp Chiến Lược Quý IV HĐQT', date: 'Thứ 2, 23/11', time: '09:00', occasion: 'Sartorial Power Dressing', outfit: 'Áo Blazer Dạ Len Ý + Quần Tây Xếp Ly Kép + Thắt Lưng Da Đồng', weather: 'Sài Gòn 31°C · Nắng nhẹ', vasReminder: true },
+      { id: 'ev-2', title: 'Dạ Tiệc Tối Khai Mạc Triển Lãm Sơn Mài', date: 'Thứ 4, 25/11', time: '19:30', occasion: 'Quiet Luxury Gala', outfit: 'Đầm Lụa Satin Sơn Mài Đen + Khăn Cài Tơ Tằm Bảo Lộc', weather: 'Gió mát 24°C', vasReminder: true },
+      { id: 'ev-3', title: 'Dạo Phố & Cà Phê Chụp Ảnh OOTD', date: 'Thứ 7, 28/11', time: '15:30', occasion: 'Minimalist Relaxed', outfit: 'Sơ Mi Normandy Linen Mộc + Quần Suông Cát + Nón Cói', weather: 'Nắng ấm 29°C', vasReminder: false },
+    ];
+  });
+  const [addingEvent, setAddingEvent] = useState(false);
+  const [newEventTitle, setNewEventTitle] = useState('');
+  const [newEventDate, setNewEventDate] = useState('Chủ Nhật, 29/11');
+  const [newEventTime, setNewEventTime] = useState('18:00');
+  const [newEventOccasion, setNewEventOccasion] = useState('Smart Casual Evening');
+  const [newEventOutfit, setNewEventOutfit] = useState('Áo Polo Dệt Kim Merino + Quần Tây Trắng Ngà');
+  const [newEventVasReminder, setNewEventVasReminder] = useState(true);
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -1109,6 +1129,200 @@ export default function AccountPage() {
                     Gỡ ghim
                   </button>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </article>
+
+      {/* Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục Cá Nhân (USER-FASHION-CALENDAR-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Calendar size={18} color="var(--clay)" /> Lịch Trình Sự Kiện &amp; Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Lên lịch phối đồ đón đầu sự kiện trong tuần, đồng bộ dự báo thời tiết và tự động kích hoạt nhắc hẹn giặt hấp đồ hiệu VAS Care.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              type="button"
+              className="button secondary"
+              style={{ fontSize: 11, padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+              onClick={() => setAddingEvent(!addingEvent)}
+            >
+              <Plus size={13} /> {addingEvent ? 'Hủy thêm lịch' : '+ Thêm sự kiện & set đồ'}
+            </button>
+            <Link
+              href="/phoi-do"
+              className="button"
+              style={{ fontSize: 11, padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
+              <Layers size={13} /> Mở Studio Phối Đồ
+            </Link>
+          </div>
+        </div>
+
+        {/* Add Event Form */}
+        {addingEvent && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!newEventTitle.trim()) return;
+              const newEv = {
+                id: `ev-${Date.now()}`,
+                title: newEventTitle.trim(),
+                date: newEventDate,
+                time: newEventTime,
+                occasion: newEventOccasion,
+                outfit: newEventOutfit,
+                weather: 'Dự báo: 28°C · Nắng đẹp',
+                vasReminder: newEventVasReminder,
+              };
+              const updated = [...fashionEvents, newEv];
+              setFashionEvents(updated);
+              try {
+                localStorage.setItem('nexora_fashion_events', JSON.stringify(updated));
+              } catch {}
+              setNewEventTitle('');
+              setAddingEvent(false);
+            }}
+            style={{ marginBottom: 14, padding: 12, background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 4, fontSize: 12 }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginBottom: 10 }}>
+              <label>
+                Tên sự kiện:
+                <input
+                  type="text"
+                  required
+                  placeholder="VD: Tiệc Kỷ Niệm Công Ty..."
+                  value={newEventTitle}
+                  onChange={(e) => setNewEventTitle(e.target.value)}
+                  style={{ marginTop: 4, width: '100%', fontSize: 12, padding: '6px 8px' }}
+                />
+              </label>
+
+              <label>
+                Ngày diễn ra:
+                <input
+                  type="text"
+                  required
+                  value={newEventDate}
+                  onChange={(e) => setNewEventDate(e.target.value)}
+                  style={{ marginTop: 4, width: '100%', fontSize: 12, padding: '6px 8px' }}
+                />
+              </label>
+
+              <label>
+                Giờ &amp; Ngữ cảnh:
+                <input
+                  type="text"
+                  required
+                  value={newEventOccasion}
+                  onChange={(e) => setNewEventOccasion(e.target.value)}
+                  style={{ marginTop: 4, width: '100%', fontSize: 12, padding: '6px 8px' }}
+                />
+              </label>
+
+              <label>
+                Set đồ chỉ định diện:
+                <input
+                  type="text"
+                  required
+                  value={newEventOutfit}
+                  onChange={(e) => setNewEventOutfit(e.target.value)}
+                  style={{ marginTop: 4, width: '100%', fontSize: 12, padding: '6px 8px' }}
+                />
+              </label>
+            </div>
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', marginBottom: 10 }}>
+              <input
+                type="checkbox"
+                checked={newEventVasReminder}
+                onChange={(e) => setNewEventVasReminder(e.target.checked)}
+                style={{ accentColor: 'var(--clay)' }}
+              />
+              Tự động gửi thông báo nhắc Spa / Giặt hấp đồ hiệu VAS Care trước 48 giờ
+            </label>
+
+            <button type="submit" className="button" style={{ fontSize: 11, padding: '6px 14px' }}>
+              Lưu Vào Lịch Trình Phong Cách
+            </button>
+          </form>
+        )}
+
+        {/* Fashion Events Timeline Cards */}
+        <div style={{ display: 'grid', gap: 10 }}>
+          {fashionEvents.map((ev) => (
+            <div
+              key={ev.id}
+              style={{
+                padding: '12px 16px',
+                background: '#fff',
+                border: '1px solid var(--line)',
+                borderRadius: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 12,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ padding: '8px 12px', background: '#fdf8ea', borderRadius: 4, textAlign: 'center', border: '1px solid #fed7aa', minWidth: 85 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--clay)' }}>{ev.date}</div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+                    <Clock size={10} /> {ev.time}
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <strong style={{ fontSize: 13, color: 'var(--ink)' }}>{ev.title}</strong>
+                    <span style={{ fontSize: 9, background: '#f1f5f9', color: '#475569', padding: '1px 6px', borderRadius: 2, fontWeight: 600 }}>
+                      {ev.occasion}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--clay)', marginTop: 3, fontWeight: 500 }}>
+                    👗 Trang phục: <strong>{ev.outfit}</strong>
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2, display: 'flex', gap: 12 }}>
+                    <span>⛅ {ev.weather}</span>
+                    {ev.vasReminder && (
+                      <span style={{ color: '#166534', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                        <CheckCircle2 size={11} /> Nhắc VAS Care trước 48h
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Link
+                  href="/vas-care"
+                  className="button secondary"
+                  style={{ fontSize: 10, padding: '4px 8px' }}
+                >
+                  Đặt Spa Đồ Hiệu
+                </Link>
+                <button
+                  type="button"
+                  className="text-button"
+                  style={{ padding: 4, color: '#94a3b8' }}
+                  onClick={() => {
+                    const updated = fashionEvents.filter((item) => item.id !== ev.id);
+                    setFashionEvents(updated);
+                    try {
+                      localStorage.setItem('nexora_fashion_events', JSON.stringify(updated));
+                    } catch {}
+                  }}
+                  title="Xóa sự kiện"
+                >
+                  <Trash2 size={14} />
+                </button>
               </div>
             </div>
           ))}

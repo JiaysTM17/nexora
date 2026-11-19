@@ -281,7 +281,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **71** | **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)** | Module 06 & Social | **100% Hoàn thiện** | Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% `RUNWAY20` tại `/live` |
 | **72** | **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)** | Module 04 & Logistics | **100% Hoàn thiện** | Đánh giá 1-5 sao, chọn 5 tiêu chí khen ngợi, thưởng tip bưu tá xe điện VinFast Feliz tại `/don-hang/[id]` |
 | **73** | **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)** | Module 01 & Stylist AI | **100% Hoàn thiện** | Tư vấn phong cách tương tác 24/7 cùng Senior Stylist Elena Vũ, gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size) tại `/san-pham/[slug]` |
-| **74** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **74** | **Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)** | Module 06 & 07 | **100% Hoàn thiện** | Lên kế hoạch outfit theo ngày/giờ, đồng bộ thời tiết và tự động nhắc hẹn giặt ủi đồ hiệu VAS Care trước 48h tại `/tai-khoan` |
+| **75** | **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)** | Module 01 & ESG | **100% Hoàn thiện** | Tab Chuẩn Xanh ESG tại `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier |
+| **76** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

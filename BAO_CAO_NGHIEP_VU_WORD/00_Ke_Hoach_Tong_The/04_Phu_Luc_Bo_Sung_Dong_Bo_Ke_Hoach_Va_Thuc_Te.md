@@ -266,3 +266,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 65. **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Trợ lý Tư vấn Phong cách AI.
    - Thực tế: Phân hệ tư vấn phong cách tương tác 24/7 tại `/san-pham/[slug]` với Senior Stylist Elena Vũ, gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size) và hội thoại tự động theo chất liệu sợi dệt và phom dáng riêng của sản phẩm.
+
+66. **Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)**:
+   - Hồ sơ: Module 06 Phong cách OOTD & Module 07 Cá nhân hóa Người dùng.
+   - Thực tế: Phân hệ lịch trình sự kiện thời trang tại `/tai-khoan`: Lên kế hoạch outfit theo ngày/giờ, đồng bộ dự báo thời tiết và tự động nhắc hẹn giặt ủi đồ hiệu VAS Care trước 48h.
+
+67. **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)**:
+   - Hồ sơ: Module 01 Quản trị Danh mục & Module 04 Bán lẻ Sàn TMĐT Bền Vững (ESG/CSR).
+   - Thực tế: Tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier Verified.

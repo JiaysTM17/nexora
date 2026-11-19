@@ -215,5 +215,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Khán Giả Bình Chọn Set Trình Diễn Live** | Module 06 & Social | Đã hoàn thiện | Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% `RUNWAY20` tại `/live` (LIVE-STREAM-POLL-01) |
 | **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện** | Module 04 & Logistics | Đã hoàn thiện | Đánh giá 1-5 sao, chọn tiêu chí khen ngợi, thưởng tip bưu tá xe điện VinFast Feliz tại `/don-hang/[id]` (ORD-DELIVERY-FEEDBACK-01) |
 | **Hỏi Đáp Phong Cách Cùng AI Stylist** | Module 01 & Stylist AI | Đã hoàn thiện | Tư vấn phong cách tương tác 24/7 cùng Senior Stylist Elena Vũ, gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size) tại `/san-pham/[slug]` (CAT-AI-STYLING-CONVERSATION-01) |
+| **Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục** | Module 06 & 07 | Đã hoàn thiện | Lên kế hoạch outfit đón đầu sự kiện theo ngày/giờ, đồng bộ thời tiết và nhắc hẹn giặt ủi đồ hiệu VAS Care trước 48h tại `/tai-khoan` (USER-FASHION-CALENDAR-01) |
+| **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG** | Module 01 & ESG | Đã hoàn thiện | Tab Chuẩn Xanh ESG tại `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier (SELLER-SUSTAINABLE-BADGE-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

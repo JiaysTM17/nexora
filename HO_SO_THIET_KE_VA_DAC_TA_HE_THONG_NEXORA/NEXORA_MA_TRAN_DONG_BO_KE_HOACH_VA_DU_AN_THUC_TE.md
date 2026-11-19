@@ -87,6 +87,8 @@
 | **76** | **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ bình chọn tương tác tại `/live`: Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% (RUNWAY20) |
 | **77** | **Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)** | Module 04 & Logistics | Đã hoàn thiện | Phân hệ đánh giá bưu tá tại `/don-hang/[id]`: Đánh giá 1-5 sao, chọn 5 tiêu chí khen ngợi, thưởng tip bưu tá xe điện VinFast Feliz và lưu vết phản hồi |
 | **78** | **Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)** | Module 01 & Stylist AI | Đã hoàn thiện | Phân hệ tư vấn phong cách tương tác tại `/san-pham/[slug]`: Gợi ý câu hỏi nhanh (Gala, Công sở, Nhăn vải, Chọn size), hội thoại thời gian thực cùng Senior Stylist Elena Vũ |
+| **79** | **Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ lịch trình sự kiện thời trang tại `/tai-khoan`: Lên kế hoạch outfit theo ngày/giờ, đồng bộ dự báo thời tiết và tự động nhắc hẹn giặt ủi đồ hiệu VAS Care trước 48h |
+| **80** | **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier |
 
 ---
 
@@ -674,6 +676,27 @@
     4. *📏 Tư vấn chọn size theo dáng người.*
   - Hộp nhập câu hỏi tùy biến và luồng phân tích ngôn ngữ tự nhiên: Nhận diện ngữ cảnh câu hỏi của người dùng và phản hồi tức thời dựa trên chất liệu (`p.material`), phom dáng (`p.fit`) và tinh thần thiết kế may đo của sản phẩm.
   - Lưu trữ lịch sử trao đổi vào `localStorage` (`nexora_stylist_chat_[id]`) giúp người dùng dễ dàng xem lại bất cứ lúc nào.
+
+### 63. Lịch Trình Sự Kiện & Chuẩn Bị Trang Phục Cá Nhân (USER-FASHION-CALENDAR-01)
+- **Mục tiêu**: Giúp người dùng chủ động xây dựng phong thái chỉn chu cho mọi dịp xuất hiện quan trọng trong tuần, loại bỏ hoàn toàn sự lúng túng "hôm nay mặc gì" thông qua cơ chế lên lịch trang phục đón đầu sự kiện.
+- **Cơ chế**:
+  - Tích hợp phân hệ Lịch Trình Phong Cách (Fashion Event & Outfit Planner) ngay trên trang cá nhân `/tai-khoan`.
+  - Hỗ trợ thêm sự kiện theo ngày, giờ, ngữ cảnh xuất hiện (Họp Ban Giám Đốc, Khai Mạc Triển Lãm, Dạo Phố Cuối Tuần) và gán trước set đồ chỉ định từ Tủ Đồ Nhộng (Capsule Wardrobe).
+  - Tự động tích hợp thông tin thời tiết địa phương (nhiệt độ, nắng ấm/se lạnh) để cảnh báo lựa chọn chất liệu phù hợp.
+  - Tùy chọn kích hoạt tính năng thông báo tự động nhắc gửi trang phục đi Spa / Giặt hấp đồ hiệu VAS Care trước 48 giờ để bảo đảm trang phục luôn ở trạng thái phẳng phiu hoàn mỹ nhất.
+  - Lưu vết sự kiện bền vững vào `localStorage` (`nexora_fashion_events`).
+
+### 64. Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG Bền Vững (SELLER-SUSTAINABLE-BADGE-01)
+- **Mục tiêu**: Thúc đẩy các nhà bán hàng và xưởng may đối tác chuyển đổi xanh, minh bạch hóa trách nhiệm môi trường và tôn vinh các thương hiệu thời trang sinh thái chân chính trên nền tảng NEXORA.
+- **Cơ chế**:
+  - Tích hợp phân hệ Chuẩn Xanh & ESG chuyên biệt tại Kênh Quản Trị Người Bán `/seller`.
+  - Bảng Thẻ Điểm ESG (ESG Scorecard) hiển thị 4 chỉ số sinh thái cốt lõi:
+    1. *Tỷ lệ sợi tự nhiên*: 94.5% (Lanh Normandy, Lụa Bảo Lộc, Bông Pima GOTS).
+    2. *Lượng carbon cắt giảm định kỳ*: 18.4 tấn CO2e / quý từ quy trình nhuộm sinh học và năng lượng mặt trời áp mái.
+    3. *Bao bì đóng gói tuần hoàn*: 100% hộp giấy Kraft tái sinh không nilon.
+    4. *Cắt vải rác thải tối thiểu (Zero-Waste Pattern)*: Tối ưu giác sơ đồ cắt, giảm 14% vải vụn dư thừa.
+  - Danh mục 4 chứng nhận xanh đã được Sàn xác minh độc lập: GOTS Organic Textile Standard, OEKO-TEX Standard 100 Class I, CO Vùng nguyên liệu Lâm Đồng và Xử lý nước thải đạt chuẩn QCVN 40:2011/BTNMT.
+  - Huy hiệu bảo chứng danh dự: Cấp chứng nhận `🌱 GREEN ATELIER VERIFIED` hiển thị nổi bật trên gian hàng và trang chi tiết sản phẩm.
 
 ---
 
