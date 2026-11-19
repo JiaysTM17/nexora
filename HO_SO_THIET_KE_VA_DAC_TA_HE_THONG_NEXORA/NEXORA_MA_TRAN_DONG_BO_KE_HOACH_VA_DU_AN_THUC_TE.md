@@ -83,6 +83,8 @@
 | **72** | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng (CART-SPLIT-DELIVERY-01)** | Module 03 & 04 | Đã hoàn thiện | Tách đơn đa điểm tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, điền thông tin người nhận riêng và phân tuyến bưu tá |
 | **73** | **Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01)** | Module 01 & UI | Đã hoàn thiện | Phân hệ lọc sắc thái tại `/tim-kiem`: 6 dòng màu tự nhiên (Cát mộc, Lam chàm, Đất nung, Đen sơn mài, Trắng ngà), tính điểm hòa sắc 98/100 |
 | **74** | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)** | Module 03 & 04 | Đã hoàn thiện | Thanh công cụ xuất gộp hóa đơn tại `/don-hang`: Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn điện tử CQT |
+| **75** | **Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)** | Module 08 & Logistics | Đã hoàn thiện | Phân hệ lên lịch bưu tá tại `/trade-in`: Chọn khung giờ hẹn (Sáng, Chiều, Tối), cung cấp túi niêm phong quang học Tamper-Evident và bưu tá xe điện VinFast Green đến nhận tận cửa 0đ |
+| **76** | **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ bình chọn tương tác tại `/live`: Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% (RUNWAY20) |
 
 ---
 
@@ -620,6 +622,28 @@
   - Tự động tổng hợp doanh thu, bóc tách tiền trước thuế và thuế GTGT 8% theo quy định hiện hành.
   - Modal Bảng kê chi phí chuẩn mực: Bảng kê chi tiết từng mã đơn, ngày mua, giá trị trước thuế, tiền thuế và tổng thanh toán, kèm thông tin chữ ký số điện tử của NEXORA (MST: 0317889988) và nút In / Lưu PDF hợp lệ.
   - Nút tải gộp file nén `.ZIP` chứa đầy đủ các hóa đơn điện tử XML/PDF đã chọn.
+
+### 59. Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)
+- **Mục tiêu**: Triệt tiêu rào cản vận chuyển cho khách hàng tham gia chương trình thu cũ đổi mới thời trang bền vững, mang lại trải nghiệm thu gom White-Glove tận cửa không cần mang ra bưu cục.
+- **Cơ chế**:
+  - Tích hợp phân hệ Lên lịch hẹn bưu tá thu gom trực tiếp tại `/trade-in`.
+  - Hỗ trợ lựa chọn 3 khung giờ bưu tá linh hoạt:
+    1. *Buổi sáng (08:00 - 12:00)*: Phù hợp nhận đồ tại nhà riêng.
+    2. *Buổi chiều (13:30 - 17:30)*: Thuận tiện nhận tại văn phòng làm việc.
+    3. *Buổi tối (18:00 - 21:00)*: Dành cho khách hàng bận rộn sau giờ làm.
+  - Ô nhập địa chỉ tiếp nhận chi tiết và tùy chọn túi niêm phong: Bưu tá xe điện VinFast Green mang sẵn Túi Niêm Phong Quang Học Tamper-Evident dán tem bảo mật một chiều kèm mã QR truy vết nguồn gốc.
+  - Tự động lưu vết lịch hẹn vào `localStorage` (`nexora_tradein_pickup`) và thông báo xác nhận thành công.
+
+### 60. Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)
+- **Mục tiêu**: Nâng cao trải nghiệm tương tác trực tuyến hai chiều (Interactive Livestreaming) giữa khán giả và sàn diễn runway, biến người xem thành đạo diễn phong cách của phiên phát sóng.
+- **Cơ chế**:
+  - Tích hợp phân hệ Bình chọn tương tác thời gian thực ngay dưới luồng livestream tại `/live`.
+  - 3 set đồ ứng cử cho lượt diễn tiếp theo:
+    1. *Set 1: Áo Blazer Da Ý & Quần Tây Xếp Ly* (Phong cách Contemporary Power Dressing).
+    2. *Set 2: Đầm Lụa Satin Sơn Mài Đen Dạ Tiệc* (Phong cách Quiet Luxury Gala).
+    3. *Set 3: Áo Khoác Măng Tô Dạ Ép Double-Breasted* (Phong cách Winter Atelier Outerwear).
+  - Thuật toán tính tỷ lệ phần trăm động thời gian thực hiển thị thanh tiến trình trực quan theo số phiếu bình chọn của toàn thể khán giả.
+  - Cơ chế thưởng tương tác: Khán giả gửi phiếu bình chọn sẽ được mở khóa ngay **Voucher Flash Deal -20% (Mã `RUNWAY20`)** áp dụng trực tiếp tại bước thanh toán cho các mẫu đang diễn, kèm nút 1-chạm sao chép mã và lưu vết trên `localStorage` (`nexora_live_poll_vote`).
 
 ---
 

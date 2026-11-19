@@ -250,3 +250,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 61. **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01)**:
    - Hồ sơ: Module 03 Kế toán Tài chính & Module 04 Hóa đơn Điện tử TT 78.
    - Thực tế: Thanh công cụ tại `/don-hang` cho phép chọn nhiều đơn hàng để xuất Bảng kê chi phí khấu trừ thuế TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn điện tử CQT.
+
+62. **Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)**:
+   - Hồ sơ: Module 05 Thời trang Tuần hoàn & Module 08 Logistics Chặng Đầu.
+   - Thực tế: Phân hệ lên lịch hẹn bưu tá xe điện VinFast Green đến nhận đồ cũ tận cửa miễn phí 100% tại `/trade-in`, chọn 3 khung giờ hẹn (Sáng, Chiều, Tối), cung cấp sẵn Túi Niêm Phong Quang Học Tamper-Evident có mã QR bảo mật.
+
+63. **Khán Giả Bình Chọn Set Trình Diễn Live (LIVE-STREAM-POLL-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Tương tác Trực tiếp Sàn diễn Runway.
+   - Thực tế: Phân hệ bình chọn tương tác thời gian thực tại `/live`, khán giả bình chọn 3 set đồ để người mẫu diện lượt tiếp theo, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% (Mã `RUNWAY20`).

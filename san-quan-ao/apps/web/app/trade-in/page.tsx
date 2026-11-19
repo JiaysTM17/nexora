@@ -1,7 +1,7 @@
 'use client';
-import { FormEvent, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -18,6 +18,31 @@ export default function TradeInPage() {
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
   const [simCategory, setSimCategory] = useState<'SHIRT' | 'BLAZER' | 'DRESS' | 'BAG'>('SHIRT');
   const [simGrade, setSimGrade] = useState<'S' | 'A' | 'B' | 'C'>('A');
+  const [pickupScheduled, setPickupScheduled] = useState(false);
+  const [pickupSlot, setPickupSlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON');
+  const [securityBag, setSecurityBag] = useState(true);
+  const [pickupAddress, setPickupAddress] = useState('128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. HCM');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('nexora_tradein_pickup');
+      if (saved) setPickupScheduled(true);
+    } catch {}
+  }, []);
+
+  function handleSchedulePickup(e: FormEvent) {
+    e.preventDefault();
+    setPickupScheduled(true);
+    try {
+      localStorage.setItem('nexora_tradein_pickup', JSON.stringify({
+        slot: pickupSlot,
+        securityBag,
+        address: pickupAddress,
+        time: new Date().toISOString(),
+      }));
+    } catch {}
+    setSuccess('✓ Đã đặt lịch bưu tá VinFast Green đến nhận đồ cũ niêm phong tận nhà thành công!');
+  }
   const [formFields, setFormFields] = useState({
     brand: '',
     itemName: '',
@@ -260,6 +285,114 @@ export default function TradeInPage() {
                 ))}
               </article>
             </div>
+          </div>
+
+          {/* Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà & Cấp Túi Niêm Phong (TRADEIN-COURIER-SLOT-01) */}
+          <div
+            style={{
+              marginTop: 24,
+              padding: 20,
+              background: '#fff',
+              border: '1px solid var(--line)',
+              borderRadius: 8,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.02)',
+            }}
+          >
+            <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Truck size={18} color="var(--clay)" />
+                <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+                  Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)
+                </strong>
+              </div>
+              <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                WHITE-GLOVE COURIER PICKUP
+              </span>
+            </div>
+
+            <p className="subtle" style={{ margin: '0 0 14px', fontSize: 12 }}>
+              Không cần mang ra bưu cục. Bưu tá xe điện VinFast Green mang túi niêm phong quang học Tamper-Evident đến tận cửa nhà tiếp nhận miễn phí 100%.
+            </p>
+
+            {pickupScheduled ? (
+              <div style={{ padding: 14, background: '#f0fdf4', borderRadius: 6, border: '1px solid #bbf7d0' }}>
+                <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+                  <div>
+                    <strong style={{ fontSize: 13, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <CheckCircle2 size={16} /> Đã Xếp Lịch Thu Gom #TRADEIN-PICKUP-889
+                    </strong>
+                    <p style={{ margin: '4px 0 0', fontSize: 12, color: '#334155', lineHeight: 1.5 }}>
+                      • Khung giờ hẹn: <strong>{pickupSlot === 'MORNING' ? 'Buổi sáng (08:00 - 12:00)' : pickupSlot === 'AFTERNOON' ? 'Buổi chiều (13:30 - 17:30)' : 'Buổi tối (18:00 - 21:00)'}</strong><br />
+                      • Địa chỉ: {pickupAddress}<br />
+                      • Dịch vụ kèm theo: {securityBag ? 'Bưu tá mang sẵn Túi Niêm Phong Quang Học Tamper-Evident & Tem Bảo Mật' : 'Khách hàng tự đóng gói trước'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    style={{ fontSize: 11, padding: '4px 10px' }}
+                    onClick={() => {
+                      setPickupScheduled(false);
+                      try { localStorage.removeItem('nexora_tradein_pickup'); } catch {}
+                    }}
+                  >
+                    Hủy / Đặt lại lịch
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSchedulePickup}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)', display: 'block', marginBottom: 4 }}>
+                      Khung giờ thuận tiện
+                    </label>
+                    <select
+                      value={pickupSlot}
+                      onChange={(e) => setPickupSlot(e.target.value as any)}
+                      style={{ width: '100%', fontSize: 12, padding: '6px 8px', borderRadius: 3, border: '1px solid var(--line)' }}
+                    >
+                      <option value="MORNING">Buổi sáng (08:00 - 12:00)</option>
+                      <option value="AFTERNOON">Buổi chiều (13:30 - 17:30)</option>
+                      <option value="EVENING">Buổi tối (18:00 - 21:00)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)', display: 'block', marginBottom: 4 }}>
+                      Địa chỉ nhận đồ cũ
+                    </label>
+                    <input
+                      value={pickupAddress}
+                      onChange={(e) => setPickupAddress(e.target.value)}
+                      style={{ width: '100%', fontSize: 12, padding: '6px 8px', borderRadius: 3, border: '1px solid var(--line)' }}
+                      placeholder="Nhập địa chỉ nhà riêng hoặc văn phòng..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 12, cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={securityBag}
+                    onChange={(e) => setSecurityBag(e.target.checked)}
+                    style={{ accentColor: 'var(--clay)' }}
+                  />
+                  Yêu cầu bưu tá mang kèm Túi Niêm Phong Quang Học Tamper-Evident &amp; Mã QR bảo mật
+                </label>
+
+                <div style={{ marginTop: 14 }}>
+                  <button
+                    type="submit"
+                    className="button"
+                    style={{ fontSize: 12, padding: '6px 18px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  >
+                    <Clock size={14} /> Xác Nhận Lịch Hẹn Thu Gom Tận Nhà
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </>
       )}

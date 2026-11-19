@@ -211,5 +211,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Phân Tách Địa Chỉ Giao Nhiều Điểm & Quà Tặng** | Module 03 & 04 | Đã hoàn thiện | Tách đơn đa điểm đến tại `/gio-hang`: Phân bổ từng món đồ về Nhà riêng hoặc Quà tặng/Văn phòng, kèm thông tin người nhận riêng (CART-SPLIT-DELIVERY-01) |
 | **Lọc Tìm Kiếm Bảng Màu Tự Nhiên & Tone-Sur-Tone** | Module 01 & UI | Đã hoàn thiện | 6 swatch màu tự nhiên (Cát mộc, Lam chàm, Đất nung, Đen sơn mài, Trắng ngà) tính điểm hòa sắc 98/100 tại `/tim-kiem` (CAT-VISUAL-PALETTE-SEARCH-01) |
 | **Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Doanh Nghiệp** | Module 03 & 04 | Đã hoàn thiện | Bảng kê chi phí hợp lý TNDN, tính thuế VAT 8%, in bảng kê và tải gói nén ZIP hóa đơn CQT tại `/don-hang` (ORD-BULK-INVOICE-DOWNLOAD-01) |
+| **Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà** | Module 08 & Logistics | Đã hoàn thiện | Phân hệ lên lịch bưu tá tại `/trade-in`: Chọn khung giờ hẹn (Sáng, Chiều, Tối), cung cấp túi niêm phong quang học Tamper-Evident và bưu tá xe điện VinFast Green nhận tận nhà 0đ (TRADEIN-COURIER-SLOT-01) |
+| **Khán Giả Bình Chọn Set Trình Diễn Live** | Module 06 & Social | Đã hoàn thiện | Khán giả bình chọn trang phục tiếp theo cho người mẫu catwalk, tính tỷ lệ động và mở khóa Voucher Flash Deal -20% `RUNWAY20` tại `/live` (LIVE-STREAM-POLL-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

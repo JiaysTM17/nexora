@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera } from 'lucide-react';
+import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera, BarChart2, Gift, CheckCircle2 } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -39,6 +39,38 @@ export default function LiveRoom() {
   const [successNotice, setSuccessNotice] = useState('');
   const [errorNotice, setErrorNotice] = useState('');
   const [runwayAngle, setRunwayAngle] = useState<'CATWALK' | 'MACRO' | 'BACKSTAGE'>('CATWALK');
+  const [selectedPollOption, setSelectedPollOption] = useState<string>('opt-1');
+  const [hasVotedPoll, setHasVotedPoll] = useState<boolean>(false);
+  const [pollVotes, setPollVotes] = useState<{ [key: string]: number }>({
+    'opt-1': 486,
+    'opt-2': 214,
+    'opt-3': 105,
+  });
+  const [voucherCopied, setVoucherCopied] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const savedVote = localStorage.getItem('nexora_live_poll_vote');
+      if (savedVote) {
+        setHasVotedPoll(true);
+        setSelectedPollOption(savedVote);
+      }
+    } catch {}
+  }, []);
+
+  function handleVotePoll(optionId: string) {
+    if (hasVotedPoll) return;
+    setHasVotedPoll(true);
+    setSelectedPollOption(optionId);
+    setPollVotes(prev => ({
+      ...prev,
+      [optionId]: (prev[optionId] || 0) + 1,
+    }));
+    try {
+      localStorage.setItem('nexora_live_poll_vote', optionId);
+    } catch {}
+    setSuccessNotice('✓ Bạn đã bình chọn thành công! Mã ưu đãi -20% Flash Deal (RUNWAY20) đã được mở khóa.');
+  }
 
   // Live countdown timer for pinned deal
   useEffect(() => {
@@ -476,6 +508,205 @@ export default function LiveRoom() {
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Khán Giả Bình Chọn Bộ Sưu Tập Kế Tiếp & Mở Khóa Deal Độc Quyền (LIVE-STREAM-POLL-01) */}
+      <div
+        style={{
+          marginTop: 28,
+          padding: '20px 24px',
+          background: '#fff',
+          border: '1px solid var(--line)',
+          borderRadius: 8,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+        }}
+      >
+        <div className="row between" style={{ marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <BarChart2 size={18} color="var(--clay)" />
+              <h2 style={{ margin: 0, fontSize: 18 }}>Khán Giả Bình Chọn Set Trình Diễn Tiếp Theo (LIVE-STREAM-POLL-01)</h2>
+              <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                INTERACTIVE RUNWAY POLL
+              </span>
+            </div>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Tham gia điều phối sàn diễn theo sở thích! Mẫu có số phiếu cao nhất sẽ được người mẫu diện trong lượt catwalk tiếp theo. Bình chọn để nhận ngay Voucher Flash Deal -20%.
+            </p>
+          </div>
+          <span style={{ fontSize: 12, color: 'var(--muted)', alignSelf: 'center' }}>
+            Tổng số phiếu: <strong>{(pollVotes['opt-1'] + pollVotes['opt-2'] + pollVotes['opt-3']).toLocaleString('vi-VN')} lượt</strong>
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+          {[
+            {
+              id: 'opt-1',
+              title: 'Set 1: Áo Blazer Da Ý & Quần Tây Xếp Ly',
+              category: 'Contemporary Power Dressing',
+              desc: 'Form dáng cấu trúc sắc nét kết hợp chất da cừu nappa bóng mờ sang trọng.',
+              img: '/products/blazer.svg',
+            },
+            {
+              id: 'opt-2',
+              title: 'Set 2: Đầm Lụa Satin Sơn Mài Đen Dạ Tiệc',
+              category: 'Quiet Luxury Gala',
+              desc: 'Tà váy rủ tự nhiên với hiệu ứng bắt sáng mềm mại dưới ánh đèn sàn diễn.',
+              img: '/products/dress.svg',
+            },
+            {
+              id: 'opt-3',
+              title: 'Set 3: Áo Khoác Măng Tô Dạ Ép Double-Breasted',
+              category: 'Winter Atelier Outerwear',
+              desc: 'Chất dạ lông cừu thượng hạng dệt thủ công tạo phom đứng ấm áp đẳng cấp.',
+              img: '/products/coat.svg',
+            },
+          ].map((opt) => {
+            const total = pollVotes['opt-1'] + pollVotes['opt-2'] + pollVotes['opt-3'];
+            const count = pollVotes[opt.id] || 0;
+            const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+            const isSelected = selectedPollOption === opt.id;
+
+            return (
+              <div
+                key={opt.id}
+                style={{
+                  border: isSelected ? '2px solid var(--clay)' : '1px solid var(--line)',
+                  borderRadius: 6,
+                  padding: 14,
+                  background: isSelected ? '#fbf8f3' : '#faf9f5',
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 10 }}>
+                    <div style={{ width: 50, height: 50, borderRadius: 4, background: '#eee', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img
+                        src={opt.img}
+                        alt={opt.title}
+                        style={{ width: '80%', height: '80%', objectFit: 'contain' }}
+                        onError={(e) => {
+                          const t = e.currentTarget as HTMLImageElement;
+                          if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg';
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 700 }}>
+                        {opt.category}
+                      </span>
+                      <strong style={{ fontSize: 13, display: 'block', color: 'var(--ink)' }}>{opt.title}</strong>
+                    </div>
+                  </div>
+                  <p style={{ margin: '0 0 10px', fontSize: 11, color: '#4b5563', lineHeight: 1.4 }}>{opt.desc}</p>
+                </div>
+
+                <div>
+                  {/* Progress bar */}
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                      <span style={{ color: 'var(--muted)' }}>Tỷ lệ bình chọn</span>
+                      <strong style={{ color: isSelected ? 'var(--clay)' : 'var(--ink)' }}>{percent}% ({count} phiếu)</strong>
+                    </div>
+                    <div style={{ width: '100%', height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${percent}%`,
+                          height: '100%',
+                          background: isSelected ? 'var(--clay)' : '#64748b',
+                          transition: 'width 0.4s ease',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={hasVotedPoll}
+                    onClick={() => handleVotePoll(opt.id)}
+                    className={isSelected ? 'button' : 'button secondary'}
+                    style={{
+                      width: '100%',
+                      fontSize: 11,
+                      padding: '6px 10px',
+                      opacity: hasVotedPoll && !isSelected ? 0.6 : 1,
+                    }}
+                  >
+                    {hasVotedPoll ? (isSelected ? '✓ Bạn đã chọn mẫu này' : 'Đã hoàn thành bình chọn') : 'Bình chọn set này'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Voucher Reward Banner */}
+        {hasVotedPoll && (
+          <div
+            style={{
+              marginTop: 16,
+              padding: '12px 16px',
+              background: '#f0fdf4',
+              borderRadius: 6,
+              border: '1px solid #bbf7d0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 10,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#dcfce7', display: 'grid', placeItems: 'center' }}>
+                <Gift size={18} color="#16a34a" />
+              </div>
+              <div>
+                <strong style={{ fontSize: 13, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle2 size={15} /> Thưởng Khán Giả: Mã Giảm Giá Live Flash Deal -20%
+                </strong>
+                <p style={{ margin: '2px 0 0', fontSize: 11, color: '#334155' }}>
+                  Áp dụng trực tiếp tại bước thanh toán giỏ hàng cho toàn bộ sản phẩm đang diễn trên sàn runway.
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div
+                style={{
+                  padding: '4px 12px',
+                  background: '#fff',
+                  border: '1px dashed #16a34a',
+                  borderRadius: 4,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  color: '#15803d',
+                }}
+              >
+                RUNWAY20
+              </div>
+              <button
+                type="button"
+                className="button"
+                style={{ fontSize: 11, padding: '6px 12px' }}
+                onClick={() => {
+                  try {
+                    navigator.clipboard.writeText('RUNWAY20');
+                  } catch {}
+                  setVoucherCopied(true);
+                  setTimeout(() => setVoucherCopied(false), 2500);
+                }}
+              >
+                {voucherCopied ? '✓ Đã sao chép' : 'Sao chép mã'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Lookbook Đa Góc Nhìn Sàn Diễn Catwalk & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01) */}
