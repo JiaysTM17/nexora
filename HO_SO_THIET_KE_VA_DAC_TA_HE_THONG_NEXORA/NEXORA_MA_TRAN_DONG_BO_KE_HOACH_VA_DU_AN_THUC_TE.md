@@ -36,6 +36,9 @@
 | **25** | **Hoàn Tiền Không Cần Trả Hàng (RET-RETURNLESS)** | Module 05 | Đã hoàn thiện | Thuật toán hoàn tiền lập tức không bắt buộc gửi trả kiện hàng vật lý đối với sự cố rõ ràng hoặc hàng lỗi, tối ưu chi phí logistics ngược |
 | **26** | **Phiên Giờ Vàng Flash Sale & Đếm Ngược (CART-FLASH-03)**| Module 03 | Đã hoàn thiện | Banner Flash Sale độc quyền trang chủ kèm đồng hồ đếm ngược thời gian thực (Countdown Timer), cơ chế phân lập kho và khóa giữ giá 15 phút chống race-condition |
 | **27** | **Mua Trước Trả Sau NEXORA PayLater (PAY-BNPL-MIDFLOW-05)**| Module 03 | Đã hoàn thiện | Tùy chọn thanh toán trả góp 0% lãi suất chia 3 kỳ linh hoạt tại Checkout Giỏ hàng và bảng theo dõi tiến độ thanh toán kỳ hạn tại `/don-hang/[id]` |
+| **28** | **Sàn Diễn Trực Tiếp & Chốt Đơn 1-Chạm (SOC-LIVE-01)** | Module 06 | Đã hoàn thiện | Phòng Live Shopping chuyên nghiệp tại `/live`: Trình phát Runway Stage mô phỏng, Deal ghim giảm 35% có đồng hồ đếm ngược & thanh tồn kho, chốt đơn 1-chạm không gián đoạn luồng xem, phòng chat tương tác thời gian thực & hiệu ứng thả tim bay sinh động |
+| **29** | **Cầu Dao Ngắt Mạch Khẩn Cấp Giá Flash (SOC-PRICE-ERROR)** | Module 06 | Đã hoàn thiện | Cầu dao khẩn cấp (Emergency Circuit Breaker Kill Switch) tại Cổng Quản trị `/admin` và Kênh Người Bán `/seller`: API `POST /admin/products/:id/circuit-breaker` & `POST /seller/shops/:shopId/products/:id/circuit-breaker`, lập tức khóa gỡ sản phẩm sang `HIDDEN` và ghi nhật ký kiểm toán bất biến khi phát hiện lỗi giá |
+| **30** | **Trung Tâm Mẫu Thử KOC & Điểm Tín Nhiệm (SOC-CREATOR-SAMPLE)** | Module 06 | Đã hoàn thiện | Hệ thống cấp bậc Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score: Kim Cương/Vàng/Bạc 0-100), huy hiệu định danh trên bài đăng OOTD, tab Trung tâm Mẫu thử KOC tại `/cong-dong` hỗ trợ KOC xin mẫu thử miễn phí với cam kết duyệt trong SLA 48h |
 
 ---
 
@@ -110,6 +113,30 @@
 ### 11. Giải Pháp Mua Trước Trả Sau NEXORA PayLater 0% Lãi Suất (PAY-BNPL-MIDFLOW-05)
 - **Mục tiêu**: Nâng cao giá trị giỏ hàng bình quân (AOV) cho các thiết kế thời trang cao cấp và dịch vụ chăm sóc đồ hiệu, mang đến sự linh hoạt tài chính tối đa cho người mua trẻ.
 - **Cơ chế**: Tích hợp tùy chọn PayLater tại khâu Checkout Giỏ hàng. Tự động chia nhỏ tổng số tiền thành 3 kỳ trả góp bằng nhau (33.3% - 33.3% - 33.4%) với 0% lãi suất và không phụ phí dịch vụ. Màn hình chi tiết đơn hàng `/don-hang/[id]` hiển thị bảng lịch trình trả góp chi tiết giúp người dùng dễ dàng theo dõi thời hạn của từng kỳ thanh toán.
+
+### 12. Nền Tảng Sàn Diễn Trực Tiếp & Mua Sắm 1-Chạm (SOC-LIVE-01)
+- **Mục tiêu**: Kết hợp giải trí sàn diễn thời trang runway sống động với thương mại chuyển đổi cao, mang lại trải nghiệm xem đồ mẫu mặc thực tế và chốt đơn liền mạch.
+- **Cơ chế**:
+  - Không gian Studio trực tiếp tại `/live` với màn hình trình diễn runway, hiển thị thông số luồng phát Full HD 1080p, đếm lượng người xem trực tuyến theo thời gian thực (1.400+ viewers) và nút thả tim bay động.
+  - Khung "Ghim Deal Sốc Đang Live" giảm sâu 35%, thanh đo lượng tồn kho Flash trực tiếp (Stock Meter) và đồng hồ đếm ngược kết thúc ưu đãi.
+  - Cơ chế **"Chốt Đơn 1-Chạm Không Rời Live"**: Người xem lựa chọn nhanh size trang phục (S/M/L) và bấm nút chốt đơn lập tức đẩy vào giỏ hàng hoặc xác nhận mà không cần thoát khỏi hoặc gián đoạn luồng video.
+  - Khán phòng chat tương tác thời gian thực: Khán giả đặt câu hỏi trực tiếp cho Stylist về chất liệu/phom dáng, hệ thống tự động bắn ticker thông báo đơn hàng thành công ("Khách hàng Minh Anh vừa chốt 1 Áo Blazer Da Ý!").
+  - Kệ hàng phiên live: Danh sách trực quan toàn bộ các bộ cánh được người mẫu diện trên sàn diễn, cho phép chuyển đổi sản phẩm ghim 1-click.
+
+### 13. Cầu Dao Ngắt Mạch Khẩn Cấp Chống Sự Cố Lỗi Giá (SOC-PRICE-ERROR Circuit Breaker)
+- **Mục tiêu**: Ngăn chặn rủi ro tổn thất tài chính quy mô lớn cho sàn và nhà bán hàng khi phát sinh sai sót kỹ thuật về mức giá flash sale (ví dụ chiết khấu nhầm 95% hoặc gõ nhầm 10.000đ thay vì 1.000.000đ).
+- **Cơ chế**:
+  - Tích hợp nút kích hoạt khẩn cấp "Ngắt Cầu Dao (Circuit Breaker Kill Switch)" trên cả Cổng Quản trị Sàn `/admin` và Kênh Người Bán `/seller`.
+  - API chuyên biệt `POST /api/v1/admin/products/:id/circuit-breaker` và `POST /api/v1/seller/shops/:shopId/products/:id/circuit-breaker`.
+  - Khi được kích hoạt, trạng thái sản phẩm chuyển đổi nguyên tử sang `HIDDEN`, gỡ bỏ sản phẩm tức thì khỏi mọi API truy vấn catalog công khai và ngăn chặn các giao dịch thêm giỏ hàng mới.
+  - Tự động ghi nhật ký kiểm toán bất biến `AuditLog` với định danh `ADMIN_CIRCUIT_BREAKER_TRIGGER` / `SELLER_CIRCUIT_BREAKER_TRIGGER` lưu vết lý do, người thực hiện và dấu thời gian chính xác.
+
+### 14. Trung Tâm Mẫu Thử KOC & Thang Điểm Tín Nhiệm Nhà Sáng Tạo (SOC-CREATOR-SAMPLE)
+- **Mục tiêu**: Chuẩn hóa quy trình hợp tác tiếp thị thời trang giữa các nhà bán hàng và mạng lưới KOC sáng tạo nội dung OOTD, bảo đảm tỷ lệ hoàn thành bài đăng và chất lượng nội dung.
+- **Cơ chế**:
+  - Thiết lập Thang Bậc Điểm Tín Nhiệm Nhà Sáng Tạo (`Creator Trust Score`: Hạng Kim Cương &ge; 90, Hạng Vàng &ge; 80, Hạng Bạc &ge; 70), gắn huy hiệu định danh uy tín ngay cạnh tên tác giả bài đăng OOTD tại `/cong-dong`.
+  - Ra mắt tab "Trung Tâm Mẫu Thử KOC (SOC-CREATOR-SAMPLE)" tại `/cong-dong`: Các Creator đạt điều kiện tín nhiệm có thể duyệt danh mục các trang phục có gắn nhãn "Mẫu thử miễn phí" và gửi yêu cầu xin mẫu thử 1-click.
+  - Ràng buộc quy tắc nghiệp vụ: Cam kết SLA người bán phản hồi duyệt hoặc từ chối trong vòng 48 giờ; KOC có trách nhiệm nộp bài phối đồ OOTD công khai trong thời hạn 14 ngày sau khi nhận mẫu để bảo lưu và tích lũy thêm điểm tín nhiệm (+2 điểm uy tín).
 
 ---
 

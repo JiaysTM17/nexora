@@ -164,5 +164,8 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Hoàn Tiền Không Trả Hàng** | Module 05 | Đã hoàn thiện | Thuật toán RET-RETURNLESS hoàn tiền nhanh không cần trả kiện hàng vật lý |
 | **Giờ Vàng Flash Sale** | Module 03 | Đã hoàn thiện | Đếm ngược thời gian thực (CART-FLASH-03), phân lập kho và giữ giá 15 phút |
 | **NEXORA PayLater (BNPL)** | Module 03 | Đã hoàn thiện | Trả góp 0% lãi suất (PAY-BNPL-MIDFLOW-05) chia 3 kỳ tại Checkout & Chi tiết đơn |
+| **Sàn Diễn Live & Chốt 1-Chạm** | Module 06 | Đã hoàn thiện | Phòng Live Studio tại `/live` (SOC-LIVE-01): Runway Stage, Deal ghim giảm 35%, đồng hồ đếm ngược, thanh tồn kho, chốt đơn 1-chạm không rời live, chat thời gian thực & thả tim |
+| **Cầu Dao Ngắt Mạch Khẩn Cấp** | Module 06 | Đã hoàn thiện | Cầu dao an ninh giá (SOC-PRICE-ERROR Circuit Breaker) tại `/admin` và `/seller`, API khóa tức thì sang `HIDDEN` và ghi nhật ký kiểm toán bất biến `AuditLog` |
+| **Mẫu Thử KOC & Điểm Tín Nhiệm**| Module 06 | Đã hoàn thiện | Creator Trust Score (0-100: Hạng Kim Cương/Vàng/Bạc) trên bài OOTD, phân hệ xin mẫu thử tại `/cong-dong` (SOC-CREATOR-SAMPLE) cam kết SLA duyệt 48h |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

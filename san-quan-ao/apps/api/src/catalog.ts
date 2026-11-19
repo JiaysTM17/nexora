@@ -111,4 +111,27 @@ export class CatalogController {
       return tx.inventoryBalance.findUnique({ where: { variantId } });
     });
   }
+  @Post('seller/shops/:shopId/products/:productId/circuit-breaker') @UseGuards(SignedIn) async sellerCircuitBreaker(
+    @Req() req: Authed,
+    @Param('shopId') shopId: string,
+    @Param('productId') productId: string,
+    @Body() body: unknown,
+  ) {
+    await this.auth.shop(req.user.id, shopId);
+    const data = z.object({ reason: z.string().trim().min(5).max(1000) }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const product = await tx.product.findFirst({ where: { id: productId, shopId } });
+      if (!product) throw new NotFoundException('Không tìm thấy sản phẩm trong shop');
+      const updated = await tx.product.update({ where: { id: productId }, data: { status: 'HIDDEN' } });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id,
+          action: 'SELLER_CIRCUIT_BREAKER_TRIGGER',
+          entityId: productId,
+          data: { shopId, reason: data.reason, productName: product.name, timestamp: new Date().toISOString() },
+        },
+      });
+      return { success: true, product: updated };
+    });
+  }
 }

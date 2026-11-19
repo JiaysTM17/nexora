@@ -43,6 +43,21 @@ export default function Home() {
         </div>
       </div>
     </section>
+    <section className="section" style={{ paddingTop: 16, paddingBottom: 0 }}>
+      <div style={{ background: '#0f172a', color: '#fff', padding: '24px 30px', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20, borderLeft: '4px solid #EF4444' }}>
+        <div style={{ maxWidth: 640 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(239, 68, 68, 0.2)', color: '#FCA5A5', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, border: '1px solid rgba(239, 68, 68, 0.4)' }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444', display: 'inline-block', boxShadow: '0 0 6px #EF4444' }}/>
+            NEXORA LIVE RUNWAY (SOC-LIVE-01) · 1.428 ĐANG XEM
+          </span>
+          <h2 style={{ color: '#fff', margin: '10px 0 6px', fontSize: 24, fontWeight: 600 }}>Sàn Diễn Trực Tiếp: BST Mùa Đông 2026</h2>
+          <p style={{ margin: 0, color: '#94a3b8', fontSize: 13, lineHeight: 1.6 }}>Trải nghiệm chốt đơn 1-chạm không rời luồng phát, tương tác trực tiếp với Stylist và săn các deal ghim độc quyền giảm tới 35%.</p>
+        </div>
+        <Link href="/live" className="button" style={{ background: '#EF4444', borderColor: '#EF4444', color: '#fff', padding: '12px 24px', fontWeight: 600, gap: 10 }}>
+          Vào xem trực tiếp <ArrowUpRight size={18}/>
+        </Link>
+      </div>
+    </section>
     <section className="section" id="trang-phuc"><div className="section-heading"><div><p className="eyebrow">CHỌN ÍT HƠN, YÊU NHIỀU HƠN</p><h2>Thêm một món <em>hợp mình.</em></h2></div><span className="subtle">{data ? `${data.total} thiết kế đang chờ bạn` : 'Tìm thiết kế dành cho bạn'}</span></div>
       <div className="catalog-toolbar"><div className="tabs" aria-label="Danh mục">{[['', 'Tất cả'], ['ao', 'Áo'], ['quan', 'Quần'], ['vay', 'Váy & đầm'], ['ao-khoac', 'Áo khoác & Blazer']].map(([id, name]) => <button key={id} className={category === id ? 'selected' : ''} onClick={() => setCategory(id)}>{name}</button>)}</div><div className="toolbar-right"><form className="search" onSubmit={e => { e.preventDefault(); setSearch(query); }}><Search size={17}/><input aria-label="Tìm tên sản phẩm" placeholder="Tìm món bạn thích…" value={query} onChange={e => setQuery(e.target.value)}/><button type="submit" aria-label="Tìm kiếm"><ArrowRight size={17}/></button></form><button className="filter-button" onClick={() => setFilters(!filters)} aria-expanded={filters}><SlidersHorizontal size={17}/>Bộ lọc</button></div></div>
       {filters && <div className="filters"><label>Màu sắc<select value={color} onChange={e => setColor(e.target.value)}><option value="">Mọi màu</option>{['Đen', 'Trắng', 'Kem', 'Nâu', 'Xanh'].map(c => <option key={c}>{c}</option>)}</select></label><label>Kích cỡ<select value={size} onChange={e => setSize(e.target.value)}><option value="">Mọi size</option>{['S', 'M', 'L'].map(s => <option key={s}>{s}</option>)}</select></label><label className="check"><input type="checkbox" checked={stock} onChange={e => setStock(e.target.checked)}/>Chỉ món còn hàng</label><label className="check"><input type="checkbox" checked={mall} onChange={e => setMall(e.target.checked)}/>Chỉ NEXORA Mall (Chính hãng)</label><button className="text-button" onClick={() => { setColor(''); setSize(''); setStock(false); setMall(false); setSearch(''); setQuery(''); }}>Xóa bộ lọc</button></div>}

@@ -62,3 +62,15 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 14. **Phương Thức Mua Trước Trả Sau NEXORA PayLater 0% (PAY-BNPL-MIDFLOW-05)**:
    - Hồ sơ: Module 03 Giỏ hàng, BNPL & Thanh toán Đa nguồn.
    - Thực tế: Lựa chọn thanh toán PayLater tại Giỏ hàng chia 3 kỳ thanh toán 0% lãi suất (hôm nay, 30 ngày, 60 ngày), kèm bảng lịch trình trả góp chi tiết hiển thị trên trang theo dõi đơn hàng `/don-hang/[id]`.
+
+15. **Sàn Diễn Trực Tiếp & Mua Sắm 1-Chạm Liền Mạch (SOC-LIVE-01)**:
+   - Hồ sơ: Module 06 Cộng đồng Phối đồ & Social Commerce.
+   - Thực tế: Phòng Live Runway Studio tại `/live` với màn hình trình diễn thời trang, ghim deal độc quyền giảm 35% có đồng hồ đếm ngược và thanh đo lượng tồn kho còn lại, cơ chế chốt đơn 1-chạm không gián đoạn luồng phát, tương tác chat thời gian thực và hiệu ứng thả tim bay sinh động.
+
+16. **Cầu Dao Ngắt Mạch Khẩn Cấp Giá Flash Sale (SOC-PRICE-ERROR Circuit Breaker)**:
+   - Hồ sơ: Module 06 Quản trị Rủi ro Giá & An ninh Sàn.
+   - Thực tế: Cầu dao ngắt khẩn cấp (Emergency Kill Switch) tại Cổng Quản trị `/admin` và Kênh Người Bán `/seller`, cho phép khóa và gỡ lập tức sản phẩm sang trạng thái `HIDDEN` khi phát hiện nhầm lẫn giá flash sale hoặc sự cố vận hành, đồng thời ghi nhận nhật ký kiểm toán bất biến `AuditLog`.
+
+17. **Trung Tâm Mẫu Thử KOC & Điểm Tín Nhiệm Nhà Sáng Tạo (SOC-CREATOR-SAMPLE)**:
+   - Hồ sơ: Module 06 Tiếp thị Liên kết & Hợp tác Nhà sáng tạo.
+   - Thực tế: Thang Bậc Điểm Tín Nhiệm Nhà Sáng Tạo (Creator Trust Score 0-100: Hạng Kim Cương / Vàng / Bạc) gắn huy hiệu định danh uy tín, phân hệ Trung tâm Mẫu thử KOC tại `/cong-dong` hỗ trợ KOC xin mẫu thử thời trang miễn phí với cam kết duyệt trong SLA 48h và đối soát bài đăng OOTD trong 14 ngày.

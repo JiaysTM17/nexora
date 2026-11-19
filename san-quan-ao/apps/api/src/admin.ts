@@ -243,4 +243,45 @@ export class AdminController {
       }
     });
   }
+  @Get('products') async products() {
+    return this.db.product.findMany({
+      include: {
+        shop: { select: { id: true, name: true, slug: true } },
+        variants: { include: { inventory: true } },
+        images: { orderBy: { position: 'asc' }, take: 1 },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+  }
+  @Post('products/:id/circuit-breaker') async circuitBreaker(
+    @Req() req: Authed,
+    @Param('id') productId: string,
+    @Body() body: unknown,
+  ) {
+    const data = z.object({
+      reason: z.string().trim().min(5).max(1000),
+    }).strict().parse(body);
+    return serial(this.db, async tx => {
+      const product = await tx.product.findUnique({ where: { id: productId } });
+      if (!product) throw new NotFoundException('Không tìm thấy sản phẩm');
+      const updated = await tx.product.update({
+        where: { id: productId },
+        data: { status: 'HIDDEN' },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorId: req.user.id,
+          action: 'ADMIN_CIRCUIT_BREAKER_TRIGGER',
+          entityId: productId,
+          data: {
+            reason: data.reason,
+            productName: product.name,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      });
+      return { success: true, product: updated };
+    });
+  }
 }
