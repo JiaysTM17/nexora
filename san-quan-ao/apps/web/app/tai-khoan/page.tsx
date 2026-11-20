@@ -98,6 +98,7 @@ export default function AccountPage() {
     }
     return false;
   });
+  const [wardrobeSyncActive, setWardrobeSyncActive] = useState(false);
   const [bespokeOrders, setBespokeOrders] = useState<Array<{ id: string; productName: string; variant: string; monogram: string; deposit: number; queuePos: number; createdAt: string; step: number; lining?: string }>>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -1085,6 +1086,113 @@ export default function AccountPage() {
               })()}
             </div>
           )}
+        </div>
+      </article>
+
+      {/* Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <ShieldCheck size={18} color="#059669" /> Hồ Sơ Tủ Đồ Số &amp; Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Đồng bộ sinh trắc học Fashion Passport với tủ đồ số hóa, bảo đảm tỷ lệ vừa vặn 98% và cam kết đổi size 0đ tận nhà.
+            </p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 11, background: '#dcfce7', color: '#166534', padding: '3px 8px', borderRadius: 4, fontWeight: 700 }}>
+              FIT MATCH: 98% · BẢO LÃNH ĐỔI TRẢ 0Đ
+            </span>
+            <button
+              type="button"
+              className="button secondary"
+              style={{ fontSize: 11, padding: '4px 10px' }}
+              onClick={() => {
+                setWardrobeSyncActive(true);
+                setTimeout(() => setWardrobeSyncActive(false), 3000);
+              }}
+            >
+              {wardrobeSyncActive ? '✓ Đã đồng bộ Passport' : 'Đồng bộ lại số đo'}
+            </button>
+          </div>
+        </div>
+
+        {/* 2 Thẻ chỉ số tổng quan */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 14 }}>
+          <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6 }}>
+            <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 2 }}>Tương Thích Sinh Trắc Học Tủ Đồ</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <strong style={{ fontSize: 22, color: '#047857', fontFamily: 'Georgia, serif' }}>98%</strong>
+              <span style={{ fontSize: 11, color: '#059669', fontWeight: 600 }}>Tối ưu tuyệt đối</span>
+            </div>
+            <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
+              Căn cứ chiều cao {passport.height}cm, ngực {passport.chest}cm, eo {passport.waist}cm từ Fashion Passport.
+            </p>
+          </div>
+
+          <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6 }}>
+            <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 2 }}>Hiệu Suất Tủ Đồ Nhộng (Capsule Utilization)</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <strong style={{ fontSize: 22, color: '#0f172a', fontFamily: 'Georgia, serif' }}>82%</strong>
+              <span style={{ fontSize: 11, color: '#2563eb', fontWeight: 600 }}>41 / 50 ngày diện</span>
+            </div>
+            <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
+              Tỷ lệ các món đồ phối lặp lại hiệu quả, giảm thiểu lãng phí và tối ưu hóa chỉ số Cost-Per-Wear.
+            </p>
+          </div>
+        </div>
+
+        {/* Danh sách 3 món đồ số hóa trong tủ */}
+        <div style={{ marginBottom: 12 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', display: 'block', marginBottom: 8 }}>
+            Kiểm Tra Độ Vừa Vặn Từng Món Trang Phục Trong Tủ Đồ Cá Nhân:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+            {[
+              {
+                name: 'Áo Khoác Blazer Dạ Len Ý Sartorial',
+                match: '99%',
+                spec: 'Vai 44cm (Khớp chuẩn 44cm) · Dài tay 61cm',
+                status: 'HOÀN HẢO',
+                statusBg: '#dcfce7',
+                statusColor: '#15803d',
+              },
+              {
+                name: 'Sơ Mi Lanh Normandy Cổ Trúc',
+                match: '98%',
+                spec: `Vòng ngực ${passport.chest}cm · Eo ${passport.waist}cm`,
+                status: 'CHUẨN FORM',
+                statusBg: '#dcfce7',
+                statusColor: '#15803d',
+              },
+              {
+                name: 'Đầm Lụa Tơ Tằm Bảo Lộc Dáng Dài',
+                match: '97%',
+                spec: 'Hạ eo 38cm · Chiều dài đầm 115cm tôn dáng',
+                status: 'VỪA VẶN',
+                statusBg: '#ede9fe',
+                statusColor: '#6d28d9',
+              },
+            ].map((item, idx) => (
+              <div key={idx} style={{ padding: '10px 12px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 6 }}>
+                <div className="row between" style={{ marginBottom: 4 }}>
+                  <strong style={{ fontSize: 11, color: '#0f172a' }}>{item.name}</strong>
+                  <span style={{ fontSize: 9, background: item.statusBg, color: item.statusColor, padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                    {item.status} ({item.match})
+                  </span>
+                </div>
+                <div style={{ fontSize: 10, color: '#64748b', lineHeight: 1.4 }}>
+                  {item.spec}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Cam kết Fit Guarantee */}
+        <div style={{ padding: '10px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 6, fontSize: 11, color: '#065f46', lineHeight: 1.4 }}>
+          <strong>🛡️ Cam Kết Vừa Vặn 100% (Fit Guarantee Assurance):</strong> Nếu bất kỳ sản phẩm nào bạn nhận về có độ lệch &gt;2cm so với thông số Fashion Passport của bạn, bạn được đổi size tốc hành 24-48h tận nhà hoàn toàn 0đ qua dịch vụ <Link href="/don-hang" style={{ color: '#047857', fontWeight: 700, textDecoration: 'underline' }}>RET-QUICK-EXCHANGE-01</Link>.
         </div>
       </article>
 

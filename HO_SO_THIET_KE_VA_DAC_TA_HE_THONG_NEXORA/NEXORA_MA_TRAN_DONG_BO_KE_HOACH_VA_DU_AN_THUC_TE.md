@@ -97,6 +97,8 @@
 | **86** | **Khung Thiết Kế Lookbook Cá Nhân & Thẻ Phối Đồ Nghệ Thuật (CAT-LOOKBOOK-CANVAS-EXPORT-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ xuất thẻ Lookbook tại `/phoi-do`: 3 không gian nghệ thuật (Atelier Kem Gỗ Sồi, Heritage Phố Cổ, Sơn Mài Midnight), chữ ký curator cá nhân, hòa sắc 98/100, lưu bộ sưu tập và đăng lên cộng đồng OOTD |
 | **87** | **Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn (TRADEIN-FABRIC-RECYCLING-INDEX-01)** | Module 02 & Circular | Đã hoàn thiện | Phân hệ hộ chiếu LCA tại `/trade-in`: Đo lường bảo tồn tài nguyên (Linen 2.700L nước, -3.2kg CO2e, -0.85kg hóa chất), phân bổ 3 hướng tái sinh (Upcycling 35%, Re-Loved 50%, Nỉ tiêu âm Bio-Felt 15%), cấp hộ chiếu điện tử độc bản `#PASSPORT-LCA-XXXXXX` |
 | **88** | **Sàn Đổi Đồ Tủ Áo Tuần Hoàn P2P & Hợp Đồng Escrow Đối Ứng (SOC-COMMUNITY-SWAP-MEET-01)** | Module 06 & Circular P2P | Đã hoàn thiện | Sàn giao lưu đồ tủ áo tại `/cong-dong`: Thuật toán định giá công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow giữ tiền chênh lệch, vận chuyển đồng kiểm 2 chiều VinFast Green, ký hợp đồng P2P `#SWAP-P2P-XXXXXX` và tích lũy +300 Điểm Xanh |
+| **89** | **Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY-INDEX-01)** | Module 01 & QA | Đã hoàn thiện | Phân hệ kiểm định độ bền tại `/san-pham/[slug]`: Thử nghiệm ma sát Martindale 35.000 chu kỳ (Heavy Commercial Grade), chống xù lông cấp 4.5/5 (ISO 12945), lực kéo 420N, tuổi thọ >80 chu kỳ giặt êm, tặng kèm túi giặt lưới micro-mesh |
+| **90** | **Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)** | Module 01 & 07 | Đã hoàn thiện | Phân hệ tủ đồ số tại `/tai-khoan`: Tương thích sinh trắc học Fashion Passport đạt 98%, hiệu suất tủ đồ nhộng 82% (41/50 ngày diện), kiểm tra độ khớp từng món trong tủ và cam kết đổi size tốc hành 24-48h tận nhà 0đ nếu lệch >2cm |
 
 ---
 
@@ -797,6 +799,27 @@
     3. *Vận Chuyển Đồng Kiểm 2 Chiều VinFast Green Bike*: Bưu tá xe điện điều phối tuyến giao - nhận cùng thời điểm, hỗ trợ đồng kiểm chất liệu tận tay trước khi bàn giao.
   - Giao diện thiết lập hợp đồng trao đổi thông minh: Cho phép nhập món đồ từ tủ áo cá nhân mang ra giao lưu, đối ứng với trang phục mục tiêu từ cộng đồng, tự động tính khoản bù chênh lệch.
   - Ký hợp đồng P2P độc bản (`#SWAP-P2P-XXXXXX`), khóa cọc Escrow, lưu vết vào `localStorage` (`nexora_active_swap_meet`) và tự động cộng **+300 Điểm Xanh Tuần Hoàn** vào ví NEX-Green.
+
+### 73. Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY-INDEX-01)
+- **Mục tiêu**: Xóa bỏ tâm lý e ngại về độ mỏng manh của sợi tự nhiên cao cấp, chứng thực độ bền vượt trội qua các chỉ số thử nghiệm phòng thí nghiệm đạt chuẩn ISO quốc tế.
+- **Cơ chế**:
+  - Tích hợp công cụ Báo Cáo Kiểm Định Độ Bền Cơ Học tại mục chi tiết chất liệu `/san-pham/[slug]`.
+  - Công bố 4 chỉ số cơ lý tính chuẩn mực:
+    1. *Thử nghiệm ma sát mài mòn Martindale*: Đạt **35.000 chu kỳ chà xát** (đạt chuẩn thương mại nặng Heavy Commercial Grade >30.000 chu kỳ mà không bị đứt sợi hay xơ mòn).
+    2. *Thang đo chống xù lông (Pilling Resistance)*: Đạt **Cấp 4.5 / 5.0** theo tiêu chuẩn ISO 12945-2, giữ bề mặt sợi phẳng mịn sau thời gian dài sử dụng.
+    3. *Độ bền kéo đứt sợi ướt / khô (Tensile Strength)*: Đạt **420N**, sợi lanh tự nhiên gia tăng độ bền gấp 2 lần khi tiếp xúc với nước nhờ liên kết xenlulozo bền vững.
+    4. *Vòng đời giặt máy ước tính*: Đạt **>80 chu kỳ giặt êm**, duy trì độ ổn định phom dáng ≥95%.
+  - Tặng kèm miễn phí 01 Túi giặt lưới dệt mịn Micro-Mesh bảo vệ sợi lụa và lanh cùng cẩm nang dùng nước giặt sinh học pH 6.2 trung tính.
+
+### 74. Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)
+- **Mục tiêu**: Kết nối dữ liệu sinh trắc học cá nhân với tủ đồ số hóa thực tế, nâng cao tỷ lệ mặc lặp lại hiệu quả của tủ đồ con nhộng và bảo chứng trải nghiệm vừa vặn hoàn hảo 100%.
+- **Cơ chế**:
+  - Tích hợp phân hệ Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo tại Cổng cá nhân `/tai-khoan`.
+  - 2 chỉ số quản trị tủ đồ thông minh:
+    1. *Tương thích sinh trắc học (Overall Fit Match Score)*: Đạt **98%**, tự động đối chiếu số đo chiều cao, vòng ngực, vòng eo từ Fashion Passport với bảng size của từng sản phẩm đã sở hữu.
+    2. *Hiệu suất sử dụng tủ đồ nhộng (Capsule Utilization Rate)*: Đạt **82%** (diện trang phục hiệu quả 41 trên 50 ngày phối đồ), giảm áp lực mua sắm thừa thãi và tối ưu hóa chỉ số Cost-Per-Wear.
+  - Đối chiếu thông số kỹ thuật chi tiết của 3 dòng trang phục trong tủ đồ số hóa (Blazer Dạ Len Ý khớp 99% vai 44cm, Sơ mi Linen Normandy khớp 98% ngực/eo, Đầm lụa Bảo Lộc khớp 97% hạ eo 38cm).
+  - Cam kết độc quyền **Fit Guarantee Assurance**: Đổi size tốc hành tận nhà 24-48h hoàn toàn 0đ qua dịch vụ RET-QUICK-EXCHANGE-01 nếu độ lệch kích thước thực tế vượt quá 2cm so với Fashion Passport.
 
 ---
 

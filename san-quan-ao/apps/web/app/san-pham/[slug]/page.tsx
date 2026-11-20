@@ -22,6 +22,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [showSilhouetteModal, setShowSilhouetteModal] = useState(false);
   const [silhouetteArchetype, setSilhouetteArchetype] = useState<'PETITE' | 'ATHLETIC' | 'CURVY'>('ATHLETIC');
   const [showFabricComparison, setShowFabricComparison] = useState(false);
+  const [showDurability, setShowDurability] = useState(false);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const [bundleItems, setBundleItems] = useState({ main: true, pants: true, belt: true });
   const [bundleBusy, setBundleBusy] = useState(false);
@@ -1180,6 +1181,72 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY-INDEX-01) */}
+              <div style={{ marginBottom: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowDurability(!showDurability)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    background: showDurability ? '#ecfdf5' : '#f8fafc',
+                    border: showDurability ? '1.5px solid #059669' : '1px solid #cbd5e1',
+                    borderRadius: 3,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: showDurability ? '#047857' : '#1e293b',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Award size={13} color="#059669" /> 🧪 {showDurability ? 'Thu gọn kiểm định độ bền' : 'Chỉ Số Độ Bền Sợi Dệt & Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY)'}
+                </button>
+
+                {showDurability && (
+                  <div style={{ marginTop: 10, padding: 12, background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4 }}>
+                    <div className="row between" style={{ marginBottom: 8 }}>
+                      <strong style={{ fontSize: 12, color: '#0f172a' }}>
+                        Báo Cáo Kiểm Định Độ Bền &amp; Ma Sát Cơ Học (ISO Standards):
+                      </strong>
+                      <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                        HEAVY COMMERCIAL GRADE
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8, marginBottom: 10 }}>
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Thử Nghiệm Ma Sát Martindale</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>35.000 Chu kỳ chà xát</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Không xơ đứt, đạt chuẩn thương mại nặng</div>
+                      </div>
+
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Chống Xù Lông (Pilling)</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>Cấp 4.5 / 5.0 (ISO 12945)</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Bề mặt sợi mịn màng, chống bết dính</div>
+                      </div>
+
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Lực Kéo Đứt Sợi Ướt / Khô</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>420N (Bền gấp đôi khi ướt)</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Cấu trúc xenlulozo tự nhiên bền bỉ</div>
+                      </div>
+
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Tuổi Thọ Giặt Máy Ước Tính</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>&gt;80 Chu kỳ giặt êm</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Duy trì &ge;95% phom dáng nguyên bản</div>
+                      </div>
+                    </div>
+
+                    <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+                      💡 <em>Cam kết tặng kèm:</em> Mỗi đơn hàng sản phẩm sợi tự nhiên đều được tặng 01 Túi Giặt Lưới Dệt Mịn Micro-Mesh chuyên dụng cho lụa và lanh, cùng tài liệu cẩm nang dùng nước giặt sinh học lành tính pH 6.2.
+                    </p>
                   </div>
                 )}
               </div>

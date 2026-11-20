@@ -306,3 +306,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 75. **Sàn Đổi Đồ Tủ Áo Tuần Hoàn P2P & Hợp Đồng Escrow Đối Ứng (SOC-COMMUNITY-SWAP-MEET-01)**:
    - Hồ sơ: Module 06 Cộng đồng Tương tác Sáng tạo OOTD & Trao Đổi Ngang Hàng P2P.
    - Thực tế: Sàn giao lưu đồ tủ áo tại `/cong-dong`: Thuật toán định giá công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow giữ tiền chênh lệch, vận chuyển đồng kiểm 2 chiều VinFast Green, ký hợp đồng P2P `#SWAP-P2P-XXXXXX` và tích lũy +300 Điểm Xanh.
+
+76. **Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY-INDEX-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Quản Trị Chất Lượng Sợi Dệt (Quality Assurance & Fabric Testing).
+   - Thực tế: Phân hệ kiểm định độ bền tại `/san-pham/[slug]`: Thử nghiệm ma sát Martindale 35.000 chu kỳ (Heavy Commercial Grade), chống xù lông cấp 4.5/5 (ISO 12945), lực kéo đứt 420N, tuổi thọ >80 chu kỳ giặt êm, tặng kèm túi giặt lưới dệt mịn micro-mesh.
+
+77. **Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 07 Cá nhân hóa Người dùng và Quản trị Tủ đồ Cá nhân.
+   - Thực tế: Phân hệ tủ đồ số tại `/tai-khoan`: Tương thích sinh trắc học Fashion Passport đạt 98%, hiệu suất sử dụng tủ đồ nhộng 82% (41/50 ngày diện), kiểm tra độ khớp từng món trong tủ và cam kết đổi size tốc hành 24-48h tận nhà 0đ nếu lệch >2cm (Fit Guarantee).
