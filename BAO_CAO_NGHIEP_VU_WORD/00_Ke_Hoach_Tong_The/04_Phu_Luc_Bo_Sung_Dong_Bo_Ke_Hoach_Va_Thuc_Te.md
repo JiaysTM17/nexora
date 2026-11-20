@@ -314,3 +314,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 77. **Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 07 Cá nhân hóa Người dùng và Quản trị Tủ đồ Cá nhân.
    - Thực tế: Phân hệ tủ đồ số tại `/tai-khoan`: Tương thích sinh trắc học Fashion Passport đạt 98%, hiệu suất sử dụng tủ đồ nhộng 82% (41/50 ngày diện), kiểm tra độ khớp từng món trong tủ và cam kết đổi size tốc hành 24-48h tận nhà 0đ nếu lệch >2cm (Fit Guarantee).
+
+78. **Két Bảo An & Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01)**:
+   - Hồ sơ: Module 02 Chăm Sóc Đồ Hiệu & Dịch Vụ Giá Trị Gia Tăng (VAS Care & High-Security Vault).
+   - Thực tế: Phân hệ két bảo an tại `/vas-care`: Két chống ẩm 45-50% RH (`#VAULT-NEX-882041`), 4 chặng phục hồi vi điểm (Soi quang học 1000 Lux, Enzyme sinh học pH 6.2, Căn chỉnh laser 3D, Niêm phong Zip-seal tamper-evident) và kính hiển vi quang học 50x.
+
+79. **Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Studio Mix & Match và Lookbook OOTD.
+   - Thực tế: Phân hệ radar thẩm mỹ tại `/phoi-do`: Điểm hòa hợp 95.0/100, 5 trục đối sánh (Bảng màu 96%, Phom dáng 94%, Chất liệu 95%, Ngữ cảnh 98%, Khí hậu 92%) và nhãn giám tuyển AI Stylist.

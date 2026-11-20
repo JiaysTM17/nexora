@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -89,6 +89,8 @@ export default function VasCarePage() {
   } | null>(null);
   const [defaultItemName, setDefaultItemName] = useState('');
   const [defaultNotes, setDefaultNotes] = useState('');
+  const [showVaultTracker, setShowVaultTracker] = useState(true);
+  const [vaultMacroView, setVaultMacroView] = useState(false);
 
   function runGarmentDiagnosis() {
     let grade = 'Cấp II · Tổn thương sắc tố bề mặt sợi (Reversible)';
@@ -737,6 +739,123 @@ export default function VasCarePage() {
                   </p>
                 </div>
               ))}
+            </article>
+
+            {/* Két Bảo An & Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01) */}
+            <article className="panel" style={{ marginTop: 16 }}>
+              <div className="row between" style={{ marginBottom: 10, flexWrap: 'wrap', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Lock size={16} color="#0d9488" />
+                  <strong style={{ fontSize: 13, color: '#115e59' }}>
+                    Két Bảo An &amp; Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01)
+                  </strong>
+                </div>
+                <span style={{ fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                  CHỐNG ẨM 45–50% RH · KÉT #VAULT-NEX-882041
+                </span>
+              </div>
+
+              <p style={{ margin: '0 0 12px', fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+                Trang phục cao cấp của bạn được lưu trữ tại buồng kiểm soát khí hậu 20°C, bảo vệ nghiêm ngặt bằng mã số định danh trước khi chuyển qua 4 chặng phục hồi quang học vi điểm.
+              </p>
+
+              {/* 4 Chặng Phục Hồi */}
+              <div style={{ display: 'grid', gap: 8, marginBottom: 12 }}>
+                {[
+                  {
+                    step: 1,
+                    title: 'Soi Quang Học 1000 Lux & Bản Đồ Tổn Thương Vi Điểm',
+                    status: 'HOÀN TẤT 100%',
+                    statusColor: '#166534',
+                    statusBg: '#dcfce7',
+                    desc: 'Kính hiển vi kỹ thuật số 50x xác định 2 vị trí biến tính sắc tố sợi lanh và 1 điểm chỉ ve áo cần gia cố.',
+                  },
+                  {
+                    step: 2,
+                    title: 'Bể Ngâm Enzyme Sinh Học Cân Bằng pH 6.2',
+                    status: 'HOÀN TẤT 100%',
+                    statusColor: '#166534',
+                    statusBg: '#dcfce7',
+                    desc: 'Bóc tách liên kết lipid mồ hôi tự nhiên và protein hữu cơ mà không gây mòn xơ dệt.',
+                  },
+                  {
+                    step: 3,
+                    title: 'Căn Chỉnh Sợi Laser & Định Hình Ve Áo 3D',
+                    status: 'ĐANG XỬ LÝ (SLA 6h)',
+                    statusColor: '#b45309',
+                    statusBg: '#fef3c7',
+                    desc: 'Buồng ủ hơi nước vi áp suất đưa sợi vải về trạng thái dãn nở tự nhiên, khôi phục độ rủ đạt 98.6%.',
+                  },
+                  {
+                    step: 4,
+                    title: 'Niêm Phong Tamper-Evident Zip-Seal & Hộp Haute Couture',
+                    status: 'CHỜ BÀN GIAO',
+                    statusColor: '#475569',
+                    statusBg: '#f1f5f9',
+                    desc: 'Khóa mã niêm phong số hóa, khử khuẩn bằng tia UV-C và điều phối bưu tá xe điện bàn giao.',
+                  },
+                ].map((s) => (
+                  <div
+                    key={s.step}
+                    style={{
+                      padding: '8px 12px',
+                      background: '#fff',
+                      borderRadius: 4,
+                      border: '1px solid #e2e8f0',
+                      fontSize: 11,
+                    }}
+                  >
+                    <div className="row between" style={{ marginBottom: 2 }}>
+                      <span style={{ fontWeight: 700, color: '#0f172a' }}>
+                        Chặng {s.step}: {s.title}
+                      </span>
+                      <span style={{ fontSize: 9, background: s.statusBg, color: s.statusColor, padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                        {s.status}
+                      </span>
+                    </div>
+                    <span style={{ color: '#64748b', fontSize: 10 }}>{s.desc}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Toggle Macro Lens View */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => setVaultMacroView(!vaultMacroView)}
+                  style={{
+                    fontSize: 11,
+                    padding: '5px 10px',
+                    background: vaultMacroView ? '#0f766e' : '#fff',
+                    color: vaultMacroView ? '#fff' : '#0f766e',
+                    border: '1px solid #0f766e',
+                    borderRadius: 4,
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 5,
+                  }}
+                >
+                  <ZoomIn size={13} /> {vaultMacroView ? 'Đóng chế độ soi hiển vi' : 'Xem Ảnh Soi Hiển Vi 50x (Macro Lens)'}
+                </button>
+                <span style={{ fontSize: 10, color: '#0f766e', fontWeight: 600 }}>
+                  ✓ Đã kiểm định theo tiêu chuẩn Thụy Sĩ
+                </span>
+              </div>
+
+              {vaultMacroView && (
+                <div style={{ marginTop: 10, padding: 10, background: '#18181b', borderRadius: 4, color: '#fff', fontSize: 11 }}>
+                  <div className="row between" style={{ marginBottom: 6 }}>
+                    <span style={{ color: '#38bdf8', fontWeight: 700 }}>🔬 KÍNH HIỂN VI QUANG HỌC 50X · 1000 LUX SENSOR</span>
+                    <span style={{ fontSize: 9, background: '#0284c7', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>CALIBRATED</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 10, color: '#94a3b8', lineHeight: 1.4 }}>
+                    • Cấu trúc sợi lanh dọc: Liên kết xenlulozo khôi phục 99.1%. Không còn cặn khoáng canxi gây cứng sợi.<br />
+                    • Độ bóng bề mặt: Đạt 94 Gu (Gloss Units), khôi phục hiệu ứng bắt sáng tự nhiên của sợi dệt cao cấp.
+                  </p>
+                </div>
+              )}
             </article>
           </div>
         </div>

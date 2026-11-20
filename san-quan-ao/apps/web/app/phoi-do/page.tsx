@@ -125,6 +125,7 @@ export default function MixMatchPage() {
   const [lookbookTheme, setLookbookTheme] = useState<'ATELIER_OAK' | 'HERITAGE_STONE' | 'MIDNIGHT_NOIR'>('ATELIER_OAK');
   const [curatorName, setCuratorName] = useState('Elena Vũ · Senior Stylist');
   const [lookbookSaved, setLookbookSaved] = useState(false);
+  const [showRadarAnalysis, setShowRadarAnalysis] = useState(false);
 
   function applyWeatherFormula(city: 'SAIGON' | 'HANOI' | 'DALAT', occ: 'OFFICE' | 'STREET' | 'GALA') {
     setWeatherCity(city);
@@ -431,6 +432,78 @@ export default function MixMatchPage() {
               <span style={{ color: '#555' }}>
                 Sự phối hợp giữa {selectedTop.material} và {selectedBottom.material} tạo độ chuyển tiếp tự nhiên, phóng khoáng mà vẫn giữ được chuẩn mực may đo tinh tế.
               </span>
+            </div>
+
+            {/* Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01) */}
+            <div
+              style={{
+                marginTop: 14,
+                padding: '12px 14px',
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
+                borderRadius: 4,
+              }}
+            >
+              <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Award size={15} color="#0d9488" />
+                  <strong style={{ fontSize: 12, color: '#0f172a' }}>
+                    Radar Tương Thích Phong Cách (CAT-STYLE-COMPATIBILITY-RADAR-01)
+                  </strong>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRadarAnalysis(!showRadarAnalysis)}
+                  style={{
+                    fontSize: 10,
+                    padding: '3px 8px',
+                    background: showRadarAnalysis ? '#0f766e' : '#fff',
+                    color: showRadarAnalysis ? '#fff' : '#0f766e',
+                    border: '1px solid #0f766e',
+                    borderRadius: 3,
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  {showRadarAnalysis ? 'Thu gọn phân tích' : 'Chi tiết 5 Trục Radar (95.0/100) →'}
+                </button>
+              </div>
+
+              <div className="row between" style={{ fontSize: 11, marginBottom: 6 }}>
+                <span style={{ color: '#475569' }}>Chỉ số hòa hợp tổng thể (Overall Synergy):</span>
+                <strong style={{ color: '#0f766e', fontSize: 13, fontFamily: 'Georgia, serif' }}>95.0 / 100</strong>
+              </div>
+
+              {showRadarAnalysis && (
+                <div style={{ marginTop: 8, display: 'grid', gap: 6, fontSize: 11 }}>
+                  {[
+                    { label: '1. Hòa sắc bảng màu (Color Harmony)', score: 96, desc: 'Tông Cát Mộc & Nâu Đất tương hỗ hoàn hảo.' },
+                    { label: '2. Cân bằng phom dáng (Silhouette Balance)', score: 94, desc: 'Tỷ lệ 1/3 thân trên ôm nhẹ, 2/3 thân dưới suông rủ thanh thoát.' },
+                    { label: '3. Đồng điệu chất liệu (Fabric Synergy)', score: 95, desc: `Lanh dệt thô hòa quyện cùng ${selectedBottom.material}.` },
+                    { label: '4. Tương thích ngữ cảnh (Occasion Fit)', score: 98, desc: 'Linh hoạt biến chuyển từ công sở đến cà phê cuối tuần.' },
+                    { label: '5. Thích ứng thời tiết (Climate Fit)', score: 92, desc: 'Thoáng khí, giải nhiệt tự nhiên cho khí hậu nhiệt đới 26–32°C.' },
+                  ].map((axis, i) => (
+                    <div key={i} style={{ background: '#fff', padding: '6px 8px', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                      <div className="row between" style={{ marginBottom: 2 }}>
+                        <span style={{ fontWeight: 600, color: '#1e293b' }}>{axis.label}</span>
+                        <strong style={{ color: '#0f766e' }}>{axis.score}%</strong>
+                      </div>
+                      <div style={{ width: '100%', height: 4, background: '#f1f5f9', borderRadius: 2, overflow: 'hidden', marginBottom: 2 }}>
+                        <div style={{ width: `${axis.score}%`, height: '100%', background: '#0d9488', borderRadius: 2 }} />
+                      </div>
+                      <span style={{ fontSize: 9, color: '#64748b' }}>{axis.desc}</span>
+                    </div>
+                  ))}
+
+                  <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 4 }}>
+                    {['#QuietLuxury', '#EffortlessElegance', '#SlowFashionSynergy'].map((tag) => (
+                      <span key={tag} style={{ fontSize: 9, background: '#ccfbf1', color: '#115e59', padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Total and Checkout Card */}
