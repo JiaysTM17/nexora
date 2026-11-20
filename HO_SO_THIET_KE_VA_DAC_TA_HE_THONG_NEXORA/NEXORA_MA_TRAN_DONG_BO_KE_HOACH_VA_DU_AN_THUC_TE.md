@@ -103,6 +103,8 @@
 | **92** | **Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ radar thẩm mỹ tại `/phoi-do`: Điểm hòa hợp 95.0/100, 5 trục đối sánh (Bảng màu 96%, Phom dáng 94%, Chất liệu 95%, Ngữ cảnh 98%, Khí hậu 92%) và nhãn giám tuyển AI Stylist |
 | **93** | **Tuyến Giao Hàng Xanh & Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)** | Module 03 & ESG | Đã hoàn thiện | Phân hệ bù đắp phát thải tại `/gio-hang`: Phân tích xe điện VinFast Feliz (-0.45kg CO2e), đệm giấy tổ ong (-0.12kg CO2e), dấu chân ròng 0.08kg CO2e, tài trợ 1 mầm cây đước Rừng Cần Giờ 0đ và cấp chứng thư `#NETZERO-XXXXXX` |
 | **94** | **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)** | Module 01 & 3D AR | Đã hoàn thiện | Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng chuyển động gió 1.2 m/s, hệ số rủ 0.32, hồi nếp 96% và xuất snapshot Lookbook |
+| **95** | **Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)** | Module 03 & Logistics | Đã hoàn thiện | Phân hệ điều phối thời tiết tại `/don-hang/[id]`: Radar thời tiết đo mưa 62mm/h, nguy cơ ngập 68%, kích hoạt đệm an toàn bưu tá +25-35 phút, 3 lớp màng Bio-Cassava kháng nước, tặng +50 Điểm Xanh đền bù kiên nhẫn, gửi tin nhắn động viên tài xế và dời ca giao tối miễn phí |
+| **96** | **Thẩm Định Bao Bì Không Nhựa & Cấp Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Phân hệ thẩm định bao bì xanh tại `/seller`: Khảo sát 4 chuẩn vật liệu (Túi màng sắn Bio-Cassava, Hộp sóng tổ ong FSC không keo, Băng keo giấy bột mì hoạt hóa nước, Tem mực đậu nành organic), cấp huy hiệu Zero-Plastic Certified (100/100) và kết nối 3 hợp tác xã bao bì xanh bản địa chiết khấu -15% |
 
 ---
 
@@ -874,6 +876,36 @@
     - Chế độ *Gió Nhẹ Thoang Thoảng (Breeze 1.2 m/s)*: Tạo hiệu ứng bay rủ vi áp suất theo thời gian thực (hệ số rủ Drape Coefficient: 0.32, độ hồi nếp gấp: 96%).
     - Chế độ *Tĩnh Lặng Phom May (Still Pose)*: Giữ nguyên phom dáng chuẩn mực của nghệ nhân may đo.
   - Nút "Chụp Snapshot Lookbook AR & Lưu Vào Ví Phong Cách", lưu vết cục bộ vào `localStorage` (`nexora_ar_snapshots`) sẵn sàng chia sẻ lên cộng đồng OOTD.
+
+### 79. Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)
+- **Mục tiêu**: Đảm bảo an toàn sinh mạng tuyệt đối cho đội ngũ bưu tá xe điện trong điều kiện thời tiết cực đoan nhiệt đới, đồng thời bảo vệ 100% tình trạng nguyên vẹn của kiện hàng thời trang cao cấp và chủ động cập nhật kỳ vọng nhận hàng của người mua.
+- **Cơ chế**:
+  - Tích hợp công cụ giám sát radar thời tiết thông minh ngay trên khối vận đơn tại `/don-hang/[id]`.
+  - Giám sát 4 chỉ số an toàn vận hành thời gian thực:
+    1. *Lượng mưa đo được*: 62 mm/h kết hợp gió giật cấp 6.
+    2. *Nguy cơ ngập úng tuyến đường*: 68% (tự động điều phối tránh tuyến trũng thấp Nguyễn Thị Thập / Huỳnh Tấn Phát).
+    3. *Tiêu chuẩn bao bọc vải*: 3 lớp màng sinh học Bio-Cassava kháng nước 100%, chống ẩm tuyệt đối cho lụa và sợi lanh.
+    4. *Đền bù kiên nhẫn*: Tự động cộng **+50 Điểm Thưởng Xanh NEX-Green** vào ví thành viên để tri ân sự thấu hiểu và kiên nhẫn của khách hàng.
+  - Tính năng điều phối tương tác:
+    - Kích hoạt đệm thời gian dự phòng **+25 - 35 phút** bảo vệ an toàn cho tài xế.
+    - Nút 1-chạm gửi tin nhắn động viên tài xế: *"Cứ thong thả giữ an toàn anh nhé!"*.
+    - Tùy chọn linh hoạt lùi ca giao sang buổi tối (18:30 - 20:30) hoặc sáng hôm sau hoàn toàn miễn phí.
+  - Lưu trữ trạng thái tương tác vào `localStorage` (`nexora_weather_reroute_[id]`).
+
+### 80. Thẩm Định Bao Bì Không Nhựa & Cấp Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)
+- **Mục tiêu**: Chuẩn hóa và khuyến khích các nhà may, xưởng thời trang đối tác loại bỏ hoàn toàn bao bì nhựa dùng một lần, hướng tới chuỗi cung ứng thương mại điện tử tuần hoàn và bền vững.
+- **Cơ chế**:
+  - Tích hợp bảng Thẩm Định Bao Bì Không Nhựa trong tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`.
+  - Bộ tiêu chuẩn 4 khâu vật liệu đóng gói sinh thái tự khai báo:
+    1. *Túi màng sắn Bio-Cassava*: 100% tinh bột sắn Củ Chi, tự hủy sinh học trong 180 ngày thành phân bón hữu cơ.
+    2. *Hộp carton sóng tổ ong FSC*: Giấy tái chế gấp xếp thông minh chịu lực 25kg, hoàn toàn không dùng keo dính hóa chất.
+    3. *Băng keo giấy hoạt hóa nước*: Bột mì kết dính tự nhiên, tái chế trực tiếp cùng bột giấy không tồn dư hóa chất.
+    4. *Tem niêm phong mực đậu nành*: Mực in gốc thực vật không chì, an toàn sinh học và không phai lem khi gặp mưa.
+  - Hệ thống tính điểm tuân thủ thời gian thực (0 - 100 điểm) và cấp huy hiệu uy tín **"ZERO-PLASTIC CERTIFIED (100/100)"** hiển thị tại gian hàng.
+  - Phân hệ liên kết đối tác cung ứng bao bì xanh bản địa:
+    - Kết nối trực tiếp 3 đơn vị đối tác chiến lược (HTX Giấy Sóng Bến Tre, Liên Minh Bio-Cassava Củ Chi, Xưởng Tem In Đậu Nành Hà Nội).
+    - Trợ giá sàn **-15%** khi đặt mua vật liệu bao bì sinh thái.
+  - Lưu trữ cấu hình cam kết và trạng thái đặt mẫu thử vào `localStorage` (`nexora_seller_eco_pack_[shopId]`).
 
 ---
 

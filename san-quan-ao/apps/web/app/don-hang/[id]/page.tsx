@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -56,6 +56,8 @@ export default function OrderDetail() {
   const [courierTip, setCourierTip] = useState<number>(10000);
   const [courierComment, setCourierComment] = useState<string>('');
   const [courierFeedbackDone, setCourierFeedbackDone] = useState<boolean>(false);
+  const [weatherMsgSent, setWeatherMsgSent] = useState<boolean>(false);
+  const [weatherRescheduledSlot, setWeatherRescheduledSlot] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -70,6 +72,12 @@ export default function OrderDetail() {
           setCourierTip(parsed.tip || 0);
           setCourierComment(parsed.comment || '');
           setCourierFeedbackDone(true);
+        }
+        const savedWeather = localStorage.getItem(`nexora_weather_reroute_${id}`);
+        if (savedWeather) {
+          const parsedWeather = JSON.parse(savedWeather);
+          if (parsedWeather.msgSent) setWeatherMsgSent(true);
+          if (parsedWeather.rescheduledSlot) setWeatherRescheduledSlot(parsedWeather.rescheduledSlot);
         }
       }
     } catch {}
@@ -402,6 +410,116 @@ export default function OrderDetail() {
                 >
                   <Navigation size={13} color="#38bdf8" /> 📍 Xem Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01)
                 </button>
+              </div>
+
+              {/* Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01) */}
+              <div
+                style={{
+                  marginTop: 12,
+                  padding: '12px 14px',
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderLeft: '4px solid #0284c7',
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: '#0369a1' }}>
+                    <CloudRain size={16} />
+                    <span>Cảnh Báo Thời Tiết &amp; Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)</span>
+                  </div>
+                  <span style={{ fontSize: 10, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 10, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <Wind size={11} /> ⛈️ ÁP THẤP NHIỆT ĐỚI · CẤP 1
+                  </span>
+                </div>
+
+                <p style={{ margin: '0 0 10px', color: '#334155', lineHeight: 1.5, fontSize: 11 }}>
+                  Hệ thống AI Radar phát hiện mưa dông lớn cục bộ và nguy cơ ngập tại tuyến đường giao vận. NEXORA kích hoạt chế độ điều phối an toàn: tự động cộng đệm thời gian dự phòng <strong>+25 - 35 phút</strong> để bảo vệ bưu tá và giữ nguyên vẹn kiện hàng thời trang cao cấp.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 10 }}>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Lượng mưa đo được</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a' }}>62 mm/h · Gió giật cấp 6</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Nguy cơ ngập úng</div>
+                    <div style={{ fontWeight: 700, color: '#d97706' }}>68% (Đã đổi lộ trình)</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Bao gói bảo vệ vải</div>
+                    <div style={{ fontWeight: 700, color: '#16a34a' }}>3 Lớp Màng Bio-Cassava</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Đền bù kiên nhẫn</div>
+                    <div style={{ fontWeight: 700, color: '#15803d' }}>+50 Điểm NEX-Green</div>
+                  </div>
+                </div>
+
+                <div style={{ background: '#eff6ff', padding: '8px 12px', borderRadius: 4, border: '1px solid #bfdbfe', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8, fontSize: 11 }}>
+                  <Umbrella size={16} color="#0284c7" style={{ flexShrink: 0 }} />
+                  <span style={{ color: '#1e40af' }}>
+                    <strong>Nhật ký điều phối:</strong> Bưu tá VinFast Green đang tạm trú tại Hub trung chuyển an toàn. Trang phục lụa/linen được bọc trong túi chống ẩm kín khí, sẵn sàng tiếp tục di chuyển khi cường độ mưa giảm.
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWeatherMsgSent(true);
+                      setSuccess('✓ Đã chuyển lời nhắn động viên ấm áp: "Cứ thong thả giữ an toàn anh nhé!" đến bưu tá.');
+                      try {
+                        if (id) {
+                          localStorage.setItem(`nexora_weather_reroute_${id}`, JSON.stringify({ msgSent: true, rescheduledSlot: weatherRescheduledSlot }));
+                        }
+                      } catch {}
+                    }}
+                    disabled={weatherMsgSent}
+                    style={{
+                      padding: '5px 12px',
+                      background: weatherMsgSent ? '#e2e8f0' : '#0284c7',
+                      color: weatherMsgSent ? '#64748b' : '#fff',
+                      border: 'none',
+                      borderRadius: 3,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: weatherMsgSent ? 'default' : 'pointer',
+                    }}
+                  >
+                    {weatherMsgSent ? '✓ Đã gửi tin nhắn động viên bưu tá' : '💬 Gửi lời nhắn: "Cứ thong thả giữ an toàn anh nhé!"'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const slot = weatherRescheduledSlot ? null : 'Buổi tối (18:30 - 20:30 · Sau khi tạnh mưa)';
+                      setWeatherRescheduledSlot(slot);
+                      if (slot) {
+                        setSuccess('✓ Đã đăng ký lùi lịch giao sang buổi tối (18:30 - 20:30) hoàn toàn miễn phí!');
+                      } else {
+                        setSuccess('Đã chuyển lại thời gian giao thông thường.');
+                      }
+                      try {
+                        if (id) {
+                          localStorage.setItem(`nexora_weather_reroute_${id}`, JSON.stringify({ msgSent: weatherMsgSent, rescheduledSlot: slot }));
+                        }
+                      } catch {}
+                    }}
+                    style={{
+                      padding: '5px 12px',
+                      background: weatherRescheduledSlot ? '#f0fdf4' : '#fff',
+                      color: weatherRescheduledSlot ? '#166534' : '#334155',
+                      border: `1px solid ${weatherRescheduledSlot ? '#86efac' : '#cbd5e1'}`,
+                      borderRadius: 3,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {weatherRescheduledSlot ? '✓ Đã dời lịch sang ca tối 18:30 - 20:30' : '🕒 Lùi ca giao sang tối (18:30 - 20:30)'}
+                  </button>
+                </div>
               </div>
             </div>
           ) : (

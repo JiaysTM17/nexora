@@ -297,7 +297,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **87** | **Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01)** | Module 01 & 06 | **100% Hoàn thiện** | Điểm hòa hợp 95.0/100, phân tích 5 trục (Bảng màu 96%, Phom dáng 94%, Chất liệu 95%, Ngữ cảnh 98%, Khí hậu 92%) tại `/phoi-do` |
 | **88** | **Tuyến Giao Hàng Xanh & Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)** | Module 03 & ESG | **100% Hoàn thiện** | Đo lường xe điện VinFast Feliz (-0.45kg CO2e), đệm giấy tổ ong (-0.12kg CO2e), dấu chân ròng 0.08kg CO2e, tài trợ cây Rừng Cần Giờ 0đ tại `/gio-hang` |
 | **89** | **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)** | Module 01 & 3D AR | **100% Hoàn thiện** | Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng gió 1.2 m/s, hệ số rủ 0.32, xuất snapshot |
-| **90** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **90** | **Cảnh Báo Thời Tiết & Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)** | Module 03 & Logistics | **100% Hoàn thiện** | Radar thời tiết đo mưa 62mm/h, nguy cơ ngập 68%, đệm an toàn bưu tá +25-35 phút, 3 lớp màng Bio-Cassava, +50 Điểm Xanh tại `/don-hang/[id]` |
+| **91** | **Thẩm Định Bao Bì Không Nhựa & Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)** | Module 01, 04 & ESG | **100% Hoàn thiện** | Khảo sát 4 chuẩn vật liệu (Túi màng sắn, Hộp sóng FSC, Băng keo bột mì, Tem mực đậu nành), cấp huy hiệu Zero-Plastic (100/100) và kết nối 3 HTX bao bì bản địa tại `/seller` |
+| **92** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

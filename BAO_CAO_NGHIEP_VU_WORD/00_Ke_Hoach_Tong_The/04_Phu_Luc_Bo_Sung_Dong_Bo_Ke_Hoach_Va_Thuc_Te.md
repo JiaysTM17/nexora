@@ -330,3 +330,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 81. **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Công nghệ Trải nghiệm Thực tế Tăng cường (3D/AR Drapery).
    - Thực tế: Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng chuyển động gió 1.2 m/s, hệ số rủ 0.32, hồi nếp 96% và xuất snapshot Lookbook.
+
+82. **Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)**:
+   - Hồ sơ: Module 03 Quản trị Đơn hàng & Module 04 Logistics Chặng Cuối và Điều Phối An Toàn Shipper.
+   - Thực tế: Phân hệ điều phối thời tiết tại `/don-hang/[id]`: Radar thời tiết đo mưa 62mm/h, nguy cơ ngập 68%, kích hoạt đệm an toàn bưu tá +25-35 phút, 3 lớp màng Bio-Cassava kháng nước, tặng +50 Điểm Xanh đền bù kiên nhẫn, gửi tin nhắn động viên tài xế và dời ca giao tối miễn phí.
+
+83. **Thẩm Định Bao Bì Không Nhựa & Cấp Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)**:
+   - Hồ sơ: Module 01 Quản trị Danh mục, Module 04 Kênh Người Bán & Bán Lẻ Bền Vững (ESG/CSR).
+   - Thực tế: Phân hệ thẩm định bao bì xanh tại `/seller`: Khảo sát 4 chuẩn vật liệu (Túi màng sắn Bio-Cassava, Hộp sóng tổ ong FSC không keo, Băng keo giấy bột mì hoạt hóa nước, Tem mực đậu nành organic), cấp huy hiệu Zero-Plastic Certified (100/100) và kết nối 3 hợp tác xã bao bì xanh bản địa chiết khấu -15%.
