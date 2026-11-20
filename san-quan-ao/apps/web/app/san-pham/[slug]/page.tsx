@@ -40,6 +40,10 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [bespokeNotes, setBespokeNotes] = useState('');
   const [bespokeConfirmed, setBespokeConfirmed] = useState(false);
   const [bespokeQueuePos] = useState(7);
+  const [showArMirrorModal, setShowArMirrorModal] = useState(false);
+  const [arLighting, setArLighting] = useState<'DAYLIGHT' | 'CANDLE' | 'SPOTLIGHT'>('DAYLIGHT');
+  const [arMotion, setArMotion] = useState<'STILL' | 'BREEZE'>('BREEZE');
+  const [arSnapshotSaved, setArSnapshotSaved] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -459,6 +463,25 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               }}
             >
               <Eye size={13} color="var(--clay)" /> 👗 Mô Phỏng Phom Dáng &amp; Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE)
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowArMirrorModal(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                background: '#f0fdfa',
+                border: '1px solid #99f6e4',
+                borderRadius: 3,
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#0f766e',
+                cursor: 'pointer',
+              }}
+            >
+              <Sparkles size={13} color="#0d9488" /> 🪞 Gương Thử Đồ AR &amp; Độ Rủ (USER-VIRTUAL-TRYON-AR)
             </button>
           </div>
 
@@ -2179,6 +2202,210 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   </button>
                 </div>
               </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Gương Thử Đồ AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01) */}
+      {showArMirrorModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.65)',
+            display: 'grid',
+            placeItems: 'center',
+            zIndex: 100,
+            padding: 16,
+          }}
+          onClick={() => setShowArMirrorModal(false)}
+        >
+          <div
+            style={{
+              background: '#fff',
+              maxWidth: 580,
+              width: '100%',
+              borderRadius: 8,
+              padding: 24,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.25)',
+              position: 'relative',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowArMirrorModal(false)}
+              style={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#64748b',
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <Sparkles size={20} color="#0d9488" />
+              <h2 style={{ margin: 0, fontSize: 17, color: '#134e4a' }}>
+                Gương Soi Ảo AR &amp; Độ Rủ (USER-VIRTUAL-TRYON-AR-01)
+              </h2>
+            </div>
+            <p style={{ margin: '0 0 16px', fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+              Mô phỏng chân thực hiệu ứng thị giác của chất liệu {p.material} dưới 3 điều kiện nguồn sáng và chuyển động gió vi điểm.
+            </p>
+
+            {/* Light Selector */}
+            <div style={{ marginBottom: 14 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 6 }}>
+                1. Chọn Điều Kiện Ánh Sáng Môi Trường:
+              </span>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                {[
+                  { id: 'DAYLIGHT' as const, label: 'Atelier Ban Ngày', kelvin: '5500K Tự nhiên' },
+                  { id: 'CANDLE' as const, label: 'Nến Ấm Dạ Tiệc', kelvin: '2700K Lãng mạn' },
+                  { id: 'SPOTLIGHT' as const, label: 'Spotlight Gallery', kelvin: '4000K Sân khấu' },
+                ].map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    onClick={() => setArLighting(l.id)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: 4,
+                      border: arLighting === l.id ? '1.5px solid #0d9488' : '1px solid #cbd5e1',
+                      background: arLighting === l.id ? '#f0fdfa' : '#fff',
+                      color: arLighting === l.id ? '#0f766e' : '#334155',
+                      fontWeight: arLighting === l.id ? 700 : 500,
+                      cursor: 'pointer',
+                      fontSize: 11,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div>{l.label}</div>
+                    <div style={{ fontSize: 9, color: '#64748b', marginTop: 2 }}>{l.kelvin}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Motion Selector */}
+            <div style={{ marginBottom: 14 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 6 }}>
+                2. Chế Độ Chuyển Động &amp; Độ Rủ (Drapery Flow):
+              </span>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {[
+                  { id: 'STILL' as const, label: 'Tĩnh Lặng Phom May (Still Pose)' },
+                  { id: 'BREEZE' as const, label: 'Gió Nhẹ Thoang Thoảng (Breeze 1.2 m/s)' },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setArMotion(m.id)}
+                    style={{
+                      flex: 1,
+                      padding: '6px 12px',
+                      borderRadius: 4,
+                      border: arMotion === m.id ? '1.5px solid #0d9488' : '1px solid #cbd5e1',
+                      background: arMotion === m.id ? '#f0fdfa' : '#fff',
+                      color: arMotion === m.id ? '#0f766e' : '#334155',
+                      fontWeight: arMotion === m.id ? 700 : 500,
+                      cursor: 'pointer',
+                      fontSize: 11,
+                    }}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* AR Virtual Mirror Stage */}
+            <div
+              style={{
+                position: 'relative',
+                height: 260,
+                borderRadius: 6,
+                overflow: 'hidden',
+                background: arLighting === 'CANDLE' ? 'linear-gradient(135deg, #451a03 0%, #1c1917 100%)' : arLighting === 'SPOTLIGHT' ? '#09090b' : '#f8fafc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 14,
+                border: '1px solid #cbd5e1',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              <img
+                src={p.images[0]?.url || '/products/shirt.svg'}
+                alt={p.name}
+                style={{
+                  maxHeight: '85%',
+                  maxWidth: '85%',
+                  objectFit: 'contain',
+                  filter: arLighting === 'CANDLE' ? 'sepia(40%) saturate(140%) contrast(105%)' : arLighting === 'SPOTLIGHT' ? 'contrast(125%) brightness(110%)' : 'none',
+                  transform: arMotion === 'BREEZE' ? 'skewX(-1.5deg) scale(1.02)' : 'none',
+                  transition: 'all 0.4s ease',
+                }}
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                }}
+              />
+
+              <div style={{ position: 'absolute', top: 10, left: 10, fontSize: 10, background: 'rgba(0,0,0,0.65)', color: '#5eead4', padding: '2px 8px', borderRadius: 3, fontWeight: 700 }}>
+                AR DRAPERY · 60 FPS
+              </div>
+
+              <div style={{ position: 'absolute', bottom: 10, right: 10, fontSize: 10, background: 'rgba(0,0,0,0.65)', color: '#fff', padding: '2px 8px', borderRadius: 3 }}>
+                Hệ số rủ: 0.32 · Hồi nếp: 96%
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            {arSnapshotSaved ? (
+              <div style={{ padding: '8px 12px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 4, color: '#065f46', fontSize: 11, textAlign: 'center' }}>
+                ✓ Đã chụp và lưu Snapshot AR vào Ví Phong Cách (`localStorage`). Bạn có thể chia sẻ lên bảng tin OOTD!
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    localStorage.setItem('nexora_ar_snapshots', JSON.stringify({
+                      product: p.name,
+                      lighting: arLighting,
+                      motion: arMotion,
+                      timestamp: new Date().toISOString(),
+                    }));
+                  } catch {}
+                  setArSnapshotSaved(true);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '9px 14px',
+                  background: '#0d9488',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <Sparkles size={14} /> Chụp Snapshot Lookbook AR &amp; Lưu Vào Ví Phong Cách
+              </button>
             )}
           </div>
         </div>

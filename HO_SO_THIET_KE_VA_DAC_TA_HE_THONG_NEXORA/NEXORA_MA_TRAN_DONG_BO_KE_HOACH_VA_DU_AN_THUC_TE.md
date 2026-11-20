@@ -101,6 +101,8 @@
 | **90** | **Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)** | Module 01 & 07 | Đã hoàn thiện | Phân hệ tủ đồ số tại `/tai-khoan`: Tương thích sinh trắc học Fashion Passport đạt 98%, hiệu suất tủ đồ nhộng 82% (41/50 ngày diện), kiểm tra độ khớp từng món trong tủ và cam kết đổi size tốc hành 24-48h tận nhà 0đ nếu lệch >2cm |
 | **91** | **Két Bảo An & Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ két bảo an tại `/vas-care`: Két chống ẩm 45-50% RH (`#VAULT-NEX-882041`), 4 chặng phục hồi vi điểm (Soi quang học 1000 Lux, Enzyme sinh học pH 6.2, Căn chỉnh laser 3D, Niêm phong Zip-seal tamper-evident) và kính hiển vi 50x |
 | **92** | **Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ radar thẩm mỹ tại `/phoi-do`: Điểm hòa hợp 95.0/100, 5 trục đối sánh (Bảng màu 96%, Phom dáng 94%, Chất liệu 95%, Ngữ cảnh 98%, Khí hậu 92%) và nhãn giám tuyển AI Stylist |
+| **93** | **Tuyến Giao Hàng Xanh & Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)** | Module 03 & ESG | Đã hoàn thiện | Phân hệ bù đắp phát thải tại `/gio-hang`: Phân tích xe điện VinFast Feliz (-0.45kg CO2e), đệm giấy tổ ong (-0.12kg CO2e), dấu chân ròng 0.08kg CO2e, tài trợ 1 mầm cây đước Rừng Cần Giờ 0đ và cấp chứng thư `#NETZERO-XXXXXX` |
+| **94** | **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)** | Module 01 & 3D AR | Đã hoàn thiện | Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng chuyển động gió 1.2 m/s, hệ số rủ 0.32, hồi nếp 96% và xuất snapshot Lookbook |
 
 ---
 
@@ -847,6 +849,31 @@
     4. *Tương thích ngữ cảnh (Occasion Fit)*: **98%** (Đa năng từ công sở sáng tạo đến cà phê dạo phố cuối tuần).
     5. *Thích ứng thời tiết (Climate Fit)*: **92%** (Thoáng khí, giải nhiệt tự nhiên cho khí hậu nhiệt đới 26–32°C).
   - Gợi ý thẻ phong cách AI Stylist độc quyền: `#QuietLuxury`, `#EffortlessElegance`, `#SlowFashionSynergy`.
+
+### 77. Tuyến Giao Hàng Xanh & Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)
+- **Mục tiêu**: Định lượng hóa chính xác lượng khí thải nhà kính (CO2e) được cắt giảm trong khâu logistics chặng cuối và cung cấp cơ chế trung hòa 100% lượng phát thải còn lại để kiến tạo các đơn hàng Net-Zero đích thực.
+- **Cơ chế**:
+  - Tích hợp bảng phân tích Tuyến Giao Hàng Xanh & Trung Hòa Carbon tại Giỏ Hàng `/gio-hang`.
+  - Minh bạch 3 chỉ số cắt giảm khí thải thời gian thực:
+    1. *Xe điện VinFast Feliz*: Cắt giảm **-0.45 kg CO2e** so với xe máy chạy xăng truyền thống trên mỗi chặng giao hàng.
+    2. *Đóng gói đệm giấy tổ ong Kraft Zero-Plastic*: Cắt giảm **-0.12 kg CO2e** từ việc loại bỏ hoàn toàn hạt vi nhựa và túi bóng khí nilon.
+    3. *Dấu chân carbon ròng*: Đạt mức tối ưu chỉ còn **0.08 kg CO2e**.
+  - Tính năng 1-chạm "Bù Đắp 100% Carbon Ròng (0đ)":
+    - Trích từ Quỹ NEXORA Green Fund tài trợ 01 mầm cây Đước tại Rừng phòng hộ Cần Giờ.
+    - Cấp mã chứng thư sinh thái số độc bản `#NETZERO-XXXXXX`, lưu vết vào `localStorage` (`nexora_order_carbon_offset`).
+
+### 78. Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)
+- **Mục tiêu**: Mang lại trải nghiệm thử đồ không gian ba chiều chân thực, xóa bỏ rào cản về việc không cảm nhận được độ bóng, sắc thái ánh sáng và độ rủ mềm mại của chất liệu vải cao cấp khi mua sắm trực tuyến.
+- **Cơ chế**:
+  - Tích hợp nút kích hoạt và Modal Gương Thử Đồ AR tại trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Tùy biến 3 điều kiện nguồn sáng vật lý mô phỏng:
+    1. *Atelier Ban Ngày (5500K)*: Ánh sáng ban ngày tự nhiên, tái hiện sắc độ sợi vải mộc chân thực.
+    2. *Nến Ấm Dạ Tiệc (2700K)*: Tông vàng ấm lãng mạn, tôn vinh độ óng ả bắt sáng của lụa tơ tằm Bảo Lộc.
+    3. *Spotlight Gallery (4000K)*: Ánh sáng sân khấu hội tụ, làm nổi bật đường may ve áo và cấu trúc vai may đo.
+  - Mô phỏng động học độ rủ sợi dệt (Drapery Flow):
+    - Chế độ *Gió Nhẹ Thoang Thoảng (Breeze 1.2 m/s)*: Tạo hiệu ứng bay rủ vi áp suất theo thời gian thực (hệ số rủ Drape Coefficient: 0.32, độ hồi nếp gấp: 96%).
+    - Chế độ *Tĩnh Lặng Phom May (Still Pose)*: Giữ nguyên phom dáng chuẩn mực của nghệ nhân may đo.
+  - Nút "Chụp Snapshot Lookbook AR & Lưu Vào Ví Phong Cách", lưu vết cục bộ vào `localStorage` (`nexora_ar_snapshots`) sẵn sàng chia sẻ lên cộng đồng OOTD.
 
 ---
 

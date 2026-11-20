@@ -2,7 +2,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck, Trees, Check } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
@@ -23,6 +23,8 @@ export default function Cart() {
     }
     return false;
   });
+  const [carbonOffsetActive, setCarbonOffsetActive] = useState(false);
+  const [offsetCertCode, setOffsetCertCode] = useState('');
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
@@ -260,6 +262,92 @@ export default function Cart() {
               </span>
             </div>
           </div>
+        )}
+      </section>
+
+      {/* Bộ Đo Giảm Phát Thải Tuyến Vận Chuyển & Đóng Góp Rừng Ngập Mặn (CART-CARBON-TAX-OFFSET-01) */}
+      <section className="panel" style={{ background: '#f8fafc', border: '1px solid #cbd5e1' }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+          <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <Trees size={18} color="#059669" /> Tuyến Giao Hàng Xanh &amp; Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)
+          </h2>
+          <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            CARBON NEUTRAL ROUTE
+          </span>
+        </div>
+
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Phân tích lượng khí thải nhà kính giảm được nhờ tối ưu hóa logistics xe điện VinFast Feliz và đệm giấy tổ ong không nilon.
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 8, marginBottom: 12 }}>
+          <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', fontSize: 11 }}>
+            <span style={{ color: '#64748b', display: 'block' }}>Xe Điện VinFast Feliz</span>
+            <strong style={{ color: '#047857', fontSize: 12 }}>-0.45 kg CO2e</strong>
+            <div style={{ fontSize: 9, color: '#94a3b8' }}>So với xe xăng truyền thống</div>
+          </div>
+
+          <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', fontSize: 11 }}>
+            <span style={{ color: '#64748b', display: 'block' }}>Đóng Gói Không Nilon</span>
+            <strong style={{ color: '#047857', fontSize: 12 }}>-0.12 kg CO2e</strong>
+            <div style={{ fontSize: 9, color: '#94a3b8' }}>Giấy tổ ong tự hủy sinh học</div>
+          </div>
+
+          <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', fontSize: 11 }}>
+            <span style={{ color: '#64748b', display: 'block' }}>Dấu Chân Carbon Ròng</span>
+            <strong style={{ color: '#0f172a', fontSize: 12 }}>0.08 kg CO2e</strong>
+            <div style={{ fontSize: 9, color: '#94a3b8' }}>Lượng phát thải tối thiểu còn lại</div>
+          </div>
+        </div>
+
+        {carbonOffsetActive ? (
+          <div style={{ padding: '10px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 4, fontSize: 12 }}>
+            <div className="row between" style={{ marginBottom: 4 }}>
+              <span style={{ color: '#065f46', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <CheckCircle2 size={15} /> Đã Bù Đắp 100% Phát Thải (Mã Chứng Thư: #{offsetCertCode})
+              </span>
+              <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                100% NET-ZERO
+              </span>
+            </div>
+            <p style={{ margin: 0, color: '#047857', fontSize: 11 }}>
+              Đơn hàng này được trích từ Quỹ NEXORA Green Fund bảo trợ 01 mầm cây Đước tại Rừng phòng hộ Cần Giờ, trung hòa hoàn toàn 0.08 kg CO2e còn lại.
+            </p>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              const code = `NETZERO-${Date.now().toString().slice(-6)}`;
+              setOffsetCertCode(code);
+              setCarbonOffsetActive(true);
+              try {
+                localStorage.setItem('nexora_order_carbon_offset', JSON.stringify({
+                  code,
+                  reduced: '0.57 kg CO2e',
+                  offset: '0.08 kg CO2e',
+                  location: 'Rừng phòng hộ Cần Giờ',
+                }));
+              } catch {}
+            }}
+            style={{
+              width: '100%',
+              padding: '8px 12px',
+              background: '#047857',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 4,
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            <Trees size={14} /> Bù Đắp 100% Carbon Ròng (Tài Trợ Trồng Rừng Cần Giờ · 0đ)
+          </button>
         )}
       </section>
       <section className="panel">

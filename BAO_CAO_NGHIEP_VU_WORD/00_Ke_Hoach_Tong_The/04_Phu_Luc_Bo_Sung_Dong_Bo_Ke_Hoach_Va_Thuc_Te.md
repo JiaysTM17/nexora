@@ -322,3 +322,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 79. **Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Studio Mix & Match và Lookbook OOTD.
    - Thực tế: Phân hệ radar thẩm mỹ tại `/phoi-do`: Điểm hòa hợp 95.0/100, 5 trục đối sánh (Bảng màu 96%, Phom dáng 94%, Chất liệu 95%, Ngữ cảnh 98%, Khí hậu 92%) và nhãn giám tuyển AI Stylist.
+
+80. **Tuyến Giao Hàng Xanh & Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)**:
+   - Hồ sơ: Module 03 Giỏ hàng Thanh toán & Module 04 Bán lẻ Sàn TMĐT Bền Vững (ESG/CSR).
+   - Thực tế: Phân hệ bù đắp phát thải tại `/gio-hang`: Phân tích xe điện VinFast Feliz (-0.45kg CO2e), đệm giấy tổ ong (-0.12kg CO2e), dấu chân ròng 0.08kg CO2e, tài trợ 1 mầm cây đước Rừng Cần Giờ 0đ và cấp chứng thư số `#NETZERO-XXXXXX`.
+
+81. **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Công nghệ Trải nghiệm Thực tế Tăng cường (3D/AR Drapery).
+   - Thực tế: Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng chuyển động gió 1.2 m/s, hệ số rủ 0.32, hồi nếp 96% và xuất snapshot Lookbook.

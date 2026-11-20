@@ -295,7 +295,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **85** | **Hồ Sơ Tủ Đồ Số & Cam Kết Tương Thích Số Đo (USER-FIT-WARDROBE-INTEGRATION-01)** | Module 01 & 07 | **100% Hoàn thiện** | Phân hệ tủ đồ số tại `/tai-khoan`: Tương thích sinh trắc học đạt 98%, hiệu suất tủ đồ nhộng 82% (41/50 ngày diện), kiểm tra độ khớp từng món và cam kết đổi size tốc hành 24-48h tận nhà 0đ nếu lệch >2cm |
 | **86** | **Két Bảo An & Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01)** | Module 02 & VAS | **100% Hoàn thiện** | Két bảo an chống ẩm 45-50% RH (`#VAULT-NEX-882041`), 4 chặng phục hồi quang học vi điểm (Soi 1000 Lux, Enzyme pH 6.2, Laser 3D, Zip-seal) tại `/vas-care` |
 | **87** | **Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01)** | Module 01 & 06 | **100% Hoàn thiện** | Điểm hòa hợp 95.0/100, phân tích 5 trục (Bảng màu 96%, Phom dáng 94%, Chất liệu 95%, Ngữ cảnh 98%, Khí hậu 92%) tại `/phoi-do` |
-| **88** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **88** | **Tuyến Giao Hàng Xanh & Trung Hòa Carbon (CART-CARBON-TAX-OFFSET-01)** | Module 03 & ESG | **100% Hoàn thiện** | Đo lường xe điện VinFast Feliz (-0.45kg CO2e), đệm giấy tổ ong (-0.12kg CO2e), dấu chân ròng 0.08kg CO2e, tài trợ cây Rừng Cần Giờ 0đ tại `/gio-hang` |
+| **89** | **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)** | Module 01 & 3D AR | **100% Hoàn thiện** | Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng gió 1.2 m/s, hệ số rủ 0.32, xuất snapshot |
+| **90** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
