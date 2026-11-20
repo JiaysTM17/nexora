@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, ShoppingBag, ArrowRight, Share2, Check, RefreshCw, Layers, Sun, Cloud, Wind, Thermometer, MapPin, Compass } from 'lucide-react';
+import { Sparkles, ShoppingBag, ArrowRight, Share2, Check, RefreshCw, Layers, Sun, Cloud, Wind, Thermometer, MapPin, Compass, Camera, Palette, Award, CheckCircle2, QrCode, X, Copy, Download } from 'lucide-react';
 import { api, vnd } from '../api';
 import { Notice, useUser } from '../ui';
 
@@ -121,6 +121,10 @@ export default function MixMatchPage() {
 
   const [weatherCity, setWeatherCity] = useState<'SAIGON' | 'HANOI' | 'DALAT'>('SAIGON');
   const [occasion, setOccasion] = useState<'OFFICE' | 'STREET' | 'GALA'>('OFFICE');
+  const [showLookbookModal, setShowLookbookModal] = useState(false);
+  const [lookbookTheme, setLookbookTheme] = useState<'ATELIER_OAK' | 'HERITAGE_STONE' | 'MIDNIGHT_NOIR'>('ATELIER_OAK');
+  const [curatorName, setCuratorName] = useState('Elena Vũ · Senior Stylist');
+  const [lookbookSaved, setLookbookSaved] = useState(false);
 
   function applyWeatherFormula(city: 'SAIGON' | 'HANOI' | 'DALAT', occ: 'OFFICE' | 'STREET' | 'GALA') {
     setWeatherCity(city);
@@ -459,6 +463,28 @@ export default function MixMatchPage() {
                 {busy ? <RefreshCw size={18} className="spin" /> : <ShoppingBag size={18} />}
                 <span>{busy ? 'Đang thêm cả set…' : `Mua Trọn Set (Tiết kiệm ${vnd(bundleDiscount)})`}</span>
               </button>
+
+              <div style={{ marginTop: 8 }}>
+                <button
+                  type="button"
+                  className="button secondary full"
+                  onClick={() => setShowLookbookModal(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    fontSize: 12,
+                    padding: '9px 14px',
+                    background: '#fdfbf7',
+                    borderColor: '#fed7aa',
+                    color: '#9a3412',
+                  }}
+                >
+                  <Camera size={16} color="#c2410c" />
+                  <span>Xuất Thẻ Lookbook Nghệ Thuật &amp; Chia Sẻ OOTD (CAT-LOOKBOOK-CANVAS-01)</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -628,6 +654,271 @@ export default function MixMatchPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Xuất Thẻ Lookbook Nghệ Thuật & Chia Sẻ OOTD (CAT-LOOKBOOK-CANVAS-EXPORT-01) */}
+      {showLookbookModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: 16,
+          }}
+          onClick={() => setShowLookbookModal(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 8,
+              maxWidth: 580,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid #e2e8f0',
+              padding: 24,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Camera size={19} color="var(--clay)" />
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, color: 'var(--ink)' }}>
+                    THẺ LOOKBOOK NGHỆ THUẬT HAUTE COUTURE
+                  </h3>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                    Xuất Thẻ Phối Đồ &amp; Chia Sẻ Lên Cộng Đồng OOTD (CAT-LOOKBOOK-CANVAS-EXPORT-01)
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowLookbookModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#64748b',
+                  padding: 4,
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Theme Selector */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 6 }}>
+                Chọn Không Gian Nghệ Thuật (Canvas Aesthetic):
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                {[
+                  { id: 'ATELIER_OAK' as const, label: 'Atelier Kem Gỗ Sồi', desc: 'Ấm áp, thanh lịch' },
+                  { id: 'HERITAGE_STONE' as const, label: 'Heritage Phố Cổ', desc: 'Đá mộc Châu Âu' },
+                  { id: 'MIDNIGHT_NOIR' as const, label: 'Sơn Mài Midnight', desc: 'Huyền bí ánh kim' },
+                ].map((th) => (
+                  <button
+                    key={th.id}
+                    type="button"
+                    onClick={() => setLookbookTheme(th.id)}
+                    style={{
+                      padding: '8px 6px',
+                      borderRadius: 4,
+                      border: lookbookTheme === th.id ? '1.5px solid var(--clay)' : '1px solid #e2e8f0',
+                      background: lookbookTheme === th.id ? '#fdf8ea' : '#f8fafc',
+                      color: lookbookTheme === th.id ? 'var(--clay)' : '#334155',
+                      fontWeight: lookbookTheme === th.id ? 700 : 500,
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <strong style={{ fontSize: 11, display: 'block' }}>{th.label}</strong>
+                    <span style={{ fontSize: 9, color: '#64748b' }}>{th.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Curator Input */}
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                Chữ Ký Giám Tuyển (Curated By):
+              </label>
+              <input
+                type="text"
+                value={curatorName}
+                onChange={(e) => setCuratorName(e.target.value)}
+                placeholder="VD: Elena Vũ · Senior Stylist hoặc Kiệt Trương"
+                style={{
+                  width: '100%',
+                  padding: '7px 10px',
+                  fontSize: 12,
+                  border: '1px solid #cbd5e1',
+                  borderRadius: 4,
+                }}
+              />
+            </div>
+
+            {/* Live Lookbook Card Preview */}
+            <div
+              style={{
+                borderRadius: 8,
+                padding: 18,
+                background:
+                  lookbookTheme === 'ATELIER_OAK'
+                    ? '#fcf9f4'
+                    : lookbookTheme === 'HERITAGE_STONE'
+                    ? '#f8fafc'
+                    : '#0f172a',
+                border:
+                  lookbookTheme === 'ATELIER_OAK'
+                    ? '1.5px solid #d4af37'
+                    : lookbookTheme === 'HERITAGE_STONE'
+                    ? '1.5px solid #94a3b8'
+                    : '1.5px solid #f59e0b',
+                color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#f8fafc' : '#1e293b',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+                marginBottom: 16,
+              }}
+            >
+              <div className="row between" style={{ borderBottom: '1px solid rgba(120, 113, 108, 0.2)', paddingBottom: 10, marginBottom: 12 }}>
+                <div>
+                  <span style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#94a3b8' : 'var(--clay)', fontWeight: 700 }}>
+                    NEXORA ATELIER EDITORIAL
+                  </span>
+                  <h4 style={{ margin: '2px 0 0', fontSize: 14, fontFamily: 'serif' }}>
+                    Lookbook #{Date.now().toString().slice(-4)} · {weatherCity} Capsule
+                  </h4>
+                </div>
+                <span style={{ fontSize: 10, background: '#16a34a', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  HARMONY 98/100
+                </span>
+              </div>
+
+              {/* 3-Piece Visual Layout */}
+              <div style={{ display: 'grid', gridTemplateColumns: selectedOuter ? '1fr 1fr 1fr' : '1fr 1fr', gap: 10, marginBottom: 12 }}>
+                {selectedOuter && (
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', marginBottom: 4 }}>
+                      <img src={selectedOuter.image} alt={selectedOuter.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Lớp Ngoài</span>
+                    <strong style={{ fontSize: 11, display: 'block', lineHeight: 1.2 }}>{selectedOuter.name}</strong>
+                  </div>
+                )}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', marginBottom: 4 }}>
+                    <img src={selectedTop.image} alt={selectedTop.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Áo Chính</span>
+                  <strong style={{ fontSize: 11, display: 'block', lineHeight: 1.2 }}>{selectedTop.name}</strong>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', marginBottom: 4 }}>
+                    <img src={selectedBottom.image} alt={selectedBottom.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Quần / Váy</span>
+                  <strong style={{ fontSize: 11, display: 'block', lineHeight: 1.2 }}>{selectedBottom.name}</strong>
+                </div>
+              </div>
+
+              {/* Color Swatches and Metadata */}
+              <div className="row between" style={{ fontSize: 11, background: 'rgba(120, 113, 108, 0.1)', padding: '8px 10px', borderRadius: 4 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span>Bảng màu:</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: selectedTop.colors.find(c => c.name === topColor)?.hex || '#dfd4bd', display: 'inline-block' }} /> {topColor}
+                  </span>
+                  <span>·</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: selectedBottom.colors.find(c => c.name === bottomColor)?.hex || '#82644e', display: 'inline-block' }} /> {bottomColor}
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'serif', fontStyle: 'italic', color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#cbd5e1' : '#57534e' }}>
+                  Curated by {curatorName}
+                </div>
+              </div>
+            </div>
+
+            {lookbookSaved && (
+              <div style={{ marginBottom: 12 }}>
+                <Notice>Đã lưu Lookbook vào bộ sưu tập cá nhân và đồng bộ lên bảng tin OOTD thành công!</Notice>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    const existing = JSON.parse(localStorage.getItem('nexora_saved_lookbooks') || '[]');
+                    const card = {
+                      id: `LB-${Date.now()}`,
+                      title: `Editorial ${weatherCity} Capsule`,
+                      theme: lookbookTheme,
+                      curator: curatorName,
+                      top: selectedTop.name,
+                      bottom: selectedBottom.name,
+                      outer: selectedOuter?.name || null,
+                      total: finalTotal,
+                      createdAt: new Date().toLocaleDateString('vi-VN'),
+                    };
+                    existing.unshift(card);
+                    localStorage.setItem('nexora_saved_lookbooks', JSON.stringify(existing));
+                    setLookbookSaved(true);
+                  } catch {}
+                }}
+                style={{
+                  flex: 1,
+                  padding: '10px 14px',
+                  background: 'var(--clay)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <Share2 size={15} /> Lưu &amp; Chia Sẻ Lên Cộng Đồng OOTD
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText(window.location.href);
+                  setNotice('Đã sao chép liên kết chia sẻ Lookbook vào bộ nhớ tạm!');
+                }}
+                style={{
+                  padding: '10px 14px',
+                  background: '#f1f5f9',
+                  color: '#334155',
+                  border: 'none',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <Copy size={15} /> Sao Chép Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

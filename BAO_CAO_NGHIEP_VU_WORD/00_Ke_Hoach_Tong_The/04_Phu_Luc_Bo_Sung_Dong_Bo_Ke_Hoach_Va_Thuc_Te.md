@@ -290,3 +290,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 71. **Đặt Trước May Đo Giới Hạn & Theo Dõi Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 02 May Đo Thủ Công Độc Bản (Bespoke Haute Couture).
    - Thực tế: Phân hệ may đo độc bản tại `/san-pham/[slug]`: Giữ suất hàng chờ nghệ nhân (#07/15), thêu monogram tên ve áo, chọn lót lụa may đo, đặt cọc 30% bảo chứng Escrow D1-01, theo dõi 5 chặng chế tác Master Tailor và đồng bộ chi tiết tại `/tai-khoan`.
+
+72. **Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Tổn Thương Phục Hồi Sinh Học (VAS-GARMENT-DIAGNOSIS-01)**:
+   - Hồ sơ: Module 02 Chăm Sóc Đồ Hiệu & Dịch Vụ Giá Trị Gia Tăng (VAS Care).
+   - Thực tế: Phân hệ chẩn đoán tổn thương sợi dệt và đồ da tại `/vas-care`: Chọn dòng đồ & triệu chứng hư hại, lập phác đồ sinh học chuẩn 1000 Lux, tỷ lệ phục hồi 98.6%, điền tự động form bưu tá và tặng voucher cấp cứu đồ hiệu -50k (`RESCUE50`).
+
+73. **Khung Thiết Kế Lookbook Cá Nhân & Thẻ Phối Đồ Nghệ Thuật (CAT-LOOKBOOK-CANVAS-EXPORT-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Studio Mix & Match và Lookbook OOTD.
+   - Thực tế: Phân hệ xuất thẻ Lookbook tại `/phoi-do`: 3 không gian nghệ thuật (Atelier Kem Gỗ Sồi, Heritage Phố Cổ, Sơn Mài Midnight), chữ ký curator cá nhân, hòa sắc 98/100, lưu bộ sưu tập và đăng lên cộng đồng OOTD.

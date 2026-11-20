@@ -93,6 +93,8 @@
 | **82** | **Workshop Trực Tuyến & Masterclass Hàng Tuần (SOC-STYLING-WORKSHOP-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ workshop stylist tại `/cong-dong`: Đăng ký giữ chỗ trực tuyến cùng Master Tailor Hoàng Nam, tặng +200 Điểm Xanh và nhận mã vé VIP |
 | **83** | **Cam Kết Tiêu Dùng Sinh Thái & Giao Hàng Không Rác Thải Nhựa (CART-CARBON-REDUCTION-PLEDGE-01)** | Module 03 & ESG | Đã hoàn thiện | Phân hệ cam kết xanh tại `/gio-hang`: Đồng ý giao gom tuyến, 100% không xốp nilon bong bóng (thay bằng giấy tổ ong Kraft), tuần hoàn bao bì, tặng +100 Điểm Xanh và huy hiệu Green Shopper Pioneer |
 | **84** | **Đặt Trước May Đo Giới Hạn & Theo Dõi Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)** | Module 01 & Bespoke | Đã hoàn thiện | Phân hệ may đo độc bản tại `/san-pham/[slug]`: Giữ suất hàng chờ nghệ nhân (#07/15), thêu monogram tên ve áo, chọn lót lụa may đo, đặt cọc 30% bảo chứng Escrow D1-01, theo dõi 5 chặng chế tác Master Tailor và đồng bộ `/tai-khoan` |
+| **85** | **Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Tổn Thương Phục Hồi Sinh Học (VAS-GARMENT-DIAGNOSIS-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ chẩn đoán tại `/vas-care`: Chọn dòng đồ & triệu chứng hư tổn, lập phác đồ sinh học chuẩn 1000 Lux, tỷ lệ phục hồi 98.6%, điền tự động form bưu tá và tặng voucher cấp cứu đồ hiệu -50k (RESCUE50) |
+| **86** | **Khung Thiết Kế Lookbook Cá Nhân & Thẻ Phối Đồ Nghệ Thuật (CAT-LOOKBOOK-CANVAS-EXPORT-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ xuất thẻ Lookbook tại `/phoi-do`: 3 không gian nghệ thuật (Atelier Kem Gỗ Sồi, Heritage Phố Cổ, Sơn Mài Midnight), chữ ký curator cá nhân, hòa sắc 98/100, lưu bộ sưu tập và đăng lên cộng đồng OOTD |
 
 ---
 
@@ -744,6 +746,29 @@
   - Quy trình 5 chặng chế tác thủ công hiển thị trực quan: Phóng rập cá nhân -> Cắt thủ công & ủ sợi -> Đơm khuy xà cừ & ráp đệm vai -> Thêu Monogram & ủ buồng 1000 Lux -> Đóng hộp Haute Couture.
   - Cơ chế cọc an toàn: Đặt cọc 30% bảo chứng qua Ký quỹ Escrow Sàn (D1-01), 70% còn lại thanh toán khi nhận hàng đồng kiểm (RET-COINSPECT).
   - Tự động lưu trữ hồ sơ may đo vào `localStorage` (`nexora_bespoke_preorders`) và hiển thị bảng theo dõi tiến độ chi tiết tại Cổng cá nhân `/tai-khoan`.
+
+### 69. Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Tổn Thương Phục Hồi Sinh Học (VAS-GARMENT-DIAGNOSIS-01)
+- **Mục tiêu**: Hỗ trợ khách hàng sơ cứu và định hướng phác đồ chăm sóc khoa học cho trang phục dạ len, lụa tơ tằm và phụ kiện đồ da cao cấp, tránh các tổn hại không thể phục hồi do xử lý giặt tẩy sai quy chuẩn.
+- **Cơ chế**:
+  - Tích hợp công cụ Chẩn Đoán Tổn Thương (Garment Health Diagnostics) tại phân hệ Chăm Sóc Đồ Hiệu `/vas-care`.
+  - Hỗ trợ chẩn đoán theo dòng trang phục (Áo Blazer/Măng tô dạ, Đầm lụa tơ tằm Bảo Lộc, Túi da bò thảo mộc, Sơ mi linen) và triệu chứng thực tế (Ố vàng loang lổ, Nấm mốc khô nứt da, Trũng đệm vai gãy ve áo, Sờn đứt chỉ may).
+  - Đưa ra Phác đồ Phục hồi Sinh học chuẩn Atelier:
+    - Phân hạng tổn thương (Grade I nhẹ / Grade II trung bình / Grade III chuyên sâu).
+    - Hợp chất can thiệp lành tính: Enzyme sinh học Protease & Amylase pH 6.2 trung tính, tinh dầu chồn Mink Oil nguyên chất, sáp ong tự nhiên và xông vi điểm buồng sáng 1000 Lux.
+    - Tỷ lệ phục hồi dự kiến: **98.6%**.
+  - Tính năng 1-chạm "Áp Dụng Phác Đồ & Điền Nhanh Vào Lịch Hẹn": Tự động điền dữ liệu chẩn đoán vào form Đặt lịch bưu tá lấy đồ tận nhà và tặng mã Voucher cứu hộ đồ hiệu `-50.000đ` (Mã `RESCUE50`).
+
+### 70. Khung Thiết Kế Lookbook Cá Nhân & Thẻ Phối Đồ Nghệ Thuật (CAT-LOOKBOOK-CANVAS-EXPORT-01)
+- **Mục tiêu**: Biến mỗi bộ trang phục phối sẵn thành một tác phẩm nghệ thuật thị giác mang dấu ấn cá nhân, kết nối trực tiếp phòng thử đồ Mix & Match với mạng xã hội phong cách sống OOTD.
+- **Cơ chế**:
+  - Tích hợp bộ công cụ Xuất Thẻ Lookbook Nghệ Thuật (Haute Couture Style Canvas Export) tại Studio Phối Đồ `/phoi-do`.
+  - Tùy biến 3 không gian nghệ thuật trình diễn:
+    1. *Atelier Kem Gỗ Sồi*: Viền vàng kim cổ điển, tông màu kem be ấm áp.
+    2. *Heritage Phố Cổ*: Viền xám tro, cảm hứng lát đá mộc mạc Châu Âu.
+    3. *Sơn Mài Midnight*: Nền đen tuyền huyền bí ánh kim sang trọng.
+  - Cho phép tùy chỉnh chữ ký giám tuyển độc bản (*Curated by Elena Vũ* hoặc tên chủ nhân).
+  - Trình bày thẻ Lookbook hoàn chỉnh: Ảnh 3 lớp trang phục phối sẵn, dải swatch màu sắc chi tiết kèm mã hex, thang điểm hòa sắc 98/100, chỉ số sợi dệt sinh thái và mã QR tra cứu bộ đồ.
+  - Hỗ trợ lưu trữ thẻ nghệ thuật vào bộ sưu tập cá nhân `localStorage` (`nexora_saved_lookbooks`), tự động đồng bộ bài đăng chia sẻ lên bảng tin Cộng Đồng OOTD `/cong-dong` và sao chép liên kết chia sẻ nhanh.
 
 ---
 

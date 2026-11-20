@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -75,6 +75,64 @@ export default function VasCarePage() {
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
   const [sliderPos, setSliderPos] = useState(50);
   const [sampleKey, setSampleKey] = useState<'BLAZER' | 'SILK' | 'LEATHER'>('BLAZER');
+  const [selectedGarmentType, setSelectedGarmentType] = useState<'WOOL_BLAZER' | 'SILK_DRESS' | 'VEG_LEATHER' | 'LINEN_SHIRT'>('WOOL_BLAZER');
+  const [selectedSymptom, setSelectedSymptom] = useState<string>('STAIN_YELLOW');
+  const [diagnosisDone, setDiagnosisDone] = useState(false);
+  const [diagnosedProtocol, setDiagnosedProtocol] = useState<{
+    grade: string;
+    recoveryRate: string;
+    chemical: string;
+    duration: string;
+    recommendedService: string;
+    serviceCode: string;
+    voucher: string;
+  } | null>(null);
+  const [defaultItemName, setDefaultItemName] = useState('');
+  const [defaultNotes, setDefaultNotes] = useState('');
+
+  function runGarmentDiagnosis() {
+    let grade = 'Cấp II · Tổn thương sắc tố bề mặt sợi (Reversible)';
+    let recoveryRate = '98.5%';
+    let chemical = 'Enzyme sinh học Protease & Amylase pH 6.2 trung tính, không bào mòn cấu trúc sợi';
+    let duration = '24–36 giờ';
+    let recommendedService = 'Giặt hấp & Spa trang phục cao cấp (250.000đ)';
+    let serviceCode = 'SPA_CLEANING';
+    let voucher = 'RESCUE50';
+
+    if (selectedSymptom === 'MOLD_DRY' || selectedGarmentType === 'VEG_LEATHER') {
+      grade = 'Cấp III · Suy giảm lipid và hydrat hóa mô da tự nhiên';
+      recoveryRate = '96.8%';
+      chemical = 'Xông khử khuẩn Ozone y tế + Tinh dầu chồn Mink Oil nguyên chất + Sáp ong rừng tự nhiên';
+      duration = '48 giờ';
+      recommendedService = 'Phục hồi & Dưỡng da túi/giày hiệu (450.000đ)';
+      serviceCode = 'LEATHER_RESTORE';
+    } else if (selectedSymptom === 'COLLAPSED_SHOULDER') {
+      grade = 'Cấp I · Lệch cấu trúc nẹp phom may đo';
+      recoveryRate = '99.4%';
+      chemical = 'Ủ hơi nước vi điểm buồng sáng 1000 Lux, cố định phom dáng Mannequin Croquis';
+      duration = '12–24 giờ';
+      recommendedService = 'Chỉnh sửa phom dáng chuẩn May đo (180.000đ)';
+      serviceCode = 'TAILORING';
+    } else if (selectedSymptom === 'FRAYED_SEAMS') {
+      grade = 'Cấp II · Suy thoái liên kết sợi chỉ may chịu lực';
+      recoveryRate = '99.0%';
+      chemical = 'Khâu tay đệm lụa tơ tằm đôi, đơm lại khuy xà cừ tự nhiên chính hãng';
+      duration = '24 giờ';
+      recommendedService = 'Chỉnh sửa phom dáng chuẩn May đo (180.000đ)';
+      serviceCode = 'TAILORING';
+    }
+
+    setDiagnosedProtocol({
+      grade,
+      recoveryRate,
+      chemical,
+      duration,
+      recommendedService,
+      serviceCode,
+      voucher,
+    });
+    setDiagnosisDone(true);
+  }
 
   const RESTORATION_SAMPLES = {
     BLAZER: {
@@ -384,6 +442,214 @@ export default function VasCarePage() {
         </div>
       </div>
 
+      {/* Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Hư Tổn Phục Hồi Sinh Học (VAS-GARMENT-DIAGNOSIS-01) */}
+      <div
+        style={{
+          margin: '20px 0',
+          padding: 20,
+          background: '#fcfbf9',
+          border: '1px solid #e2d9cc',
+          borderRadius: 8,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.02)',
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Stethoscope size={19} color="var(--clay)" />
+            <div>
+              <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+                Bác Sĩ Đồ Hiệu · Chẩn Đoán Tổn Thương &amp; Lập Phác Đồ Sinh Học (VAS-GARMENT-DIAGNOSIS-01)
+              </strong>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                Phân tích tình trạng sợi dệt/đồ da và thiết lập phác đồ phục hồi vi điểm chuẩn Atelier 1000 Lux.
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: 11, background: '#f5efe6', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            ATELIER CLINIC
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: 14 }}>
+          {/* Step 1: Garment Type */}
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 6 }}>
+              1. Chọn dòng trang phục cần cứu hộ:
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              {[
+                { id: 'WOOL_BLAZER', label: 'Áo Blazer/Măng tô dạ' },
+                { id: 'SILK_DRESS', label: 'Đầm lụa tơ tằm Bảo Lộc' },
+                { id: 'VEG_LEATHER', label: 'Túi/Giày da bò thảo mộc' },
+                { id: 'LINEN_SHIRT', label: 'Sơ mi linen tự nhiên' },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedGarmentType(item.id as any);
+                    setDiagnosisDone(false);
+                  }}
+                  style={{
+                    padding: '8px 10px',
+                    fontSize: 11,
+                    textAlign: 'left',
+                    borderRadius: 4,
+                    border: selectedGarmentType === item.id ? '1.5px solid var(--clay)' : '1px solid #e2e8f0',
+                    background: selectedGarmentType === item.id ? '#fdf8ea' : '#fff',
+                    color: selectedGarmentType === item.id ? 'var(--clay)' : '#1e293b',
+                    fontWeight: selectedGarmentType === item.id ? 700 : 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Step 2: Symptom */}
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 6 }}>
+              2. Chọn triệu chứng hư tổn quan sát thấy:
+            </label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {[
+                { id: 'STAIN_YELLOW', label: 'Vệt ố trà/cà phê, ố vàng mồ hôi loang lổ lâu ngày' },
+                { id: 'MOLD_DRY', label: 'Nấm mốc trắng chân lông, khô ráp nứt nẻ bề mặt' },
+                { id: 'COLLAPSED_SHOULDER', label: 'Trũng đệm vai, gãy ve áo, nhăn co nếp phom 3D' },
+                { id: 'FRAYED_SEAMS', label: 'Sờn rách đường chỉ may, đứt khuy xà cừ, xơ mép vải' },
+              ].map((sym) => (
+                <button
+                  key={sym.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSymptom(sym.id);
+                    setDiagnosisDone(false);
+                  }}
+                  style={{
+                    padding: '6px 10px',
+                    fontSize: 11,
+                    textAlign: 'left',
+                    borderRadius: 4,
+                    border: selectedSymptom === sym.id ? '1.5px solid var(--clay)' : '1px solid #e2e8f0',
+                    background: selectedSymptom === sym.id ? '#fdf8ea' : '#fff',
+                    color: selectedSymptom === sym.id ? 'var(--clay)' : '#334155',
+                    fontWeight: selectedSymptom === sym.id ? 700 : 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  ● {sym.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={runGarmentDiagnosis}
+          style={{
+            width: '100%',
+            padding: '10px 14px',
+            background: 'var(--clay)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 4,
+            fontSize: 12,
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6,
+          }}
+        >
+          <Activity size={15} /> Khởi Chạy Chẩn Đoán &amp; Đề Xuất Phác Đồ Chuẩn Atelier
+        </button>
+
+        {diagnosisDone && diagnosedProtocol && (
+          <div
+            style={{
+              marginTop: 14,
+              padding: 16,
+              background: '#fff',
+              border: '1.5px solid #16a34a',
+              borderRadius: 6,
+              boxShadow: '0 4px 12px rgba(22, 101, 52, 0.06)',
+            }}
+          >
+            <div className="row between" style={{ marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckCircle2 size={16} color="#16a34a" />
+                <strong style={{ fontSize: 13, color: '#166534' }}>
+                  Phác Đồ Phục Hồi Sinh Học Khuyến Nghị (Treatment Protocol)
+                </strong>
+              </div>
+              <span style={{ fontSize: 11, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                Tỷ lệ phục hồi dự kiến: {diagnosedProtocol.recoveryRate}
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gap: 8, fontSize: 12, marginBottom: 12 }}>
+              <div className="row between" style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                <span style={{ color: '#64748b' }}>Phân loại tổn thương:</span>
+                <strong style={{ color: '#0f172a' }}>{diagnosedProtocol.grade}</strong>
+              </div>
+              <div className="row between" style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                <span style={{ color: '#64748b' }}>Hợp chất can thiệp:</span>
+                <span style={{ color: '#0f172a', textAlign: 'right', maxWidth: '60%' }}>{diagnosedProtocol.chemical}</span>
+              </div>
+              <div className="row between" style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                <span style={{ color: '#64748b' }}>Thời gian phục hồi dự kiến:</span>
+                <strong style={{ color: 'var(--clay)' }}>{diagnosedProtocol.duration}</strong>
+              </div>
+              <div className="row between" style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                <span style={{ color: '#64748b' }}>Dịch vụ chỉ định:</span>
+                <strong style={{ color: '#166534' }}>{diagnosedProtocol.recommendedService}</strong>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('COURIER');
+                  setDefaultItemName(
+                    selectedGarmentType === 'WOOL_BLAZER'
+                      ? 'Áo Blazer / Măng tô dạ cao cấp'
+                      : selectedGarmentType === 'SILK_DRESS'
+                      ? 'Đầm lụa tơ tằm Bảo Lộc'
+                      : selectedGarmentType === 'VEG_LEATHER'
+                      ? 'Túi da bò thảo mộc'
+                      : 'Sơ mi linen tự nhiên'
+                  );
+                  setDefaultNotes(`[Phác đồ Atelier]: ${diagnosedProtocol.grade} - Dùng hợp chất: ${diagnosedProtocol.chemical} (Mã trợ giá ${diagnosedProtocol.voucher})`);
+                  setSuccess(`Đã áp dụng phác đồ! Mã giảm giá ${diagnosedProtocol.voucher} (-50.000đ) đã sẵn sàng cho dịch vụ.`);
+                }}
+                style={{
+                  flex: 1,
+                  padding: '9px 14px',
+                  background: '#166534',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                }}
+              >
+                <ArrowRight size={15} /> Điền Nhanh Vào Lịch Hẹn &amp; Nhận Voucher -50k ({diagnosedProtocol.voucher})
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Mode Switcher Tabs */}
       <div style={{ display: 'flex', gap: 10, margin: '16px 0 20px', borderBottom: '1px solid var(--line)', paddingBottom: 10 }}>
         <button
@@ -434,7 +700,7 @@ export default function VasCarePage() {
             <h2><ShieldCheck size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />Đặt lịch bưu tá niêm phong tận nhà</h2>
             {error && <Notice error>{error}</Notice>}
             {success && <Notice>{success}</Notice>}
-            <label>Tên món đồ cần chăm sóc<input name="itemName" required minLength={3} placeholder="VD: Áo khoác len Cashmere / Túi da bê..." /></label>
+            <label>Tên món đồ cần chăm sóc<input key={defaultItemName} name="itemName" required minLength={3} defaultValue={defaultItemName} placeholder="VD: Áo khoác len Cashmere / Túi da bê..." /></label>
             <label>Gói dịch vụ
               <select name="serviceType" defaultValue="SPA_CLEANING">
                 {Object.entries(SERVICE_LABELS).map(([val, label]) => (
@@ -445,7 +711,7 @@ export default function VasCarePage() {
             <label>Giá trị khai báo bảo hiểm (tối đa 100.000.000đ)
               <input name="insuredValue" type="number" min={0} max={100000000} defaultValue={10000000} required />
             </label>
-            <label>Lưu ý đặc biệt cho chuyên viên<textarea name="notes" placeholder="VD: Vết ố nhẹ ở cổ tay, lưu ý khuy ngọc trai..." /></label>
+            <label>Lưu ý đặc biệt cho chuyên viên<textarea key={defaultNotes} name="notes" defaultValue={defaultNotes} placeholder="VD: Vết ố nhẹ ở cổ tay, lưu ý khuy ngọc trai..." /></label>
             <button className="button" disabled={busy}>{busy ? 'Đang khởi tạo mã Zip-seal…' : 'Đặt lịch & Cấp mã Zip-seal'}</button>
           </form>
 
