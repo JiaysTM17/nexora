@@ -91,6 +91,8 @@
 | **80** | **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier |
 | **81** | **Đối Soát & Thẩm Định Chứng Chỉ Xanh ESG Sàn (ADMIN-ESG-AUDIT-DASHBOARD-01)** | Module 04 & Admin ESG | Đã hoàn thiện | Tab Thẩm định ESG tại Cổng Quản Trị `/admin`: Đối soát chứng chỉ xanh xưởng may, giám sát 142.8 tấn CO2e trung hòa, tỷ lệ giao xe điện 88.6% |
 | **82** | **Workshop Trực Tuyến & Masterclass Hàng Tuần (SOC-STYLING-WORKSHOP-01)** | Module 06 & Social | Đã hoàn thiện | Phân hệ workshop stylist tại `/cong-dong`: Đăng ký giữ chỗ trực tuyến cùng Master Tailor Hoàng Nam, tặng +200 Điểm Xanh và nhận mã vé VIP |
+| **83** | **Cam Kết Tiêu Dùng Sinh Thái & Giao Hàng Không Rác Thải Nhựa (CART-CARBON-REDUCTION-PLEDGE-01)** | Module 03 & ESG | Đã hoàn thiện | Phân hệ cam kết xanh tại `/gio-hang`: Đồng ý giao gom tuyến, 100% không xốp nilon bong bóng (thay bằng giấy tổ ong Kraft), tuần hoàn bao bì, tặng +100 Điểm Xanh và huy hiệu Green Shopper Pioneer |
+| **84** | **Đặt Trước May Đo Giới Hạn & Theo Dõi Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)** | Module 01 & Bespoke | Đã hoàn thiện | Phân hệ may đo độc bản tại `/san-pham/[slug]`: Giữ suất hàng chờ nghệ nhân (#07/15), thêu monogram tên ve áo, chọn lót lụa may đo, đặt cọc 30% bảo chứng Escrow D1-01, theo dõi 5 chặng chế tác Master Tailor và đồng bộ `/tai-khoan` |
 
 ---
 
@@ -719,6 +721,29 @@
   - Giới thiệu các buổi Masterclass chuyên sâu: "Nghệ Thuật Xếp Lớp Smart Layering & Giữ Phom Lụa", dẫn dắt bởi Master Tailor Hoàng Nam và Senior Stylist Elena Vũ.
   - Lịch trình phát sóng trực tiếp: Thứ 7 hàng tuần từ 19:30 - 21:00 kết nối đồng thời qua Zoom Studio và luồng phát sóng `/live`.
   - Nút 1-chạm "Đăng Ký Giữ Chỗ Miễn Phí": Tự động cấp mã vé VIP độc bản `#WS-LAYER-XX`, tặng ngay **+200 Điểm Thưởng Xanh (NEX-Green Points)** vào tài khoản và lưu vết trên `localStorage` (`nexora_workshop_rsvp`).
+
+### 67. Cam Kết Tiêu Dùng Sinh Thái & Giao Hàng Không Rác Thải Nhựa (CART-CARBON-REDUCTION-PLEDGE-01)
+- **Mục tiêu**: Lan tỏa tinh thần trách nhiệm môi trường đến từng khách hàng, biến mỗi hành động mua sắm thành một cam kết cụ thể về giảm phát thải và bảo vệ hệ sinh thái.
+- **Cơ chế**:
+  - Tích hợp phân hệ Ký Cam Kết Tiêu Dùng Bền Vững (Green Shopper Carbon Pledge) tại Giỏ hàng `/gio-hang`.
+  - 3 nguyên tắc vận hành sinh thái:
+    1. *Vận chuyển gom tuyến (Consolidated Route)*: Điều phối bưu tá xe điện VinFast ưu tiên ghép tuyến thông minh, giảm 35% lượt xe và lượng khí thải CO2e.
+    2. *100% Không túi nilon bóng khí (Zero Bubble-wrap)*: Toàn bộ kiện hàng được bọc lót bằng giấy tổ ong Kraft tái chế sinh học và dây thừng đay tự nhiên.
+    3. *Thu hồi bao bì tuần hoàn*: Khách hàng cam kết giữ lại bao bì và hoàn trả cho shipper ở lần mua sắm kế tiếp.
+  - Tặng ngay danh hiệu **🌿 Green Shopper Pioneer**, tích lũy **+100 Điểm Xanh (NEX-Green Points)**, lưu vết bền vững vào `localStorage` (`nexora_green_shopper_pledge`) và đồng bộ hiển thị huy hiệu trên trang cá nhân `/tai-khoan`.
+
+### 68. Đặt Trước May Đo Giới Hạn & Theo Dõi Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)
+- **Mục tiêu**: Mang trải nghiệm may đo thủ công độc bản (Bespoke Haute Couture) đến khách hàng, kiểm soát năng lực chế tác giới hạn của các nghệ nhân bậc thầy và minh bạch hóa từng công đoạn may.
+- **Cơ chế**:
+  - Tích hợp phân hệ Đặt Trước May Đo Thủ Công (Bespoke Pre-Order Atelier Queue) trên trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - Quản lý hàng chờ nghệ nhân độc quyền: Giới hạn 15 suất may đo mỗi tuần (ví dụ: Suất #07/15), thời gian hoàn thiện 5–7 ngày làm việc.
+  - Tùy biến cá nhân hóa cao cấp:
+    - Nhập chữ thêu Monogram viết tắt tên chủ nhân (tối đa 4 ký tự, vd: "N.X.", "J.T.") thêu chỉ lụa vàng/bạc lên ve áo trong hoặc cổ áo.
+    - Chọn 3 dòng lớp lót lụa may đo: Lụa Jacquard Thêu Chìm Bảo Lộc, Lanh Mộc Normandy hoặc Satin Noir Đen Sơn Mài.
+    - Nhập ghi chú điều chỉnh thông số phom dáng riêng cho Master Tailor.
+  - Quy trình 5 chặng chế tác thủ công hiển thị trực quan: Phóng rập cá nhân -> Cắt thủ công & ủ sợi -> Đơm khuy xà cừ & ráp đệm vai -> Thêu Monogram & ủ buồng 1000 Lux -> Đóng hộp Haute Couture.
+  - Cơ chế cọc an toàn: Đặt cọc 30% bảo chứng qua Ký quỹ Escrow Sàn (D1-01), 70% còn lại thanh toán khi nhận hàng đồng kiểm (RET-COINSPECT).
+  - Tự động lưu trữ hồ sơ may đo vào `localStorage` (`nexora_bespoke_preorders`) và hiển thị bảng theo dõi tiến độ chi tiết tại Cổng cá nhân `/tai-khoan`.
 
 ---
 

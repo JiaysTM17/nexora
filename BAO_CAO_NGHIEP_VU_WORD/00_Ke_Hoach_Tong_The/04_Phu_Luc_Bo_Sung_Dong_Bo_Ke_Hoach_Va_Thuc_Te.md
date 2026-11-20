@@ -282,3 +282,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 69. **Masterclass Thời Trang Bền Vững & Workshop Trực Tuyến (SOC-STYLING-WORKSHOP-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Cộng đồng Tương tác Sáng tạo OOTD.
    - Thực tế: Phân hệ workshop stylist trực tuyến tại `/cong-dong`: Đăng ký giữ chỗ Workshop Smart Layering cùng Master Tailor Hoàng Nam, tặng +200 Điểm Xanh và nhận mã vé VIP.
+
+70. **Cam Kết Tiêu Dùng Sinh Thái & Giao Hàng Không Rác Thải Nhựa (CART-CARBON-REDUCTION-PLEDGE-01)**:
+   - Hồ sơ: Module 03 Giỏ hàng Thanh toán & Module 04 Bán lẻ Sàn TMĐT Bền Vững (ESG/CSR).
+   - Thực tế: Phân hệ cam kết xanh tại `/gio-hang`: Khách hàng ký cam kết vận chuyển gom tuyến, 100% không xốp nilon bong bóng (thay bằng giấy tổ ong đệm kraft), tuần hoàn bao bì, tặng ngay danh hiệu Green Shopper Pioneer và +100 Điểm Xanh.
+
+71. **Đặt Trước May Đo Giới Hạn & Theo Dõi Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 02 May Đo Thủ Công Độc Bản (Bespoke Haute Couture).
+   - Thực tế: Phân hệ may đo độc bản tại `/san-pham/[slug]`: Giữ suất hàng chờ nghệ nhân (#07/15), thêu monogram tên ve áo, chọn lót lụa may đo, đặt cọc 30% bảo chứng Escrow D1-01, theo dõi 5 chặng chế tác Master Tailor và đồng bộ chi tiết tại `/tai-khoan`.

@@ -2,7 +2,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
@@ -17,6 +17,12 @@ export default function Cart() {
   const [giftRecipientName, setGiftRecipientName] = useState('');
   const [giftRecipientPhone, setGiftRecipientPhone] = useState('');
   const [giftRecipientAddress, setGiftRecipientAddress] = useState('');
+  const [carbonPledge, setCarbonPledge] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('nexora_green_shopper_pledge') === 'true';
+    }
+    return false;
+  });
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
@@ -175,6 +181,86 @@ export default function Cart() {
             </small>
           </span>
         </label>
+      </section>
+
+      {/* Cam Kết Tiêu Dùng Xanh & Giao Hàng Không Rác Thải Nhựa (CART-CARBON-REDUCTION-PLEDGE-01) */}
+      <section className="panel" style={{ background: carbonPledge ? '#f0fdf4' : undefined, border: carbonPledge ? '1px solid #86efac' : undefined }}>
+        <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Leaf size={18} color="#16a34a" /> Cam Kết Tiêu Dùng Bền Vững &amp; Giao Không Nhựa (CART-CARBON-REDUCTION-PLEDGE-01)
+        </h2>
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Đồng hành cùng NEXORA trong sứ mệnh thời trang sinh thái, bảo vệ thiên nhiên và loại bỏ hoàn toàn rác thải nhựa một lần.
+        </p>
+
+        <label className="address-option" style={{ background: carbonPledge ? '#dcfce7' : '#f8fafc', border: carbonPledge ? '1.5px solid #22c55e' : '1px solid #e2e8f0', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={carbonPledge}
+            onChange={e => {
+              setCarbonPledge(e.target.checked);
+              if (e.target.checked) {
+                localStorage.setItem('nexora_green_shopper_pledge', 'true');
+              } else {
+                localStorage.removeItem('nexora_green_shopper_pledge');
+              }
+            }}
+          />
+          <span>
+            <strong style={{ color: '#15803d', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              🌿 Ký Cam Kết Tiêu Dùng Sinh Thái &amp; Giao Hàng Xanh
+              <span style={{ fontSize: 10, background: '#16a34a', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                +100 ĐIỂM XANH
+              </span>
+            </strong>
+            <br />
+            <small style={{ color: '#166534', fontSize: 12 }}>
+              Đồng ý 3 nguyên tắc vận hành bền vững của NEXORA cho đơn hàng này:
+            </small>
+          </span>
+        </label>
+
+        {carbonPledge && (
+          <div style={{ marginTop: 12, padding: 12, background: '#ffffff', borderRadius: 4, border: '1px solid #bbf7d0', fontSize: 12 }}>
+            <div style={{ display: 'grid', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                <CheckCircle2 size={16} color="#16a34a" style={{ flexShrink: 0, marginTop: 2 }} />
+                <div>
+                  <strong style={{ color: '#14532d' }}>1. Vận chuyển gom tuyến (Consolidated Route):</strong>
+                  <div style={{ color: '#334155', marginTop: 1 }}>
+                    Bưu tá xe điện VinFast ưu tiên tối ưu cung đường giao ghép để giảm 35% phát thải khí nhà kính (CO2e).
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                <CheckCircle2 size={16} color="#16a34a" style={{ flexShrink: 0, marginTop: 2 }} />
+                <div>
+                  <strong style={{ color: '#14532d' }}>2. 100% Không túi nilon bóng khí (Zero Bubble-wrap):</strong>
+                  <div style={{ color: '#334155', marginTop: 1 }}>
+                    Toàn bộ trang phục được bảo vệ bằng đệm giấy tổ ong Kraft tái chế, dây thừng đay tự nhiên và tem niêm phong sáp sinh học.
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                <CheckCircle2 size={16} color="#16a34a" style={{ flexShrink: 0, marginTop: 2 }} />
+                <div>
+                  <strong style={{ color: '#14532d' }}>3. Thu hồi bao bì tuần hoàn:</strong>
+                  <div style={{ color: '#334155', marginTop: 1 }}>
+                    Sẵn sàng hoàn trả hộp carton hoặc túi giấy bảo quản cho shipper NEXORA trong lần giao nhận tiếp theo.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #dcfce7', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+              <span style={{ fontSize: 11, color: '#15803d', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <Award size={14} /> Kích hoạt danh hiệu: <strong>🌿 Green Shopper Pioneer</strong>
+              </span>
+              <span style={{ fontSize: 11, background: '#dcfce7', color: '#14532d', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                Đã ghi nhận vào hồ sơ cá nhân
+              </span>
+            </div>
+          </div>
+        )}
       </section>
       <section className="panel">
         <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

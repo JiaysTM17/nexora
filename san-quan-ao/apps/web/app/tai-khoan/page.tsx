@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2 } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -92,6 +92,21 @@ export default function AccountPage() {
   const [newEventOccasion, setNewEventOccasion] = useState('Smart Casual Evening');
   const [newEventOutfit, setNewEventOutfit] = useState('Áo Polo Dệt Kim Merino + Quần Tây Trắng Ngà');
   const [newEventVasReminder, setNewEventVasReminder] = useState(true);
+  const [hasGreenPledge, setHasGreenPledge] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('nexora_green_shopper_pledge') === 'true';
+    }
+    return false;
+  });
+  const [bespokeOrders, setBespokeOrders] = useState<Array<{ id: string; productName: string; variant: string; monogram: string; deposit: number; queuePos: number; createdAt: string; step: number; lining?: string }>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('nexora_bespoke_preorders');
+        if (stored) return JSON.parse(stored);
+      } catch {}
+    }
+    return [];
+  });
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -175,6 +190,96 @@ export default function AccountPage() {
           <strong>{wishlist.data?.length ?? 0} món</strong>
         </div>
       </div>
+
+      {/* Huy Hiệu Cam Kết Tiêu Dùng Xanh (CART-CARBON-REDUCTION-PLEDGE-01) */}
+      {hasGreenPledge && (
+        <div style={{ marginBottom: 16, padding: '12px 16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ fontSize: 22 }}>🌿</span>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <strong style={{ fontSize: 13, color: '#166534' }}>Huy Hiệu Tiêu Dùng Sinh Thái: Green Shopper Pioneer</strong>
+                <span style={{ fontSize: 10, background: '#16a34a', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  PLEDGE VERIFIED
+                </span>
+              </div>
+              <p style={{ margin: '3px 0 0', fontSize: 11, color: '#15803d' }}>
+                Đã ký cam kết giao hàng không nilon, gom chuyến xe điện và tuần hoàn bao bì. Tích lũy <strong>+100 Điểm Xanh NEX-Green</strong>.
+              </p>
+            </div>
+          </div>
+          <Link href="/gio-hang" style={{ fontSize: 11, color: '#166534', fontWeight: 600, textDecoration: 'underline' }}>
+            Xem cam kết tại giỏ →
+          </Link>
+        </div>
+      )}
+
+      {/* Danh Sách Đặt Trước May Đo Thủ Công Atelier (CAT-PRE-ORDER-ATELIER-01) */}
+      {bespokeOrders.length > 0 && (
+        <article className="panel" style={{ background: '#fdfbf7', border: '1px solid #fed7aa', marginBottom: 16 }}>
+          <div className="row between" style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Scissors size={18} color="#b45309" />
+              <div>
+                <h2 style={{ margin: 0, fontSize: 14, color: '#78350f' }}>
+                  Hồ Sơ Đặt Trước May Đo Thủ Công (Bespoke Pre-Order Atelier Queue)
+                </h2>
+                <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
+                  Tiến trình chế tác thủ công độc bản bởi Master Tailor Hoàng Nam tại NEXORA Atelier.
+                </p>
+              </div>
+            </div>
+            <span style={{ fontSize: 11, background: '#fef3c7', color: '#92400e', padding: '3px 8px', borderRadius: 2, fontWeight: 700 }}>
+              {bespokeOrders.length} suất đang may
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gap: 12 }}>
+            {bespokeOrders.map((bo) => (
+              <div key={bo.id} style={{ background: '#ffffff', borderRadius: 6, border: '1px solid #fed7aa', padding: 14 }}>
+                <div className="row between" style={{ marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
+                  <div>
+                    <strong style={{ fontSize: 13, color: '#1e293b' }}>{bo.productName}</strong>
+                    <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                      Mã hồ sơ: <strong>#{bo.id}</strong> · Ngày đăng ký: {bo.createdAt} · Biến thể: {bo.variant}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: 11, background: '#f0fdf4', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                      Suất Hàng Chờ #{bo.queuePos}/15
+                    </span>
+                    <div style={{ fontSize: 11, color: '#b45309', fontWeight: 700, marginTop: 4 }}>
+                      Đã cọc 30%: {vnd(bo.deposit)}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '8px 0', padding: '8px 10px', background: '#fafaf9', borderRadius: 4, fontSize: 11 }}>
+                  <span>Monogram ve áo: <strong style={{ color: '#b45309', fontFamily: 'serif', letterSpacing: 1 }}>{bo.monogram}</strong></span>
+                  <span>·</span>
+                  <span>Lớp lót: <strong>{bo.lining || 'Lụa Jacquard'}</strong></span>
+                  <span>·</span>
+                  <span>Bảo chứng: <strong style={{ color: '#16a34a' }}>Escrow Sàn D1-01</strong></span>
+                </div>
+
+                {/* 5-step progress bar */}
+                <div style={{ marginTop: 10 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#475569', marginBottom: 4 }}>
+                    <span style={{ fontWeight: 700, color: '#b45309' }}>Chặng 1: Phóng rập cá nhân</span>
+                    <span>Chặng 2: Cắt sợi</span>
+                    <span>Chặng 3: Đơm khuy</span>
+                    <span>Chặng 4: Thêu monogram</span>
+                    <span>Chặng 5: Đóng hộp</span>
+                  </div>
+                  <div style={{ width: '100%', height: 6, background: '#f1f5f9', borderRadius: 3, overflow: 'hidden' }}>
+                    <div style={{ width: '25%', height: '100%', background: '#b45309' }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+      )}
 
       {/* Hồ Sơ Số Đo Thời Trang Cá Nhân (NEXORA Fashion Passport · USER-PASSPORT-01) */}
       <article className="panel">

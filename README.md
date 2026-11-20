@@ -285,7 +285,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **75** | **Chứng Nhận Xưởng May Xanh & Thẻ Điểm ESG (SELLER-SUSTAINABLE-BADGE-01)** | Module 01 & ESG | **100% Hoàn thiện** | Tab Chuẩn Xanh ESG tại `/seller`: Thẻ điểm sợi tự nhiên 94.5%, giảm 18.4 tấn CO2e, hồ sơ chứng chỉ GOTS/OEKO-TEX và huy hiệu Green Atelier |
 | **76** | **Đối Soát & Thẩm Định Chứng Chỉ Xanh ESG Sàn (ADMIN-ESG-AUDIT-DASHBOARD-01)** | Module 04 & Admin ESG | **100% Hoàn thiện** | Tab Thẩm định ESG tại `/admin`: Bảng đối soát chứng chỉ xanh xưởng may, giám sát 142.8 tấn CO2e trung hòa, tỷ lệ giao xe điện 88.6% |
 | **77** | **Workshop Trực Tuyến & Masterclass Hàng Tuần (SOC-STYLING-WORKSHOP-01)** | Module 06 & Social | **100% Hoàn thiện** | Đăng ký giữ chỗ Workshop Smart Layering cùng Master Tailor Hoàng Nam, tặng +200 Điểm Xanh tại `/cong-dong` |
-| **78** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **78** | **Cam Kết Tiêu Dùng Sinh Thái & Giao Không Nhựa (CART-CARBON-REDUCTION-PLEDGE-01)** | Module 03 & ESG | **100% Hoàn thiện** | Ký cam kết xanh tại `/gio-hang`: Vận chuyển gom tuyến, 100% không túi bóng khí nilon (thay bằng giấy tổ ong đệm kraft), tuần hoàn bao bì, tặng danh hiệu Green Shopper Pioneer và +100 Điểm Xanh |
+| **79** | **Đặt Trước May Đo Giới Hạn & Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)** | Module 01 & Bespoke | **100% Hoàn thiện** | Đặt trước may đo tại `/san-pham/[slug]`: Giữ suất hàng chờ Master Tailor (#07/15), thêu Monogram ve áo, chọn lót lụa may đo, đặt cọc 30% Escrow D1-01 và theo dõi 5 chặng chế tác tại `/tai-khoan` |
+| **80** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

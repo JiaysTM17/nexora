@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot, Scissors, CheckCircle2 } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -33,6 +33,12 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [showAiChat, setShowAiChat] = useState(false);
   const [aiChatInput, setAiChatInput] = useState('');
   const [aiChatHistory, setAiChatHistory] = useState<Array<{ id: string; sender: 'user' | 'stylist'; text: string; time: string }>>([]);
+  const [showBespokeModal, setShowBespokeModal] = useState(false);
+  const [bespokeMonogram, setBespokeMonogram] = useState('N.X.');
+  const [bespokeLining, setBespokeLining] = useState<'SILK_JACQUARD' | 'NORMANDY_FLAX' | 'ATELIER_NOIR'>('SILK_JACQUARD');
+  const [bespokeNotes, setBespokeNotes] = useState('');
+  const [bespokeConfirmed, setBespokeConfirmed] = useState(false);
+  const [bespokeQueuePos] = useState(7);
   const { user } = useUser();
 
   useEffect(() => {
@@ -655,6 +661,29 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               <ShoppingBag size={19} />
             </Link>
           )}
+
+          {/* Đặt Trước May Đo Giới Hạn & Theo Dõi Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01) */}
+          <div style={{ marginTop: 10 }}>
+            <button
+              type="button"
+              className="button secondary full"
+              style={{
+                fontSize: 12,
+                padding: '9px 14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                background: '#faf5f0',
+                borderColor: '#e7d8c9',
+                color: '#78350f',
+              }}
+              onClick={() => setShowBespokeModal(true)}
+            >
+              <Scissors size={15} color="#b45309" />
+              <strong>Đặt Trước May Đo Thủ Công Atelier (Bespoke Pre-Order · Suất #{bespokeQueuePos}/15)</strong>
+            </button>
+          </div>
 
           {notice && (
             <Notice error={failed}>
@@ -1759,6 +1788,331 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Đặt Trước May Đo Thủ Công Atelier (CAT-PRE-ORDER-ATELIER-01) */}
+      {showBespokeModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: 16,
+          }}
+          onClick={() => setShowBespokeModal(false)}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 8,
+              maxWidth: 580,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              border: '1px solid #fed7aa',
+              padding: 24,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 20 }}>🪡</span>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 16, color: '#78350f' }}>
+                    XƯỞNG MAY ĐO THỦ CÔNG NEXORA ATELIER
+                  </h3>
+                  <div style={{ fontSize: 11, color: '#92400e' }}>
+                    Chế Tác Thủ Công Độc Bản (Bespoke Pre-Order Queue · CAT-PRE-ORDER-ATELIER-01)
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowBespokeModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#64748b',
+                  padding: 4,
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {bespokeConfirmed ? (
+              <div style={{ textAlign: 'center', padding: '16px 8px' }}>
+                <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <Award size={32} color="#b45309" />
+                </div>
+                <h4 style={{ margin: '0 0 6px', fontSize: 16, color: '#78350f' }}>
+                  Đã Xác Nhận Giữ Suất May Đo Thành Công!
+                </h4>
+                <p style={{ margin: '0 0 16px', fontSize: 12, color: '#52525b', lineHeight: 1.5 }}>
+                  Mã đăng ký chế tác độc bản: <strong>#ATELIER-BESPOKE-{Date.now().toString().slice(-6)}</strong>.<br />
+                  Hồ sơ đã được chuyển tiếp đến Master Tailor Hoàng Nam để chuẩn bị phóng rập may đo.
+                </p>
+
+                <div style={{ background: '#fdfbf7', border: '1px dashed #d97706', borderRadius: 6, padding: 14, textAlign: 'left', marginBottom: 16, fontSize: 12 }}>
+                  <div className="row between" style={{ marginBottom: 6 }}>
+                    <span style={{ color: '#71717a' }}>Trang phục may đo:</span>
+                    <strong>{p.name}</strong>
+                  </div>
+                  <div className="row between" style={{ marginBottom: 6 }}>
+                    <span style={{ color: '#71717a' }}>Màu sắc &amp; Size:</span>
+                    <span>{selectedColor || 'Mặc định'} · Size {size || 'Theo Passport'}</span>
+                  </div>
+                  <div className="row between" style={{ marginBottom: 6 }}>
+                    <span style={{ color: '#71717a' }}>Monogram thêu ve áo:</span>
+                    <strong style={{ color: '#b45309', fontFamily: 'serif', letterSpacing: 1 }}>{bespokeMonogram}</strong>
+                  </div>
+                  <div className="row between" style={{ marginBottom: 6 }}>
+                    <span style={{ color: '#71717a' }}>Hàng chờ nghệ nhân:</span>
+                    <strong style={{ color: '#16a34a' }}>Suất #{bespokeQueuePos} / 15 tuần này</strong>
+                  </div>
+                  <div className="row between">
+                    <span style={{ color: '#71717a' }}>Tiền cọc 30% (Escrow Sàn D1-01):</span>
+                    <strong style={{ color: 'var(--clay)' }}>{vnd(Math.round((variant?.price || p.variants[0]?.price || 0) * 0.3))}</strong>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowBespokeModal(false);
+                      router.push('/tai-khoan');
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      background: 'var(--clay)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Xem Hồ Sơ May Đo Tại Tài Khoản →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowBespokeModal(false)}
+                    style={{
+                      padding: '10px 14px',
+                      background: '#f1f5f9',
+                      color: '#475569',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div style={{ padding: '10px 14px', background: '#fffbeb', borderRadius: 4, border: '1px solid #fde68a', marginBottom: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#92400e' }}>
+                      ⚡ Hàng chờ nghệ nhân xưởng may tuần này:
+                    </span>
+                    <span style={{ fontSize: 11, background: '#f59e0b', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                      Suất #{bespokeQueuePos} / 15
+                    </span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: 11, color: '#78350f', lineHeight: 1.4 }}>
+                    Mỗi tuần NEXORA Atelier chỉ nhận may đo giới hạn 15 sản phẩm thủ công để bảo đảm từng đường may đạt tiêu chuẩn Haute Couture. Thời gian hoàn thiện dự kiến: <strong>5–7 ngày làm việc</strong>.
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                      1. Thêu Monogram Viết Tắt Tên Chủ Nhân (Ve áo / Cổ áo trong):
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={4}
+                      value={bespokeMonogram}
+                      onChange={(e) => setBespokeMonogram(e.target.value.toUpperCase())}
+                      placeholder="VD: N.X. hoặc J.T."
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: 4,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        letterSpacing: 2,
+                        fontFamily: 'serif',
+                      }}
+                    />
+                    <small style={{ color: '#64748b', fontSize: 10 }}>
+                      Thêu tay chỉ lụa vàng ánh kim hoặc bạc trầm tùy sắc thái vải chính.
+                    </small>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                      2. Chọn Lớp Lót Lụa May Đo Tùy Biến:
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                      {[
+                        { id: 'SILK_JACQUARD', label: 'Lụa Thêu Chìm', desc: 'Bảo Lộc Silk' },
+                        { id: 'NORMANDY_FLAX', label: 'Lanh Mộc Tự Nhiên', desc: 'Normandy Flax' },
+                        { id: 'ATELIER_NOIR', label: 'Satin Đen Tuyển', desc: 'Sơn Mài Noir' },
+                      ].map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setBespokeLining(item.id as any)}
+                          style={{
+                            padding: '8px 6px',
+                            border: bespokeLining === item.id ? '1.5px solid var(--clay)' : '1px solid #e2e8f0',
+                            borderRadius: 4,
+                            background: bespokeLining === item.id ? '#fef3c7' : '#f8fafc',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <strong style={{ fontSize: 11, display: 'block', color: '#1e293b' }}>{item.label}</strong>
+                          <span style={{ fontSize: 9, color: '#64748b' }}>{item.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                      3. Ghi Chú Tùy Biến Phom Dáng Dành Cho Master Tailor:
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={bespokeNotes}
+                      onChange={(e) => setBespokeNotes(e.target.value)}
+                      placeholder="VD: Hạ eo 1cm, nới ngực 2cm cho dáng người thể thao, tay áo may lửng qua mắt cá tay..."
+                      style={{
+                        width: '100%',
+                        padding: '6px 10px',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: 4,
+                        fontSize: 12,
+                        resize: 'none',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* 5 Chặng Tiến Trình Nghệ Nhân */}
+                <div style={{ marginBottom: 16 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', display: 'block', marginBottom: 8 }}>
+                    Tiến Trình 5 Chặng Chế Tác Thủ Công (Artisanal Lifecycle):
+                  </span>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 4, textAlign: 'center' }}>
+                    {[
+                      { step: 1, title: 'Phóng Rập', desc: 'Theo số đo' },
+                      { step: 2, title: 'Cắt Thủ Công', desc: 'Ủ sợi dệt' },
+                      { step: 3, title: 'May Đo Ráp', desc: 'Đơm khuy xà cừ' },
+                      { step: 4, title: 'Thêu Monogram', desc: 'Ủ buồng 1000 Lux' },
+                      { step: 5, title: 'Đóng Hộp', desc: 'Haute Couture' },
+                    ].map((st) => (
+                      <div key={st.step} style={{ padding: '6px 4px', background: '#f8fafc', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+                        <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#b45309', color: '#fff', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 4px' }}>
+                          {st.step}
+                        </div>
+                        <strong style={{ fontSize: 10, display: 'block', color: '#0f172a' }}>{st.title}</strong>
+                        <span style={{ fontSize: 8, color: '#64748b' }}>{st.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: '#fafaf9', padding: '10px 14px', borderRadius: 4, border: '1px solid #e7e5e4', marginBottom: 16 }}>
+                  <div className="row between" style={{ fontSize: 12 }}>
+                    <span>Tổng giá trị trang phục:</span>
+                    <strong>{vnd(variant?.price || p.variants[0]?.price || 0)}</strong>
+                  </div>
+                  <div className="row between" style={{ fontSize: 12, marginTop: 4 }}>
+                    <span style={{ color: '#b45309' }}>Tiền cọc giữ suất 30% (Escrow Sàn D1-01):</span>
+                    <strong style={{ color: '#b45309', fontSize: 13 }}>
+                      {vnd(Math.round((variant?.price || p.variants[0]?.price || 0) * 0.3))}
+                    </strong>
+                  </div>
+                  <div style={{ fontSize: 10, color: '#78716c', marginTop: 4 }}>
+                    Phần còn lại 70% sẽ thanh toán khi bưu tá giao hàng tận nhà và khách hàng đồng kiểm ngoại quan (RET-COINSPECT).
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newOrder = {
+                        id: `ATELIER-BESPOKE-${Date.now().toString().slice(-6)}`,
+                        productName: p.name,
+                        variant: `${selectedColor || 'Mặc định'} · Size ${size || 'Theo Passport'}`,
+                        monogram: bespokeMonogram,
+                        lining: bespokeLining,
+                        deposit: Math.round((variant?.price || p.variants[0]?.price || 0) * 0.3),
+                        queuePos: bespokeQueuePos,
+                        createdAt: new Date().toLocaleDateString('vi-VN'),
+                        step: 1,
+                      };
+                      try {
+                        const existing = JSON.parse(localStorage.getItem('nexora_bespoke_preorders') || '[]');
+                        existing.unshift(newOrder);
+                        localStorage.setItem('nexora_bespoke_preorders', JSON.stringify(existing));
+                      } catch {}
+                      setBespokeConfirmed(true);
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '11px 16px',
+                      background: 'var(--clay)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 13,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Xác Nhận Đặt Cọc 30% &amp; Giữ Suất May Đo →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowBespokeModal(false)}
+                    style={{
+                      padding: '11px 16px',
+                      background: '#f1f5f9',
+                      color: '#475569',
+                      border: 'none',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
