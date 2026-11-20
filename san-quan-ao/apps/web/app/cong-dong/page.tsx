@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
-import { Bookmark, Heart, MessageCircle, Plus, Flag, ArrowUpRight, ShoppingBag, Share2, HelpCircle, CheckCircle2, Sparkles, Filter, Hash, Compass, Coffee, Coins, Gift, Trophy, Flame, Award, ThumbsUp, Calendar, Video, Users } from 'lucide-react';
+import { Bookmark, Heart, MessageCircle, Plus, Flag, ArrowUpRight, ShoppingBag, Share2, HelpCircle, CheckCircle2, Sparkles, Filter, Hash, Compass, Coffee, Coins, Gift, Trophy, Flame, Award, ThumbsUp, Calendar, Video, Users, ArrowLeftRight, Repeat, ShieldCheck, Scale } from 'lucide-react';
 import { api, FeedPost, Product, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 export default function Community() {
@@ -10,6 +10,13 @@ export default function Community() {
   const [challengeVotes, setChallengeVotes] = useState<Record<string, number>>({});
   const [joinedChallenge, setJoinedChallenge] = useState(false);
   const [workshopRsvp, setWorkshopRsvp] = useState(false);
+  const [swapModalOpen, setSwapModalOpen] = useState(false);
+  const [swapProposed, setSwapProposed] = useState(false);
+  const [mySwapItem, setMySwapItem] = useState('Áo Khoác Blazer Linen Cổ Điển');
+  const [mySwapVal, setMySwapVal] = useState(650000);
+  const [targetSwapItem, setTargetSwapItem] = useState('Sơ Mi Lụa Tơ Tằm Bảo Lộc');
+  const [targetSwapVal, setTargetSwapVal] = useState(680000);
+  const [swapContractId, setSwapContractId] = useState('SWAP-P2P-882149');
 
   useEffect(() => {
     try {
@@ -19,6 +26,14 @@ export default function Community() {
       if (storedJoined) setJoinedChallenge(true);
       const storedRsvp = localStorage.getItem('nexora_workshop_rsvp');
       if (storedRsvp) setWorkshopRsvp(true);
+      const storedSwap = localStorage.getItem('nexora_active_swap_meet');
+      if (storedSwap) {
+        setSwapProposed(true);
+        try {
+          const parsed = JSON.parse(storedSwap);
+          if (parsed?.id) setSwapContractId(parsed.id);
+        } catch {}
+      }
     } catch {}
   }, []);
 
@@ -181,6 +196,203 @@ export default function Community() {
           </button>
         )}
       </div>
+    </div>
+
+    {/* Sàn Đổi Đồ Tủ Áo Tuần Hoàn · NEX-Swap Circle P2P (SOC-COMMUNITY-SWAP-MEET-01) */}
+    <div
+      style={{
+        marginBottom: 16,
+        padding: '16px 20px',
+        background: 'linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%)',
+        border: '1px solid #99f6e4',
+        borderRadius: 8,
+      }}
+    >
+      <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ArrowLeftRight size={18} color="#0f766e" />
+          <div>
+            <strong style={{ fontSize: 13, color: '#134e4a' }}>
+              Sàn Đổi Đồ Tủ Áo Tuần Hoàn · NEX-Swap Circle P2P (SOC-COMMUNITY-SWAP-MEET-01)
+            </strong>
+            <span style={{ marginLeft: 8, fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+              ESCROW BẢO CHỨNG 1:1
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setSwapModalOpen(!swapModalOpen)}
+          style={{
+            fontSize: 11,
+            padding: '4px 10px',
+            background: swapModalOpen ? '#0f766e' : '#fff',
+            color: swapModalOpen ? '#fff' : '#0f766e',
+            border: '1px solid #0f766e',
+            borderRadius: 4,
+            cursor: 'pointer',
+            fontWeight: 600,
+          }}
+        >
+          {swapModalOpen ? 'Thu gọn giao diện đổi đồ' : 'Khám phá Sàn Đổi Đồ & Đề Xuất →'}
+        </button>
+      </div>
+
+      <p style={{ margin: '0 0 10px', fontSize: 11, color: '#115e59', lineHeight: 1.4 }}>
+        Giao lưu phục trang cao cấp trực tiếp giữa các thành viên cộng đồng. Định giá đối ứng công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow an toàn 100% và shipper đồng kiểm 2 chiều VinFast Green Bike.
+      </p>
+
+      {/* 3 Trụ cột an toàn */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 12 }}>
+        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 6, border: '1px solid #ccfbf1', fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0f766e', fontWeight: 700, marginBottom: 2 }}>
+            <Scale size={13} /> Định Giá Công Bằng 96%
+          </div>
+          <span style={{ color: '#475569', fontSize: 10 }}>Thuật toán so khớp giá trị thị trường và tự động tính tiền bù trừ chênh lệch.</span>
+        </div>
+        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 6, border: '1px solid #ccfbf1', fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0f766e', fontWeight: 700, marginBottom: 2 }}>
+            <ShieldCheck size={13} /> Escrow Khóa Cọc Trung Gian
+          </div>
+          <span style={{ color: '#475569', fontSize: 10 }}>Khoản cọc được giữ an toàn trên NEXORA Trust đến khi hai bên cùng ký nhận hài lòng.</span>
+        </div>
+        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 6, border: '1px solid #ccfbf1', fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0f766e', fontWeight: 700, marginBottom: 2 }}>
+            <Repeat size={13} /> Vận Chuyển Đồng Kiểm 2 Chiều
+          </div>
+          <span style={{ color: '#475569', fontSize: 10 }}>Shipper VinFast Green giao - nhận cùng thời điểm, đồng kiểm chất liệu tận tay.</span>
+        </div>
+      </div>
+
+      {/* Swap Status or Form */}
+      {swapProposed ? (
+        <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid #0d9488', borderRadius: 6 }}>
+          <div className="row between" style={{ marginBottom: 6 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#0f766e', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CheckCircle2 size={14} color="#0d9488" /> Hợp Đồng Trao Đổi Đang Thực Hiện: #{swapContractId}
+            </span>
+            <span style={{ fontSize: 10, background: '#ccfbf1', color: '#0f766e', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
+              ESCROW ĐÃ KHÓA · SHIPPER ĐANG ĐIỀU PHỐI
+            </span>
+          </div>
+          <div style={{ fontSize: 11, color: '#334155', lineHeight: 1.5, background: '#f8fafc', padding: '8px 10px', borderRadius: 4, marginBottom: 8 }}>
+            <div>• <strong>Món của bạn:</strong> {mySwapItem} (Định giá: {vnd(mySwapVal)})</div>
+            <div>• <strong>Đổi lấy:</strong> {targetSwapItem} (Định giá: {vnd(targetSwapVal)})</div>
+            <div>• <strong>Khoản bù trừ chênh lệch:</strong> {vnd(Math.abs(targetSwapVal - mySwapVal))} (Đã khóa tạm giữ vào Escrow)</div>
+            <div>• <strong>Đơn vị vận chuyển:</strong> VinFast Green Electric Courier (Mã lộ trình: #VF-SWAP-992)</div>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.removeItem('nexora_active_swap_meet');
+                } catch {}
+                setSwapProposed(false);
+                setNotice('Đã hoàn tất / đóng hợp đồng trao đổi đồ tuần hoàn.');
+              }}
+              style={{
+                fontSize: 11,
+                padding: '4px 10px',
+                background: '#f1f5f9',
+                color: '#475569',
+                border: '1px solid #cbd5e1',
+                borderRadius: 4,
+                cursor: 'pointer',
+              }}
+            >
+              Hoàn tất &amp; Đóng hợp đồng
+            </button>
+            <span style={{ fontSize: 10, color: '#0f766e', alignSelf: 'center', fontWeight: 600 }}>
+              ✓ Đã tích lũy +300 Điểm Xanh Tuần Hoàn vào ví NEX-Green
+            </span>
+          </div>
+        </div>
+      ) : swapModalOpen ? (
+        <div style={{ padding: '12px 14px', background: '#fff', border: '1px dashed #0d9488', borderRadius: 6 }}>
+          <strong style={{ fontSize: 12, color: '#0f766e', display: 'block', marginBottom: 8 }}>
+            Đề Xuất Hợp Đồng Trao Đổi Ngang Hàng P2P:
+          </strong>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginBottom: 10 }}>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 4 }}>
+                1. Món đồ từ tủ đồ của bạn:
+              </label>
+              <input
+                type="text"
+                value={mySwapItem}
+                onChange={(e) => setMySwapItem(e.target.value)}
+                style={{ width: '100%', fontSize: 11, padding: '6px 8px', border: '1px solid #cbd5e1', borderRadius: 4, marginBottom: 4 }}
+                placeholder="Tên trang phục mang trao đổi…"
+              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: '#64748b' }}>
+                Định giá: <strong style={{ color: 'var(--ink)' }}>{vnd(mySwapVal)}</strong>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 4 }}>
+                2. Món đồ cộng đồng muốn đổi lấy:
+              </label>
+              <input
+                type="text"
+                value={targetSwapItem}
+                onChange={(e) => setTargetSwapItem(e.target.value)}
+                style={{ width: '100%', fontSize: 11, padding: '6px 8px', border: '1px solid #cbd5e1', borderRadius: 4, marginBottom: 4 }}
+                placeholder="Tên trang phục bạn muốn nhận…"
+              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: '#64748b' }}>
+                Định giá: <strong style={{ color: 'var(--ink)' }}>{vnd(targetSwapVal)}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="row between" style={{ background: '#f0fdfa', padding: '8px 12px', borderRadius: 4, marginBottom: 10, fontSize: 11 }}>
+            <span style={{ color: '#134e4a' }}>
+              Chênh lệch giá trị đối ứng: <strong>{vnd(Math.abs(targetSwapVal - mySwapVal))}</strong> ({targetSwapVal > mySwapVal ? 'Bạn bù qua Escrow' : 'Đối tác bù vào ví bạn'})
+            </span>
+            <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+              FAIR VALUE MATCH: 96%
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              const contractId = `SWAP-P2P-${Date.now().toString().slice(-6)}`;
+              setSwapContractId(contractId);
+              try {
+                localStorage.setItem('nexora_active_swap_meet', JSON.stringify({
+                  id: contractId,
+                  myItem: mySwapItem,
+                  targetItem: targetSwapItem,
+                  diff: Math.abs(targetSwapVal - mySwapVal),
+                  createdAt: new Date().toISOString(),
+                }));
+              } catch {}
+              setSwapProposed(true);
+              setNotice(`✓ Đã tạo hợp đồng đổi đồ #${contractId}! Escrow trung gian đã kích hoạt và thông báo tới chủ nhân món đồ.`);
+            }}
+            style={{
+              width: '100%',
+              padding: '8px 14px',
+              background: '#0d9488',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 4,
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            <ArrowLeftRight size={14} /> Ký Thỏa Thuận Đổi Đồ &amp; Khóa Escrow Bảo Chứng
+          </button>
+        </div>
+      ) : null}
     </div>
 
     {/* Thanh Khám Phá Thẻ Xu Hướng (SOC-OOTD-TAG-DISCOVERY-02) */}

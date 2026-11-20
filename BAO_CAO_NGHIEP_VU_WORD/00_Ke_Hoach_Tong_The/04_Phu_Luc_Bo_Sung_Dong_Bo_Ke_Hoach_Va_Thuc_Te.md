@@ -298,3 +298,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 73. **Khung Thiết Kế Lookbook Cá Nhân & Thẻ Phối Đồ Nghệ Thuật (CAT-LOOKBOOK-CANVAS-EXPORT-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Studio Mix & Match và Lookbook OOTD.
    - Thực tế: Phân hệ xuất thẻ Lookbook tại `/phoi-do`: 3 không gian nghệ thuật (Atelier Kem Gỗ Sồi, Heritage Phố Cổ, Sơn Mài Midnight), chữ ký curator cá nhân, hòa sắc 98/100, lưu bộ sưu tập và đăng lên cộng đồng OOTD.
+
+74. **Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn (TRADEIN-FABRIC-RECYCLING-INDEX-01)**:
+   - Hồ sơ: Module 02 Thu Cũ Đổi Mới & Tuần Hoàn Thời Trang (Circular Fashion & LCA).
+   - Thực tế: Phân hệ hộ chiếu LCA tại `/trade-in`: Đo lường bảo tồn tài nguyên sinh thái (Linen 2.700L nước, -3.2kg CO2e, -0.85kg hóa chất), phân bổ 3 hướng tái sinh (Upcycling 35%, Re-Loved 50%, Nỉ tiêu âm Bio-Felt 15%), cấp hộ chiếu điện tử độc bản `#PASSPORT-LCA-XXXXXX`.
+
+75. **Sàn Đổi Đồ Tủ Áo Tuần Hoàn P2P & Hợp Đồng Escrow Đối Ứng (SOC-COMMUNITY-SWAP-MEET-01)**:
+   - Hồ sơ: Module 06 Cộng đồng Tương tác Sáng tạo OOTD & Trao Đổi Ngang Hàng P2P.
+   - Thực tế: Sàn giao lưu đồ tủ áo tại `/cong-dong`: Thuật toán định giá công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow giữ tiền chênh lệch, vận chuyển đồng kiểm 2 chiều VinFast Green, ký hợp đồng P2P `#SWAP-P2P-XXXXXX` và tích lũy +300 Điểm Xanh.

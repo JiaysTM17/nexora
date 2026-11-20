@@ -95,6 +95,8 @@
 | **84** | **Đặt Trước May Đo Giới Hạn & Theo Dõi Tiến Trình Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01)** | Module 01 & Bespoke | Đã hoàn thiện | Phân hệ may đo độc bản tại `/san-pham/[slug]`: Giữ suất hàng chờ nghệ nhân (#07/15), thêu monogram tên ve áo, chọn lót lụa may đo, đặt cọc 30% bảo chứng Escrow D1-01, theo dõi 5 chặng chế tác Master Tailor và đồng bộ `/tai-khoan` |
 | **85** | **Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Tổn Thương Phục Hồi Sinh Học (VAS-GARMENT-DIAGNOSIS-01)** | Module 02 & VAS | Đã hoàn thiện | Phân hệ chẩn đoán tại `/vas-care`: Chọn dòng đồ & triệu chứng hư tổn, lập phác đồ sinh học chuẩn 1000 Lux, tỷ lệ phục hồi 98.6%, điền tự động form bưu tá và tặng voucher cấp cứu đồ hiệu -50k (RESCUE50) |
 | **86** | **Khung Thiết Kế Lookbook Cá Nhân & Thẻ Phối Đồ Nghệ Thuật (CAT-LOOKBOOK-CANVAS-EXPORT-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ xuất thẻ Lookbook tại `/phoi-do`: 3 không gian nghệ thuật (Atelier Kem Gỗ Sồi, Heritage Phố Cổ, Sơn Mài Midnight), chữ ký curator cá nhân, hòa sắc 98/100, lưu bộ sưu tập và đăng lên cộng đồng OOTD |
+| **87** | **Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn (TRADEIN-FABRIC-RECYCLING-INDEX-01)** | Module 02 & Circular | Đã hoàn thiện | Phân hệ hộ chiếu LCA tại `/trade-in`: Đo lường bảo tồn tài nguyên (Linen 2.700L nước, -3.2kg CO2e, -0.85kg hóa chất), phân bổ 3 hướng tái sinh (Upcycling 35%, Re-Loved 50%, Nỉ tiêu âm Bio-Felt 15%), cấp hộ chiếu điện tử độc bản `#PASSPORT-LCA-XXXXXX` |
+| **88** | **Sàn Đổi Đồ Tủ Áo Tuần Hoàn P2P & Hợp Đồng Escrow Đối Ứng (SOC-COMMUNITY-SWAP-MEET-01)** | Module 06 & Circular P2P | Đã hoàn thiện | Sàn giao lưu đồ tủ áo tại `/cong-dong`: Thuật toán định giá công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow giữ tiền chênh lệch, vận chuyển đồng kiểm 2 chiều VinFast Green, ký hợp đồng P2P `#SWAP-P2P-XXXXXX` và tích lũy +300 Điểm Xanh |
 
 ---
 
@@ -769,6 +771,32 @@
   - Cho phép tùy chỉnh chữ ký giám tuyển độc bản (*Curated by Elena Vũ* hoặc tên chủ nhân).
   - Trình bày thẻ Lookbook hoàn chỉnh: Ảnh 3 lớp trang phục phối sẵn, dải swatch màu sắc chi tiết kèm mã hex, thang điểm hòa sắc 98/100, chỉ số sợi dệt sinh thái và mã QR tra cứu bộ đồ.
   - Hỗ trợ lưu trữ thẻ nghệ thuật vào bộ sưu tập cá nhân `localStorage` (`nexora_saved_lookbooks`), tự động đồng bộ bài đăng chia sẻ lên bảng tin Cộng Đồng OOTD `/cong-dong` và sao chép liên kết chia sẻ nhanh.
+
+### 71. Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn (TRADEIN-FABRIC-RECYCLING-INDEX-01)
+- **Mục tiêu**: Định lượng hóa chính xác đóng góp bảo tồn tài nguyên sinh thái của từng trang phục cũ được thu hồi, thiết lập vòng tuần hoàn Zero-Landfill minh bạch thông qua chỉ số đánh giá vòng đời sản phẩm (Life Cycle Assessment - LCA).
+- **Cơ chế**:
+  - Tích hợp phân hệ Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tuần Hoàn LCA tại trang Thu Cũ Đổi Mới `/trade-in`.
+  - Phân tích chỉ số bảo tồn tài nguyên môi trường đối với 4 chất liệu dệt may thiết yếu:
+    1. *Lanh Normandy (Linen)*: Bảo tồn **2.700 lít nước**, giảm phát thải **3.2 kg CO2e**, tiết kiệm **0.85 kg hóa chất nông nghiệp**.
+    2. *Lụa Tơ Tằm Bảo Lộc*: Bảo tồn **1.900 lít nước**, giảm phát thải **2.8 kg CO2e**, tiết kiệm **0.60 kg hóa chất**.
+    3. *Bông Hữu Cơ GOTS*: Bảo tồn **3.800 lít nước**, giảm phát thải **3.6 kg CO2e**, tiết kiệm **1.10 kg hóa chất**.
+    4. *Dạ Len Ý (Merino Wool)*: Bảo tồn **2.400 lít nước**, giảm phát thải **4.1 kg CO2e**, tiết kiệm **0.90 kg hóa chất**.
+  - Minh bạch bản đồ phân bổ 3 hướng tái sinh tuần hoàn:
+    1. *Upcycling Haute Couture (35%)*: Chuyển giao các nhà thiết kế trẻ tại NEXORA Studio may nối (patchwork) thành áo khoác độc bản.
+    2. *Re-Loved Vintage Market (50%)*: Spa phục hồi buồng sáng 1000 Lux và đưa lên gian hàng đồ cũ tuyển chọn giá ưu đãi.
+    3. *Bio-Felt Acoustic Panels (15%)*: Xơ sợi vụn được kéo sợi lại để chế tác tấm tiêu âm và nỉ sinh học tự nhiên.
+  - Nút bấm xuất chứng thư cấp **Hộ Chiếu Vòng Đời Tuần Hoàn Số** độc bản (`#PASSPORT-LCA-XXXXXX`), lưu vết vào ví cá nhân `localStorage` (`nexora_circular_passport`) và xác nhận đóng góp vào mục tiêu Net-Zero.
+
+### 72. Sàn Đổi Đồ Tủ Áo Tuần Hoàn P2P & Hợp Đồng Escrow Đối Ứng (SOC-COMMUNITY-SWAP-MEET-01)
+- **Mục tiêu**: Khuyến khích lối sống tuần hoàn và tối ưu hóa vòng đời trang phục thông qua mô hình trao đổi đồ ngang hàng (Peer-to-Peer Wardrobe Swap) an toàn tuyệt đối, loại bỏ rủi ro gian lận giá trị hoặc giao hàng không đúng thỏa thuận.
+- **Cơ chế**:
+  - Tích hợp Sàn Đổi Đồ Tủ Áo Tuần Hoàn (NEX-Swap Circle P2P) tại phân hệ Cộng Đồng OOTD `/cong-dong`.
+  - 3 trụ cột an toàn bảo chứng giao dịch:
+    1. *Định Giá Công Bằng 96% (Fair Value Match Score)*: Thuật toán đối chiếu giá trị thị trường và tự động tính toán khoản tiền bù trừ chênh lệch giữa 2 món đồ trao đổi.
+    2. *Escrow Khóa Cọc Trung Gian*: Khoản cọc chênh lệch được bảo chứng an toàn trên ví ký quỹ trung gian NEXORA Trust (D1-01) đến khi cả hai bên cùng ký nhận hài lòng.
+    3. *Vận Chuyển Đồng Kiểm 2 Chiều VinFast Green Bike*: Bưu tá xe điện điều phối tuyến giao - nhận cùng thời điểm, hỗ trợ đồng kiểm chất liệu tận tay trước khi bàn giao.
+  - Giao diện thiết lập hợp đồng trao đổi thông minh: Cho phép nhập món đồ từ tủ áo cá nhân mang ra giao lưu, đối ứng với trang phục mục tiêu từ cộng đồng, tự động tính khoản bù chênh lệch.
+  - Ký hợp đồng P2P độc bản (`#SWAP-P2P-XXXXXX`), khóa cọc Escrow, lưu vết vào `localStorage` (`nexora_active_swap_meet`) và tự động cộng **+300 Điểm Xanh Tuần Hoàn** vào ví NEX-Green.
 
 ---
 

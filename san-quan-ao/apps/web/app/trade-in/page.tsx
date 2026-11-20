@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -22,6 +22,8 @@ export default function TradeInPage() {
   const [pickupSlot, setPickupSlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON');
   const [securityBag, setSecurityBag] = useState(true);
   const [pickupAddress, setPickupAddress] = useState('128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. HCM');
+  const [lcaFabricType, setLcaFabricType] = useState<'LINEN' | 'SILK' | 'COTTON' | 'WOOL'>('LINEN');
+  const [passportGenerated, setPassportGenerated] = useState(false);
 
   useEffect(() => {
     try {
@@ -396,6 +398,183 @@ export default function TradeInPage() {
           </div>
         </>
       )}
+
+      {/* Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn (TRADEIN-FABRIC-RECYCLING-INDEX-01) */}
+      <div
+        style={{
+          marginTop: 24,
+          padding: '20px 24px',
+          background: '#f8fafc',
+          border: '1px solid #cbd5e1',
+          borderRadius: 8,
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Recycle size={18} color="#059669" />
+            <div>
+              <strong style={{ fontSize: 14, color: '#0f172a' }}>
+                Hộ Chiếu Tái Chế Sợi Dệt &amp; Vòng Đời Tuần Hoàn LCA (TRADEIN-FABRIC-RECYCLING-INDEX-01)
+              </strong>
+              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                Đo lường lượng tài nguyên bảo tồn và phân bổ 3 hướng tái sinh cho trang phục thu cũ.
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            ZERO-LANDFILL LCA
+          </span>
+        </div>
+
+        {/* Fabric Type Selector */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+          {[
+            { id: 'LINEN' as const, label: 'Lanh Normandy (Linen)', water: '2.700L', co2: '3.2 kg CO2e', chem: '0.85 kg' },
+            { id: 'SILK' as const, label: 'Lụa Tơ Tằm Bảo Lộc', water: '1.900L', co2: '2.8 kg CO2e', chem: '0.60 kg' },
+            { id: 'COTTON' as const, label: 'Bông Hữu Cơ GOTS', water: '3.800L', co2: '3.6 kg CO2e', chem: '1.10 kg' },
+            { id: 'WOOL' as const, label: 'Dạ Len Ý (Merino Wool)', water: '2.400L', co2: '4.1 kg CO2e', chem: '0.90 kg' },
+          ].map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => {
+                setLcaFabricType(f.id);
+                setPassportGenerated(false);
+              }}
+              style={{
+                fontSize: 11,
+                padding: '6px 12px',
+                borderRadius: 4,
+                border: lcaFabricType === f.id ? '1.5px solid #059669' : '1px solid #cbd5e1',
+                background: lcaFabricType === f.id ? '#ecfdf5' : '#fff',
+                color: lcaFabricType === f.id ? '#047857' : '#334155',
+                fontWeight: lcaFabricType === f.id ? 700 : 500,
+                cursor: 'pointer',
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* LCA Environmental Metrics */}
+        {(() => {
+          const lcaMetrics = {
+            LINEN: { water: '2.700 lít', co2: '3.2 kg CO2e', chemical: '0.85 kg', landfill: '100% Chuyển hướng' },
+            SILK: { water: '1.900 lít', co2: '2.8 kg CO2e', chemical: '0.60 kg', landfill: '100% Chuyển hướng' },
+            COTTON: { water: '3.800 lít', co2: '3.6 kg CO2e', chemical: '1.10 kg', landfill: '100% Chuyển hướng' },
+            WOOL: { water: '2.400 lít', co2: '4.1 kg CO2e', chemical: '0.90 kg', landfill: '100% Chuyển hướng' },
+          }[lcaFabricType];
+
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 10, marginBottom: 14 }}>
+              <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <Droplets size={16} color="#0284c7" style={{ margin: '0 auto 4px' }} />
+                <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Nước sạch bảo tồn</span>
+                <strong style={{ fontSize: 13, color: '#0369a1' }}>{lcaMetrics.water}</strong>
+              </div>
+              <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <Leaf size={16} color="#16a34a" style={{ margin: '0 auto 4px' }} />
+                <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Cắt giảm khí thải</span>
+                <strong style={{ fontSize: 13, color: '#15803d' }}>{lcaMetrics.co2}</strong>
+              </div>
+              <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <ShieldCheck size={16} color="#d97706" style={{ margin: '0 auto 4px' }} />
+                <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hóa chất tổng hợp</span>
+                <strong style={{ fontSize: 13, color: '#b45309' }}>−{lcaMetrics.chemical}</strong>
+              </div>
+              <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <Recycle size={16} color="#7c3aed" style={{ margin: '0 auto 4px' }} />
+                <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Bãi chôn lấp rác</span>
+                <strong style={{ fontSize: 13, color: '#6d28d9' }}>{lcaMetrics.landfill}</strong>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 3 Circular Pathways */}
+        <div style={{ marginBottom: 14 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#1e293b', display: 'block', marginBottom: 8 }}>
+            Bản Đồ Phân Bổ 3 Hướng Tái Sinh Tuần Hoàn (Circular Allocation):
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+            <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+              <div className="row between" style={{ marginBottom: 4 }}>
+                <strong style={{ fontSize: 11, color: '#0f172a' }}>1. Upcycling Haute Couture</strong>
+                <span style={{ fontSize: 10, background: '#fef3c7', color: '#b45309', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>35%</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 10, color: '#64748b', lineHeight: 1.4 }}>
+                Chuyển giao cho các nhà thiết kế trẻ tại NEXORA Studio may nối (patchwork) thành các mẫu áo khoác độc bản.
+              </p>
+            </div>
+            <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+              <div className="row between" style={{ marginBottom: 4 }}>
+                <strong style={{ fontSize: 11, color: '#0f172a' }}>2. Re-Loved Vintage Market</strong>
+                <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>50%</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 10, color: '#64748b', lineHeight: 1.4 }}>
+                Trải qua quy trình phục hồi Spa 1000 Lux và đưa lên gian hàng đồ cũ tuyển chọn với giá ưu đãi.
+              </p>
+            </div>
+            <div style={{ padding: '10px 12px', background: '#fff', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+              <div className="row between" style={{ marginBottom: 4 }}>
+                <strong style={{ fontSize: 11, color: '#0f172a' }}>3. Bio-Felt Acoustic Panels</strong>
+                <span style={{ fontSize: 10, background: '#ede9fe', color: '#6d28d9', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>15%</span>
+              </div>
+              <p style={{ margin: 0, fontSize: 10, color: '#64748b', lineHeight: 1.4 }}>
+                Phần sợi xơ vụn được kéo sợi lại để sản xuất tấm tiêu âm và nỉ sinh học tự nhiên thân thiện môi trường.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {passportGenerated ? (
+          <div style={{ padding: '12px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 6, fontSize: 12 }}>
+            <div className="row between" style={{ marginBottom: 4 }}>
+              <span style={{ color: '#065f46', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <Award size={15} /> Đã Cấp Hộ Chiếu Vòng Đời Tuần Hoàn Số: #PASSPORT-LCA-{Date.now().toString().slice(-6)}
+              </span>
+              <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                VERIFIED BY NEXORA ESG
+              </span>
+            </div>
+            <p style={{ margin: '4px 0 0', color: '#047857', fontSize: 11 }}>
+              Hộ chiếu đã được lưu trữ vào ví cá nhân (`localStorage`). Bạn đã góp phần giảm thiểu rác thải thời trang và đóng góp vào mục tiêu phát thải ròng bằng 0 (Net-Zero).
+            </p>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              try {
+                localStorage.setItem('nexora_circular_passport', JSON.stringify({
+                  fabric: lcaFabricType,
+                  code: `PASSPORT-LCA-${Date.now().toString().slice(-6)}`,
+                  time: new Date().toISOString(),
+                }));
+              } catch {}
+              setPassportGenerated(true);
+            }}
+            style={{
+              width: '100%',
+              padding: '9px 14px',
+              background: '#047857',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 4,
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            <Award size={14} /> Xuất Hộ Chiếu Vòng Đời Tuần Hoàn Số &amp; Xác Nhận Đóng Góp Sinh Thái
+          </button>
+        )}
+      </div>
 
       {/* Cam kết Bảo chứng Thu cũ & Quyền Cân nhắc 14 ngày (VAS-TRADEIN-REQUOTE) */}
       <div
