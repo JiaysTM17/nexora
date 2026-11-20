@@ -299,7 +299,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **89** | **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)** | Module 01 & 3D AR | **100% Hoàn thiện** | Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng gió 1.2 m/s, hệ số rủ 0.32, xuất snapshot |
 | **90** | **Cảnh Báo Thời Tiết & Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)** | Module 03 & Logistics | **100% Hoàn thiện** | Radar thời tiết đo mưa 62mm/h, nguy cơ ngập 68%, đệm an toàn bưu tá +25-35 phút, 3 lớp màng Bio-Cassava, +50 Điểm Xanh tại `/don-hang/[id]` |
 | **91** | **Thẩm Định Bao Bì Không Nhựa & Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)** | Module 01, 04 & ESG | **100% Hoàn thiện** | Khảo sát 4 chuẩn vật liệu (Túi màng sắn, Hộp sóng FSC, Băng keo bột mì, Tem mực đậu nành), cấp huy hiệu Zero-Plastic (100/100) và kết nối 3 HTX bao bì bản địa tại `/seller` |
-| **92** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **92** | **Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast (ADMIN-CARBON-LOGISTICS-MAP-01)** | Module 04 & Admin ESG | **100% Hoàn thiện** | Giám sát 142 bưu tá xe điện Feliz/Klara S, dung lượng pin 93.4%, giảm -127.6kg CO2e/ngày qua 4 cụm Hub, ưu tiên xe điện giờ cao điểm tại `/admin` |
+| **93** | **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)** | Module 06 & Social Patron | **100% Hoàn thiện** | Bảng vinh danh Top 3 Style Muses, bảo trợ cà phê (10k-100k), khấu trừ 10% thuế TNCN TT 111/2013, tích lũy +20 Điểm Xanh tại `/cong-dong` |
+| **94** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

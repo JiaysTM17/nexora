@@ -338,3 +338,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 83. **Thẩm Định Bao Bì Không Nhựa & Cấp Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)**:
    - Hồ sơ: Module 01 Quản trị Danh mục, Module 04 Kênh Người Bán & Bán Lẻ Bền Vững (ESG/CSR).
    - Thực tế: Phân hệ thẩm định bao bì xanh tại `/seller`: Khảo sát 4 chuẩn vật liệu (Túi màng sắn Bio-Cassava, Hộp sóng tổ ong FSC không keo, Băng keo giấy bột mì hoạt hóa nước, Tem mực đậu nành organic), cấp huy hiệu Zero-Plastic Certified (100/100) và kết nối 3 hợp tác xã bao bì xanh bản địa chiết khấu -15%.
+
+84. **Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast (ADMIN-CARBON-LOGISTICS-MAP-01)**:
+   - Hồ sơ: Module 04 Quản trị Sàn TMĐT & Module 07 Kiểm toán Môi trường ESG và Điều Phối Đội Xe Bưu Chính Xanh.
+   - Thực tế: Phân hệ giám sát logistics xanh tại `/admin`: Theo dõi 142 bưu tá xe điện Feliz/Klara S, dung lượng pin 93.4%, giảm -127.6kg CO2e/ngày qua 4 cụm Hub (Quận 1, Quận 7, Thủ Đức, Cần Giờ Net-Zero), kích hoạt ưu tiên xe điện giờ cao điểm và xuất báo cáo GHG Scope 3.
+
+85. **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)**:
+   - Hồ sơ: Module 06 Cộng đồng Tương tác Sáng tạo OOTD & Kinh Tế Sáng Tạo Độc Lập (Creator Economy).
+   - Thực tế: Phân hệ bảo trợ nhà sáng tạo tại `/cong-dong`: Bảng vinh danh Top 3 Style Muses (Elena Vũ, Hoàng Nam, Mai Phương), gửi tặng ly cà phê bảo trợ phong cách (10k/20k/50k/100k), tự động khấu trừ 10% thuế TNCN TT 111/2013 vào Creator Wallet, tích lũy +20 Điểm Xanh.

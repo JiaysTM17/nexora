@@ -17,6 +17,11 @@ export default function Community() {
   const [targetSwapItem, setTargetSwapItem] = useState('Sơ Mi Lụa Tơ Tằm Bảo Lộc');
   const [targetSwapVal, setTargetSwapVal] = useState(680000);
   const [swapContractId, setSwapContractId] = useState('SWAP-P2P-882149');
+  const [patronOpen, setPatronOpen] = useState(false);
+  const [selectedCreator, setSelectedCreator] = useState('Elena Vũ (@elenavu)');
+  const [patronAmount, setPatronAmount] = useState(20000);
+  const [patronMsg, setPatronMsg] = useState('Bộ phối đồ blazer và lụa quá thanh lịch!');
+  const [patronHistory, setPatronHistory] = useState<Array<{ id: string; creator: string; amount: number; msg: string; at: string }>>([]);
 
   useEffect(() => {
     try {
@@ -34,8 +39,28 @@ export default function Community() {
           if (parsed?.id) setSwapContractId(parsed.id);
         } catch {}
       }
+      const savedPatron = localStorage.getItem('nexora_creator_patronage');
+      if (savedPatron) setPatronHistory(JSON.parse(savedPatron));
     } catch {}
   }, []);
+
+  function handleSendPatronage(e: FormEvent) {
+    e.preventDefault();
+    const entry = {
+      id: `PATRON-${Date.now().toString().slice(-6)}`,
+      creator: selectedCreator,
+      amount: patronAmount,
+      msg: patronMsg,
+      at: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+    };
+    const updated = [entry, ...patronHistory.slice(0, 5)];
+    setPatronHistory(updated);
+    try {
+      localStorage.setItem('nexora_creator_patronage', JSON.stringify(updated));
+    } catch {}
+    setNotice(`✓ Bạn đã gửi bảo trợ ${vnd(patronAmount)} đến ${selectedCreator}! Đã cộng +20 Xu Xanh vào tài khoản của bạn.`);
+    setPatronOpen(false);
+  }
 
   function voteChallenge(postId: string) {
     const current = challengeVotes[postId] || 0;
@@ -395,7 +420,185 @@ export default function Community() {
       ) : null}
     </div>
 
-    {/* Thanh Khám Phá Thẻ Xu Hướng (SOC-OOTD-TAG-DISCOVERY-02) */}
+    {/* Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo OOTD (SOC-LOOKBOOK-CREATOR-REWARD-01) */}
+    <div
+      style={{
+        marginBottom: 16,
+        padding: '16px 20px',
+        background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
+        border: '1px solid #fde68a',
+        borderRadius: 8,
+      }}
+    >
+      <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={18} color="#b45309" />
+          <div>
+            <strong style={{ fontSize: 13, color: '#92400e' }}>
+              Quỹ Bảo Trợ Phong Cách &amp; Bảng Vinh Danh Nhà Sáng Tạo OOTD (SOC-LOOKBOOK-CREATOR-REWARD-01)
+            </strong>
+            <span style={{ marginLeft: 8, fontSize: 10, background: '#fef3c7', color: '#b45309', padding: '1px 6px', borderRadius: 2, fontWeight: 700, border: '1px solid #fde68a' }}>
+              CREATOR PATRONAGE VAULT
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => setPatronOpen(!patronOpen)}
+          style={{
+            fontSize: 11,
+            padding: '4px 10px',
+            background: patronOpen ? '#b45309' : '#fff',
+            color: patronOpen ? '#fff' : '#b45309',
+            border: '1px solid #b45309',
+            borderRadius: 4,
+            cursor: 'pointer',
+            fontWeight: 600,
+          }}
+        >
+          {patronOpen ? 'Đóng biểu mẫu gửi bảo trợ' : '🌟 Gửi Bảo Trợ Phong Cách →'}
+        </button>
+      </div>
+
+      <p style={{ margin: '0 0 12px', fontSize: 11, color: '#78350f', lineHeight: 1.4 }}>
+        Vinh danh và tiếp sức tài chính trực tiếp cho các Stylist &amp; Curator có gu ăn mặc truyền cảm hứng. Khoản tài trợ được chuyển tự động vào Creator Wallet với chứng từ khấu trừ 10% thuế TNCN tại nguồn theo TT 111/2013/TT-BTC.
+      </p>
+
+      {/* 3 Top Muses của tuần */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginBottom: 12 }}>
+        {[
+          { name: 'Elena Vũ (@elenavu)', funded: '9.450.000₫', coffees: 128, role: 'Atelier Muse', tag: 'Top 1 Tuần 46' },
+          { name: 'Hoàng Nam (@namtailor)', funded: '6.200.000₫', coffees: 84, role: 'Master Tailor Mentor', tag: 'Top 2 Tuần 46' },
+          { name: 'Mai Phương (@maiphuong.eco)', funded: '4.850.000₫', coffees: 62, role: 'Slow Fashion Ambassador', tag: 'Top 3 Tuần 46' },
+        ].map((muse, mIdx) => (
+          <div
+            key={mIdx}
+            style={{
+              padding: '10px 12px',
+              background: '#fff',
+              border: '1px solid #fde68a',
+              borderRadius: 6,
+              fontSize: 11,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+              <strong style={{ color: '#0f172a', fontSize: 12 }}>{muse.name}</strong>
+              <span style={{ fontSize: 9, background: '#fef9c3', color: '#a16207', padding: '1px 5px', borderRadius: 4, fontWeight: 700 }}>
+                {muse.tag}
+              </span>
+            </div>
+            <div style={{ color: '#64748b', fontSize: 10, marginBottom: 2 }}>Danh hiệu: <strong style={{ color: '#b45309' }}>{muse.role}</strong></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+              <span style={{ color: '#166534', fontWeight: 700 }}>{muse.funded} ({muse.coffees} ☕)</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCreator(muse.name);
+                  setPatronOpen(true);
+                }}
+                style={{
+                  fontSize: 10,
+                  padding: '2px 8px',
+                  background: '#fef3c7',
+                  color: '#92400e',
+                  border: '1px solid #fde68a',
+                  borderRadius: 3,
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                }}
+              >
+                Tặng ly cà phê
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {patronOpen && (
+        <form onSubmit={handleSendPatronage} style={{ padding: '12px 14px', background: '#fff', border: '1px dashed #d97706', borderRadius: 6, marginTop: 8 }}>
+          <strong style={{ fontSize: 12, color: '#92400e', display: 'block', marginBottom: 8 }}>
+            Gửi Khoản Tri Ân Cho Nhà Sáng Tạo:
+          </strong>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 10 }}>
+            <div>
+              <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 2 }}>Nhà sáng tạo nhận:</label>
+              <select
+                value={selectedCreator}
+                onChange={e => setSelectedCreator(e.target.value)}
+                style={{ width: '100%', fontSize: 11, padding: '5px 8px', border: '1px solid #cbd5e1', borderRadius: 4 }}
+              >
+                <option value="Elena Vũ (@elenavu)">Elena Vũ (@elenavu) · Atelier Muse</option>
+                <option value="Hoàng Nam (@namtailor)">Hoàng Nam (@namtailor) · Master Tailor</option>
+                <option value="Mai Phương (@maiphuong.eco)">Mai Phương (@maiphuong.eco) · Slow Fashion</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 2 }}>Mức tài trợ:</label>
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                {[
+                  { v: 10000, label: '10k (Trà)' },
+                  { v: 20000, label: '20k (Cà phê)' },
+                  { v: 50000, label: '50k (Bánh)' },
+                  { v: 100000, label: '100k (Hoa)' },
+                ].map(opt => (
+                  <button
+                    key={opt.v}
+                    type="button"
+                    onClick={() => setPatronAmount(opt.v)}
+                    style={{
+                      padding: '4px 6px',
+                      fontSize: 10,
+                      background: patronAmount === opt.v ? '#fef3c7' : '#fff',
+                      color: patronAmount === opt.v ? '#92400e' : '#475569',
+                      border: `1px solid ${patronAmount === opt.v ? '#d97706' : '#cbd5e1'}`,
+                      borderRadius: 3,
+                      fontWeight: patronAmount === opt.v ? 700 : 400,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <label style={{ fontSize: 10, color: '#64748b', display: 'block', marginBottom: 2 }}>Lời nhắn gửi gắm:</label>
+            <input
+              type="text"
+              value={patronMsg}
+              onChange={e => setPatronMsg(e.target.value)}
+              style={{ width: '100%', fontSize: 11, padding: '5px 8px', border: '1px solid #cbd5e1', borderRadius: 4 }}
+              placeholder="Lời nhắn ấm áp động viên tác giả…"
+            />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 10, color: '#166534', fontWeight: 600 }}>
+              ✓ Tự động cộng +20 Điểm Xanh vào tài khoản của bạn
+            </span>
+            <button
+              type="submit"
+              className="button"
+              style={{ fontSize: 11, padding: '5px 14px', background: '#b45309', color: '#fff' }}
+            >
+              Gửi Bảo Trợ {vnd(patronAmount)}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {patronHistory.length > 0 && (
+        <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px dashed #fde68a', fontSize: 10 }}>
+          <span style={{ color: '#92400e', fontWeight: 600 }}>Nhật ký bạn vừa bảo trợ gần đây:</span>
+          {patronHistory.slice(0, 2).map(h => (
+            <div key={h.id} style={{ display: 'flex', justifyContent: 'space-between', color: '#78350f', marginTop: 2 }}>
+              <span>{h.creator}: <em>"{h.msg}"</em></span>
+              <strong>{vnd(h.amount)} ({h.at})</strong>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
     <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 10, marginBottom: 16 }}>
       {[
         { id: 'ALL', label: '# Tất cả cảm hứng' },

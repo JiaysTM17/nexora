@@ -105,6 +105,8 @@
 | **94** | **Gương Soi Ảo AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01)** | Module 01 & 3D AR | Đã hoàn thiện | Phòng thử đồ AR tại `/san-pham/[slug]`: 3 nguồn sáng (Atelier 5500K, Nến ấm 2700K, Gallery 4000K), mô phỏng chuyển động gió 1.2 m/s, hệ số rủ 0.32, hồi nếp 96% và xuất snapshot Lookbook |
 | **95** | **Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)** | Module 03 & Logistics | Đã hoàn thiện | Phân hệ điều phối thời tiết tại `/don-hang/[id]`: Radar thời tiết đo mưa 62mm/h, nguy cơ ngập 68%, kích hoạt đệm an toàn bưu tá +25-35 phút, 3 lớp màng Bio-Cassava kháng nước, tặng +50 Điểm Xanh đền bù kiên nhẫn, gửi tin nhắn động viên tài xế và dời ca giao tối miễn phí |
 | **96** | **Thẩm Định Bao Bì Không Nhựa & Cấp Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Phân hệ thẩm định bao bì xanh tại `/seller`: Khảo sát 4 chuẩn vật liệu (Túi màng sắn Bio-Cassava, Hộp sóng tổ ong FSC không keo, Băng keo giấy bột mì hoạt hóa nước, Tem mực đậu nành organic), cấp huy hiệu Zero-Plastic Certified (100/100) và kết nối 3 hợp tác xã bao bì xanh bản địa chiết khấu -15% |
+| **97** | **Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast (ADMIN-CARBON-LOGISTICS-MAP-01)** | Module 04 & Admin ESG | Đã hoàn thiện | Phân hệ giám sát logistics xanh tại `/admin`: Theo dõi 142 bưu tá xe điện Feliz/Klara S, dung lượng pin 93.4%, giảm -127.6kg CO2e/ngày qua 4 cụm Hub (Quận 1, Quận 7, Thủ Đức, Cần Giờ Net-Zero), kích hoạt ưu tiên xe điện giờ cao điểm và xuất báo cáo GHG Scope 3 |
+| **98** | **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)** | Module 06 & Social Patron | Đã hoàn thiện | Phân hệ bảo trợ nhà sáng tạo tại `/cong-dong`: Bảng vinh danh Top 3 Style Muses (Elena Vũ, Hoàng Nam, Mai Phương), gửi tặng ly cà phê bảo trợ phong cách (10k/20k/50k/100k), tự động khấu trừ 10% thuế TNCN TT 111/2013 vào Creator Wallet, tích lũy +20 Điểm Xanh |
 
 ---
 
@@ -906,6 +908,40 @@
     - Kết nối trực tiếp 3 đơn vị đối tác chiến lược (HTX Giấy Sóng Bến Tre, Liên Minh Bio-Cassava Củ Chi, Xưởng Tem In Đậu Nành Hà Nội).
     - Trợ giá sàn **-15%** khi đặt mua vật liệu bao bì sinh thái.
   - Lưu trữ cấu hình cam kết và trạng thái đặt mẫu thử vào `localStorage` (`nexora_seller_eco_pack_[shopId]`).
+
+### 81. Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast (ADMIN-CARBON-LOGISTICS-MAP-01)
+- **Mục tiêu**: Nâng cấp khả năng điều hành mạng lưới bưu chính chặng cuối của ban quản trị sàn TMĐT, giám sát lượng phát thải giảm thiểu theo thời gian thực và tự động tối ưu hóa lộ trình xe điện VinFast nhằm triệt tiêu khí thải CO2e.
+- **Cơ chế**:
+  - Tích hợp phân hệ Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện trong tab Thẩm Định ESG tại Cổng Quản Trị `/admin`.
+  - Bảng đồng hồ đo lường đội xe thời gian thực:
+    - 142 Bưu tá xe điện VinFast Feliz & Klara S đang hoạt động trên toàn tuyến.
+    - Dung lượng pin trung bình: 93.4%.
+    - Quãng đường trung bình mỗi cuốc giao: 4.2 km.
+    - Lượng khí nhà kính CO2e cắt giảm: -127.6 kg CO2e/ngày.
+  - Ma trận giám sát 4 Micro-Hub phân phối xanh:
+    1. *Hub 01 — Bến Nghé (Quận 1)*: 38 xe điện, Giảm -24.5 kg CO2e/ngày, Tỷ lệ giao xe điện 92%.
+    2. *Hub 02 — Tân Phong (Quận 7)*: 45 xe điện, Giảm -38.2 kg CO2e/ngày, Tỷ lệ giao xe điện 89%.
+    3. *Hub 03 — An Phú (TP. Thủ Đức)*: 52 xe điện, Giảm -52.1 kg CO2e/ngày, Tỷ lệ giao xe điện 94%.
+    4. *Hành Lang Net-Zero — Bình Khánh (Cần Giờ)*: 7 xe điện chuyên dụng, Giảm -12.8 kg CO2e/ngày, Tỷ lệ 100% Net Zero.
+  - Tác vụ điều phối thông minh:
+    - Nút gạt kích hoạt "Chế Độ Ưu Tiên Tuyến Xe Điện Giờ Cao Điểm" (EV Priority Dispatch).
+    - Nút xuất Báo Cáo Logistics Xanh Đạt Chuẩn GHG Protocol Scope 3 (ISO 14064).
+    - Lưu vết cấu hình vào `localStorage` (`nexora_admin_green_logistics`).
+
+### 82. Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo OOTD (SOC-LOOKBOOK-CREATOR-REWARD-01)
+- **Mục tiêu**: Xây dựng nền kinh tế sáng tạo độc lập (Creator Economy) trong hệ sinh thái thời trang bền vững NEXORA, tạo dòng thu nhập vi mô (Micro-Patronage) bền vững và tri ân các KOC có gu thẩm mỹ cao.
+- **Cơ chế**:
+  - Tích hợp bảng Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo OOTD ngay tại `/cong-dong`.
+  - Bảng vinh danh Top 3 Style Muses của tuần:
+    1. *Elena Vũ (@elenavu)*: 9.450.000₫ tài trợ, 128 ly cà phê, danh hiệu Atelier Muse.
+    2. *Hoàng Nam (@namtailor)*: 6.200.000₫ tài trợ, 84 ly cà phê, danh hiệu Master Tailor Mentor.
+    3. *Mai Phương (@maiphuong.eco)*: 4.850.000₫ tài trợ, 62 ly cà phê, danh hiệu Slow Fashion Ambassador.
+  - Cơ chế gửi bảo trợ vi mô P2P:
+    - Cho phép độc giả chọn mức tài trợ linh hoạt: 10.000₫ (Trà xanh), 20.000₫ (Cà phê), 50.000₫ (Bánh ngọt), 100.000₫ (Bó hoa).
+    - Soạn lời nhắn động viên ấm áp đính kèm phiếu tài trợ.
+    - Tự động khấu trừ 10% thuế TNCN tại nguồn theo Thông tư 111/2013/TT-BTC chuyển thẳng vào Creator Wallet khả dụng.
+    - Tặng kèm +20 Điểm Thưởng Xanh NEX-Green cho người ủng hộ.
+    - Lưu trữ lịch sử bảo trợ vào `localStorage` (`nexora_creator_patronage`).
 
 ---
 
