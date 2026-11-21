@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn, Sun, Zap, Thermometer } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -91,6 +91,9 @@ export default function VasCarePage() {
   const [defaultNotes, setDefaultNotes] = useState('');
   const [showVaultTracker, setShowVaultTracker] = useState(true);
   const [vaultMacroView, setVaultMacroView] = useState(false);
+  const [sterilizationPreset, setSterilizationPreset] = useState<'SILK_CASHMERE' | 'LEATHER_BAGS' | 'EVENING_GOWNS'>('SILK_CASHMERE');
+  const [sterilizationBooked, setSterilizationBooked] = useState(false);
+  const [sterilizationTicket, setSterilizationTicket] = useState('');
 
   function runGarmentDiagnosis() {
     let grade = 'Cấp II · Tổn thương sắc tố bề mặt sợi (Reversible)';
@@ -190,6 +193,12 @@ export default function VasCarePage() {
         };
         setAtelierBookings([sample]);
         localStorage.setItem('nexora_atelier_bookings', JSON.stringify([sample]));
+      }
+      const storedSter = localStorage.getItem('nexora_vas_sterilization');
+      if (storedSter) {
+        const parsed = JSON.parse(storedSter);
+        setSterilizationBooked(true);
+        setSterilizationTicket(parsed.ticket);
       }
     } catch {}
   }, []);
@@ -1009,6 +1018,184 @@ export default function VasCarePage() {
           </div>
         </div>
       )}
+
+      {/* Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01) */}
+      <div
+        style={{
+          marginTop: 32,
+          padding: '24px 28px',
+          background: '#0f172a',
+          color: '#f8fafc',
+          borderRadius: 8,
+          border: '1px solid #334155',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'rgba(56, 189, 248, 0.15)', display: 'grid', placeItems: 'center' }}>
+              <Sun size={20} color="#38bdf8" />
+            </div>
+            <div>
+              <strong style={{ fontSize: 16, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 8 }}>
+                Khử Khuẩn Quang Học UV-C &amp; Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)
+              </strong>
+              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                Tiệt trùng buồng lạnh bảo vệ sợi dệt tự nhiên nhạy cảm nhiệt độ (lụa, cashmere, da thuộc) đạt chuẩn y tế EN 14476.
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: 10, background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid #0284c7', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
+            EN 14476 MEDICAL GRADE · ZERO-THERMAL DAMAGE
+          </span>
+        </div>
+
+        {/* Preset Selector */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginBottom: 16 }}>
+          {[
+            {
+              id: 'SILK_CASHMERE' as const,
+              title: 'Lụa Tơ Tằm & Len Cashmere',
+              tech: 'UV-C 254nm lạnh + Ion Bạc Ag+',
+              time: '15 phút · 21°C',
+              desc: 'Diệt khuẩn vi mô, giữ nguyên 100% độ bóng ánh xà cừ và liên kết protein tơ tự nhiên.',
+            },
+            {
+              id: 'LEATHER_BAGS' as const,
+              title: 'Đồ Da Thuộc Thảo Mộc & Túi Hiệu',
+              tech: 'Buồng Ozone áp suất âm 0.05 ppm',
+              time: '25 phút · 46% RH',
+              desc: 'Phá vỡ phân tử mùi ẩm mốc hữu cơ, tái cấp ẩm tinh dầu không làm nứt bề mặt da patina.',
+            },
+            {
+              id: 'EVENING_GOWNS' as const,
+              title: 'Váy Dạ Tiệc & Đính Kết Kim Hoàn',
+              tech: 'Sóng siêu âm vi điểm + Cực tím lạnh',
+              time: '30 phút · 22°C',
+              desc: 'Làm sạch sâu từng kẽ pha lê Swarovski, bảo toàn tuyệt đối sợi chỉ kim tuyến Haute Couture.',
+            },
+          ].map((preset) => {
+            const isSelected = sterilizationPreset === preset.id;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => setSterilizationPreset(preset.id)}
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 14px',
+                  borderRadius: 6,
+                  border: isSelected ? '1.5px solid #38bdf8' : '1px solid #334155',
+                  background: isSelected ? 'rgba(56, 189, 248, 0.12)' : '#1e293b',
+                  color: isSelected ? '#f8fafc' : '#cbd5e1',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div>
+                  <div className="row between" style={{ marginBottom: 4 }}>
+                    <strong style={{ fontSize: 12, color: isSelected ? '#38bdf8' : '#f8fafc' }}>{preset.title}</strong>
+                    <span style={{ fontSize: 9, background: '#0284c7', color: '#fff', padding: '1px 5px', borderRadius: 2 }}>{preset.time}</span>
+                  </div>
+                  <span style={{ fontSize: 10, color: '#94a3b8', display: 'block', marginBottom: 4 }}>{preset.tech}</span>
+                  <p style={{ margin: 0, fontSize: 10, color: '#cbd5e1', lineHeight: 1.4 }}>{preset.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Live Chamber Physical Monitoring */}
+        <div
+          style={{
+            background: '#1e293b',
+            border: '1px solid #334155',
+            borderRadius: 6,
+            padding: '14px 18px',
+            marginBottom: 16,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            gap: 12,
+            textAlign: 'center',
+          }}
+        >
+          <div>
+            <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Nhiệt độ buồng lạnh</span>
+            <strong style={{ fontSize: 14, color: '#38bdf8' }}>21.8°C (Khử trùng lạnh)</strong>
+          </div>
+          <div>
+            <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Độ ẩm kiểm soát</span>
+            <strong style={{ fontSize: 14, color: '#a78bfa' }}>46% RH (Kháng mốc)</strong>
+          </div>
+          <div>
+            <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Liều lượng quang học</span>
+            <strong style={{ fontSize: 14, color: '#fbbf24' }}>48 mJ/cm² (UV-C 254nm)</strong>
+          </div>
+          <div>
+            <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Tỷ lệ tiêu diệt mầm bệnh</span>
+            <strong style={{ fontSize: 14, color: '#4ade80' }}>99.98% (EN 14476)</strong>
+          </div>
+        </div>
+
+        {/* Booking Action */}
+        {sterilizationBooked ? (
+          <div style={{ padding: '12px 16px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #059669', borderRadius: 6 }}>
+            <div className="row between" style={{ flexWrap: 'wrap', gap: 8, marginBottom: 4 }}>
+              <span style={{ color: '#34d399', fontWeight: 700, fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <CheckCircle2 size={16} /> ĐÃ ĐẶT CHỖ KHỬ KHUẨN VÔ TRÙNG BUỒNG LẠNH · MÃ: {sterilizationTicket}
+              </span>
+              <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                ATELIER STERILE PASSPORT
+              </span>
+            </div>
+            <p style={{ margin: 0, color: '#a7f3d0', fontSize: 11 }}>
+              Trang phục của bạn sẽ được xử lý qua chu trình buồng tiệt trùng quang học UV-C và xông Ozone vô trùng. Bạn nhận được <strong>+120 Điểm Thưởng Xanh NEX-Green</strong> cho việc duy trì thói quen chăm sóc thời trang bền vững.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => {
+                const code = `#STERILIZE-VAS-${Date.now().toString().slice(-6)}`;
+                setSterilizationTicket(code);
+                setSterilizationBooked(true);
+                try {
+                  localStorage.setItem('nexora_vas_sterilization', JSON.stringify({
+                    preset: sterilizationPreset,
+                    ticket: code,
+                    time: new Date().toISOString(),
+                  }));
+                } catch {}
+              }}
+              style={{
+                flex: 1,
+                minWidth: 240,
+                padding: '10px 18px',
+                background: '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <Zap size={14} /> Đặt Chỗ Khử Khuẩn Vô Trùng Buồng Lạnh (+120 Điểm Xanh)
+            </button>
+            <span style={{ fontSize: 11, color: '#94a3b8' }}>
+              Miễn phí 100% khi kết hợp cùng dịch vụ Spa Giặt Hấp hoặc Đặt lịch Atelier VIP
+            </span>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

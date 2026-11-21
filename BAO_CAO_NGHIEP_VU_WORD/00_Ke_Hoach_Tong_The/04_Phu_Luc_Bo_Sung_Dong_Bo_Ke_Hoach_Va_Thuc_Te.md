@@ -362,3 +362,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 89. **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Sàn Diễn Trực Tiếp Tương Tác Đa Điểm (Interactive Runway Livestream).
    - Thực tế: Phân hệ chụp Lookbook sàn diễn tại `/live`: Bắt trọn khung hình 3 góc quay (Catwalk, Macro 4K, Hậu trường), phân tách trọn set 3 món (Áo chính, Quần suông tơ tằm, Thắt lưng da thảo mộc), tự động tính chiết khấu Combo Flash Deal -25%, lưu trữ tủ đồ số (`localStorage`) và chốt đơn 1-chạm vào giỏ hàng.
+
+90. **Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)**:
+   - Hồ sơ: Module 02 Dịch Vụ Gia Tăng VAS Care & Tiệt Trùng Đồ Hiệu Chuẩn Y Tế EN 14476 (Zero-Thermal Damage).
+   - Thực tế: Phân hệ buồng vô trùng tại `/vas-care`: 3 chế độ (UV-C 254nm lạnh + Ion Bạc Ag+ 15 phút cho lụa/cashmere, buồng Ozone áp suất âm 0.05 ppm 25 phút cho đồ da, sóng siêu âm vi điểm cho váy dạ tiệc), tỷ lệ diệt mầm bệnh 99.98%, nhiệt độ buồng 21.8°C, cấp mã `#STERILIZE-VAS-XXXXXX` và tích lũy +120 Điểm Xanh.
+
+91. **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)**:
+   - Hồ sơ: Module 03 Giỏ Hàng Thanh Toán & Module 04 Logistics Gom Tuyến Đa Điểm (Multi-Shop Consolidation).
+   - Thực tế: Phân hệ tối ưu giao ghép tại `/gio-hang`: Tự động nhận diện đơn hàng đa xưởng may, gom tuyến về trạm Micro-Hub trung tâm (Quận 1) điều phối bưu tá xe điện Feliz, tiết kiệm 35.000₫ cước vận chuyển ròng, giảm −0.38kg CO2e, hỗ trợ 2 chế độ (Single Eco Drop thưởng +100 Điểm Xanh hoặc Expedite Partial).

@@ -2,7 +2,7 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck, Trees, Check } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck, Trees, Check, Truck, CheckCheck } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
@@ -25,6 +25,13 @@ export default function Cart() {
   });
   const [carbonOffsetActive, setCarbonOffsetActive] = useState(false);
   const [offsetCertCode, setOffsetCertCode] = useState('');
+  const [consolidatedShipping, setConsolidatedShipping] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('nexora_consolidated_shipping') !== 'false';
+    }
+    return true;
+  });
+  const [consolidationMode, setConsolidationMode] = useState<'SINGLE_DROP' | 'EXPEDITE_PARTIAL'>('SINGLE_DROP');
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
@@ -132,6 +139,105 @@ export default function Cart() {
                   style={{ fontSize: 12, padding: '6px 8px', border: '1px solid var(--line)', borderRadius: 3 }}
                 />
               </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01) */}
+      <section className="panel" style={{ background: consolidatedShipping ? '#f0fdf4' : undefined, border: consolidatedShipping ? '1.5px solid #86efac' : undefined }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+          <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <Truck size={18} color={consolidatedShipping ? '#15803d' : undefined} />
+            Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)
+          </h2>
+          <span style={{ fontSize: 10, background: '#dcfce7', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            {groups.size > 1 ? `GOM TUYẾN ${groups.size} SHOP` : 'ĐƠN HÀNG XANH'} · VINFAST EV
+          </span>
+        </div>
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Thuật toán định tuyến thông minh: Tự động gom các kiện hàng từ <strong>{groups.size} xưởng thời trang</strong> về trạm Micro-Hub trung tâm trước khi điều phối bưu tá xe điện giao tận cửa, tránh lãng phí nhiều cuốc xe và tiết kiệm cước vận chuyển.
+        </p>
+
+        <label className="address-option" style={{ background: '#fff', border: consolidatedShipping ? '1.5px solid #16a34a' : '1px solid var(--line)', marginBottom: 12 }}>
+          <input
+            type="checkbox"
+            checked={consolidatedShipping}
+            onChange={(e) => {
+              setConsolidatedShipping(e.target.checked);
+              try {
+                localStorage.setItem('nexora_consolidated_shipping', String(e.target.checked));
+              } catch {}
+              invalidate();
+            }}
+            style={{ accentColor: '#16a34a' }}
+          />
+          <span>
+            <strong style={{ color: '#15803d', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <CheckCheck size={16} /> Bật chế độ Gom Tuyến Giao Ghép Xe Điện
+              <span style={{ fontSize: 10, background: '#16a34a', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                TIẾT KIỆM 35.000₫ &amp; −0.38kg CO2e
+              </span>
+            </strong>
+            <br />
+            <small className="subtle">
+              Các gói hàng từ {[...groups.values()].map(g => g[0]?.variant?.product?.shop?.name).filter(Boolean).join(', ')} sẽ được ghép chung 1 lộ trình giao bưu tá VinFast Feliz.
+            </small>
+          </span>
+        </label>
+
+        {consolidatedShipping && (
+          <div style={{ padding: 12, background: '#fff', borderRadius: 6, border: '1px dashed #86efac' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#166534', display: 'block', marginBottom: 8 }}>
+              Chọn phương thức gom chuyến bưu tá:
+            </span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 10 }}>
+              <button
+                type="button"
+                onClick={() => setConsolidationMode('SINGLE_DROP')}
+                style={{
+                  textAlign: 'left',
+                  padding: '8px 10px',
+                  borderRadius: 4,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  border: consolidationMode === 'SINGLE_DROP' ? '1.5px solid #16a34a' : '1px solid var(--line)',
+                  background: consolidationMode === 'SINGLE_DROP' ? '#ecfdf5' : '#fafafa',
+                  color: consolidationMode === 'SINGLE_DROP' ? '#15803d' : 'var(--ink)',
+                  fontWeight: consolidationMode === 'SINGLE_DROP' ? 700 : 500,
+                }}
+              >
+                <div>✓ 1. Giao gộp 1 lần duy nhất (Single Eco Drop)</div>
+                <small style={{ color: '#64748b', display: 'block', marginTop: 2 }}>
+                  Bưu tá giao cùng lúc tất cả món đồ khi tập kết đủ tại Hub. Thưởng +100 Điểm Xanh.
+                </small>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setConsolidationMode('EXPEDITE_PARTIAL')}
+                style={{
+                  textAlign: 'left',
+                  padding: '8px 10px',
+                  borderRadius: 4,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  border: consolidationMode === 'EXPEDITE_PARTIAL' ? '1.5px solid #ca8a04' : '1px solid var(--line)',
+                  background: consolidationMode === 'EXPEDITE_PARTIAL' ? '#fefce8' : '#fafafa',
+                  color: consolidationMode === 'EXPEDITE_PARTIAL' ? '#854d0e' : 'var(--ink)',
+                  fontWeight: consolidationMode === 'EXPEDITE_PARTIAL' ? 700 : 500,
+                }}
+              >
+                <div>⚡ 2. Giao tách lẻ theo tiến độ (Expedite Partial)</div>
+                <small style={{ color: '#64748b', display: 'block', marginTop: 2 }}>
+                  Shop nào chuẩn bị xong trước sẽ phát hàng trước cho khách cần gấp.
+                </small>
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11, color: '#15803d', borderTop: '1px solid #dcfce7', paddingTop: 8 }}>
+              <span>Trạm gom tập kết: <strong>Micro-Hub Bến Nghé (Quận 1)</strong></span>
+              <span>Giảm thiểu: <strong>−0.38 kg CO2e</strong></span>
             </div>
           </div>
         )}

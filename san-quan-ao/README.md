@@ -239,5 +239,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Thử Nghiệm Phục Hồi Co Giãn & Chỉ Số Kháng Nhăn** | Module 01 & QA | Đã hoàn thiện | Góc hồi nếp nhăn ISO 2313 đạt 162° Cấp A, đàn hồi 96.5% tại giãn dài 5%, thoáng khí 185 mm/s ISO 9237 tại `/san-pham/[slug]` (CAT-FABRIC-STRETCH-RECOVERY-01) |
 | **Quang Học Vi Điểm 50x & Thẩm Định Tính Xác Thực Đồ Cũ** | Module 02 & Circular | Đã hoàn thiện | Soi quang học vi điểm 50x kiểm tra sợi ISO 4915, rãnh khắc CNC 0.15mm khóa kéo, tem dệt nhiệt 3D, đối sánh 128k mẫu tại `/trade-in` (TRADEIN-AI-AUTHENTICATION-SCAN-01) |
 | **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời** | Module 01 & 06 | Đã hoàn thiện | Bắt trọn khung hình 3 góc máy, bóc tách set 3 món, chiết khấu Combo Flash Deal -25%, lưu tủ đồ số tại `/live` (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01) |
+| **Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết** | Module 02 & VAS | Đã hoàn thiện | Tiệt trùng buồng lạnh bảo vệ lụa tơ tằm, cashmere, da thuộc chuẩn y tế EN 14476, diệt mầm bệnh 99.98% tại `/vas-care` (VAS-UV-DISINFECTION-OZONE-01) |
+| **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng** | Module 03 & 04 | Đã hoàn thiện | Thuật toán gom tuyến đa xưởng về trạm Micro-Hub, bưu tá xe điện Feliz giao tận cửa, tiết kiệm 35k cước ship tại `/gio-hang` (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

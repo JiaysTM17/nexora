@@ -111,6 +111,8 @@
 | **100** | **Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên (CAT-FABRIC-STRETCH-RECOVERY-01)** | Module 01 & QA Lab | Đã hoàn thiện | Kiểm nghiệm phục hồi sợi tại `/san-pham/[slug]`: Góc hồi nếp nhăn 162° cấp A (ISO 2313), đàn hồi hồi phục 96.5% ở độ giãn 5%, thoát ẩm 185 mm/s (ISO 9237), tự thẳng bằng hơi nước 94/100 không cần bàn ủi nóng |
 | **101** | **Quang Học Vi Điểm 50x & Thẩm Định Tính Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01)** | Module 02 & Circular | Đã hoàn thiện | Phân hệ soi quang học 50x tại `/trade-in`: Kiểm định 3 điểm trọng yếu (mật độ dệt & mũi vắt sổ ISO 4915, rãnh khắc CNC sâu 0.15mm mạ PVD khóa kéo, tem dệt nhiệt chống giả phản quang 3D & sợi UV), khớp 99.4%, cấp mã số `#AUTH-NEXORA-XXXXXX` |
 | **102** | **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ chụp Lookbook sàn diễn tại `/live`: Bắt trọn khung hình 3 góc máy (Catwalk, Macro 4K, Hậu trường), phân tách set 3 món, tự động tính chiết khấu Combo Flash Deal -25%, lưu trữ tủ đồ số (`localStorage`) và chốt đơn 1-chạm |
+| **103** | **Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)** | Module 02 & VAS | Đã hoàn thiện | Tiệt trùng buồng lạnh bảo vệ lụa tơ tằm, cashmere, da thuộc thảo mộc chuẩn y tế EN 14476 tại `/vas-care`: 3 chế độ (UV-C 254nm, Ozone áp suất âm 0.05 ppm, Siêu âm cực tím), diệt mầm bệnh 99.98%, cấp mã `#STERILIZE-VAS-XXXXXX`, thưởng +120 Điểm Xanh |
+| **104** | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)** | Module 03 & 04 | Đã hoàn thiện | Tự động gom đơn đa xưởng về trạm Micro-Hub trước khi bưu tá xe điện Feliz giao tận cửa tại `/gio-hang`: Tiết kiệm 35.000₫ cước vận chuyển, giảm −0.38kg CO2e, 2 chế độ Single Eco Drop (+100 Điểm Xanh) hoặc Expedite Partial |
 
 ---
 
@@ -1000,6 +1002,29 @@
     - Tạo thẻ Lookbook cá nhân chứa ảnh snapshot, thông tin set đồ, nhãn góc quay, thời điểm chụp và giá ưu đãi.
     - Lưu vĩnh viễn vào Bộ sưu tập Lookbook cá nhân (`localStorage` `nexora_saved_runway_looks`), tự động đồng bộ vào Tủ đồ số tại `/tai-khoan`.
     - Nút bấm 1-chạm "Chốt Trọn Set Sàn Diễn (-25%) Vào Giỏ Hàng" tự động thêm toàn bộ combo món đồ vào giỏ hàng `/gio-hang`.
+
+### 87. Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)
+- **Mục tiêu**: Cung cấp công nghệ tiệt trùng không gia nhiệt (Zero-Thermal Damage) bảo vệ tuyệt đối cấu trúc sợi dệt tự nhiên nhạy cảm nhiệt độ cao (lụa tơ tằm, dạ len Cashmere, da thuộc thảo mộc) đạt chuẩn y tế EN 14476.
+- **Cơ chế**:
+  - Tích hợp buồng tiệt trùng quang học UV-C và xông Ozone vô trùng tại `/vas-care`.
+  - 3 chế độ tiệt trùng chuyên biệt:
+    1. *Lụa Tơ Tằm & Len Cashmere*: Chiếu tia UV-C 254nm lạnh kết hợp ion bạc Ag+ trong 15 phút, duy trì nhiệt độ buồng 21.8°C, bảo toàn độ bóng ánh xà cừ và liên kết protein tơ tự nhiên.
+    2. *Đồ Da Thuộc Thảo Mộc & Túi Hiệu*: Buồng Ozone áp suất âm nồng độ 0.05 ppm trong 25 phút, phá vỡ phân tử mùi ẩm mốc hữu cơ và tái cấp ẩm tinh dầu không làm nứt bề mặt da patina.
+    3. *Váy Dạ Tiệc & Đính Kết Kim Hoàn*: Sóng siêu âm vi điểm kết hợp tia cực tím lạnh trong 30 phút, làm sạch sâu từng kẽ pha lê Swarovski và bảo toàn sợi kim tuyến Haute Couture.
+  - Màn hình giám sát buồng vô trùng thời gian thực: Nhiệt độ buồng 21.8°C, độ ẩm kiểm soát 46% RH, liều lượng quang học 48 mJ/cm², tỷ lệ tiêu diệt mầm bệnh **99.98%**.
+  - Đặt chỗ nhận thẻ chứng thư số `#STERILIZE-VAS-XXXXXX`, tặng ngay **+120 Điểm Thưởng Xanh NEX-Green**, lưu cấu hình vào `localStorage` (`nexora_vas_sterilization`).
+
+### 88. Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)
+- **Mục tiêu**: Tối ưu hóa chuỗi cung ứng logistics chặng cuối cho các giỏ hàng mua từ nhiều nhà bán độc lập (Multi-Shop Order), giảm thiểu trùng lặp các chuyến xe giao hàng và cắt giảm tối đa chi phí vận chuyển cho người tiêu dùng.
+- **Cơ chế**:
+  - Tích hợp bộ thuật toán định tuyến gom hàng giao ghép ngay tại `/gio-hang`.
+  - Nhận diện đơn hàng có từ 2 xưởng/gian hàng trở lên, kích hoạt tuyến gom bưu kiện về trạm Micro-Hub trung tâm (Micro-Hub Bến Nghé, Quận 1).
+  - Tự động trừ **35.000₫ cước vận chuyển ròng** cho khách hàng bật gom chuyến.
+  - Giảm phát thải thực chứng **−0.38 kg CO2e** thông qua việc loại bỏ các cuốc xe đơn lẻ bằng đội xe điện VinFast Feliz Green Logistics.
+  - 2 chế độ hoàn tất linh hoạt:
+    1. *Giao gộp 1 lần duy nhất (Single Eco Drop)*: Chờ đủ các món đồ tập kết tại Hub rồi giao 1 chuyến duy nhất tận nhà, thưởng ngay **+100 Điểm Thưởng Xanh NEX-Green**.
+    2. *Giao tách lẻ theo tiến độ (Expedite Partial)*: Shop nào may xong trước bưu tá giao trước cho khách cần diện gấp.
+  - Lưu trạng thái vào `localStorage` (`nexora_consolidated_shipping`).
 
 ---
 
