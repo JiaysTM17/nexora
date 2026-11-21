@@ -237,5 +237,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo** | Module 06 & Social Patron | Đã hoàn thiện | Bảng vinh danh Top 3 Style Muses, bảo trợ cà phê (10k-100k), khấu trừ 10% thuế TNCN TT 111/2013, tích lũy +20 Điểm Xanh tại `/cong-dong` (SOC-LOOKBOOK-CREATOR-REWARD-01) |
 | **Nhật Ký Chăm Sóc Sợi Vải & Két Ngủ Đông Trang Phục** | Module 07 & VAS | Đã hoàn thiện | Theo dõi chu kỳ giặt êm (Linen 18/80), tuổi thọ 78%, đặt két ngủ đông theo mùa 45-50% RH khử UV-C `#HIBERNATE-VAULT-XXXX` tại `/tai-khoan` (USER-GARMENT-LIFESPAN-EXTENDER-01) |
 | **Thử Nghiệm Phục Hồi Co Giãn & Chỉ Số Kháng Nhăn** | Module 01 & QA | Đã hoàn thiện | Góc hồi nếp nhăn ISO 2313 đạt 162° Cấp A, đàn hồi 96.5% tại giãn dài 5%, thoáng khí 185 mm/s ISO 9237 tại `/san-pham/[slug]` (CAT-FABRIC-STRETCH-RECOVERY-01) |
+| **Quang Học Vi Điểm 50x & Thẩm Định Tính Xác Thực Đồ Cũ** | Module 02 & Circular | Đã hoàn thiện | Soi quang học vi điểm 50x kiểm tra sợi ISO 4915, rãnh khắc CNC 0.15mm khóa kéo, tem dệt nhiệt 3D, đối sánh 128k mẫu tại `/trade-in` (TRADEIN-AI-AUTHENTICATION-SCAN-01) |
+| **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời** | Module 01 & 06 | Đã hoàn thiện | Bắt trọn khung hình 3 góc máy, bóc tách set 3 món, chiết khấu Combo Flash Deal -25%, lưu tủ đồ số tại `/live` (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

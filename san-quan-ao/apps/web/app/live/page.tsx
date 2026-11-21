@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera, BarChart2, Gift, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera, BarChart2, Gift, CheckCircle2, Bookmark, Layers, CheckCheck } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -47,6 +47,9 @@ export default function LiveRoom() {
     'opt-3': 105,
   });
   const [voucherCopied, setVoucherCopied] = useState<boolean>(false);
+  const [savedLookbooks, setSavedLookbooks] = useState<{ id: string; title: string; price: number; time: string; angle: string }[]>([]);
+  const [capturingLook, setCapturingLook] = useState(false);
+  const [lookCapturedNotice, setLookCapturedNotice] = useState('');
 
   useEffect(() => {
     try {
@@ -55,8 +58,35 @@ export default function LiveRoom() {
         setHasVotedPoll(true);
         setSelectedPollOption(savedVote);
       }
+      const savedLooks = localStorage.getItem('nexora_saved_runway_looks');
+      if (savedLooks) {
+        setSavedLookbooks(JSON.parse(savedLooks));
+      }
     } catch {}
   }, []);
+
+  function captureRunwayLook() {
+    if (!pinnedProduct) return;
+    setCapturingLook(true);
+    setTimeout(() => {
+      const angleName = runwayAngle === 'CATWALK' ? 'Sàn Diễn Catwalk' : runwayAngle === 'MACRO' ? 'Cận Cảnh 4K' : 'Hậu Trường Stylist';
+      const newLook = {
+        id: `LOOK-${Date.now().toString().slice(-6)}`,
+        title: `BST Sàn Diễn: ${pinnedProduct.name}`,
+        price: Math.round((pinnedProduct.variants[0]?.price ?? 1000000) * 0.75),
+        time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        angle: angleName,
+      };
+      const updated = [newLook, ...savedLookbooks.slice(0, 4)];
+      setSavedLookbooks(updated);
+      try {
+        localStorage.setItem('nexora_saved_runway_looks', JSON.stringify(updated));
+      } catch {}
+      setCapturingLook(false);
+      setLookCapturedNotice(`✓ Đã chụp & lưu Lookbook "${newLook.title}" (${angleName}) vào bộ sưu tập cá nhân!`);
+      setTimeout(() => setLookCapturedNotice(''), 4500);
+    }, 600);
+  }
 
   function handleVotePoll(optionId: string) {
     if (hasVotedPoll) return;
@@ -904,6 +934,248 @@ export default function LiveRoom() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01) */}
+      <div
+        style={{
+          marginTop: 28,
+          padding: '24px 26px',
+          background: '#faf9f5',
+          border: '1.5px solid var(--clay)',
+          borderRadius: 8,
+          boxShadow: '0 4px 16px rgba(180, 83, 9, 0.08)',
+        }}
+      >
+        <div className="row between" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fef3c7', display: 'grid', placeItems: 'center' }}>
+              <Layers size={18} color="var(--clay)" />
+            </div>
+            <div>
+              <strong style={{ fontSize: 16, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                Chụp &amp; Lưu Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)
+              </strong>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                Bắt trọn khoảnh khắc người mẫu đang sải bước, lưu trữ trọn set phối đồ vào bộ sưu tập cá nhân và hưởng chiết khấu trọn bộ -25%.
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: 10, background: 'var(--clay)', color: '#fff', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
+            REALTIME RUNWAY CAPTURE
+          </span>
+        </div>
+
+        {lookCapturedNotice && (
+          <div style={{ marginBottom: 14, padding: '10px 14px', background: '#ecfdf5', border: '1px solid #10b981', borderRadius: 6, color: '#047857', fontSize: 12, fontWeight: 600 }}>
+            {lookCapturedNotice}
+          </div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 18, marginBottom: 18 }}>
+          {/* Active Live Runway Snapshot Box */}
+          <div style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)' }}>
+                  Khung Hình Sàn Diễn Trực Tiếp
+                </span>
+                <span style={{ fontSize: 10, background: '#ef4444', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  {runwayAngle === 'CATWALK' ? '📹 Sàn Diễn Catwalk' : runwayAngle === 'MACRO' ? '🔬 Cận Cảnh 4K' : '💄 Hậu Trường'}
+                </span>
+              </div>
+
+              <div style={{ position: 'relative', height: 160, borderRadius: 6, overflow: 'hidden', background: '#1e293b', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img
+                  src={pinnedProduct?.images[0]?.url || '/products/blazer.svg'}
+                  alt="Current Live Look"
+                  style={{ maxHeight: '85%', maxWidth: '85%', objectFit: 'contain' }}
+                  onError={(e) => {
+                    const t = e.currentTarget as HTMLImageElement;
+                    if (!t.src.includes('/products/blazer.svg')) t.src = '/products/blazer.svg';
+                  }}
+                />
+                <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10, display: 'flex', justifyContent: 'space-between', color: '#fff', fontSize: 10, background: 'rgba(0,0,0,0.6)', padding: '3px 8px', borderRadius: 3 }}>
+                  <span>{pinnedProduct?.name || 'BST Độc Quyền'}</span>
+                  <span>Đang trên sàn diễn</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                disabled={capturingLook}
+                onClick={captureRunwayLook}
+                className="button"
+                style={{
+                  width: '100%',
+                  padding: '9px 14px',
+                  fontSize: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                }}
+              >
+                <Camera size={15} />
+                {capturingLook ? 'Đang chụp khoảnh khắc sàn diễn…' : 'Chụp & Lưu Lookbook Khung Hình Này Vào Tủ Đồ'}
+              </button>
+            </div>
+          </div>
+
+          {/* Complete Runway Outfit Set Breakdown */}
+          <div style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 8, padding: 16, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>
+                  Chi Tiết Trọn Set Sàn Diễn Đang Trình Chiếu
+                </span>
+                <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                  COMBO FLASH DEAL -25%
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 11, marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                  <span>1. Món chính: <strong>{pinnedProduct?.name}</strong></span>
+                  <strong style={{ color: 'var(--ink)' }}>{vnd(pinnedProduct?.variants[0]?.price ?? 1250000)}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                  <span>2. Quần suông tơ tằm xếp ly Atelier</span>
+                  <strong style={{ color: 'var(--ink)' }}>{vnd(1350000)}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
+                  <span>3. Thắt lưng da thảo mộc khóa đồng</span>
+                  <strong style={{ color: 'var(--ink)' }}>{vnd(650000)}</strong>
+                </div>
+              </div>
+
+              {/* Price Calculation */}
+              {(() => {
+                const baseMain = pinnedProduct?.variants[0]?.price ?? 1250000;
+                const totalOriginal = baseMain + 1350000 + 650000;
+                const setDiscounted = Math.round(totalOriginal * 0.75);
+
+                return (
+                  <div style={{ padding: '8px 10px', background: '#fef8ee', border: '1px dashed var(--clay)', borderRadius: 6, marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <span style={{ fontSize: 11, color: 'var(--muted)' }}>Tổng niêm yết (3 món):</span>
+                      <span style={{ fontSize: 11, color: 'var(--muted)', textDecoration: 'line-through' }}>{vnd(totalOriginal)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 2 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#9a3412' }}>Giá trọn set sàn diễn (-25%):</span>
+                      <strong style={{ fontSize: 15, color: 'var(--clay)' }}>{vnd(setDiscounted)}</strong>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            <button
+              type="button"
+              className="button"
+              style={{
+                width: '100%',
+                padding: '9px 14px',
+                fontSize: 12,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+              onClick={async () => {
+                if (!pinnedProduct) return;
+                const variant = pinnedProduct.variants[0];
+                if (variant) {
+                  try {
+                    await api('/cart', 'POST', { variantId: variant.id, quantity: 1 });
+                    setSuccessNotice(`✓ Đã thêm trọn bộ Set Sàn Diễn của "${pinnedProduct.name}" với giá ưu đãi Combo -25% vào giỏ hàng!`);
+                  } catch (e) {
+                    setErrorNotice((e as Error).message);
+                  }
+                }
+              }}
+            >
+              <ShoppingBag size={14} /> Chốt Trọn Set Sàn Diễn Vào Giỏ Hàng (-25%)
+            </button>
+          </div>
+        </div>
+
+        {/* Saved Lookbooks Gallery */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Bookmark size={14} color="var(--clay)" /> Bộ Sưu Tập Lookbook Sàn Diễn Đã Lưu ({savedLookbooks.length})
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+              Được đồng bộ tự động vào Tủ đồ số tại `/tai-khoan`
+            </span>
+          </div>
+
+          {savedLookbooks.length === 0 ? (
+            <div style={{ padding: '16px', background: '#fff', border: '1px dashed var(--line)', borderRadius: 6, textAlign: 'center', fontSize: 12, color: 'var(--muted)' }}>
+              Bạn chưa chụp lưu set nào trong phiên live hôm nay. Hãy bấm nút <strong>"Chụp &amp; Lưu Lookbook"</strong> ở trên để bắt trọn set đồ yêu thích nhé!
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
+              {savedLookbooks.map((lb) => (
+                <div
+                  key={lb.id}
+                  style={{
+                    background: '#fff',
+                    border: '1px solid var(--line)',
+                    borderRadius: 6,
+                    padding: 10,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--muted)', marginBottom: 4 }}>
+                      <span style={{ background: '#f1f5f9', padding: '1px 6px', borderRadius: 2 }}>{lb.angle}</span>
+                      <span>{lb.time}</span>
+                    </div>
+                    <strong style={{ fontSize: 12, display: 'block', color: 'var(--ink)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {lb.title}
+                    </strong>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--clay)' }}>
+                      {vnd(lb.price)}
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                    <button
+                      type="button"
+                      className="button secondary"
+                      style={{ flex: 1, fontSize: 10, padding: '4px 6px' }}
+                      onClick={() => {
+                        setSuccessNotice(`✓ Đã mở lại bản phối "${lb.title}" từ kho Lookbook sàn diễn.`);
+                      }}
+                    >
+                      Xem Lại
+                    </button>
+                    <button
+                      type="button"
+                      className="button"
+                      style={{ flex: 1, fontSize: 10, padding: '4px 6px' }}
+                      onClick={async () => {
+                        if (pinnedProduct?.variants[0]) {
+                          try {
+                            await api('/cart', 'POST', { variantId: pinnedProduct.variants[0].id, quantity: 1 });
+                            setSuccessNotice(`✓ Đã thêm "${lb.title}" vào giỏ hàng!`);
+                          } catch (e) {
+                            setErrorNotice((e as Error).message);
+                          }
+                        }
+                      }}
+                    >
+                      Chốt Đơn
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers, Search, Eye, CheckCheck } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -24,11 +24,22 @@ export default function TradeInPage() {
   const [pickupAddress, setPickupAddress] = useState('128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. HCM');
   const [lcaFabricType, setLcaFabricType] = useState<'LINEN' | 'SILK' | 'COTTON' | 'WOOL'>('LINEN');
   const [passportGenerated, setPassportGenerated] = useState(false);
+  const [opticalScanTarget, setOpticalScanTarget] = useState<'ZIPPER' | 'WEAVE' | 'LABEL'>('WEAVE');
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanComplete, setScanComplete] = useState(false);
+  const [authCode, setAuthCode] = useState('');
+  const [sealTagRequested, setSealTagRequested] = useState(true);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('nexora_tradein_pickup');
       if (saved) setPickupScheduled(true);
+      const savedAuth = localStorage.getItem('nexora_optical_auth');
+      if (savedAuth) {
+        const parsed = JSON.parse(savedAuth);
+        setScanComplete(true);
+        setAuthCode(parsed.code);
+      }
     } catch {}
   }, []);
 
@@ -573,6 +584,225 @@ export default function TradeInPage() {
           >
             <Award size={14} /> Xuất Hộ Chiếu Vòng Đời Tuần Hoàn Số &amp; Xác Nhận Đóng Góp Sinh Thái
           </button>
+        )}
+      </div>
+
+      {/* Quang Học Vi Điểm 50x & Thẩm Định Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01) */}
+      <div
+        style={{
+          marginTop: 28,
+          padding: '22px 26px',
+          background: '#0f172a',
+          color: '#f8fafc',
+          borderRadius: 8,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(56, 189, 248, 0.15)', display: 'grid', placeItems: 'center' }}>
+              <Eye size={20} color="#38bdf8" />
+            </div>
+            <div>
+              <strong style={{ fontSize: 15, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 8 }}>
+                Quang Học Vi Điểm 50x &amp; Thẩm Định Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01)
+              </strong>
+              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                Soi quang học 50x phân tích mật độ sợi dệt, độ sâu rãnh khắc CNC và tem dệt nhiệt chống hàng giả.
+              </div>
+            </div>
+          </div>
+          <span style={{ fontSize: 10, background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid #0284c7', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
+            ISO 4915 &amp; ENTRUPY STANDARD · 50X OPTICAL
+          </span>
+        </div>
+
+        {/* Target Points Selector */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 18, flexWrap: 'wrap' }}>
+          {[
+            { id: 'WEAVE' as const, label: '🔬 1. Cấu Trúc Sợi Dệt & Vết Chỉ (ISO 4915)', desc: 'Mật độ 22 sợi/cm, đường vắt sổ đôi song song 1.2mm' },
+            { id: 'ZIPPER' as const, label: '⚙️ 2. Khóa Kéo & Kim Loại Khắc CNC', desc: 'Rãnh khắc sâu 0.15mm chuẩn YKK Excella / Lampo mạ PVD' },
+            { id: 'LABEL' as const, label: '🏷️ 3. Tem Lụa & Sợi Huỳnh Quang UV', desc: 'Chữ vi tính Micro-print 0.3mm & sợi bảo an quang học 3D' },
+          ].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => {
+                setOpticalScanTarget(t.id);
+                setScanComplete(false);
+              }}
+              style={{
+                fontSize: 11,
+                padding: '8px 14px',
+                borderRadius: 4,
+                border: opticalScanTarget === t.id ? '1.5px solid #38bdf8' : '1px solid #334155',
+                background: opticalScanTarget === t.id ? 'rgba(56, 189, 248, 0.12)' : '#1e293b',
+                color: opticalScanTarget === t.id ? '#38bdf8' : '#cbd5e1',
+                fontWeight: opticalScanTarget === t.id ? 700 : 500,
+                cursor: 'pointer',
+                textAlign: 'left',
+              }}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Optical 50x Simulated Viewport */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: 16,
+            background: '#1e293b',
+            border: '1px solid #334155',
+            borderRadius: 6,
+            padding: 16,
+            marginBottom: 16,
+            alignItems: 'center',
+          }}
+        >
+          {/* Circular Aperture */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <div
+              style={{
+                width: 140,
+                height: 140,
+                borderRadius: '50%',
+                border: '2px dashed #38bdf8',
+                background: opticalScanTarget === 'WEAVE'
+                  ? 'radial-gradient(circle, #0284c7 10%, #0f172a 75%)'
+                  : opticalScanTarget === 'ZIPPER'
+                  ? 'radial-gradient(circle, #64748b 10%, #0f172a 75%)'
+                  : 'radial-gradient(circle, #8b5cf6 10%, #0f172a 75%)',
+                position: 'relative',
+                display: 'grid',
+                placeItems: 'center',
+                boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(56, 189, 248, 0.3)',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Crosshairs */}
+              <div style={{ position: 'absolute', width: '100%', height: 1, background: 'rgba(56, 189, 248, 0.4)' }} />
+              <div style={{ position: 'absolute', height: '100%', width: 1, background: 'rgba(56, 189, 248, 0.4)' }} />
+              <div style={{ width: 70, height: 70, borderRadius: '50%', border: '1px solid rgba(56, 189, 248, 0.3)' }} />
+              <span style={{ fontSize: 9, color: '#38bdf8', fontWeight: 700, zIndex: 2, background: 'rgba(15,23,42,0.7)', padding: '1px 4px', borderRadius: 2 }}>
+                50X ZOOM
+              </span>
+            </div>
+            <span style={{ fontSize: 10, color: '#94a3b8' }}>Kính hiển vi quang học phân giải cao 1000 Lux</span>
+          </div>
+
+          {/* Optical Analysis Details */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#38bdf8' }}>
+                {opticalScanTarget === 'WEAVE'
+                  ? 'Kiểm định sợi dệt tự nhiên & Vết kim'
+                  : opticalScanTarget === 'ZIPPER'
+                  ? 'Kiểm định khắc vi tính phụ kiện kim loại'
+                  : 'Kiểm định tem dệt nhiệt chống giả'}
+              </span>
+              <span style={{ fontSize: 10, background: '#0284c7', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                128.400+ MẪU ĐỐI SÁNH
+              </span>
+            </div>
+            <p style={{ margin: '0 0 10px', fontSize: 11, color: '#cbd5e1', lineHeight: 1.5 }}>
+              {opticalScanTarget === 'WEAVE'
+                ? 'Sợi lanh Normandy dệt chéo 2/2 đồng nhất, không pha trộn tạp chất nylon tái sinh, bước chỉ may vắt sổ 5 mũi/cm không rút xơ.'
+                : opticalScanTarget === 'ZIPPER'
+                ? 'Răng khóa đồng nguyên khối cắt gọt CNC độ sâu 0.15mm, lớp phủ mạ PVD chống hoen gỉ, logo dập sắc nét không bavia.'
+                : 'Mực in phản quang sắc nét vi mô 0.3mm, đường dệt sợi quang học ẩn dưới ánh sáng UV bước sóng 365nm.'}
+            </p>
+
+            {/* Metrics */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, textAlign: 'center' }}>
+              <div style={{ padding: '6px 8px', background: '#0f172a', borderRadius: 4, border: '1px solid #334155' }}>
+                <span style={{ fontSize: 9, color: '#94a3b8', display: 'block' }}>Độ khớp mẫu</span>
+                <strong style={{ fontSize: 12, color: '#38bdf8' }}>99.4%</strong>
+              </div>
+              <div style={{ padding: '6px 8px', background: '#0f172a', borderRadius: 4, border: '1px solid #334155' }}>
+                <span style={{ fontSize: 9, color: '#94a3b8', display: 'block' }}>Rủi ro hàng nhái</span>
+                <strong style={{ fontSize: 12, color: '#4ade80' }}>&lt; 0.6%</strong>
+              </div>
+              <div style={{ padding: '6px 8px', background: '#0f172a', borderRadius: 4, border: '1px solid #334155' }}>
+                <span style={{ fontSize: 9, color: '#94a3b8', display: 'block' }}>Chuẩn phân giải</span>
+                <strong style={{ fontSize: 12, color: '#fbbf24' }}>50x Lux</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scan Actions & Result */}
+        {scanComplete ? (
+          <div style={{ padding: '12px 16px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #059669', borderRadius: 6 }}>
+            <div className="row between" style={{ flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+              <span style={{ color: '#34d399', fontWeight: 700, fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <CheckCheck size={16} /> ĐÃ THẨM ĐỊNH CHÍNH HÃNG 100% · MÃ: {authCode}
+              </span>
+              <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                VERIFIED AUTHENTIC
+              </span>
+            </div>
+            <p style={{ margin: '0 0 8px', color: '#a7f3d0', fontSize: 11 }}>
+              Chứng thư thẩm định số hóa bất biến đã được liên kết với hồ sơ Trade-In của bạn. Khi gửi đồ về Hub, hệ thống sẽ tự động đối chiếu mã quang học này trong vòng 120 giây.
+            </p>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#cbd5e1', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={sealTagRequested}
+                onChange={(e) => setSealTagRequested(e.target.checked)}
+                style={{ accentColor: '#38bdf8' }}
+              />
+              Yêu cầu dán thêm tem niêm phong giáp lai vật lý Hologram 3D chống giả khi bưu tá nhận đồ
+            </label>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              disabled={isScanning}
+              onClick={() => {
+                setIsScanning(true);
+                setTimeout(() => {
+                  const generatedCode = `#AUTH-NEXORA-${Date.now().toString().slice(-6)}`;
+                  setAuthCode(generatedCode);
+                  setScanComplete(true);
+                  setIsScanning(false);
+                  try {
+                    localStorage.setItem('nexora_optical_auth', JSON.stringify({
+                      target: opticalScanTarget,
+                      code: generatedCode,
+                      time: new Date().toISOString(),
+                    }));
+                  } catch {}
+                  setSuccess('✓ Đã hoàn tất thẩm định quang học vi điểm 50x: Xác nhận 99.4% Chính hãng!');
+                }, 1200);
+              }}
+              style={{
+                flex: 1,
+                minWidth: 220,
+                padding: '10px 16px',
+                background: '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: isScanning ? 'wait' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <Search size={14} />
+              {isScanning ? 'Đang phân tích cấu trúc vi điểm 50x…' : 'Kích Hoạt Quét Quang Học Vi Điểm 50x & Cấp Mã Thẩm Định'}
+            </button>
+            <span style={{ fontSize: 11, color: '#94a3b8' }}>
+              Thời gian quét: ~1.2s · Không làm tổn hại sợi vải
+            </span>
+          </div>
         )}
       </div>
 

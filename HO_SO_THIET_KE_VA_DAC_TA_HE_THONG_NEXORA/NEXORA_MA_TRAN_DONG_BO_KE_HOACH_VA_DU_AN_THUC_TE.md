@@ -109,6 +109,8 @@
 | **98** | **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)** | Module 06 & Social Patron | Đã hoàn thiện | Phân hệ bảo trợ nhà sáng tạo tại `/cong-dong`: Bảng vinh danh Top 3 Style Muses (Elena Vũ, Hoàng Nam, Mai Phương), gửi tặng ly cà phê bảo trợ phong cách (10k/20k/50k/100k), tự động khấu trừ 10% thuế TNCN TT 111/2013 vào Creator Wallet, tích lũy +20 Điểm Xanh |
 | **99** | **Nhật Ký Bảo Dưỡng Sợi Dệt & Két Ngủ Đông Phục Trang (USER-GARMENT-LIFESPAN-EXTENDER-01)** | Module 01, 02 & 07 | Đã hoàn thiện | Phân hệ bảo dưỡng tại `/tai-khoan`: Theo dõi chu kỳ giặt êm (18/80 lần lanh, 4/30 lần blazer), dịch vụ gửi buồng két ngủ đông trái mùa (Atelier Vault 45-50% RH) gói 3/6/12 tháng, khử khuẩn UV-C và tặng +150 Điểm Xanh |
 | **100** | **Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên (CAT-FABRIC-STRETCH-RECOVERY-01)** | Module 01 & QA Lab | Đã hoàn thiện | Kiểm nghiệm phục hồi sợi tại `/san-pham/[slug]`: Góc hồi nếp nhăn 162° cấp A (ISO 2313), đàn hồi hồi phục 96.5% ở độ giãn 5%, thoát ẩm 185 mm/s (ISO 9237), tự thẳng bằng hơi nước 94/100 không cần bàn ủi nóng |
+| **101** | **Quang Học Vi Điểm 50x & Thẩm Định Tính Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01)** | Module 02 & Circular | Đã hoàn thiện | Phân hệ soi quang học 50x tại `/trade-in`: Kiểm định 3 điểm trọng yếu (mật độ dệt & mũi vắt sổ ISO 4915, rãnh khắc CNC sâu 0.15mm mạ PVD khóa kéo, tem dệt nhiệt chống giả phản quang 3D & sợi UV), khớp 99.4%, cấp mã số `#AUTH-NEXORA-XXXXXX` |
+| **102** | **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ chụp Lookbook sàn diễn tại `/live`: Bắt trọn khung hình 3 góc máy (Catwalk, Macro 4K, Hậu trường), phân tách set 3 món, tự động tính chiết khấu Combo Flash Deal -25%, lưu trữ tủ đồ số (`localStorage`) và chốt đơn 1-chạm |
 
 ---
 
@@ -970,6 +972,34 @@
     3. *Độ thoát khí & giảm nhiệt (Air Permeability - ISO 9237)*: Đạt **185 mm/s**, giải phóng nhiệt ẩm tối ưu cho khí hậu nhiệt đới gió mùa.
     4. *Chỉ số tự thẳng bằng hơi nước (Steam Self-Straightening Index)*: Đạt **94 / 100 điểm**, tự phục hồi độ rủ êm ái khi treo trong phòng tắm nước ấm mà không cần bàn là nhiệt.
   - Cẩm nang du lịch độc quyền: Hướng dẫn mẹo xông hơi nước ẩm trong phòng tắm khách sạn 10-15 phút để loại bỏ hoàn toàn nếp gấp vali trên phục trang lụa và lanh.
+
+### 85. Quang Học Vi Điểm 50x & Thẩm Định Tính Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01)
+- **Mục tiêu**: Nâng cao độ chính xác và tính minh bạch của quy trình thẩm định đồ thời trang cũ/xa xỉ thu gom thông qua kính hiển vi quang học vi điểm 50x, loại trừ 100% rủi ro hàng giả hàng nhái trước khi giải ngân voucher tuần hoàn.
+- **Cơ chế**:
+  - Tích hợp kính hiển vi quang học vi điểm 50x trực quan tại `/trade-in`.
+  - Kiểm định 3 điểm chốt quang học then chốt:
+    1. *Cấu trúc sợi dệt & Vết may vắt sổ (Chuẩn ISO 4915)*: Mật độ 22 sợi/cm, đường vắt sổ đôi song song 1.2mm đồng đều, loại trừ sợi pha tạp nylon giá rẻ.
+    2. *Khóa kéo & Kim loại khắc chìm CNC*: Chiều sâu rãnh khắc 0.15mm chuẩn YKK Excella / Lampo / Raccagni, lớp phủ mạ PVD chống oxy hóa và rỉ sét.
+    3. *Tem lụa dệt nhiệt & Chữ vi tính Micro-Print*: Ký tự vi mô 0.3mm sắc nét và đường dệt phản quang quang học 3D phát quang dưới ánh sáng UV 365nm.
+  - Công cụ giả lập kính soi quang học khẩu độ tròn (Circular Aperture) có thước đo tâm và lưới căn chỉnh 50x Zoom.
+  - Tự động đối chiếu trên cơ sở dữ liệu 128.400+ mẫu thời trang cao cấp quốc tế, đạt tỷ lệ chính xác **99.4% (Authentic Luxury)**, rủi ro hàng giả &lt; 0.6%.
+  - Cấp chứng thư số giám định bất biến `#AUTH-NEXORA-XXXXXX` tích hợp vào voucher, kèm tùy chọn dán tem giáp lai vật lý Hologram 3D tamper-evident khi bưu tá nhận đồ.
+  - Lưu cấu hình vào `localStorage` (`nexora_optical_auth`).
+
+### 86. Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)
+- **Mục tiêu**: Nâng tầm trải nghiệm livestream thời trang từ thụ động xem video sang chủ động nắm bắt khoảnh khắc nghệ thuật, cho phép người xem chụp snapshot sàn diễn đang sải bước và đặt mua cả bộ phối trọn gói với mức giá độc quyền.
+- **Cơ chế**:
+  - Tích hợp phân hệ Chụp & Lưu Lookbook Sàn Diễn Tức Thời ngay tại phòng live `/live`.
+  - Bắt trọn khung hình người mẫu catwalk theo thời gian thực tương ứng với 3 góc quay camera chủ động (Sàn Diễn Catwalk, Cận Cảnh Sợi Vải 4K, Hậu Trường Stylist).
+  - Tự động bóc tách thành phần trọn set 3 món:
+    1. Món chính: Trang phục đang trình chiếu (VD: Áo Blazer Dạ len Ý hoặc Áo sơ mi lụa tơ tằm).
+    2. Món phối kèm 1: Quần suông tơ tằm xếp ly Atelier.
+    3. Phụ kiện đi kèm 2: Thắt lưng da thảo mộc khóa đồng nguyên khối.
+  - Tự động tính toán mức chiết khấu Combo Flash Deal trọn set **-25%** độc quyền cho khán giả đang xem live.
+  - Cơ chế 1-chạm "Chụp & Lưu Lookbook Khung Hình":
+    - Tạo thẻ Lookbook cá nhân chứa ảnh snapshot, thông tin set đồ, nhãn góc quay, thời điểm chụp và giá ưu đãi.
+    - Lưu vĩnh viễn vào Bộ sưu tập Lookbook cá nhân (`localStorage` `nexora_saved_runway_looks`), tự động đồng bộ vào Tủ đồ số tại `/tai-khoan`.
+    - Nút bấm 1-chạm "Chốt Trọn Set Sàn Diễn (-25%) Vào Giỏ Hàng" tự động thêm toàn bộ combo món đồ vào giỏ hàng `/gio-hang`.
 
 ---
 

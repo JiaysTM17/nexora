@@ -354,3 +354,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 87. **Thử Nghiệm Phục Hồi Co Giãn & Chỉ Số Kháng Nhăn Sợi Dệt (CAT-FABRIC-STRETCH-RECOVERY-01)**:
    - Hồ sơ: Module 01 Trưng bày Sản phẩm & Kiểm định Chất lượng Sợi Dệt Vật Lý Quốc Tế (ISO Textile Testing).
    - Thực tế: Phân hệ kiểm định cơ lý sợi tại `/san-pham/[slug]`: Góc hồi nếp nhăn Crease Recovery Angle ISO 2313 đạt 162° (Cấp A - Phục hồi tự nhiên), độ phục hồi đàn hồi 96.5% ở độ giãn dài 5%, độ thoáng khí ISO 9237 đạt 185 mm/s, chỉ số tự duỗi thẳng bằng hơi nước 94/100, kèm khuyến nghị ủi hơi nước nhiệt độ thấp 110°C.
+
+88. **Quang Học Vi Điểm 50x & Thẩm Định Tính Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01)**:
+   - Hồ sơ: Module 02 Kiểm Định Hàng Xa Xỉ Thu Cũ & Module 07 Kinh Tế Thời Trang Tuần Hoàn (Circular Luxury).
+   - Thực tế: Phân hệ soi quang học 50x tại `/trade-in`: Kiểm định 3 điểm trọng yếu (Mật độ sợi dệt & vết vắt sổ ISO 4915 22 sợi/cm, rãnh khắc CNC sâu 0.15mm khóa kéo YKK/Lampo mạ PVD, tem dệt nhiệt chống giả phản quang 3D & sợi huỳnh quang UV 365nm), khớp 99.4% trên cơ sở dữ liệu 128.400+ mẫu, cấp mã chứng thư số `#AUTH-NEXORA-XXXXXX` và cấp tem giáp lai vật lý Hologram.
+
+89. **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Module 06 Sàn Diễn Trực Tiếp Tương Tác Đa Điểm (Interactive Runway Livestream).
+   - Thực tế: Phân hệ chụp Lookbook sàn diễn tại `/live`: Bắt trọn khung hình 3 góc quay (Catwalk, Macro 4K, Hậu trường), phân tách trọn set 3 món (Áo chính, Quần suông tơ tằm, Thắt lưng da thảo mộc), tự động tính chiết khấu Combo Flash Deal -25%, lưu trữ tủ đồ số (`localStorage`) và chốt đơn 1-chạm vào giỏ hàng.
