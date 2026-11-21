@@ -17,6 +17,7 @@ export default function Community() {
   const [targetSwapItem, setTargetSwapItem] = useState('Sơ Mi Lụa Tơ Tằm Bảo Lộc');
   const [targetSwapVal, setTargetSwapVal] = useState(680000);
   const [swapContractId, setSwapContractId] = useState('SWAP-P2P-882149');
+  const [selectedShowcaseSwap, setSelectedShowcaseSwap] = useState(0);
   const [patronOpen, setPatronOpen] = useState(false);
   const [selectedCreator, setSelectedCreator] = useState('Elena Vũ (@elenavu)');
   const [patronAmount, setPatronAmount] = useState(20000);
@@ -418,6 +419,91 @@ export default function Community() {
           </button>
         </div>
       ) : null}
+
+      {/* Showcase Các Cặp Trao Đổi Tuần Hoàn & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01) */}
+      <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px dashed #99f6e4' }}>
+        <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+          <span style={{ fontSize: 12, fontWeight: 700, color: '#134e4a', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Scale size={14} color="#0f766e" /> Showcase Các Cặp Đổi Điển Hình &amp; Ma Trận Fair Value (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)
+          </span>
+          <span style={{ fontSize: 10, background: '#ccfbf1', color: '#0f766e', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+            WEAR &amp; TEAR INDEX · ESCROW 1:1
+          </span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 8, marginBottom: 6 }}>
+          {[
+            {
+              title: 'Cặp Đổi 01 · Tinh Hoa Linen & Lụa',
+              from: 'Blazer Linen Khuy Sừng Tự Nhiên (Size M, Mới 95%)',
+              fromVal: 1850000,
+              to: 'Váy Lụa Hà Đông Cắt Xéo (Size S, Mới 98%)',
+              toVal: 1950000,
+              diff: 100000,
+              comp: 'Bù 100.000₫ qua Escrow',
+              eco: 'Giảm 4.8kg CO2e · Tiết kiệm 3.200L nước',
+              score: '97.2%',
+            },
+            {
+              title: 'Cặp Đổi 02 · Denim Nhật & Wool Blend',
+              from: 'Sơ Mi Denim Nhật Dệt Thủ Công (Size L, Mới 92%)',
+              fromVal: 1450000,
+              to: 'Quần Tây Xếp Ly Wool Blend (Size 32, Mới 94%)',
+              toVal: 1550000,
+              diff: 100000,
+              comp: 'Bù 100.000₫ qua Escrow',
+              eco: 'Giảm 3.9kg CO2e · Tiết kiệm 2.800L nước',
+              score: '96.5%',
+            },
+            {
+              title: 'Cặp Đổi 03 · Phụ Kiện Da Thảo Mộc',
+              from: 'Túi Da Veg-Tan Nhuộm Thảo Mộc (Mới 90%)',
+              fromVal: 2400000,
+              to: 'Khăn Lụa Tơ Tằm + Loafer Da Lộn (Size 38, Mới 96%)',
+              toVal: 2350000,
+              diff: 50000,
+              comp: 'Đối tác bù 50.000₫ vào ví bạn',
+              eco: 'Giảm 6.2kg CO2e · Tái chế 100% vòng đời',
+              score: '98.1%',
+            },
+          ].map((pair, idx) => (
+            <div
+              key={idx}
+              onClick={() => {
+                setSelectedShowcaseSwap(idx);
+                setMySwapItem(pair.from);
+                setMySwapVal(pair.fromVal);
+                setTargetSwapItem(pair.to);
+                setTargetSwapVal(pair.toVal);
+                setSwapModalOpen(true);
+                setNotice(`✓ Đã áp dụng "${pair.title}" vào Hợp đồng Escrow! Bạn có thể chỉnh sửa chi tiết hoặc ấn Ký ngay.`);
+              }}
+              style={{
+                padding: '10px 12px',
+                background: selectedShowcaseSwap === idx ? '#ccfbf1' : '#ffffff',
+                border: `1px solid ${selectedShowcaseSwap === idx ? '#0d9488' : '#e2e8f0'}`,
+                borderRadius: 6,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <div className="row between" style={{ marginBottom: 4 }}>
+                <strong style={{ fontSize: 11, color: '#0f766e' }}>{pair.title}</strong>
+                <span style={{ fontSize: 9, background: '#059669', color: '#fff', padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                  Match: {pair.score}
+                </span>
+              </div>
+              <div style={{ fontSize: 10, color: '#334155', lineHeight: 1.4, marginBottom: 4 }}>
+                <div><strong>Bạn đổi:</strong> {pair.from} ({vnd(pair.fromVal)})</div>
+                <div><strong>Nhận về:</strong> {pair.to} ({vnd(pair.toVal)})</div>
+              </div>
+              <div className="row between" style={{ fontSize: 9, color: '#0f766e', borderTop: '1px solid #e6fffa', paddingTop: 4, marginTop: 4 }}>
+                <span>{pair.comp}</span>
+                <span style={{ color: '#059669', fontWeight: 600 }}>{pair.eco}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
 
     {/* Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo OOTD (SOC-LOOKBOOK-CREATOR-REWARD-01) */}

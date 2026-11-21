@@ -307,7 +307,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **97** | **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | **100% Hoàn thiện** | Bắt trọn khung hình 3 góc máy, bóc tách set 3 món, chiết khấu Combo Flash Deal -25%, lưu tủ đồ số tại `/live` |
 | **98** | **Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)** | Module 02 & VAS | **100% Hoàn thiện** | Tiệt trùng buồng lạnh bảo vệ lụa tơ tằm, cashmere, da thuộc chuẩn y tế EN 14476, diệt mầm bệnh 99.98% tại `/vas-care` |
 | **99** | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)** | Module 03 & 04 | **100% Hoàn thiện** | Thuật toán gom tuyến đa xưởng về trạm Micro-Hub, bưu tá xe điện Feliz giao tận cửa, tiết kiệm 35k cước ship tại `/gio-hang` |
-| **100** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **100** | **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)** | Module 01 & 07 | **100% Hoàn thiện** | 4 phân khúc GSM (Mỏng <150 GSM, Vừa 150-260 GSM, Dày >260 GSM), lọc theo độ rủ sợi dệt tại `/tim-kiem` |
+| **101** | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)** | Module 06 & Circular | **100% Hoàn thiện** | 3 cặp đổi mẫu thuật toán Fair Value Matrix, chỉ số hao mòn & tính bù trừ cọc Escrow tại `/cong-dong` |
+| **102** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

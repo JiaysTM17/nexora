@@ -113,6 +113,8 @@
 | **102** | **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)** | Module 01 & 06 | Đã hoàn thiện | Phân hệ chụp Lookbook sàn diễn tại `/live`: Bắt trọn khung hình 3 góc máy (Catwalk, Macro 4K, Hậu trường), phân tách set 3 món, tự động tính chiết khấu Combo Flash Deal -25%, lưu trữ tủ đồ số (`localStorage`) và chốt đơn 1-chạm |
 | **103** | **Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)** | Module 02 & VAS | Đã hoàn thiện | Tiệt trùng buồng lạnh bảo vệ lụa tơ tằm, cashmere, da thuộc thảo mộc chuẩn y tế EN 14476 tại `/vas-care`: 3 chế độ (UV-C 254nm, Ozone áp suất âm 0.05 ppm, Siêu âm cực tím), diệt mầm bệnh 99.98%, cấp mã `#STERILIZE-VAS-XXXXXX`, thưởng +120 Điểm Xanh |
 | **104** | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)** | Module 03 & 04 | Đã hoàn thiện | Tự động gom đơn đa xưởng về trạm Micro-Hub trước khi bưu tá xe điện Feliz giao tận cửa tại `/gio-hang`: Tiết kiệm 35.000₫ cước vận chuyển, giảm −0.38kg CO2e, 2 chế độ Single Eco Drop (+100 Điểm Xanh) hoặc Expedite Partial |
+| **105** | **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)** | Module 01 & 07 | Đã hoàn thiện | Bộ lọc định lượng sợi dệt chuyên sâu tại `/tim-kiem`: 4 phân khúc GSM chuẩn quốc tế (Mỏng nhẹ nhiệt đới <150 GSM, Trung bình bốn mùa 150-260 GSM, Dày dặn cấu trúc >260 GSM, Tất cả), lọc theo cấu trúc dệt vải và độ rủ phom dáng |
+| **106** | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)** | Module 06 & Circular | Đã hoàn thiện | Phân hệ trực quan hóa trao đổi P2P tại `/cong-dong`: 3 cặp đổi mẫu minh họa thuật toán Fair Value Matrix và Wear & Tear Index, tự động tính bù trừ cọc Escrow D1-01, đo lường giảm thiểu CO2e/nước và nạp nhanh hợp đồng 1-chạm |
 
 ---
 
@@ -1025,6 +1027,27 @@
     1. *Giao gộp 1 lần duy nhất (Single Eco Drop)*: Chờ đủ các món đồ tập kết tại Hub rồi giao 1 chuyến duy nhất tận nhà, thưởng ngay **+100 Điểm Thưởng Xanh NEX-Green**.
     2. *Giao tách lẻ theo tiến độ (Expedite Partial)*: Shop nào may xong trước bưu tá giao trước cho khách cần diện gấp.
   - Lưu trạng thái vào `localStorage` (`nexora_consolidated_shipping`).
+
+### 89. Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)
+- **Mục tiêu**: Giúp người mua hàng thời trang may đo cao cấp dễ dàng tìm kiếm phục trang phù hợp với khí hậu vùng miền hoặc ngữ cảnh thời tiết thông qua chỉ số định lượng trọng lượng sợi vải (Grams per Square Meter - GSM).
+- **Cơ chế**:
+  - Tích hợp bộ lọc 4 nấc GSM chuyên sâu vào trang Tìm Kiếm & Danh Mục Sản Phẩm `/tim-kiem`:
+    1. *Mọi định lượng (Tất cả)*: Quét toàn bộ kho hàng Catalog sản phẩm.
+    2. *Mỏng nhẹ nhiệt đới (< 150 GSM)*: Lụa Habotai, Voan tơ tằm, Linen mỏng 115 GSM - mặc mát mẻ cho mùa hè nhiệt đới.
+    3. *Trung bình bốn mùa (150 - 260 GSM)*: Linen Normandy 185 GSM, Oxford Cotton 210 GSM - phom đứng rủ nhẹ, diện quanh năm.
+    4. *Dày dặn cấu trúc (> 260 GSM)*: Dạ Len Ý 420 GSM, Da thuộc thảo mộc, Canvas dệt đôi - giữ ấm và giữ ve áo sắc nét.
+  - Phân tích tương quan chất liệu (`material`) và tên sản phẩm để lọc tức thời, kết hợp nhịp nhàng với bộ lọc Sắc thái bảng màu và Danh mục chuẩn.
+  - Nút Đặt lại bộ lọc toàn diện hỗ trợ xóa nhanh cấu hình định lượng vải.
+
+### 90. Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)
+- **Mục tiêu**: Trực quan hóa quy trình trao đổi đồ tủ áo tuần hoàn P2P, minh chứng tính minh bạch và chuẩn xác của thuật toán định giá công bằng (Fair Value Matrix) và chỉ số hao mòn (Wear & Tear Index).
+- **Cơ chế**:
+  - Xây dựng mô-đun Showcase trực quan ngay trong phân hệ Đổi Đồ Tuần Hoàn tại `/cong-dong`.
+  - Cung cấp 3 cặp trao đổi mẫu kinh điển được thẩm định bởi chuyên gia:
+    1. *Cặp Đổi 01 · Tinh Hoa Linen & Lụa*: Blazer Linen Khuy Sừng Tự Nhiên (Size M, Mới 95%) ↔ Váy Lụa Hà Đông Cắt Xéo (Size S, Mới 98%) | Match 97.2% | Bù 100.000₫ Escrow | Tiết kiệm 4.8kg CO2e & 3.200L nước.
+    2. *Cặp Đổi 02 · Denim Nhật & Wool Blend*: Sơ Mi Denim Nhật Dệt Thủ Công (Size L, Mới 92%) ↔ Quần Tây Xếp Ly Wool Blend (Size 32, Mới 94%) | Match 96.5% | Bù 100.000₫ Escrow | Tiết kiệm 3.9kg CO2e & 2.800L nước.
+    3. *Cặp Đổi 03 · Phụ Kiện Da Thảo Mộc*: Túi Da Veg-Tan Nhuộm Thảo Mộc (Mới 90%) ↔ Khăn Lụa Tơ Tằm + Loafer Da Lộn (Size 38, Mới 96%) | Match 98.1% | Đối tác bù 50.000₫ vào ví bạn | Giảm 6.2kg CO2e, tái chế 100% vòng đời.
+  - Người dùng có thể nhấn 1-chạm vào bất kỳ cặp trao đổi nào để tự động điền thông số vào hợp đồng Escrow bảo chứng và tiến hành ký kết.
 
 ---
 

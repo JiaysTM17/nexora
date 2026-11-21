@@ -370,3 +370,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 91. **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)**:
    - Hồ sơ: Module 03 Giỏ Hàng Thanh Toán & Module 04 Logistics Gom Tuyến Đa Điểm (Multi-Shop Consolidation).
    - Thực tế: Phân hệ tối ưu giao ghép tại `/gio-hang`: Tự động nhận diện đơn hàng đa xưởng may, gom tuyến về trạm Micro-Hub trung tâm (Quận 1) điều phối bưu tá xe điện Feliz, tiết kiệm 35.000₫ cước vận chuyển ròng, giảm −0.38kg CO2e, hỗ trợ 2 chế độ (Single Eco Drop thưởng +100 Điểm Xanh hoặc Expedite Partial).
+
+92. **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)**:
+   - Hồ sơ: Module 01 Quản Lý Sản Phẩm Thời Trang May Đo & Module 07 Tìm Kiếm & Khám Phá Nâng Cao.
+   - Thực tế: Phân hệ bộ lọc định lượng sợi dệt tại `/tim-kiem`: 4 nấc GSM chuẩn quốc tế (Mỏng nhẹ nhiệt đới <150 GSM, Trung bình bốn mùa 150-260 GSM, Dày dặn cấu trúc >260 GSM, Tất cả), tương quan độ rủ phom dáng và khí hậu thời tiết thực tế, kết hợp bộ lọc sắc thái tone-sur-tone.
+
+93. **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)**:
+   - Hồ sơ: Module 06 Mạng Xã Hội Phong Cách OOTD & Khung Trao Đổi Tuần Hoàn P2P Escrow D1-01.
+   - Thực tế: Phân hệ trực quan hóa trao đổi đồ tại `/cong-dong`: 3 cặp đổi mẫu minh họa thuật toán Fair Value Matrix và Wear & Tear Index, đo lường giảm thiểu CO2e/nước sạch, tự động tính bù trừ chênh lệch cọc Escrow và điền nhanh hợp đồng 1-chạm.

@@ -2,7 +2,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Palette, Sparkles } from 'lucide-react';
+import { Search, Palette, Sparkles, Layers } from 'lucide-react';
 import { useResource } from '../api';
 import { Loading, Empty } from '../ui';
 import type { Product } from '../api';
@@ -27,7 +27,20 @@ const PALETTE_KEYWORDS: Record<string, string[]> = {
   IVORY: ['trắng', 'ngà', 'ivory', 'white', 'lụa'],
 };
 
-function SearchResults({ q, category, priceRange, isMall, palette }: { q: string; category?: string; priceRange?: string; isMall?: boolean; palette?: string }) {
+const GSM_TIERS = [
+  { id: 'ALL', name: 'Mọi định lượng (Tất cả)', range: '0 - 600 GSM', desc: 'Toàn bộ trang phục trong catalog' },
+  { id: 'LIGHT', name: 'Mỏng nhẹ nhiệt đới (< 150 GSM)', range: '80 - 150 GSM', desc: 'Lụa Habotai, Voan tơ tằm, Linen mỏng 115 GSM - mặc mát mùa hè' },
+  { id: 'MEDIUM', name: 'Trung bình bốn mùa (150 - 260 GSM)', range: '150 - 260 GSM', desc: 'Linen Normandy 185 GSM, Oxford Cotton 210 GSM - phom đứng rủ nhẹ' },
+  { id: 'HEAVY', name: 'Dày dặn cấu trúc (> 260 GSM)', range: '260 - 520 GSM', desc: 'Dạ Len Ý 420 GSM, Da thuộc thảo mộc, Canvas dệt đôi - giữ ấm & ve áo sắc nét' },
+];
+
+const GSM_KEYWORDS: Record<string, string[]> = {
+  LIGHT: ['lụa', 'silk', 'habotai', 'voan', 'mỏng', 'nhẹ', 'sơ mi lụa'],
+  MEDIUM: ['linen', 'lanh', 'cotton', 'polo', 'oxford', 'twill', 'sơ mi'],
+  HEAVY: ['blazer', 'dạ', 'len', 'khoác', 'áo khoác', 'măng tô', 'da bò', 'wool', 'jacket', 'túi'],
+};
+
+function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { q: string; category?: string; priceRange?: string; isMall?: boolean; palette?: string; gsmTier?: string }) {
   let queryUrl = `/products?page=1`;
   if (q) queryUrl += `&q=${encodeURIComponent(q)}`;
   if (category) queryUrl += `&category=${encodeURIComponent(category)}`;
@@ -37,19 +50,22 @@ function SearchResults({ q, category, priceRange, isMall, palette }: { q: string
   else if (priceRange === 'over-2m') queryUrl += `&minPrice=2000000`;
 
   const { data, loading, error } = useResource<ProductsResult>(queryUrl);
-  if (!q && !category && !priceRange && !isMall && (!palette || palette === 'ALL')) {
+  if (!q && !category && !priceRange && !isMall && (!palette || palette === 'ALL') && (!gsmTier || gsmTier === 'ALL')) {
     return <p style={{ color: 'var(--muted)', margin: '60px auto', textAlign: 'center' }}>Nhập từ khóa hoặc chọn bộ lọc để tìm kiếm sản phẩm.</p>;
   }
   if (loading) return <Loading />;
   if (error) return <p style={{ color: 'var(--muted)' }}>Không thể tải kết quả. Vui lòng thử lại.</p>;
 
   const rawItems = data?.items ?? [];
-  const items = palette && palette !== 'ALL' && PALETTE_KEYWORDS[palette]
-    ? rawItems.filter(p => {
-        const kws = PALETTE_KEYWORDS[palette];
-        return p.variants.some(v => kws.some(kw => v.color.toLowerCase().includes(kw))) || kws.some(kw => p.name.toLowerCase().includes(kw));
-      })
-    : rawItems;
+  let items = rawItems;
+  if (palette && palette !== 'ALL' && PALETTE_KEYWORDS[palette]) {
+    const kws = PALETTE_KEYWORDS[palette];
+    items = items.filter(p => p.variants.some(v => kws.some(kw => v.color.toLowerCase().includes(kw))) || kws.some(kw => p.name.toLowerCase().includes(kw)));
+  }
+  if (gsmTier && gsmTier !== 'ALL' && GSM_KEYWORDS[gsmTier]) {
+    const gKws = GSM_KEYWORDS[gsmTier];
+    items = items.filter(p => gKws.some(kw => p.name.toLowerCase().includes(kw) || p.material.toLowerCase().includes(kw)));
+  }
 
   if (!items.length) {
     return (
@@ -141,6 +157,7 @@ function SearchPage() {
   const [priceRange, setPriceRange] = useState(initialPrice);
   const [mallOnly, setMallOnly] = useState(initialMall);
   const [palette, setPalette] = useState('ALL');
+  const [gsmTier, setGsmTier] = useState('ALL');
 
   const categories = useResource<Category[]>('/categories');
 
@@ -223,12 +240,12 @@ function SearchPage() {
           <strong style={{ color: 'var(--clay)' }}>NEXORA Mall</strong> (Chính hãng 100%)
         </label>
 
-        {(q || category || priceRange || mallOnly || palette !== 'ALL') && (
+        {(q || category || priceRange || mallOnly || palette !== 'ALL' || gsmTier !== 'ALL') && (
           <button
             type="button"
             className="button secondary"
             style={{ padding: '8px 12px', fontSize: 12 }}
-            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); setMallOnly(false); setPalette('ALL'); router.push('/tim-kiem', { scroll: false }); }}
+            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); setMallOnly(false); setPalette('ALL'); setGsmTier('ALL'); router.push('/tim-kiem', { scroll: false }); }}
           >
             Đặt lại bộ lọc
           </button>
@@ -238,7 +255,7 @@ function SearchPage() {
       {/* Bộ Lọc Sắc Thái Bảng Màu & Hòa Sắc Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01) */}
       <div
         style={{
-          margin: '0 0 28px',
+          margin: '0 0 16px',
           padding: '12px 16px',
           background: '#fdfbf7',
           border: '1px solid #fed7aa',
@@ -294,8 +311,59 @@ function SearchPage() {
         </div>
       </div>
 
+      {/* Bộ Lọc Định Lượng Sợi Dệt GSM & Độ Dày Trang Phục (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01) */}
+      <div
+        style={{
+          margin: '0 0 28px',
+          padding: '12px 16px',
+          background: '#f8fafc',
+          border: '1px solid #cbd5e1',
+          borderRadius: 6,
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Layers size={15} color="#0284c7" />
+            <strong style={{ fontSize: 12, color: '#0369a1' }}>
+              Lọc Theo Định Lượng Sợi Dệt GSM (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)
+            </strong>
+          </div>
+          <span style={{ fontSize: 11, color: '#0284c7' }}>
+            Độ dày: <strong>{GSM_TIERS.find((g) => g.id === gsmTier)?.range}</strong>
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8 }}>
+          {GSM_TIERS.map((g) => {
+            const isSelected = gsmTier === g.id;
+            return (
+              <button
+                key={g.id}
+                type="button"
+                onClick={() => setGsmTier(g.id)}
+                style={{
+                  textAlign: 'left',
+                  padding: '8px 10px',
+                  borderRadius: 4,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  border: isSelected ? '1.5px solid #0284c7' : '1px solid #e2e8f0',
+                  background: isSelected ? '#e0f2fe' : '#fff',
+                  color: isSelected ? '#0369a1' : '#334155',
+                  fontWeight: isSelected ? 700 : 400,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div style={{ fontWeight: 600 }}>{g.name}</div>
+                <small style={{ color: '#64748b', display: 'block', fontSize: 10, marginTop: 2 }}>{g.desc}</small>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <Suspense fallback={<Loading />}>
-        <SearchResults q={q} category={category} priceRange={priceRange} isMall={mallOnly} palette={palette} />
+        <SearchResults q={q} category={category} priceRange={priceRange} isMall={mallOnly} palette={palette} gsmTier={gsmTier} />
       </Suspense>
     </section>
   );

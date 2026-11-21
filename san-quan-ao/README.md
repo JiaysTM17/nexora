@@ -241,5 +241,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời** | Module 01 & 06 | Đã hoàn thiện | Bắt trọn khung hình 3 góc máy, bóc tách set 3 món, chiết khấu Combo Flash Deal -25%, lưu tủ đồ số tại `/live` (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01) |
 | **Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết** | Module 02 & VAS | Đã hoàn thiện | Tiệt trùng buồng lạnh bảo vệ lụa tơ tằm, cashmere, da thuộc chuẩn y tế EN 14476, diệt mầm bệnh 99.98% tại `/vas-care` (VAS-UV-DISINFECTION-OZONE-01) |
 | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng** | Module 03 & 04 | Đã hoàn thiện | Thuật toán gom tuyến đa xưởng về trạm Micro-Hub, bưu tá xe điện Feliz giao tận cửa, tiết kiệm 35k cước ship tại `/gio-hang` (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01) |
+| **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa** | Module 01 & 07 | Đã hoàn thiện | 4 phân khúc GSM (Mỏng <150 GSM, Vừa 150-260 GSM, Dày >260 GSM), lọc theo độ rủ sợi dệt tại `/tim-kiem` (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01) |
+| **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá** | Module 06 & Circular | Đã hoàn thiện | 3 cặp đổi mẫu thuật toán Fair Value Matrix, chỉ số hao mòn & tính bù trừ cọc Escrow tại `/cong-dong` (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
