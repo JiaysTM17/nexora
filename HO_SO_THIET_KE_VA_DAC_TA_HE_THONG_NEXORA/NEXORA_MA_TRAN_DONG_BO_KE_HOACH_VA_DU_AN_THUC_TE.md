@@ -107,6 +107,8 @@
 | **96** | **Thẩm Định Bao Bì Không Nhựa & Cấp Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Phân hệ thẩm định bao bì xanh tại `/seller`: Khảo sát 4 chuẩn vật liệu (Túi màng sắn Bio-Cassava, Hộp sóng tổ ong FSC không keo, Băng keo giấy bột mì hoạt hóa nước, Tem mực đậu nành organic), cấp huy hiệu Zero-Plastic Certified (100/100) và kết nối 3 hợp tác xã bao bì xanh bản địa chiết khấu -15% |
 | **97** | **Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast (ADMIN-CARBON-LOGISTICS-MAP-01)** | Module 04 & Admin ESG | Đã hoàn thiện | Phân hệ giám sát logistics xanh tại `/admin`: Theo dõi 142 bưu tá xe điện Feliz/Klara S, dung lượng pin 93.4%, giảm -127.6kg CO2e/ngày qua 4 cụm Hub (Quận 1, Quận 7, Thủ Đức, Cần Giờ Net-Zero), kích hoạt ưu tiên xe điện giờ cao điểm và xuất báo cáo GHG Scope 3 |
 | **98** | **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)** | Module 06 & Social Patron | Đã hoàn thiện | Phân hệ bảo trợ nhà sáng tạo tại `/cong-dong`: Bảng vinh danh Top 3 Style Muses (Elena Vũ, Hoàng Nam, Mai Phương), gửi tặng ly cà phê bảo trợ phong cách (10k/20k/50k/100k), tự động khấu trừ 10% thuế TNCN TT 111/2013 vào Creator Wallet, tích lũy +20 Điểm Xanh |
+| **99** | **Nhật Ký Bảo Dưỡng Sợi Dệt & Két Ngủ Đông Phục Trang (USER-GARMENT-LIFESPAN-EXTENDER-01)** | Module 01, 02 & 07 | Đã hoàn thiện | Phân hệ bảo dưỡng tại `/tai-khoan`: Theo dõi chu kỳ giặt êm (18/80 lần lanh, 4/30 lần blazer), dịch vụ gửi buồng két ngủ đông trái mùa (Atelier Vault 45-50% RH) gói 3/6/12 tháng, khử khuẩn UV-C và tặng +150 Điểm Xanh |
+| **100** | **Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên (CAT-FABRIC-STRETCH-RECOVERY-01)** | Module 01 & QA Lab | Đã hoàn thiện | Kiểm nghiệm phục hồi sợi tại `/san-pham/[slug]`: Góc hồi nếp nhăn 162° cấp A (ISO 2313), đàn hồi hồi phục 96.5% ở độ giãn 5%, thoát ẩm 185 mm/s (ISO 9237), tự thẳng bằng hơi nước 94/100 không cần bàn ủi nóng |
 
 ---
 
@@ -942,6 +944,32 @@
     - Tự động khấu trừ 10% thuế TNCN tại nguồn theo Thông tư 111/2013/TT-BTC chuyển thẳng vào Creator Wallet khả dụng.
     - Tặng kèm +20 Điểm Thưởng Xanh NEX-Green cho người ủng hộ.
     - Lưu trữ lịch sử bảo trợ vào `localStorage` (`nexora_creator_patronage`).
+
+### 83. Nhật Ký Bảo Dưỡng Sợi Dệt & Két Ngủ Đông Phục Trang (USER-GARMENT-LIFESPAN-EXTENDER-01)
+- **Mục tiêu**: Kéo dài tối đa tuổi thọ các thiết kế thời trang cao cấp bằng cách cá nhân hóa quy trình bảo dưỡng vi điểm theo từng loại sợi dệt và cung cấp giải pháp lưu kho vô trùng chống ẩm mốc cho trang phục trái mùa tại vùng khí hậu nhiệt đới.
+- **Cơ chế**:
+  - Tích hợp khối Nhật Ký Bảo Dưỡng Sợi Dệt & Két Ngủ Đông Phục Trang tại Cổng cá nhân `/tai-khoan`.
+  - Giám sát 3 chỉ số chu kỳ giặt êm và độ bền sợi thực tế:
+    1. *Sơ mi Linen Normandy*: 18/80 chu kỳ giặt êm, độ nguyên vẹn sợi đạt 94.2%.
+    2. *Blazer Dạ Len Ý Sartorial*: 4/30 lần hấp sinh học, phom ve áo nguyên vẹn 99%.
+    3. *Đầm Lụa Tơ Tằm Bảo Lộc*: 6/50 lần giặt lụa nhẹ, độ óng ả bề mặt 96 Gu.
+  - Phân hệ đăng ký buồng két ngủ đông trái mùa (Atelier Hibernation Vault):
+    - Bảo quản trong buồng két kiểm soát độ ẩm chuẩn mực 45-50% RH và nhiệt độ ổn định 20°C.
+    - Tùy chọn 3 gói thời hạn: 3 Tháng (120k), 6 Tháng (240k), 12 Tháng (420k).
+    - Tặng kèm dịch vụ giặt hấp phục hồi trước khi hoàn trả tận nhà trong túi vải canvas chống bụi có khóa zip-seal.
+    - Cấp mã gửi két độc bản `#HIBERNATE-VAULT-XXXX`, cộng ngay **+150 Điểm Thưởng Xanh NEX-Green**.
+    - Lưu cấu hình vào `localStorage` (`nexora_garment_hibernation`).
+
+### 84. Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên (CAT-FABRIC-STRETCH-RECOVERY-01)
+- **Mục tiêu**: Cung cấp cơ sở khoa học vật liệu chứng thực khả năng giữ phom ve áo và tự nhả nếp nhăn không cần ủi nhiệt của các loại sợi dệt thiên nhiên cao cấp, xóa tan định kiến "vải tự nhiên dễ nhăn khó chăm sóc".
+- **Cơ chế**:
+  - Tích hợp bảng Kiểm Nghiệm Phục Hồi Sợi & Kháng Nhăn trong mục Chất liệu tại `/san-pham/[slug]`.
+  - Công bố 4 chỉ số cơ lý tính đạt chuẩn kiểm nghiệm quốc tế:
+    1. *Góc hồi nếp nhăn (Crease Recovery Angle - ISO 2313)*: Đạt **162° (Cấp A - Kháng nhăn thượng hạng)**, tự nhả nếp gấp tự nhiên sau 15 phút treo trong môi trường ẩm.
+    2. *Hồi phục đàn hồi co giãn (Elastic Recovery Rate)*: Đạt **96.5% tại độ giãn 5%**, bảo toàn cấu trúc ve áo may đo và vai áo sắc nét.
+    3. *Độ thoát khí & giảm nhiệt (Air Permeability - ISO 9237)*: Đạt **185 mm/s**, giải phóng nhiệt ẩm tối ưu cho khí hậu nhiệt đới gió mùa.
+    4. *Chỉ số tự thẳng bằng hơi nước (Steam Self-Straightening Index)*: Đạt **94 / 100 điểm**, tự phục hồi độ rủ êm ái khi treo trong phòng tắm nước ấm mà không cần bàn là nhiệt.
+  - Cẩm nang du lịch độc quyền: Hướng dẫn mẹo xông hơi nước ẩm trong phòng tắm khách sạn 10-15 phút để loại bỏ hoàn toàn nếp gấp vali trên phục trang lụa và lanh.
 
 ---
 

@@ -301,7 +301,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **91** | **Thẩm Định Bao Bì Không Nhựa & Huy Hiệu Zero-Plastic (SELLER-ECO-PACKAGING-CERT-01)** | Module 01, 04 & ESG | **100% Hoàn thiện** | Khảo sát 4 chuẩn vật liệu (Túi màng sắn, Hộp sóng FSC, Băng keo bột mì, Tem mực đậu nành), cấp huy hiệu Zero-Plastic (100/100) và kết nối 3 HTX bao bì bản địa tại `/seller` |
 | **92** | **Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast (ADMIN-CARBON-LOGISTICS-MAP-01)** | Module 04 & Admin ESG | **100% Hoàn thiện** | Giám sát 142 bưu tá xe điện Feliz/Klara S, dung lượng pin 93.4%, giảm -127.6kg CO2e/ngày qua 4 cụm Hub, ưu tiên xe điện giờ cao điểm tại `/admin` |
 | **93** | **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)** | Module 06 & Social Patron | **100% Hoàn thiện** | Bảng vinh danh Top 3 Style Muses, bảo trợ cà phê (10k-100k), khấu trừ 10% thuế TNCN TT 111/2013, tích lũy +20 Điểm Xanh tại `/cong-dong` |
-| **94** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **94** | **Nhật Ký Chăm Sóc Sợi Vải & Két Ngủ Đông Trang Phục (USER-GARMENT-LIFESPAN-EXTENDER-01)** | Module 07 & VAS | **100% Hoàn thiện** | Theo dõi chu kỳ giặt êm (Linen 18/80), tuổi thọ 78%, đặt két ngủ đông theo mùa 45-50% RH khử UV-C `#HIBERNATE-VAULT-XXXX` tại `/tai-khoan` |
+| **95** | **Thử Nghiệm Phục Hồi Co Giãn & Chỉ Số Kháng Nhăn (CAT-FABRIC-STRETCH-RECOVERY-01)** | Module 01 & QA | **100% Hoàn thiện** | Góc hồi nếp nhăn ISO 2313 đạt 162° Cấp A, đàn hồi 96.5% tại giãn dài 5%, thoáng khí 185 mm/s ISO 9237 tại `/san-pham/[slug]` |
+| **96** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors, Archive } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -107,6 +107,20 @@ export default function AccountPage() {
       } catch {}
     }
     return [];
+  });
+  const [hibernationOpen, setHibernationOpen] = useState(false);
+  const [hibernationItem, setHibernationItem] = useState('Áo Khoác Blazer Dạ Len Ý Sartorial');
+  const [hibernationDuration, setHibernationDuration] = useState<'3_MONTHS' | '6_MONTHS' | '12_MONTHS'>('6_MONTHS');
+  const [hibernationBooked, setHibernationBooked] = useState<Array<{ id: string; item: string; duration: string; fee: number; code: string; date: string }>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('nexora_garment_hibernation');
+        if (stored) return JSON.parse(stored);
+      } catch {}
+    }
+    return [
+      { id: 'HIB-8812', item: 'Áo Khoác Blazer Dạ Len Ý Sartorial', duration: '6 Tháng (Gói Mùa Mưa)', fee: 240000, code: 'HIBERNATE-VAULT-8812', date: '18/11/2026' }
+    ];
   });
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
@@ -1193,6 +1207,126 @@ export default function AccountPage() {
         {/* Cam kết Fit Guarantee */}
         <div style={{ padding: '10px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 6, fontSize: 11, color: '#065f46', lineHeight: 1.4 }}>
           <strong>🛡️ Cam Kết Vừa Vặn 100% (Fit Guarantee Assurance):</strong> Nếu bất kỳ sản phẩm nào bạn nhận về có độ lệch &gt;2cm so với thông số Fashion Passport của bạn, bạn được đổi size tốc hành 24-48h tận nhà hoàn toàn 0đ qua dịch vụ <Link href="/don-hang" style={{ color: '#047857', fontWeight: 700, textDecoration: 'underline' }}>RET-QUICK-EXCHANGE-01</Link>.
+        </div>
+
+        {/* Nhật Ký Bảo Dưỡng Sợi Dệt & Két Ngủ Đông Phục Trang (USER-GARMENT-LIFESPAN-EXTENDER-01) */}
+        <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed #cbd5e1' }}>
+          <div className="row between" style={{ marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              <strong style={{ fontSize: 13, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Archive size={16} color="#047857" /> Nhật Ký Bảo Dưỡng Sợi Dệt &amp; Két Ngủ Đông Phục Trang (USER-GARMENT-LIFESPAN-EXTENDER-01)
+              </strong>
+              <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
+                Quản lý vòng đời chu kỳ giặt êm của sợi dệt và dịch vụ lưu trữ phục trang trái mùa trong buồng két kháng ẩm 45-50% RH chuẩn Atelier.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="button secondary"
+              style={{ fontSize: 11, padding: '4px 10px' }}
+              onClick={() => setHibernationOpen(!hibernationOpen)}
+            >
+              {hibernationOpen ? 'Đóng biểu mẫu gửi két' : '❄️ Gửi Két Ngủ Đông Trái Mùa →'}
+            </button>
+          </div>
+
+          {/* 3 Metrics vòng đời sợi dệt */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 10 }}>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 11 }}>
+              <div style={{ color: '#64748b', fontSize: 10 }}>Sơ Mi Lanh Normandy</div>
+              <strong style={{ color: '#047857' }}>18 / 80 Chu kỳ giặt êm</strong>
+              <div style={{ fontSize: 9, color: '#059669', marginTop: 1 }}>Độ nguyên vẹn sợi: 94.2% · Khuyến nghị xịt sương ấm</div>
+            </div>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 11 }}>
+              <div style={{ color: '#64748b', fontSize: 10 }}>Blazer Dạ Len Ý Sartorial</div>
+              <strong style={{ color: '#047857' }}>4 / 30 Lần hấp sinh học</strong>
+              <div style={{ fontSize: 9, color: '#059669', marginTop: 1 }}>Phom ve áo: 99% · Đã sẵn sàng gửi két ngủ đông</div>
+            </div>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 11 }}>
+              <div style={{ color: '#64748b', fontSize: 10 }}>Đầm Lụa Tơ Tằm Bảo Lộc</div>
+              <strong style={{ color: '#047857' }}>6 / 50 Lần giặt lụa nhẹ</strong>
+              <div style={{ fontSize: 9, color: '#059669', marginTop: 1 }}>Độ óng ả bề mặt: 96 Gu · Khuyến nghị ủi mặt trái</div>
+            </div>
+          </div>
+
+          {hibernationOpen && (
+            <div style={{ padding: '12px 14px', background: '#f0fdf4', border: '1px dashed #86efac', borderRadius: 6, marginTop: 8 }}>
+              <strong style={{ fontSize: 12, color: '#166534', display: 'block', marginBottom: 8 }}>
+                Đăng Ký Lưu Kho Buồng Két Ngủ Đông Trái Mùa (Atelier Hibernation Vault):
+              </strong>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 10 }}>
+                <div>
+                  <label style={{ fontSize: 10, color: '#166534', display: 'block', marginBottom: 2 }}>Món đồ cần lưu kho:</label>
+                  <select
+                    value={hibernationItem}
+                    onChange={e => setHibernationItem(e.target.value)}
+                    style={{ width: '100%', fontSize: 11, padding: '5px 8px', border: '1px solid #86efac', borderRadius: 4 }}
+                  >
+                    <option value="Áo Khoác Blazer Dạ Len Ý Sartorial">Áo Khoác Blazer Dạ Len Ý Sartorial (Dạ dày mùa đông)</option>
+                    <option value="Đầm Lụa Dạ Tiệc Dáng Dài">Đầm Lụa Dạ Tiệc Dáng Dài (Trang phục lễ hội cao cấp)</option>
+                    <option value="Áo Măng Tô Dạ Cashmere 2 Hàng Khuy">Áo Măng Tô Dạ Cashmere 2 Hàng Khuy</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, color: '#166534', display: 'block', marginBottom: 2 }}>Thời gian bảo quản:</label>
+                  <select
+                    value={hibernationDuration}
+                    onChange={e => setHibernationDuration(e.target.value as any)}
+                    style={{ width: '100%', fontSize: 11, padding: '5px 8px', border: '1px solid #86efac', borderRadius: 4 }}
+                  >
+                    <option value="3_MONTHS">3 Tháng (120.000₫ · Tặng 1 lần giặt hấp)</option>
+                    <option value="6_MONTHS">6 Tháng (240.000₫ · Tặng 1 lần giặt + túi vải canvas)</option>
+                    <option value="12_MONTHS">12 Tháng (420.000₫ · Tặng 2 lần giặt + bảo hiểm 50tr)</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 10, color: '#15803d', fontWeight: 600 }}>
+                  ✓ Bưu tá xe điện lấy đồ tận nhà trong túi niêm phong zip-seal tamper-evident
+                </span>
+                <button
+                  type="button"
+                  className="button"
+                  style={{ fontSize: 11, padding: '5px 14px', background: '#166534', color: '#fff' }}
+                  onClick={() => {
+                    const fee = hibernationDuration === '3_MONTHS' ? 120000 : hibernationDuration === '6_MONTHS' ? 240000 : 420000;
+                    const code = `HIBERNATE-VAULT-${Math.floor(1000 + Math.random() * 9000)}`;
+                    const durationLabel = hibernationDuration === '3_MONTHS' ? '3 Tháng' : hibernationDuration === '6_MONTHS' ? '6 Tháng' : '12 Tháng';
+                    const newEntry = {
+                      id: `HIB-${Date.now().toString().slice(-4)}`,
+                      item: hibernationItem,
+                      duration: `${durationLabel} (Atelier Care)`,
+                      fee,
+                      code,
+                      date: new Date().toLocaleDateString('vi-VN'),
+                    };
+                    const updated = [newEntry, ...hibernationBooked];
+                    setHibernationBooked(updated);
+                    try {
+                      localStorage.setItem('nexora_garment_hibernation', JSON.stringify(updated));
+                    } catch {}
+                    setHibernationOpen(false);
+                  }}
+                >
+                  Xác Nhận Gửi Két Bảo An (+150 Xu Xanh)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {hibernationBooked.length > 0 && (
+            <div style={{ marginTop: 8, fontSize: 11 }}>
+              <span style={{ fontSize: 10, color: '#64748b', fontWeight: 600 }}>Phiếu gửi két ngủ đông đang có hiệu lực:</span>
+              <div style={{ display: 'grid', gap: 4, marginTop: 4 }}>
+                {hibernationBooked.slice(0, 2).map(b => (
+                  <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 10px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 4, fontSize: 10 }}>
+                    <span><strong>{b.item}</strong> · {b.duration}</span>
+                    <span style={{ color: '#166534', fontWeight: 700 }}>Mã: {b.code} ({vnd(b.fee)})</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </article>
 

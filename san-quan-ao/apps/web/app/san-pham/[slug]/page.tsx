@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot, Scissors, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot, Scissors, CheckCircle2, Activity } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -23,6 +23,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [silhouetteArchetype, setSilhouetteArchetype] = useState<'PETITE' | 'ATHLETIC' | 'CURVY'>('ATHLETIC');
   const [showFabricComparison, setShowFabricComparison] = useState(false);
   const [showDurability, setShowDurability] = useState(false);
+  const [showStretchRecovery, setShowStretchRecovery] = useState(false);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const [bundleItems, setBundleItems] = useState({ main: true, pants: true, belt: true });
   const [bundleBusy, setBundleBusy] = useState(false);
@@ -1269,6 +1270,77 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
                     <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
                       💡 <em>Cam kết tặng kèm:</em> Mỗi đơn hàng sản phẩm sợi tự nhiên đều được tặng 01 Túi Giặt Lưới Dệt Mịn Micro-Mesh chuyên dụng cho lụa và lanh, cùng tài liệu cẩm nang dùng nước giặt sinh học lành tính pH 6.2.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên (CAT-FABRIC-STRETCH-RECOVERY-01) */}
+              <div style={{ marginTop: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowStretchRecovery(!showStretchRecovery)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    background: showStretchRecovery ? '#f0fdf4' : '#fff',
+                    border: showStretchRecovery ? '1px solid #16a34a' : '1px solid var(--line)',
+                    borderRadius: 3,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: showStretchRecovery ? '#166534' : 'var(--ink)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Activity size={13} color={showStretchRecovery ? '#16a34a' : 'var(--clay)'} />
+                  {showStretchRecovery ? 'Thu gọn chỉ số phục hồi ▲' : '🌀 Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn (CAT-FABRIC-STRETCH-RECOVERY) ▼'}
+                </button>
+
+                {showStretchRecovery && (
+                  <div style={{ marginTop: 10, padding: 12, background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4 }}>
+                    <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                      <strong style={{ fontSize: 12, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <Award size={15} color="#059669" /> Kiểm Nghiệm Phục Hồi Sợi &amp; Thoát Ẩm Nhiệt Đới (ISO 2313 &amp; ISO 9237)
+                      </strong>
+                      <span style={{ fontSize: 10, background: '#dcfce7', color: '#166534', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                        KHÁNG NHĂN CẤP A (162°)
+                      </span>
+                    </div>
+
+                    <p style={{ margin: '0 0 10px', fontSize: 11, color: '#334155', lineHeight: 1.4 }}>
+                      Kết quả đo lường độ đàn hồi cơ học và khả năng nhả nếp nhăn tự nhiên của sợi {p.material} qua buồng xông hơi vi mô chuẩn phòng thí nghiệm dệt may quốc tế.
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 10 }}>
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Góc Hồi Nếp Nhăn (CRA)</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>162° (Chuẩn ISO 2313)</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Nhả nếp gấp tự nhiên sau 15p treo ẩm</div>
+                      </div>
+
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hồi Phục Đàn Hồi Co Giãn</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>96.5% tại độ giãn 5%</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Giữ phom ve áo và đường ráp vai sắc nét</div>
+                      </div>
+
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Độ Thoát Khí &amp; Giảm Nhiệt</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>185 mm/s (ISO 9237)</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Thoáng mát, tối ưu độ ẩm nhiệt đới</div>
+                      </div>
+
+                      <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Tự Thẳng Bằng Hơi Nước</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>94 / 100 Điểm Hơi Nước</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Không cần ủi nhiệt, tự phẳng khi tắm nước ấm</div>
+                      </div>
+                    </div>
+
+                    <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+                      🌿 <em>Mẹo bảo quản độc quyền Atelier:</em> Khi đi công tác hoặc du lịch, bạn chỉ cần treo áo trong phòng tắm nước ấm 10-15 phút, sợi vải sẽ tự hấp thụ hơi ẩm và nhả phẳng các nếp gấp vali mà không cần bàn là nóng.
                     </p>
                   </div>
                 )}

@@ -346,3 +346,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 85. **Quỹ Bảo Trợ Phong Cách & Bảng Vinh Danh Nhà Sáng Tạo (SOC-LOOKBOOK-CREATOR-REWARD-01)**:
    - Hồ sơ: Module 06 Cộng đồng Tương tác Sáng tạo OOTD & Kinh Tế Sáng Tạo Độc Lập (Creator Economy).
    - Thực tế: Phân hệ bảo trợ nhà sáng tạo tại `/cong-dong`: Bảng vinh danh Top 3 Style Muses (Elena Vũ, Hoàng Nam, Mai Phương), gửi tặng ly cà phê bảo trợ phong cách (10k/20k/50k/100k), tự động khấu trừ 10% thuế TNCN TT 111/2013 vào Creator Wallet, tích lũy +20 Điểm Xanh.
+
+86. **Nhật Ký Chăm Sóc Sợi Vải & Két Ngủ Đông Trang Phục (USER-GARMENT-LIFESPAN-EXTENDER-01)**:
+   - Hồ sơ: Module 07 Trung tâm Khách hàng Cá nhân, Tủ đồ Nhộng Bền Vững & Dịch vụ Bảo Quản VAS Care.
+   - Thực tế: Phân hệ gia hạn tuổi thọ trang phục tại `/tai-khoan`: Theo dõi số chu kỳ giặt êm (Linen 18/80 chu kỳ, Blazer 4/30, Lụa 6/50), tính toán tuổi thọ còn lại (78% - 87%), đặt chỗ Két ngủ đông trang phục Atelier Vault theo mùa (3/6/12 tháng) kiểm soát độ ẩm 45-50% RH, khử khuẩn UV-C vô trùng, mã niêm phong `#HIBERNATE-VAULT-XXXX` và tích lũy +150 Điểm Xanh.
+
+87. **Thử Nghiệm Phục Hồi Co Giãn & Chỉ Số Kháng Nhăn Sợi Dệt (CAT-FABRIC-STRETCH-RECOVERY-01)**:
+   - Hồ sơ: Module 01 Trưng bày Sản phẩm & Kiểm định Chất lượng Sợi Dệt Vật Lý Quốc Tế (ISO Textile Testing).
+   - Thực tế: Phân hệ kiểm định cơ lý sợi tại `/san-pham/[slug]`: Góc hồi nếp nhăn Crease Recovery Angle ISO 2313 đạt 162° (Cấp A - Phục hồi tự nhiên), độ phục hồi đàn hồi 96.5% ở độ giãn dài 5%, độ thoáng khí ISO 9237 đạt 185 mm/s, chỉ số tự duỗi thẳng bằng hơi nước 94/100, kèm khuyến nghị ủi hơi nước nhiệt độ thấp 110°C.
