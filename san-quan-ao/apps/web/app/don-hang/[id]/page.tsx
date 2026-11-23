@@ -250,7 +250,7 @@ export default function OrderDetail() {
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--line)', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', fontSize: 11 }}>
               {(address as any).deliverySlot && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f5f0e8', padding: '3px 8px', borderRadius: 3, color: 'var(--ink)' }}>
-                  <Clock size={12} color="var(--clay)" /> Khung giờ hẹn: <strong>{SLOT_LABELS[(address as any).deliverySlot] ?? (address as any).deliverySlot}</strong>
+                  <Clock size={12} color="var(--brand-indigo)" /> Khung giờ hẹn: <strong>{SLOT_LABELS[(address as any).deliverySlot] ?? (address as any).deliverySlot}</strong>
                 </span>
               )}
               {(address as any).ecoPackaging && (
@@ -288,7 +288,7 @@ export default function OrderDetail() {
                 const isCurrent = currentStage === idx;
                 return (
                   <div key={step.key} style={{ display: 'flex', alignItems: 'center', gap: 5, fontWeight: isCurrent ? 700 : 500, color: isPassed ? 'var(--ink)' : 'var(--muted)' }}>
-                    <span style={{ width: 16, height: 16, borderRadius: '50%', background: isPassed ? 'var(--clay)' : 'var(--line)', color: isPassed ? '#fff' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>
+                    <span style={{ width: 16, height: 16, borderRadius: '50%', background: isPassed ? 'var(--brand-indigo)' : 'var(--line)', color: isPassed ? '#fff' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>
                       {isPassed ? '✓' : idx + 1}
                     </span>
                     <span>{step.label}</span>
@@ -371,10 +371,10 @@ export default function OrderDetail() {
               </div>
               <div className="row between" style={{ background: '#fff', padding: '8px 12px', borderRadius: 2, marginBottom: 10, flexWrap: 'wrap', gap: 6, border: '1px solid var(--line)' }}>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <KeyRound size={14} style={{ color: 'var(--clay)' }} />
+                  <KeyRound size={14} style={{ color: 'var(--brand-indigo)' }} />
                   <strong>Mã PIN an ninh nhận hàng (FUL-VERIF-05):</strong>
                 </span>
-                <span style={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: 3, color: 'var(--clay)', fontSize: 15 }}>
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: 3, color: 'var(--brand-indigo)', fontSize: 15 }}>
                   {getSecurityPin(order.code, shop.id)}
                 </span>
               </div>
@@ -790,7 +790,7 @@ export default function OrderDetail() {
         <article className="panel" style={{ marginTop: 16 }}>
           <div className="row between">
             <h2>Kế hoạch Trả góp NEXORA PayLater (0% Lãi suất)</h2>
-            <span className="badge" style={{ background: 'var(--clay)', color: '#fff' }}>Đã kích hoạt</span>
+            <span className="badge" style={{ background: 'var(--brand-indigo)', color: '#fff' }}>Đã kích hoạt</span>
           </div>
           <p className="subtle" style={{ fontSize: 12 }}>Áp dụng theo đặc tả PAY-BNPL-MIDFLOW-05 · 3 kỳ thanh toán 0% phụ phí.</p>
           <div className="table-wrap" style={{ marginTop: 10 }}>
@@ -1230,9 +1230,9 @@ export default function OrderDetail() {
                         padding: '4px 10px',
                         fontSize: 11,
                         borderRadius: 20,
-                        border: active ? '1px solid var(--clay)' : '1px solid #cbd5e1',
+                        border: active ? '1px solid var(--brand-indigo)' : '1px solid #cbd5e1',
                         background: active ? '#fdf8ea' : '#fff',
-                        color: active ? 'var(--clay)' : '#475569',
+                        color: active ? 'var(--brand-indigo)' : '#475569',
                         fontWeight: active ? 600 : 400,
                         cursor: 'pointer',
                       }}
@@ -1247,7 +1247,7 @@ export default function OrderDetail() {
             {/* Courier Tip Selection */}
             <div style={{ marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                <Coffee size={14} color="var(--clay)" />
+                <Coffee size={14} color="var(--brand-indigo)" />
                 <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>
                   Thưởng tip động viên bưu tá xanh (tùy chọn):
                 </label>
@@ -1267,9 +1267,9 @@ export default function OrderDetail() {
                       padding: '5px 12px',
                       fontSize: 11,
                       borderRadius: 4,
-                      border: courierTip === tip.value ? '2px solid var(--clay)' : '1px solid #cbd5e1',
+                      border: courierTip === tip.value ? '2px solid var(--brand-indigo)' : '1px solid #cbd5e1',
                       background: courierTip === tip.value ? '#fdf8ea' : '#fff',
-                      color: courierTip === tip.value ? 'var(--clay)' : '#334155',
+                      color: courierTip === tip.value ? 'var(--brand-indigo)' : '#334155',
                       fontWeight: courierTip === tip.value ? 700 : 400,
                       cursor: 'pointer',
                     }}
@@ -1661,7 +1661,7 @@ export default function OrderDetail() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <FileText size={18} color="var(--clay)" />
+                <FileText size={18} color="var(--brand-indigo)" />
                 <strong style={{ fontSize: 14 }}>Bản Thể Hiện Hóa Đơn Điện Tử Hợp Chuẩn (TT 78/2021/TT-BTC)</strong>
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
@@ -1690,7 +1690,7 @@ export default function OrderDetail() {
               style={{
                 padding: '30px 40px',
                 color: '#1a1a1a',
-                fontFamily: 'serif',
+                fontFamily: 'var(--font-sans)',
                 lineHeight: 1.5,
                 background: '#fff',
               }}
@@ -1900,7 +1900,7 @@ export default function OrderDetail() {
             </div>
 
             {/* Haute Couture Certificate Layout */}
-            <div style={{ padding: '36px 32px', textAlign: 'center', color: '#1c1917', fontFamily: 'Georgia, serif' }}>
+            <div style={{ padding: '36px 32px', textAlign: 'center', color: '#1c1917', fontFamily: 'var(--font-sans)' }}>
               <div style={{ fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#166534', fontWeight: 700, marginBottom: 8 }}>
                 CHỨNG NHẬN ĐÓNG GÓP SINH THÁI
               </div>

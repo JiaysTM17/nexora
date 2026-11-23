@@ -132,7 +132,7 @@ export default function TradeInPage() {
               >
                 <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Calculator size={18} color="var(--clay)" />
+                    <Calculator size={18} color="var(--brand-indigo)" />
                     <strong style={{ fontSize: 14, color: '#9a3412' }}>
                       Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR)
                     </strong>
@@ -163,9 +163,9 @@ export default function TradeInPage() {
                             padding: '6px 10px',
                             fontSize: 11,
                             borderRadius: 3,
-                            border: simCategory === cat.id ? '1px solid var(--clay)' : '1px solid var(--line)',
+                            border: simCategory === cat.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
                             background: simCategory === cat.id ? '#fff' : '#fafafa',
-                            color: simCategory === cat.id ? 'var(--clay)' : 'var(--ink)',
+                            color: simCategory === cat.id ? 'var(--brand-indigo)' : 'var(--ink)',
                             fontWeight: simCategory === cat.id ? 700 : 400,
                             cursor: 'pointer',
                           }}
@@ -197,9 +197,9 @@ export default function TradeInPage() {
                             padding: '6px 10px',
                             fontSize: 11,
                             borderRadius: 3,
-                            border: simGrade === g.id ? '1px solid var(--clay)' : '1px solid var(--line)',
+                            border: simGrade === g.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
                             background: simGrade === g.id ? '#fff' : '#fafafa',
-                            color: simGrade === g.id ? 'var(--clay)' : 'var(--ink)',
+                            color: simGrade === g.id ? 'var(--brand-indigo)' : 'var(--ink)',
                             fontWeight: simGrade === g.id ? 700 : 400,
                             cursor: 'pointer',
                           }}
@@ -227,7 +227,7 @@ export default function TradeInPage() {
                       <span style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', display: 'block' }}>
                         Ước Tính Voucher Nhận Được:
                       </span>
-                      <strong style={{ fontSize: 20, color: 'var(--clay)', fontFamily: 'var(--serif)', display: 'block', margin: '4px 0' }}>
+                      <strong style={{ fontSize: 20, color: 'var(--brand-indigo)', fontFamily: 'var(--font-sans)', display: 'block', margin: '4px 0' }}>
                         {vnd(estimatedValue)}
                       </strong>
                       <div style={{ fontSize: 11, color: '#166534', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
@@ -319,12 +319,12 @@ export default function TradeInPage() {
           >
             <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Truck size={18} color="var(--clay)" />
+                <Truck size={18} color="var(--brand-indigo)" />
                 <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
                   Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)
                 </strong>
               </div>
-              <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 WHITE-GLOVE COURIER PICKUP
               </span>
             </div>
@@ -396,7 +396,7 @@ export default function TradeInPage() {
                     type="checkbox"
                     checked={securityBag}
                     onChange={(e) => setSecurityBag(e.target.checked)}
-                    style={{ accentColor: 'var(--clay)' }}
+                    style={{ accentColor: 'var(--brand-indigo)' }}
                   />
                   Yêu cầu bưu tá mang kèm Túi Niêm Phong Quang Học Tamper-Evident &amp; Mã QR bảo mật
                 </label>
@@ -828,7 +828,7 @@ export default function TradeInPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Cpu size={22} color="#38bdf8" />
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--serif)', color: '#f8fafc' }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--font-sans)', color: '#f8fafc' }}>
                 Hộ Chiếu Sở Hữu Số NFT &amp; Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8' }}>
@@ -1105,13 +1105,13 @@ export default function TradeInPage() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-          <ShieldCheck size={22} color="var(--clay)" />
-          <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--serif)', color: 'var(--ink)' }}>
+          <ShieldCheck size={22} color="var(--brand-indigo)" />
+          <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
             Chính sách Bảo chứng Thu cũ &amp; Quyền Cân nhắc 14 Ngày (NEXORA SLA Guarantee)
           </h3>
           <span
             style={{
-              background: 'var(--clay)',
+              background: 'var(--brand-indigo)',
               color: '#fff',
               fontSize: 11,
               fontWeight: 700,
@@ -1134,7 +1134,7 @@ export default function TradeInPage() {
         >
           <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--line)', borderRadius: 6 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
-              <RotateCcw size={16} color="var(--clay)" />
+              <RotateCcw size={16} color="var(--brand-indigo)" />
               <span>Quyền cân nhắc 14 ngày vô điều kiện</span>
             </div>
             <p style={{ margin: 0, color: 'var(--muted)' }}>

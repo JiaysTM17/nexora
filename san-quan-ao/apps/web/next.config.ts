@@ -7,5 +7,7 @@ const config: NextConfig = {
   experimental: {
     cpus: 2,
   },
+  outputFileTracingRoot: undefined,
+  productionBrowserSourceMaps: false,
 };
 export default config;

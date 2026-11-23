@@ -201,10 +201,10 @@ export default function MixMatchPage() {
       <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Sparkles size={14} color="var(--clay)" />
+            <Sparkles size={14} color="var(--brand-indigo)" />
             NEXORA EDITORIAL STUDIO · CAT-MIX-MATCH-01
           </p>
-          <h1 style={{ margin: '4px 0 8px', fontSize: 28, fontFamily: 'var(--serif)' }}>
+          <h1 style={{ margin: '4px 0 8px', fontSize: 28, fontFamily: 'var(--font-sans)', fontWeight: 750 }}>
             Phòng Thử Đồ Mix &amp; Match
           </h1>
           <p className="subtle" style={{ margin: 0, maxWidth: 600 }}>
@@ -240,15 +240,15 @@ export default function MixMatchPage() {
       >
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Thermometer size={16} color="var(--clay)" />
-            <strong style={{ fontSize: 13, color: '#9a3412' }}>
+            <Thermometer size={16} color="var(--brand-indigo)" />
+            <strong style={{ fontSize: 13, color: 'var(--ink)' }}>
               Gợi Ý Phối Đồ Theo Thời Tiết &amp; Dịp Xuất Hiện (CAT-OUTFIT-WEATHER-SYNC-01)
             </strong>
-            <span style={{ fontSize: 10, background: '#ffedd5', color: '#9a3412', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+            <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
               AI WEATHER SYNC
             </span>
           </div>
-          <span style={{ fontSize: 11, color: '#78350f' }}>
+          <span style={{ fontSize: 11, color: 'var(--muted)' }}>
             Khí hậu địa phương: <strong>{weatherCity === 'SAIGON' ? 'Nhiệt đới nắng ấm (32°C)' : weatherCity === 'HANOI' ? 'Gió mùa Đông Bắc (19°C)' : 'Cao nguyên sương lạnh (14°C)'}</strong>
           </span>
         </div>
@@ -266,13 +266,14 @@ export default function MixMatchPage() {
               onClick={() => applyWeatherFormula(item.id, occasion)}
               style={{
                 fontSize: 11,
-                padding: '5px 12px',
+                padding: '6px 14px',
                 borderRadius: 20,
-                border: weatherCity === item.id ? '1.5px solid var(--clay)' : '1px solid #fed7aa',
-                background: weatherCity === item.id ? '#fed7aa' : '#fff',
-                color: weatherCity === item.id ? '#7c2d12' : '#9a3412',
+                border: weatherCity === item.id ? '1.5px solid #09090B' : '1px solid var(--line)',
+                background: weatherCity === item.id ? '#09090B' : '#FFFFFF',
+                color: weatherCity === item.id ? '#FFFFFF' : 'var(--ink)',
                 fontWeight: weatherCity === item.id ? 700 : 500,
                 cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
               {item.label}
@@ -366,7 +367,7 @@ export default function MixMatchPage() {
                     />
                   </div>
                   <div style={{ marginTop: 8 }}>
-                    <span style={{ fontSize: 10, color: 'var(--clay)', fontWeight: 700 }}>LỚP NGOÀI</span>
+                    <span style={{ fontSize: 10, color: 'var(--brand-indigo)', fontWeight: 700 }}>LỚP NGOÀI</span>
                     <h4 style={{ margin: '2px 0', fontSize: 12, lineHeight: 1.3 }}>{selectedOuter.name}</h4>
                     <span style={{ fontSize: 12, fontWeight: 700 }}>{vnd(selectedOuter.price)}</span>
                   </div>
@@ -375,7 +376,7 @@ export default function MixMatchPage() {
 
               {/* Top Layer */}
               <div style={{ position: 'relative' }}>
-                <div style={{ aspectRatio: '3/4', overflow: 'hidden', borderRadius: 4, background: '#f5f0e8' }}>
+                <div style={{ aspectRatio: '3/4', overflow: 'hidden', borderRadius: 4, background: '#F8FAFC', border: '1px solid var(--line)' }}>
                   <img
                     src={selectedTop.image}
                     alt={selectedTop.name}
@@ -387,7 +388,7 @@ export default function MixMatchPage() {
                   />
                 </div>
                 <div style={{ marginTop: 8 }}>
-                  <span style={{ fontSize: 10, color: 'var(--clay)', fontWeight: 700 }}>ÁO CHÍNH</span>
+                  <span style={{ fontSize: 10, color: 'var(--brand-indigo)', fontWeight: 700 }}>ÁO CHÍNH</span>
                   <h4 style={{ margin: '2px 0', fontSize: 12, lineHeight: 1.3 }}>{selectedTop.name}</h4>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>{vnd(selectedTop.price)}</span>
                 </div>
@@ -395,7 +396,7 @@ export default function MixMatchPage() {
 
               {/* Bottom Layer */}
               <div style={{ position: 'relative' }}>
-                <div style={{ aspectRatio: '3/4', overflow: 'hidden', borderRadius: 4, background: '#f5f0e8' }}>
+                <div style={{ aspectRatio: '3/4', overflow: 'hidden', borderRadius: 4, background: '#F8FAFC', border: '1px solid var(--line)' }}>
                   <img
                     src={selectedBottom.image}
                     alt={selectedBottom.name}
@@ -407,7 +408,7 @@ export default function MixMatchPage() {
                   />
                 </div>
                 <div style={{ marginTop: 8 }}>
-                  <span style={{ fontSize: 10, color: 'var(--clay)', fontWeight: 700 }}>QUẦN / VÁY</span>
+                  <span style={{ fontSize: 10, color: 'var(--brand-indigo)', fontWeight: 700 }}>QUẦN / VÁY</span>
                   <h4 style={{ margin: '2px 0', fontSize: 12, lineHeight: 1.3 }}>{selectedBottom.name}</h4>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>{vnd(selectedBottom.price)}</span>
                 </div>
@@ -419,7 +420,7 @@ export default function MixMatchPage() {
               style={{
                 marginTop: 20,
                 padding: '12px 14px',
-                background: '#faf8f5',
+                background: '#FFFFFF',
                 border: '1px solid var(--line)',
                 borderRadius: 4,
                 fontSize: 12,
@@ -471,7 +472,7 @@ export default function MixMatchPage() {
 
               <div className="row between" style={{ fontSize: 11, marginBottom: 6 }}>
                 <span style={{ color: '#475569' }}>Chỉ số hòa hợp tổng thể (Overall Synergy):</span>
-                <strong style={{ color: '#0f766e', fontSize: 13, fontFamily: 'var(--serif)' }}>95.0 / 100</strong>
+                <strong style={{ color: '#0f766e', fontSize: 13, fontFamily: 'var(--font-sans)', fontWeight: 800 }}>95.0 / 100</strong>
               </div>
 
               {showRadarAnalysis && (
@@ -524,7 +525,7 @@ export default function MixMatchPage() {
               </div>
               <div className="row between" style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 16 }}>
                 <span>Tổng thanh toán Combo:</span>
-                <span style={{ color: 'var(--clay)' }}>{vnd(finalTotal)}</span>
+                <span style={{ color: 'var(--brand-indigo)', fontWeight: 800 }}>{vnd(finalTotal)}</span>
               </div>
 
               <button
@@ -567,7 +568,7 @@ export default function MixMatchPage() {
           {/* Section 1: Áo Khoác Ngoài (Outerwear) */}
           <div className="panel">
             <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Layers size={16} color="var(--clay)" /> Lớp Ngoài (Outerwear)
+              <Layers size={16} color="var(--brand-indigo)" /> Lớp Ngoài (Outerwear)
             </h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
               <button
@@ -619,7 +620,7 @@ export default function MixMatchPage() {
           {/* Section 2: Áo Chính (Tops) */}
           <div className="panel">
             <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles size={16} color="var(--clay)" /> Áo Chính (Tops)
+              <Sparkles size={16} color="var(--brand-indigo)" /> Áo Chính (Tops)
             </h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
               {PIECES.filter(p => p.category === 'top').map(p => (
@@ -663,7 +664,7 @@ export default function MixMatchPage() {
           {/* Section 3: Quần / Chân Váy (Bottoms) */}
           <div className="panel">
             <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles size={16} color="var(--clay)" /> Quần / Chân Váy (Bottoms)
+              <Sparkles size={16} color="var(--brand-indigo)" /> Quần / Chân Váy (Bottoms)
             </h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
               {PIECES.filter(p => p.category === 'bottom').map(p => (
@@ -760,7 +761,7 @@ export default function MixMatchPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Camera size={19} color="var(--clay)" />
+                <Camera size={19} color="var(--brand-indigo)" />
                 <div>
                   <h3 style={{ margin: 0, fontSize: 16, color: 'var(--ink)' }}>
                     THẺ LOOKBOOK NGHỆ THUẬT HAUTE COUTURE
@@ -803,9 +804,9 @@ export default function MixMatchPage() {
                     style={{
                       padding: '8px 6px',
                       borderRadius: 4,
-                      border: lookbookTheme === th.id ? '1.5px solid var(--clay)' : '1px solid #e2e8f0',
-                      background: lookbookTheme === th.id ? '#fdf8ea' : '#f8fafc',
-                      color: lookbookTheme === th.id ? 'var(--clay)' : '#334155',
+                      border: lookbookTheme === th.id ? '1.5px solid var(--brand-indigo)' : '1px solid #e2e8f0',
+                      background: lookbookTheme === th.id ? '#EEF2FF' : '#f8fafc',
+                      color: lookbookTheme === th.id ? 'var(--brand-indigo)' : '#334155',
                       fontWeight: lookbookTheme === th.id ? 700 : 500,
                       cursor: 'pointer',
                       textAlign: 'center',
@@ -862,10 +863,10 @@ export default function MixMatchPage() {
             >
               <div className="row between" style={{ borderBottom: '1px solid rgba(120, 113, 108, 0.2)', paddingBottom: 10, marginBottom: 12 }}>
                 <div>
-                  <span style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#94a3b8' : 'var(--clay)', fontWeight: 700 }}>
+                  <span style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#94a3b8' : 'var(--brand-indigo)', fontWeight: 700 }}>
                     NEXORA ATELIER EDITORIAL
                   </span>
-                  <h4 style={{ margin: '2px 0 0', fontSize: 14, fontFamily: 'serif' }}>
+                  <h4 style={{ margin: '2px 0 0', fontSize: 14, fontFamily: 'var(--font-sans)', fontWeight: 700 }}>
                     Lookbook #{Date.now().toString().slice(-4)} · {weatherCity} Capsule
                   </h4>
                 </div>
@@ -878,7 +879,7 @@ export default function MixMatchPage() {
               <div style={{ display: 'grid', gridTemplateColumns: selectedOuter ? '1fr 1fr 1fr' : '1fr 1fr', gap: 10, marginBottom: 12 }}>
                 {selectedOuter && (
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', marginBottom: 4 }}>
+                    <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#F8FAFC', border: '1px solid var(--line)', marginBottom: 4 }}>
                       <img src={selectedOuter.image} alt={selectedOuter.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Lớp Ngoài</span>
@@ -886,14 +887,14 @@ export default function MixMatchPage() {
                   </div>
                 )}
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', marginBottom: 4 }}>
+                  <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#F8FAFC', border: '1px solid var(--line)', marginBottom: 4 }}>
                     <img src={selectedTop.image} alt={selectedTop.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                   <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Áo Chính</span>
                   <strong style={{ fontSize: 11, display: 'block', lineHeight: 1.2 }}>{selectedTop.name}</strong>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#e2e8f0', marginBottom: 4 }}>
+                  <div style={{ aspectRatio: '3/4', borderRadius: 4, overflow: 'hidden', background: '#F8FAFC', border: '1px solid var(--line)', marginBottom: 4 }}>
                     <img src={selectedBottom.image} alt={selectedBottom.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                   <span style={{ fontSize: 10, color: '#94a3b8', display: 'block' }}>Quần / Váy</span>
@@ -913,7 +914,7 @@ export default function MixMatchPage() {
                     <span style={{ width: 10, height: 10, borderRadius: '50%', background: selectedBottom.colors.find(c => c.name === bottomColor)?.hex || '#82644e', display: 'inline-block' }} /> {bottomColor}
                   </span>
                 </div>
-                <div style={{ fontFamily: 'serif', fontStyle: 'italic', color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#cbd5e1' : '#57534e' }}>
+                <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#cbd5e1' : '#475569' }}>
                   Curated by {curatorName}
                 </div>
               </div>
@@ -951,7 +952,7 @@ export default function MixMatchPage() {
                 style={{
                   flex: 1,
                   padding: '10px 14px',
-                  background: 'var(--clay)',
+                  background: '#09090B',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 4,

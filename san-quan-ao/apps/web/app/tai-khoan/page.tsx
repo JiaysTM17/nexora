@@ -65,7 +65,7 @@ export default function AccountPage() {
       { id: '1', title: 'Normandy Coastal Flax', palette: '#d6cbba', note: 'Sợi lanh thô dệt thưa, tông cát mộc mạc thư thái', tag: '#QuietLuxury' },
       { id: '2', title: 'Sơn Mài Midnight', palette: '#1c1917', note: 'Đen tuyền sâu thẳm, đường cắt sắc sảo tương phản', tag: '#Monochrome' },
       { id: '3', title: 'Bảo Lộc Silk Elegance', palette: '#f8fafc', note: 'Lụa tơ tằm mềm mại óng ả, độ rủ hoàn hảo', tag: '#SilkHeritage' },
-      { id: '4', title: 'Terracotta Earth', palette: '#b45309', note: 'Nâu đất ấm nồng, phóng khoáng hòa nhịp đất trời', tag: '#EarthSartorial' },
+      { id: '4', title: 'Terracotta Earth', palette: '#4F46E5', note: 'Nâu đất ấm nồng, phóng khoáng hòa nhịp đất trời', tag: '#EarthSartorial' },
     ];
   });
   const [addingPin, setAddingPin] = useState(false);
@@ -259,9 +259,9 @@ export default function AccountPage() {
         <article className="panel" style={{ background: '#fdfbf7', border: '1px solid #fed7aa', marginBottom: 16 }}>
           <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Scissors size={20} color="#b45309" />
+              <Scissors size={20} color="#4F46E5" />
               <div>
-                <h2 style={{ margin: 0, fontSize: 15, color: '#78350f', fontFamily: 'var(--serif)' }}>
+                <h2 style={{ margin: 0, fontSize: 15, color: '#78350f', fontFamily: 'var(--font-sans)' }}>
                   Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng &amp; Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)
                 </h2>
                 <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
@@ -280,7 +280,7 @@ export default function AccountPage() {
                   padding: '3px 8px',
                   background: liveCameraFeedOpen ? '#78350f' : '#fff',
                   color: liveCameraFeedOpen ? '#fff' : '#78350f',
-                  border: '1px solid #b45309',
+                  border: '1px solid #4F46E5',
                   borderRadius: 3,
                   fontSize: 11,
                   fontWeight: 600,
@@ -326,7 +326,7 @@ export default function AccountPage() {
                     <span style={{ fontSize: 11, background: '#f0fdf4', color: '#166534', padding: '3px 8px', borderRadius: 3, fontWeight: 700 }}>
                       Suất Hàng Chờ #{bo.queuePos}/15
                     </span>
-                    <div style={{ fontSize: 12, color: '#b45309', fontWeight: 800, marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: '#4F46E5', fontWeight: 800, marginTop: 4 }}>
                       Cọc Escrow 30%: {vnd(bo.deposit)}
                     </div>
                   </div>
@@ -334,7 +334,7 @@ export default function AccountPage() {
 
                 {/* Escrow and Detail Tag Bar */}
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', margin: '8px 0 14px', padding: '8px 12px', background: '#fafaf9', borderRadius: 4, fontSize: 11 }}>
-                  <span>Monogram ve áo: <strong style={{ color: '#b45309', fontFamily: 'serif', letterSpacing: 1.2 }}>{bo.monogram}</strong></span>
+                  <span>Monogram ve áo: <strong style={{ color: '#4F46E5', fontFamily: 'var(--font-sans)', letterSpacing: 1.2 }}>{bo.monogram}</strong></span>
                   <span>·</span>
                   <span>Lớp lót may đo: <strong>{bo.lining || 'Lụa Tơ Tằm Bảo Lộc'}</strong></span>
                   <span>·</span>
@@ -369,7 +369,7 @@ export default function AccountPage() {
                           <div style={{ fontSize: 10, fontWeight: 700, color: isCurrent ? '#92400e' : isPast ? '#166534' : '#64748b' }}>
                             {st.title}
                           </div>
-                          <div style={{ fontSize: 9, color: isCurrent ? '#b45309' : '#94a3b8', marginTop: 2, lineHeight: 1.2 }}>
+                          <div style={{ fontSize: 9, color: isCurrent ? '#4F46E5' : '#94a3b8', marginTop: 2, lineHeight: 1.2 }}>
                             {st.desc}
                           </div>
                           <div style={{ marginTop: 4, fontSize: 9, fontWeight: 700, color: isPast ? '#16a34a' : isCurrent ? '#d97706' : '#cbd5e1' }}>
@@ -426,7 +426,7 @@ export default function AccountPage() {
         <div className="row between" style={{ marginBottom: 12 }}>
           <div>
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
-              <Sparkles size={18} color="var(--clay)" /> Hồ Sơ Số Đo Thời Trang (Fashion Passport)
+              <Sparkles size={18} color="var(--brand-indigo)" /> Hồ Sơ Số Đo Thời Trang (Fashion Passport)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
               Lưu số đo cơ thể cá nhân để nhận gợi ý size thông minh (Smart Fit) tự động trên từng sản phẩm.
@@ -479,7 +479,7 @@ export default function AccountPage() {
           <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, flexWrap: 'wrap', gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--ink)' }}>
-                <Footprints size={16} color="var(--clay)" /> Thước Đo Chân Số Hóa &amp; Size Giày/Guốc (USER-FOOTWEAR-SCAN-01)
+                <Footprints size={16} color="var(--brand-indigo)" /> Thước Đo Chân Số Hóa &amp; Size Giày/Guốc (USER-FOOTWEAR-SCAN-01)
               </span>
               <span style={{ fontSize: 10, background: '#f5f3ef', padding: '2px 8px', borderRadius: 2, color: 'var(--muted)', fontWeight: 600 }}>
                 Chuẩn quốc tế ISO 9407 / Mondopoint
@@ -516,7 +516,7 @@ export default function AccountPage() {
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     <div style={{ background: '#fff', border: '1px solid var(--line)', padding: '6px 10px', borderRadius: 3, textAlign: 'center' }}>
                       <div style={{ fontSize: 9, color: 'var(--muted)' }}>SIZE CHUẨN</div>
-                      <strong style={{ fontSize: 14, color: 'var(--clay)' }}>EU {eu}</strong>
+                      <strong style={{ fontSize: 14, color: 'var(--brand-indigo)' }}>EU {eu}</strong>
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink)' }}>
                       <span>Tương đương: <strong>US {us}</strong> · <strong>UK {uk}</strong> · Lót giày khuyến nghị: <strong>{fl + 5}mm</strong></span>
@@ -545,7 +545,7 @@ export default function AccountPage() {
         <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
           <div>
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
-              <Compass size={18} color="var(--clay)" /> Bản Sắc Phong Cách Thời Trang (Fashion Archetype)
+              <Compass size={18} color="var(--brand-indigo)" /> Bản Sắc Phong Cách Thời Trang (Fashion Archetype)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
               Khám phá DNA thẩm mỹ của bạn qua 4 câu hỏi định hình phong cách độc quyền từ các Senior Stylist.
@@ -570,7 +570,7 @@ export default function AccountPage() {
           <div
             style={{
               padding: '14px 18px',
-              background: '#faf8f5',
+              background: '#F8FAFC',
               border: '1px solid var(--line)',
               borderRadius: 4,
               display: 'flex',
@@ -581,7 +581,7 @@ export default function AccountPage() {
             }}
           >
             <div>
-              <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clay)', fontWeight: 700 }}>
+              <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--brand-indigo)', fontWeight: 700 }}>
                 STYLE DNA ARCHETYPE
               </span>
               <h3 style={{ margin: '2px 0 4px', fontSize: 16 }}>{archetype}</h3>
@@ -651,7 +651,7 @@ export default function AccountPage() {
               return (
                 <div>
                   <div className="row between" style={{ marginBottom: 12 }}>
-                    <span style={{ fontSize: 11, color: 'var(--clay)', fontWeight: 700, textTransform: 'uppercase' }}>
+                    <span style={{ fontSize: 11, color: 'var(--brand-indigo)', fontWeight: 700, textTransform: 'uppercase' }}>
                       CÂU HỎI {quizStep + 1} / 4
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--muted)' }}>
@@ -672,7 +672,7 @@ export default function AccountPage() {
                           border: '1px solid var(--line)',
                           borderRadius: 3,
                           background: quizAnswers[quizStep] === opt.type ? '#faf8f3' : '#fff',
-                          borderColor: quizAnswers[quizStep] === opt.type ? 'var(--clay)' : 'var(--line)',
+                          borderColor: quizAnswers[quizStep] === opt.type ? 'var(--brand-indigo)' : 'var(--line)',
                           cursor: 'pointer',
                           fontSize: 13,
                           lineHeight: 1.5,
@@ -732,7 +732,7 @@ export default function AccountPage() {
         <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
           <div>
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
-              <Layers size={18} color="var(--clay)" /> Tủ Đồ Nhộng &amp; Trợ Lý AI Stylist (Capsule Wardrobe)
+              <Layers size={18} color="var(--brand-indigo)" /> Tủ Đồ Nhộng &amp; Trợ Lý AI Stylist (Capsule Wardrobe)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
               Thuật toán AI Stylist tự động lập lịch phối đồ 7 ngày từ 7 món đồ thiết yếu, đồng bộ theo số đo ({passport.height}cm / {passport.weight}kg · {passport.fitPref}) của bạn.
@@ -800,14 +800,14 @@ export default function AccountPage() {
                 style={{
                   padding: '8px 4px',
                   borderRadius: 3,
-                  border: isSelected ? '2px solid var(--clay)' : '1px solid var(--line)',
+                  border: isSelected ? '2px solid var(--brand-indigo)' : '1px solid var(--line)',
                   background: isSelected ? '#faf8f3' : '#fff',
                   cursor: 'pointer',
                   textAlign: 'center',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <div style={{ fontSize: 11, fontWeight: isSelected ? 700 : 500, color: isSelected ? 'var(--clay)' : 'var(--ink)' }}>
+                <div style={{ fontSize: 11, fontWeight: isSelected ? 700 : 500, color: isSelected ? 'var(--brand-indigo)' : 'var(--ink)' }}>
                   {item.day}
                 </div>
                 <div style={{ fontSize: 9, color: 'var(--muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -975,7 +975,7 @@ export default function AccountPage() {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
                 <div>
-                  <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--clay)', fontWeight: 700 }}>
+                  <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--brand-indigo)', fontWeight: 700 }}>
                     LỊCH PHỐI ĐỒ {current.dayName.toUpperCase()} · AI STYLIST
                   </span>
                   <h3 style={{ margin: '2px 0', fontSize: 16 }}>{current.concept}</h3>
@@ -1051,7 +1051,7 @@ export default function AccountPage() {
         {/* Capsule Wardrobe Missing Piece Recommender */}
         <div style={{ marginTop: 14, padding: '12px 16px', background: '#fcfcfc', border: '1px dashed var(--line)', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Shirt size={22} color="var(--clay)" />
+            <Shirt size={22} color="var(--brand-indigo)" />
             <div>
               <div style={{ fontSize: 12, fontWeight: 600 }}>Mảnh Ghép Capsule Hoàn Hảo (Missing Piece Suggestion)</div>
               <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--muted)' }}>
@@ -1072,7 +1072,7 @@ export default function AccountPage() {
         <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--line)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <BarChart3 size={17} color="var(--clay)" />
+              <BarChart3 size={17} color="var(--brand-indigo)" />
               <strong style={{ fontSize: 13, color: 'var(--ink)' }}>
                 Phân Tích Bảng Màu &amp; Chi Phí Mỗi Lần Mặc (USER-WARDROBE-ANALYTICS-01)
               </strong>
@@ -1091,13 +1091,13 @@ export default function AccountPage() {
           <div style={{ marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4, color: 'var(--muted)' }}>
               <span>Phân bổ bảng màu tủ đồ cá nhân:</span>
-              <strong style={{ color: 'var(--clay)' }}>88% Hài hòa phong cách {archetype}</strong>
+              <strong style={{ color: 'var(--brand-indigo)' }}>88% Hài hòa phong cách {archetype}</strong>
             </div>
             <div style={{ display: 'flex', height: 12, borderRadius: 3, overflow: 'hidden', border: '1px solid var(--line)' }}>
               <div style={{ width: '42%', background: '#d6cbba' }} title="Neutral & Trắng Ngà: 42%" />
               <div style={{ width: '28%', background: '#1e3a8a' }} title="Indigo & Navy: 28%" />
               <div style={{ width: '18%', background: '#333333' }} title="Đen Tuyền & Xám Melange: 18%" />
-              <div style={{ width: '12%', background: '#b45309' }} title="Nâu Đất Sa Mạc: 12%" />
+              <div style={{ width: '12%', background: '#4F46E5' }} title="Nâu Đất Sa Mạc: 12%" />
             </div>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 11, marginTop: 6, color: 'var(--muted)' }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -1113,7 +1113,7 @@ export default function AccountPage() {
                 18% Noir &amp; Slate
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#b45309', display: 'inline-block' }} />
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#4F46E5', display: 'inline-block' }} />
                 12% Earth Ochre
               </span>
             </div>
@@ -1136,7 +1136,7 @@ export default function AccountPage() {
                 return (
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                      <Calculator size={15} color="var(--clay)" />
+                      <Calculator size={15} color="var(--brand-indigo)" />
                       <strong style={{ fontSize: 12, color: 'var(--ink)' }}>
                         Bộ Tính Chi Phí Mỗi Lần Mặc (Cost-Per-Wear · CPW Calculator)
                       </strong>
@@ -1159,14 +1159,14 @@ export default function AccountPage() {
                       </label>
 
                       <label style={{ fontSize: 11 }}>
-                        Số lần đã diện trang phục: <strong style={{ color: 'var(--clay)' }}>{cpwWears} lần</strong>
+                        Số lần đã diện trang phục: <strong style={{ color: 'var(--brand-indigo)' }}>{cpwWears} lần</strong>
                         <input
                           type="range"
                           min={1}
                           max={100}
                           value={cpwWears}
                           onChange={(e) => setCpwWears(Number(e.target.value))}
-                          style={{ marginTop: 6, width: '100%', accentColor: 'var(--clay)' }}
+                          style={{ marginTop: 6, width: '100%', accentColor: 'var(--brand-indigo)' }}
                         />
                       </label>
                     </div>
@@ -1190,7 +1190,7 @@ export default function AccountPage() {
                           Chi phí thực tế trên mỗi lần mặc:
                         </span>
                         <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6 }}>
-                          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--clay)', fontFamily: 'var(--serif)' }}>
+                          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--brand-indigo)', fontFamily: 'var(--font-sans)' }}>
                             {vnd(currentCpw)}
                           </span>
                           <span style={{ fontSize: 11, color: 'var(--muted)' }}>/ lần diện</span>
@@ -1205,7 +1205,7 @@ export default function AccountPage() {
                             borderRadius: 2,
                             fontWeight: 600,
                             background: isOptimal ? '#f0fdf4' : '#fffbeb',
-                            color: isOptimal ? '#166534' : '#b45309',
+                            color: isOptimal ? '#166534' : '#4F46E5',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 4,
@@ -1214,7 +1214,7 @@ export default function AccountPage() {
                           {isOptimal ? '🌿 Đạt chuẩn Bền Vững Xanh (< 50k/lần)' : '⚡ Cần mặc thêm để tối ưu hóa giá trị'}
                         </span>
                         <div style={{ marginTop: 4 }}>
-                          <Link href="/trade-in" style={{ fontSize: 10, color: 'var(--clay)', textDecoration: 'underline' }}>
+                          <Link href="/trade-in" style={{ fontSize: 10, color: 'var(--brand-indigo)', textDecoration: 'underline' }}>
                             🔄 Thu Cũ Đổi Mới Nếu Ít Mặc (&lt; 5 lần) →
                           </Link>
                         </div>
@@ -1262,7 +1262,7 @@ export default function AccountPage() {
           <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6 }}>
             <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 2 }}>Tương Thích Sinh Trắc Học Tủ Đồ</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <strong style={{ fontSize: 22, color: '#047857', fontFamily: 'var(--serif)' }}>98%</strong>
+              <strong style={{ fontSize: 22, color: '#047857', fontFamily: 'var(--font-sans)' }}>98%</strong>
               <span style={{ fontSize: 11, color: '#059669', fontWeight: 600 }}>Tối ưu tuyệt đối</span>
             </div>
             <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
@@ -1273,7 +1273,7 @@ export default function AccountPage() {
           <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6 }}>
             <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 2 }}>Hiệu Suất Tủ Đồ Nhộng (Capsule Utilization)</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <strong style={{ fontSize: 22, color: '#0f172a', fontFamily: 'var(--serif)' }}>82%</strong>
+              <strong style={{ fontSize: 22, color: '#0f172a', fontFamily: 'var(--font-sans)' }}>82%</strong>
               <span style={{ fontSize: 11, color: '#2563eb', fontWeight: 600 }}>41 / 50 ngày diện</span>
             </div>
             <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
@@ -1586,7 +1586,7 @@ export default function AccountPage() {
         <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
           <div>
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
-              <Pin size={18} color="var(--clay)" /> Bảng Cảm Hứng Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)
+              <Pin size={18} color="var(--brand-indigo)" /> Bảng Cảm Hứng Phong Cách Cá Nhân (USER-STYLE-MOODBOARD-01)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
               Lưu giữ những gam màu, chất liệu và phom dáng truyền cảm hứng nhất cho bản sắc {archetype} của bạn.
@@ -1660,7 +1660,7 @@ export default function AccountPage() {
               <label>
                 Tông màu chủ đạo:
                 <div style={{ display: 'flex', gap: 6, marginTop: 4, alignItems: 'center' }}>
-                  {['#d6cbba', '#1c1917', '#1e3a8a', '#b45309', '#f8fafc', '#15803d'].map((c) => (
+                  {['#d6cbba', '#1c1917', '#1e3a8a', '#4F46E5', '#f8fafc', '#15803d'].map((c) => (
                     <button
                       key={c}
                       type="button"
@@ -1669,7 +1669,7 @@ export default function AccountPage() {
                         height: 22,
                         borderRadius: '50%',
                         background: c,
-                        border: newPinPalette === c ? '2px solid var(--clay)' : '1px solid var(--line)',
+                        border: newPinPalette === c ? '2px solid var(--brand-indigo)' : '1px solid var(--line)',
                         cursor: 'pointer',
                       }}
                       onClick={() => setNewPinPalette(c)}
@@ -1710,7 +1710,7 @@ export default function AccountPage() {
                 <p style={{ margin: 0, fontSize: 11, color: 'var(--muted)', lineHeight: 1.4 }}>
                   {pin.note}
                 </p>
-                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: 'var(--clay)' }}>
+                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: 'var(--brand-indigo)' }}>
                   <span>✓ Style Moodboard</span>
                   <button
                     type="button"
@@ -1738,7 +1738,7 @@ export default function AccountPage() {
         <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
           <div>
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
-              <Calendar size={18} color="var(--clay)" /> Lịch Trình Sự Kiện &amp; Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)
+              <Calendar size={18} color="var(--brand-indigo)" /> Lịch Trình Sự Kiện &amp; Chuẩn Bị Trang Phục (USER-FASHION-CALENDAR-01)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
               Lên lịch phối đồ đón đầu sự kiện trong tuần, đồng bộ dự báo thời tiết và tự động kích hoạt nhắc hẹn giặt hấp đồ hiệu VAS Care.
@@ -1841,7 +1841,7 @@ export default function AccountPage() {
                 type="checkbox"
                 checked={newEventVasReminder}
                 onChange={(e) => setNewEventVasReminder(e.target.checked)}
-                style={{ accentColor: 'var(--clay)' }}
+                style={{ accentColor: 'var(--brand-indigo)' }}
               />
               Tự động gửi thông báo nhắc Spa / Giặt hấp đồ hiệu VAS Care trước 48 giờ
             </label>
@@ -1871,7 +1871,7 @@ export default function AccountPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ padding: '8px 12px', background: '#fdf8ea', borderRadius: 4, textAlign: 'center', border: '1px solid #fed7aa', minWidth: 85 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--clay)' }}>{ev.date}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand-indigo)' }}>{ev.date}</div>
                   <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
                     <Clock size={10} /> {ev.time}
                   </div>
@@ -1884,7 +1884,7 @@ export default function AccountPage() {
                       {ev.occasion}
                     </span>
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--clay)', marginTop: 3, fontWeight: 500 }}>
+                  <div style={{ fontSize: 12, color: 'var(--brand-indigo)', marginTop: 3, fontWeight: 500 }}>
                     👗 Trang phục: <strong>{ev.outfit}</strong>
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2, display: 'flex', gap: 12 }}>
@@ -1955,7 +1955,7 @@ export default function AccountPage() {
           </div>
           <div>
             <small>XU THƯỞNG ECO BOX</small>
-            <strong style={{ color: 'var(--clay)' }}>+150 Xu đã nhận</strong>
+            <strong style={{ color: 'var(--brand-indigo)' }}>+150 Xu đã nhận</strong>
           </div>
           <div>
             <small>ĐÓNG GÓI XANH</small>
@@ -2029,7 +2029,7 @@ export default function AccountPage() {
       <article className="panel">
         <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--serif)', color: 'var(--ink)' }}>
+            <h2 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
               Ví Hoa Hồng KOC &amp; Bảng Kê Thuế TNCN (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>

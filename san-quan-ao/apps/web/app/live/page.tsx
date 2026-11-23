@@ -311,7 +311,7 @@ export default function LiveRoom() {
                   </p>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                    <strong style={{ fontSize: 20, color: 'var(--clay)' }}>
+                    <strong style={{ fontSize: 20, color: 'var(--brand-indigo)' }}>
                       {vnd(Math.round((pinnedProduct.variants[0]?.price ?? 1000000) * 0.65))}
                     </strong>
                     <span style={{ fontSize: 13, textDecoration: 'line-through', color: 'var(--muted)' }}>
@@ -396,7 +396,7 @@ export default function LiveRoom() {
                   onClick={() => { setPinnedIndex(idx); setStockLeft(8); }}
                   style={{
                     background: '#fff',
-                    border: pinnedIndex === idx ? '2px solid var(--clay)' : '1px solid var(--line)',
+                    border: pinnedIndex === idx ? '2px solid var(--brand-indigo)' : '1px solid var(--line)',
                     borderRadius: 8,
                     padding: 10,
                     cursor: 'pointer',
@@ -413,8 +413,8 @@ export default function LiveRoom() {
                     }}
                   />
                   <strong style={{ fontSize: 12, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</strong>
-                  <span style={{ fontSize: 12, color: 'var(--clay)', fontWeight: 600 }}>{vnd(p.variants[0]?.price ?? 0)}</span>
-                  {pinnedIndex === idx && <span style={{ display: 'block', fontSize: 10, color: 'var(--clay)', marginTop: 4 }}>● Đang diễn trên sàn</span>}
+                  <span style={{ fontSize: 12, color: 'var(--brand-indigo)', fontWeight: 600 }}>{vnd(p.variants[0]?.price ?? 0)}</span>
+                  {pinnedIndex === idx && <span style={{ display: 'block', fontSize: 10, color: 'var(--brand-indigo)', marginTop: 4 }}>● Đang diễn trên sàn</span>}
                 </div>
               ))}
             </div>
@@ -554,9 +554,9 @@ export default function LiveRoom() {
         <div className="row between" style={{ marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <BarChart2 size={18} color="var(--clay)" />
+              <BarChart2 size={18} color="var(--brand-indigo)" />
               <h2 style={{ margin: 0, fontSize: 18 }}>Khán Giả Bình Chọn Set Trình Diễn Tiếp Theo (LIVE-STREAM-POLL-01)</h2>
-              <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 INTERACTIVE RUNWAY POLL
               </span>
             </div>
@@ -602,7 +602,7 @@ export default function LiveRoom() {
               <div
                 key={opt.id}
                 style={{
-                  border: isSelected ? '2px solid var(--clay)' : '1px solid var(--line)',
+                  border: isSelected ? '2px solid var(--brand-indigo)' : '1px solid var(--line)',
                   borderRadius: 6,
                   padding: 14,
                   background: isSelected ? '#fbf8f3' : '#faf9f5',
@@ -641,14 +641,14 @@ export default function LiveRoom() {
                   <div style={{ marginBottom: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
                       <span style={{ color: 'var(--muted)' }}>Tỷ lệ bình chọn</span>
-                      <strong style={{ color: isSelected ? 'var(--clay)' : 'var(--ink)' }}>{percent}% ({count} phiếu)</strong>
+                      <strong style={{ color: isSelected ? 'var(--brand-indigo)' : 'var(--ink)' }}>{percent}% ({count} phiếu)</strong>
                     </div>
                     <div style={{ width: '100%', height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
                       <div
                         style={{
                           width: `${percent}%`,
                           height: '100%',
-                          background: isSelected ? 'var(--clay)' : '#64748b',
+                          background: isSelected ? 'var(--brand-indigo)' : '#64748b',
                           transition: 'width 0.4s ease',
                         }}
                       />
@@ -744,7 +744,7 @@ export default function LiveRoom() {
         <div className="row between" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Camera size={18} color="var(--clay)" />
+              <Camera size={18} color="var(--brand-indigo)" />
               <h2 style={{ margin: 0, fontSize: 18 }}>Lookbook Sàn Diễn Đa Góc Nhìn (LIVE-RUNWAY-LOOKBOOK-01)</h2>
               <span style={{ fontSize: 10, background: '#ef4444', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                 RUNWAY 360°
@@ -770,9 +770,9 @@ export default function LiveRoom() {
                   borderRadius: 20,
                   fontSize: 11,
                   fontWeight: runwayAngle === ang.id ? 700 : 500,
-                  border: runwayAngle === ang.id ? '1px solid var(--clay)' : '1px solid var(--line)',
-                  background: runwayAngle === ang.id ? '#fdf8ea' : '#fff',
-                  color: runwayAngle === ang.id ? 'var(--clay)' : 'var(--ink)',
+                  border: runwayAngle === ang.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
+                  background: runwayAngle === ang.id ? '#EEF2FF' : '#fff',
+                  color: runwayAngle === ang.id ? 'var(--brand-indigo)' : 'var(--ink)',
                   cursor: 'pointer',
                 }}
                 onClick={() => setRunwayAngle(ang.id as any)}
@@ -834,7 +834,7 @@ export default function LiveRoom() {
                 flexDirection: 'column',
               }}
             >
-              <div style={{ position: 'relative', height: 200, background: '#f3efe6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ position: 'relative', height: 200, background: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <img
                   src={item.img}
                   alt={item.title}
@@ -865,7 +865,7 @@ export default function LiveRoom() {
                     top: 10,
                     right: 10,
                     fontSize: 10,
-                    background: 'var(--clay)',
+                    background: 'var(--brand-indigo)',
                     color: '#fff',
                     padding: '2px 8px',
                     borderRadius: 2,
@@ -891,7 +891,7 @@ export default function LiveRoom() {
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 8 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--clay)' }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand-indigo)' }}>
                       {vnd(item.livePrice)}
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--muted)', textDecoration: 'line-through' }}>
@@ -943,7 +943,7 @@ export default function LiveRoom() {
           marginTop: 28,
           padding: '24px 26px',
           background: '#faf9f5',
-          border: '1.5px solid var(--clay)',
+          border: '1.5px solid var(--brand-indigo)',
           borderRadius: 8,
           boxShadow: '0 4px 16px rgba(180, 83, 9, 0.08)',
         }}
@@ -951,7 +951,7 @@ export default function LiveRoom() {
         <div className="row between" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fef3c7', display: 'grid', placeItems: 'center' }}>
-              <Layers size={18} color="var(--clay)" />
+              <Layers size={18} color="var(--brand-indigo)" />
             </div>
             <div>
               <strong style={{ fontSize: 16, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -962,7 +962,7 @@ export default function LiveRoom() {
               </div>
             </div>
           </div>
-          <span style={{ fontSize: 10, background: 'var(--clay)', color: '#fff', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
+          <span style={{ fontSize: 10, background: 'var(--brand-indigo)', color: '#fff', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
             REALTIME RUNWAY CAPTURE
           </span>
         </div>
@@ -1057,14 +1057,14 @@ export default function LiveRoom() {
                 const setDiscounted = Math.round(totalOriginal * 0.75);
 
                 return (
-                  <div style={{ padding: '8px 10px', background: '#fef8ee', border: '1px dashed var(--clay)', borderRadius: 6, marginBottom: 12 }}>
+                  <div style={{ padding: '8px 10px', background: '#EEF2FF', border: '1px dashed var(--brand-indigo)', borderRadius: 6, marginBottom: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                       <span style={{ fontSize: 11, color: 'var(--muted)' }}>Tổng niêm yết (3 món):</span>
                       <span style={{ fontSize: 11, color: 'var(--muted)', textDecoration: 'line-through' }}>{vnd(totalOriginal)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 2 }}>
                       <span style={{ fontSize: 12, fontWeight: 700, color: '#9a3412' }}>Giá trọn set sàn diễn (-25%):</span>
-                      <strong style={{ fontSize: 15, color: 'var(--clay)' }}>{vnd(setDiscounted)}</strong>
+                      <strong style={{ fontSize: 15, color: 'var(--brand-indigo)' }}>{vnd(setDiscounted)}</strong>
                     </div>
                   </div>
                 );
@@ -1105,7 +1105,7 @@ export default function LiveRoom() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <Bookmark size={14} color="var(--clay)" /> Bộ Sưu Tập Lookbook Sàn Diễn Đã Lưu ({savedLookbooks.length})
+              <Bookmark size={14} color="var(--brand-indigo)" /> Bộ Sưu Tập Lookbook Sàn Diễn Đã Lưu ({savedLookbooks.length})
             </span>
             <span style={{ fontSize: 11, color: 'var(--muted)' }}>
               Được đồng bộ tự động vào Tủ đồ số tại `/tai-khoan`
@@ -1139,7 +1139,7 @@ export default function LiveRoom() {
                     <strong style={{ fontSize: 12, display: 'block', color: 'var(--ink)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {lb.title}
                     </strong>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--clay)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)' }}>
                       {vnd(lb.price)}
                     </div>
                   </div>

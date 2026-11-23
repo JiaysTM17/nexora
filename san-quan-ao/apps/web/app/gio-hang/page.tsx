@@ -124,7 +124,7 @@ export default function Cart() {
                 setSplitDelivery(e.target.checked);
                 invalidate();
               }}
-              style={{ accentColor: 'var(--clay)' }}
+              style={{ accentColor: 'var(--brand-indigo)' }}
             />
             Bật phân tách địa chỉ
           </label>

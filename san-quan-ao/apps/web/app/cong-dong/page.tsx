@@ -113,28 +113,28 @@ export default function Community() {
       style={{
         marginBottom: 16,
         padding: '14px 18px',
-        background: 'linear-gradient(135deg, #fdfbf7 0%, #fefce8 100%)',
-        border: '1px solid #fef08a',
+        background: 'linear-gradient(135deg, #fdfbf7 0%, #F8FAFC 100%)',
+        border: '1px solid #E2E8F0',
         borderRadius: 8,
       }}
     >
       <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Trophy size={18} color="#b45309" />
+          <Trophy size={18} color="#4F46E5" />
           <div>
-            <strong style={{ fontSize: 14, color: '#854d0e' }}>
+            <strong style={{ fontSize: 14, color: '#09090B' }}>
               Thử Thách Tuần: #LinenInTheCity · Tuần 46 (SOC-OOTD-CHALLENGE-01)
             </strong>
-            <span style={{ marginLeft: 8, fontSize: 10, background: '#fef08a', color: '#854d0e', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+            <span style={{ marginLeft: 8, fontSize: 10, background: '#E2E8F0', color: '#09090B', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
               ĐANG BÌNH CHỌN · CÒN 4 NGÀY
             </span>
           </div>
         </div>
-        <div style={{ fontSize: 12, color: '#b45309', fontWeight: 600 }}>
-          Quỹ thưởng: <strong style={{ color: 'var(--clay)' }}>15.000.000₫</strong> Voucher &amp; Thẻ VIP Fashion Week
+        <div style={{ fontSize: 12, color: '#4F46E5', fontWeight: 600 }}>
+          Quỹ thưởng: <strong style={{ color: 'var(--brand-indigo)' }}>15.000.000₫</strong> Voucher &amp; Thẻ VIP Fashion Week
         </div>
       </div>
-      <p style={{ margin: '0 0 10px', fontSize: 12, color: '#713f12', lineHeight: 1.4 }}>
+      <p style={{ margin: '0 0 10px', fontSize: 12, color: '#475569', lineHeight: 1.4 }}>
         Thử thách sáng tạo bộ phối OOTD tinh tế cùng chất liệu Linen tự nhiên &amp; Lụa Bảo Lộc. Hãy bình chọn cho outfit bạn ấn tượng nhất hoặc gửi bài phối để nhận ngay +500 Xu Xanh!
       </p>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -146,7 +146,7 @@ export default function Community() {
           <button
             type="button"
             className="button"
-            style={{ fontSize: 11, padding: '5px 14px', background: '#b45309', borderColor: '#92400e', color: '#fff' }}
+            style={{ fontSize: 11, padding: '5px 14px', background: '#4F46E5', borderColor: '#92400e', color: '#fff' }}
             onClick={handleJoinChallenge}
           >
             <Plus size={13} /> Tham gia thử thách (+500 Điểm Xanh)
@@ -182,7 +182,7 @@ export default function Community() {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ width: 40, height: 40, borderRadius: 8, background: '#fdf8ea', display: 'grid', placeItems: 'center', color: 'var(--clay)', flexShrink: 0 }}>
+        <div style={{ width: 40, height: 40, borderRadius: 8, background: '#EEF2FF', display: 'grid', placeItems: 'center', color: 'var(--brand-indigo)', flexShrink: 0 }}>
           <Video size={20} />
         </div>
         <div>
@@ -518,12 +518,12 @@ export default function Community() {
     >
       <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Sparkles size={18} color="#b45309" />
+          <Sparkles size={18} color="#4F46E5" />
           <div>
             <strong style={{ fontSize: 13, color: '#92400e' }}>
               Quỹ Bảo Trợ Phong Cách &amp; Bảng Vinh Danh Nhà Sáng Tạo OOTD (SOC-LOOKBOOK-CREATOR-REWARD-01)
             </strong>
-            <span style={{ marginLeft: 8, fontSize: 10, background: '#fef3c7', color: '#b45309', padding: '1px 6px', borderRadius: 2, fontWeight: 700, border: '1px solid #fde68a' }}>
+            <span style={{ marginLeft: 8, fontSize: 10, background: '#fef3c7', color: '#4F46E5', padding: '1px 6px', borderRadius: 2, fontWeight: 700, border: '1px solid #fde68a' }}>
               CREATOR PATRONAGE VAULT
             </span>
           </div>
@@ -534,9 +534,9 @@ export default function Community() {
           style={{
             fontSize: 11,
             padding: '4px 10px',
-            background: patronOpen ? '#b45309' : '#fff',
-            color: patronOpen ? '#fff' : '#b45309',
-            border: '1px solid #b45309',
+            background: patronOpen ? '#4F46E5' : '#fff',
+            color: patronOpen ? '#fff' : '#4F46E5',
+            border: '1px solid #4F46E5',
             borderRadius: 4,
             cursor: 'pointer',
             fontWeight: 600,
@@ -569,11 +569,11 @@ export default function Community() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
               <strong style={{ color: '#0f172a', fontSize: 12 }}>{muse.name}</strong>
-              <span style={{ fontSize: 9, background: '#fef9c3', color: '#a16207', padding: '1px 5px', borderRadius: 4, fontWeight: 700 }}>
+              <span style={{ fontSize: 9, background: '#EEF2FF', color: '#a16207', padding: '1px 5px', borderRadius: 4, fontWeight: 700 }}>
                 {muse.tag}
               </span>
             </div>
-            <div style={{ color: '#64748b', fontSize: 10, marginBottom: 2 }}>Danh hiệu: <strong style={{ color: '#b45309' }}>{muse.role}</strong></div>
+            <div style={{ color: '#64748b', fontSize: 10, marginBottom: 2 }}>Danh hiệu: <strong style={{ color: '#4F46E5' }}>{muse.role}</strong></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
               <span style={{ color: '#166534', fontWeight: 700 }}>{muse.funded} ({muse.coffees} ☕)</span>
               <button
@@ -665,7 +665,7 @@ export default function Community() {
             <button
               type="submit"
               className="button"
-              style={{ fontSize: 11, padding: '5px 14px', background: '#b45309', color: '#fff' }}
+              style={{ fontSize: 11, padding: '5px 14px', background: '#4F46E5', color: '#fff' }}
             >
               Gửi Bảo Trợ {vnd(patronAmount)}
             </button>
@@ -704,9 +704,9 @@ export default function Community() {
             fontSize: 11,
             whiteSpace: 'nowrap',
             cursor: 'pointer',
-            border: trendTag === tag.id ? '1px solid var(--clay)' : '1px solid var(--line)',
-            background: trendTag === tag.id ? '#fdf8ea' : '#fff',
-            color: trendTag === tag.id ? 'var(--clay)' : 'var(--ink)',
+            border: trendTag === tag.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
+            background: trendTag === tag.id ? '#EEF2FF' : '#fff',
+            color: trendTag === tag.id ? 'var(--brand-indigo)' : 'var(--ink)',
             fontWeight: trendTag === tag.id ? 700 : 500,
           }}
         >
@@ -714,7 +714,7 @@ export default function Community() {
         </button>
       ))}
     </div>
-    {filter === 'samples' && <div className="panel" style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 8, padding: 24, marginBottom: 24 }}><div className="row between" style={{ marginBottom: 16 }}><div><h2 style={{ fontSize: 22, margin: 0 }}>Trung Tâm Mẫu Thử KOC (SOC-CREATOR-SAMPLE)</h2><p className="subtle" style={{ margin: '4px 0 0' }}>Dành cho Nhà Sáng Tạo có Điểm Tín Nhiệm &ge; 90. Nhận mẫu thử miễn phí, sáng tạo OOTD và nhận hoa hồng 5%.</p></div><div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '8px 14px', borderRadius: 8, fontSize: 12 }}>Điểm Tín Nhiệm Của Bạn: <strong style={{ color: '#1D4ED8' }}>96/100 (Hạng Kim Cương)</strong> · SLA duyệt 48h</div></div><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>{catalog.data?.items.slice(0, 4).map(p => <div key={p.id} style={{ border: '1px solid var(--line)', borderRadius: 8, padding: 14 }}><img src={p.images[0]?.url || '/products/shirt.svg'} alt={p.name} style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 10 }} onError={(e) => { const t = e.currentTarget as HTMLImageElement; if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg'; }} /><strong style={{ fontSize: 13, display: 'block' }}>{p.name}</strong><span className="subtle" style={{ fontSize: 11 }}>Gian hàng: {p.shop.name}</span><div className="row between" style={{ marginTop: 10 }}><span style={{ fontSize: 11, background: '#DCFCE7', color: '#166534', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>Mẫu thử miễn phí</span><button className="button" style={{ fontSize: 11, padding: '6px 12px' }} disabled={busy} onClick={() => { setNotice(`Đã gửi yêu cầu xin mẫu thử "${p.name}" tới ${p.shop.name}! Shop sẽ phản hồi trong 48h.`); }}>Xin Mẫu Thử</button></div></div>)}</div></div>}{compose && <form className="panel form composer" onSubmit={publish}><h2>Hôm nay bạn mặc gì?</h2><label>Câu chuyện của bạn<textarea name="caption" required minLength={5} maxLength={2000}/></label><label>Đường dẫn ảnh, mỗi ảnh một dòng<textarea name="images" required placeholder="http://localhost:3000/products/outfit.svg"/></label><p className="fine-print">Bản phát triển dùng URL ảnh. Luồng tải ảnh trực tiếp sẽ được bổ sung.</p><fieldset><legend>Gắn sản phẩm trong bộ đồ</legend>{catalog.data?.items.map(p => <label className="check" key={p.id}><input type="checkbox" checked={tagIds.includes(p.id)} onChange={e => setTagIds(e.target.checked ? [...tagIds, p.id] : tagIds.filter(id => id !== p.id))}/>{p.name} · {p.shop.name}</label>)}</fieldset><button disabled={busy} className="button">{busy ? 'Đang đăng…' : 'Đăng bài phối đồ'}</button></form>}{error && <Notice error>{error}</Notice>}{notice && <Notice>{notice} <Link href="/gio-hang">Xem giỏ hàng →</Link></Notice>}{feed.error && <Notice error>{feed.error}</Notice>}{feed.loading ? <Loading/> : <div className="feed-grid">{posts.map(post => <article key={post.id} className="post"><div className="post-author"><div className="avatar">{post.author.name[0]}</div><div><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><strong>{post.author.name}</strong><span className="badge" style={{ fontSize: 9, padding: '1px 5px', background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A' }}>★ KOC Kim Cương (96/100)</span></div><span className="subtle" style={{ fontSize: 11 }}>Cảm hứng hằng ngày</span></div>{user && user.id !== post.author.id && <button className="text-button" onClick={() => action(`/community/users/${post.author.id}/follow`)}>Theo dõi</button>}</div><div className="post-media"><img src={post.media[0]?.url} alt={post.caption} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('/products/outfit.svg')) target.src = '/products/outfit.svg'; }}/>{post.tags.filter(t => t.mediaPosition === 0).map((tag, i) => tag.available ? <Link key={tag.id} className="image-tag" style={{ left: `${tag.x * 100}%`, top: `${tag.y * 100}%` }} href={`/san-pham/${tag.product.slug}`} aria-label={`Xem ${tag.product.name}`}>{i + 1}<span>{tag.product.name}</span></Link> : <span key={tag.id} className="image-tag unavailable" style={{ left: `${tag.x * 100}%`, top: `${tag.y * 100}%` }}>×</span>)}</div><div className="post-actions"><button className={post.liked ? 'icon-link liked' : 'icon-link'} aria-label={post.liked ? 'Bỏ thích' : 'Thích'} onClick={() => action(`/community/posts/${post.id}/like`, post.liked ? 'DELETE' : 'POST')}><Heart size={22} fill={post.liked ? 'currentColor' : 'none'}/>{post._count.reactions}</button><span className="row"><MessageCircle size={21}/>{post._count.comments}</span><button className="icon-link" aria-label="Chia sẻ link KOC" title="Sao chép link giới thiệu KOC" onClick={() => { void navigator.clipboard?.writeText(`${window.location.origin}/?ref=${post.author.id}`); setNotice(`Đã sao chép link KOC của ${post.author.name}!`); }}><Share2 size={18}/></button><button className="icon-link" style={{ color: tippedPosts[post.id] ? '#b45309' : undefined }} aria-label="Tặng xu sáng tạo" title="Tặng xu thưởng sáng tạo cho tác giả (SOC-CREATOR-TIP-01)" onClick={() => setTipPostId(tipPostId === post.id ? null : post.id)}><Coffee size={18}/><span style={{ fontSize: 11, fontWeight: 600 }}>{tippedPosts[post.id] ? vnd(tippedPosts[post.id]) : 'Thưởng KOC'}</span></button><button className="icon-link" style={{ color: challengeVotes[post.id] ? '#b45309' : undefined }} aria-label="Bình chọn thử thách" title="Bình chọn trang phục tham gia Thử Thách Tuần (SOC-OOTD-CHALLENGE-01)" onClick={() => voteChallenge(post.id)}><Trophy size={17}/><span style={{ fontSize: 11, fontWeight: 600 }}>{challengeVotes[post.id] ? `${challengeVotes[post.id]} vote` : 'Bình chọn'}</span></button><button className="icon-link push-right" aria-label={post.savedByMe ? 'Bỏ lưu' : 'Lưu bài'} onClick={() => action(`/community/posts/${post.id}/save`, post.savedByMe ? 'DELETE' : 'POST')}><Bookmark size={21} fill={post.savedByMe ? 'currentColor' : 'none'}/></button><button className="icon-link" aria-label="Báo cáo bài" onClick={() => setReportId(reportId === post.id ? '' : post.id)}><Flag size={17}/></button></div>{tipPostId === post.id && (<div style={{ margin: '8px 20px', padding: 12, background: '#fefce8', border: '1px solid #fef08a', borderRadius: 4, fontSize: 12 }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}><strong style={{ color: '#854d0e', display: 'flex', alignItems: 'center', gap: 6 }}><Coffee size={15}/> Tặng Ly Cà Phê · Xu Sáng Tạo (SOC-CREATOR-TIP-01)</strong><span style={{ fontSize: 10, background: '#fef9c3', color: '#a16207', padding: '1px 6px', borderRadius: 2 }}>Tuân thủ TT 111/2013 PIT 10%</span></div><p style={{ margin: '0 0 8px', fontSize: 11, color: '#713f12', lineHeight: 1.4 }}>Gửi tặng khoản thưởng khích lệ tác giả <strong>{post.author.name}</strong>. Khoản thưởng chuyển thẳng vào Creator Wallet sau khi khấu trừ thuế theo quy định.</p><div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>{[{ val: 10000, label: '10.000₫ · Trà Xanh' }, { val: 20000, label: '20.000₫ · Cà Phê' }, { val: 50000, label: '50.000₫ · Bánh Ngọt' }, { val: 100000, label: '100.000₫ · Bó Hoa' }].map(opt => (<button key={opt.val} type="button" style={{ padding: '4px 8px', fontSize: 11, borderRadius: 3, border: tipAmount === opt.val ? '1px solid var(--clay)' : '1px solid #fde047', background: tipAmount === opt.val ? '#fdf8ea' : '#fff', color: tipAmount === opt.val ? 'var(--clay)' : '#854d0e', fontWeight: tipAmount === opt.val ? 700 : 500, cursor: 'pointer' }} onClick={() => setTipAmount(opt.val)}>{opt.label}</button>))}</div><div style={{ display: 'flex', gap: 8 }}><button type="button" className="button" style={{ fontSize: 11, padding: '5px 12px' }} onClick={() => { setTippedPosts({ ...tippedPosts, [post.id]: (tippedPosts[post.id] || 0) + tipAmount }); setTipPostId(null); setNotice(`✓ Bạn đã tặng ${vnd(tipAmount)} cho nhà sáng tạo ${post.author.name}! Khoản thưởng đã được ghi nhận vào Creator Wallet.`); }}>Tặng {vnd(tipAmount)} ngay</button><button type="button" className="text-button" style={{ fontSize: 11, padding: '5px 8px' }} onClick={() => setTipPostId(null)}>Đóng</button></div></div>)}<p className="caption">{post.caption}</p><div className="tagged-products">{post.tags.map((tag, index) => <div key={tag.id}><span className="tag-number">{index + 1}</span><div className="grow"><strong>{tag.product.name}</strong><small>{tag.product.shop.name}</small></div>{tag.available ? <Link href={`/san-pham/${tag.product.slug}`}>{tag.product.variants[0] && vnd(tag.product.variants[0].price)}<ArrowUpRight size={16}/></Link> : <span className="subtle">Ngừng bán</span>}</div>)}</div>{post.tags.some(t => t.available) && <div style={{ padding: '0 20px 12px' }}><button className="button secondary full" disabled={busy} onClick={() => shopTheLook(post)}><ShoppingBag size={16}/>Mua trọn bộ (Shop the Look)</button></div>}{reportId === post.id && <form className="form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/community/posts/${post.id}/report`, 'POST', { reason: d.get('reason') }); setReportId(''); }}><label>Lý do báo cáo<input name="reason" minLength={5} required/></label><button className="button secondary">Gửi báo cáo</button></form>}
+    {filter === 'samples' && <div className="panel" style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 8, padding: 24, marginBottom: 24 }}><div className="row between" style={{ marginBottom: 16 }}><div><h2 style={{ fontSize: 22, margin: 0 }}>Trung Tâm Mẫu Thử KOC (SOC-CREATOR-SAMPLE)</h2><p className="subtle" style={{ margin: '4px 0 0' }}>Dành cho Nhà Sáng Tạo có Điểm Tín Nhiệm &ge; 90. Nhận mẫu thử miễn phí, sáng tạo OOTD và nhận hoa hồng 5%.</p></div><div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '8px 14px', borderRadius: 8, fontSize: 12 }}>Điểm Tín Nhiệm Của Bạn: <strong style={{ color: '#1D4ED8' }}>96/100 (Hạng Kim Cương)</strong> · SLA duyệt 48h</div></div><div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>{catalog.data?.items.slice(0, 4).map(p => <div key={p.id} style={{ border: '1px solid var(--line)', borderRadius: 8, padding: 14 }}><img src={p.images[0]?.url || '/products/shirt.svg'} alt={p.name} style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 6, marginBottom: 10 }} onError={(e) => { const t = e.currentTarget as HTMLImageElement; if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg'; }} /><strong style={{ fontSize: 13, display: 'block' }}>{p.name}</strong><span className="subtle" style={{ fontSize: 11 }}>Gian hàng: {p.shop.name}</span><div className="row between" style={{ marginTop: 10 }}><span style={{ fontSize: 11, background: '#DCFCE7', color: '#166534', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>Mẫu thử miễn phí</span><button className="button" style={{ fontSize: 11, padding: '6px 12px' }} disabled={busy} onClick={() => { setNotice(`Đã gửi yêu cầu xin mẫu thử "${p.name}" tới ${p.shop.name}! Shop sẽ phản hồi trong 48h.`); }}>Xin Mẫu Thử</button></div></div>)}</div></div>}{compose && <form className="panel form composer" onSubmit={publish}><h2>Hôm nay bạn mặc gì?</h2><label>Câu chuyện của bạn<textarea name="caption" required minLength={5} maxLength={2000}/></label><label>Đường dẫn ảnh, mỗi ảnh một dòng<textarea name="images" required placeholder="http://localhost:3000/products/outfit.svg"/></label><p className="fine-print">Bản phát triển dùng URL ảnh. Luồng tải ảnh trực tiếp sẽ được bổ sung.</p><fieldset><legend>Gắn sản phẩm trong bộ đồ</legend>{catalog.data?.items.map(p => <label className="check" key={p.id}><input type="checkbox" checked={tagIds.includes(p.id)} onChange={e => setTagIds(e.target.checked ? [...tagIds, p.id] : tagIds.filter(id => id !== p.id))}/>{p.name} · {p.shop.name}</label>)}</fieldset><button disabled={busy} className="button">{busy ? 'Đang đăng…' : 'Đăng bài phối đồ'}</button></form>}{error && <Notice error>{error}</Notice>}{notice && <Notice>{notice} <Link href="/gio-hang">Xem giỏ hàng →</Link></Notice>}{feed.error && <Notice error>{feed.error}</Notice>}{feed.loading ? <Loading/> : <div className="feed-grid">{posts.map(post => <article key={post.id} className="post"><div className="post-author"><div className="avatar">{post.author.name[0]}</div><div><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}><strong>{post.author.name}</strong><span className="badge" style={{ fontSize: 9, padding: '1px 5px', background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A' }}>★ KOC Kim Cương (96/100)</span></div><span className="subtle" style={{ fontSize: 11 }}>Cảm hứng hằng ngày</span></div>{user && user.id !== post.author.id && <button className="text-button" onClick={() => action(`/community/users/${post.author.id}/follow`)}>Theo dõi</button>}</div><div className="post-media"><img src={post.media[0]?.url} alt={post.caption} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('/products/outfit.svg')) target.src = '/products/outfit.svg'; }}/>{post.tags.filter(t => t.mediaPosition === 0).map((tag, i) => tag.available ? <Link key={tag.id} className="image-tag" style={{ left: `${tag.x * 100}%`, top: `${tag.y * 100}%` }} href={`/san-pham/${tag.product.slug}`} aria-label={`Xem ${tag.product.name}`}>{i + 1}<span>{tag.product.name}</span></Link> : <span key={tag.id} className="image-tag unavailable" style={{ left: `${tag.x * 100}%`, top: `${tag.y * 100}%` }}>×</span>)}</div><div className="post-actions"><button className={post.liked ? 'icon-link liked' : 'icon-link'} aria-label={post.liked ? 'Bỏ thích' : 'Thích'} onClick={() => action(`/community/posts/${post.id}/like`, post.liked ? 'DELETE' : 'POST')}><Heart size={22} fill={post.liked ? 'currentColor' : 'none'}/>{post._count.reactions}</button><span className="row"><MessageCircle size={21}/>{post._count.comments}</span><button className="icon-link" aria-label="Chia sẻ link KOC" title="Sao chép link giới thiệu KOC" onClick={() => { void navigator.clipboard?.writeText(`${window.location.origin}/?ref=${post.author.id}`); setNotice(`Đã sao chép link KOC của ${post.author.name}!`); }}><Share2 size={18}/></button><button className="icon-link" style={{ color: tippedPosts[post.id] ? '#4F46E5' : undefined }} aria-label="Tặng xu sáng tạo" title="Tặng xu thưởng sáng tạo cho tác giả (SOC-CREATOR-TIP-01)" onClick={() => setTipPostId(tipPostId === post.id ? null : post.id)}><Coffee size={18}/><span style={{ fontSize: 11, fontWeight: 600 }}>{tippedPosts[post.id] ? vnd(tippedPosts[post.id]) : 'Thưởng KOC'}</span></button><button className="icon-link" style={{ color: challengeVotes[post.id] ? '#4F46E5' : undefined }} aria-label="Bình chọn thử thách" title="Bình chọn trang phục tham gia Thử Thách Tuần (SOC-OOTD-CHALLENGE-01)" onClick={() => voteChallenge(post.id)}><Trophy size={17}/><span style={{ fontSize: 11, fontWeight: 600 }}>{challengeVotes[post.id] ? `${challengeVotes[post.id]} vote` : 'Bình chọn'}</span></button><button className="icon-link push-right" aria-label={post.savedByMe ? 'Bỏ lưu' : 'Lưu bài'} onClick={() => action(`/community/posts/${post.id}/save`, post.savedByMe ? 'DELETE' : 'POST')}><Bookmark size={21} fill={post.savedByMe ? 'currentColor' : 'none'}/></button><button className="icon-link" aria-label="Báo cáo bài" onClick={() => setReportId(reportId === post.id ? '' : post.id)}><Flag size={17}/></button></div>{tipPostId === post.id && (<div style={{ margin: '8px 20px', padding: 12, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 4, fontSize: 12 }}><div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}><strong style={{ color: '#09090B', display: 'flex', alignItems: 'center', gap: 6 }}><Coffee size={15}/> Tặng Ly Cà Phê · Xu Sáng Tạo (SOC-CREATOR-TIP-01)</strong><span style={{ fontSize: 10, background: '#EEF2FF', color: '#a16207', padding: '1px 6px', borderRadius: 2 }}>Tuân thủ TT 111/2013 PIT 10%</span></div><p style={{ margin: '0 0 8px', fontSize: 11, color: '#475569', lineHeight: 1.4 }}>Gửi tặng khoản thưởng khích lệ tác giả <strong>{post.author.name}</strong>. Khoản thưởng chuyển thẳng vào Creator Wallet sau khi khấu trừ thuế theo quy định.</p><div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>{[{ val: 10000, label: '10.000₫ · Trà Xanh' }, { val: 20000, label: '20.000₫ · Cà Phê' }, { val: 50000, label: '50.000₫ · Bánh Ngọt' }, { val: 100000, label: '100.000₫ · Bó Hoa' }].map(opt => (<button key={opt.val} type="button" style={{ padding: '4px 8px', fontSize: 11, borderRadius: 3, border: tipAmount === opt.val ? '1px solid var(--brand-indigo)' : '1px solid #CBD5E1', background: tipAmount === opt.val ? '#EEF2FF' : '#fff', color: tipAmount === opt.val ? 'var(--brand-indigo)' : '#09090B', fontWeight: tipAmount === opt.val ? 700 : 500, cursor: 'pointer' }} onClick={() => setTipAmount(opt.val)}>{opt.label}</button>))}</div><div style={{ display: 'flex', gap: 8 }}><button type="button" className="button" style={{ fontSize: 11, padding: '5px 12px' }} onClick={() => { setTippedPosts({ ...tippedPosts, [post.id]: (tippedPosts[post.id] || 0) + tipAmount }); setTipPostId(null); setNotice(`✓ Bạn đã tặng ${vnd(tipAmount)} cho nhà sáng tạo ${post.author.name}! Khoản thưởng đã được ghi nhận vào Creator Wallet.`); }}>Tặng {vnd(tipAmount)} ngay</button><button type="button" className="text-button" style={{ fontSize: 11, padding: '5px 8px' }} onClick={() => setTipPostId(null)}>Đóng</button></div></div>)}<p className="caption">{post.caption}</p><div className="tagged-products">{post.tags.map((tag, index) => <div key={tag.id}><span className="tag-number">{index + 1}</span><div className="grow"><strong>{tag.product.name}</strong><small>{tag.product.shop.name}</small></div>{tag.available ? <Link href={`/san-pham/${tag.product.slug}`}>{tag.product.variants[0] && vnd(tag.product.variants[0].price)}<ArrowUpRight size={16}/></Link> : <span className="subtle">Ngừng bán</span>}</div>)}</div>{post.tags.some(t => t.available) && <div style={{ padding: '0 20px 12px' }}><button className="button secondary full" disabled={busy} onClick={() => shopTheLook(post)}><ShoppingBag size={16}/>Mua trọn bộ (Shop the Look)</button></div>}{reportId === post.id && <form className="form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/community/posts/${post.id}/report`, 'POST', { reason: d.get('reason') }); setReportId(''); }}><label>Lý do báo cáo<input name="reason" minLength={5} required/></label><button className="button secondary">Gửi báo cáo</button></form>}
 
 {/* Thẻ Lọc & Hỏi Đáp Tỉ Lệ Dáng KOC (SOC-FIT-FEEDBACK-01) */}
 <div style={{ padding: '0 20px 8px', borderTop: '1px solid rgba(0,0,0,0.05)', marginTop: 8, paddingTop: 8 }}>
@@ -740,7 +740,7 @@ export default function Community() {
         type="button"
         onClick={() => setFitTab({ ...fitTab, [post.id]: 'fit' })}
         style={{
-          background: fitTab[post.id] === 'fit' ? 'var(--clay)' : '#f1f5f9',
+          background: fitTab[post.id] === 'fit' ? 'var(--brand-indigo)' : '#f1f5f9',
           color: fitTab[post.id] === 'fit' ? '#fff' : '#475569',
           border: 'none',
           padding: '3px 8px',

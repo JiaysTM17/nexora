@@ -84,7 +84,7 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
           Tìm thấy <strong>{items.length}</strong> sản phẩm phù hợp {palette && palette !== 'ALL' ? `(Sắc thái: ${PALETTE_FAMILIES.find(p => p.id === palette)?.name})` : ''}
         </p>
         {palette && palette !== 'ALL' && (
-          <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+          <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
             HÒA SẮC TONE-SUR-TONE 98/100
           </span>
         )}
@@ -116,7 +116,7 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
                   {p.shop.isMall && (
                     <span
                       style={{
-                        background: 'var(--clay)',
+                        background: 'var(--brand-indigo)',
                         color: '#fff',
                         fontSize: 9,
                         fontWeight: 700,
@@ -237,7 +237,7 @@ function SearchPage() {
               applyFilters(q, category, priceRange, e.target.checked);
             }}
           />
-          <strong style={{ color: 'var(--clay)' }}>NEXORA Mall</strong> (Chính hãng 100%)
+          <strong style={{ color: 'var(--brand-indigo)' }}>NEXORA Mall</strong> (Chính hãng 100%)
         </label>
 
         {(q || category || priceRange || mallOnly || palette !== 'ALL' || gsmTier !== 'ALL') && (
@@ -258,13 +258,13 @@ function SearchPage() {
           margin: '0 0 16px',
           padding: '12px 16px',
           background: '#fdfbf7',
-          border: '1px solid #fed7aa',
+          border: '1px solid var(--line)',
           borderRadius: 6,
         }}
       >
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Palette size={15} color="var(--clay)" />
+            <Palette size={15} color="var(--brand-indigo)" />
             <strong style={{ fontSize: 12, color: '#9a3412' }}>
               Lọc Theo Sắc Thái Bảng Màu Tự Nhiên (CAT-VISUAL-PALETTE-SEARCH-01)
             </strong>
@@ -288,8 +288,8 @@ function SearchPage() {
                 borderRadius: 20,
                 fontSize: 11,
                 cursor: 'pointer',
-                border: palette === p.id ? '1.5px solid var(--clay)' : '1px solid #fed7aa',
-                background: palette === p.id ? '#fed7aa' : '#fff',
+                border: palette === p.id ? '1.5px solid var(--brand-indigo)' : '1px solid var(--line)',
+                background: palette === p.id ? 'var(--line)' : '#fff',
                 color: palette === p.id ? '#7c2d12' : '#9a3412',
                 fontWeight: palette === p.id ? 700 : 500,
                 whiteSpace: 'nowrap',
