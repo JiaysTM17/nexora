@@ -7,27 +7,18 @@ import { Loading, Notice, ProductCard } from './ui';
 
 export default function Home() {
   const [category, setCategory] = useState(''), [query, setQuery] = useState(''), [search, setSearch] = useState(''), [color, setColor] = useState(''), [size, setSize] = useState(''), [stock, setStock] = useState(false), [mall, setMall] = useState(false), [filters, setFilters] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 45, seconds: 18 });
   const [activeCapsule, setActiveCapsule] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return { hours: 3, minutes: 0, seconds: 0 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
   const params = new URLSearchParams({ ...(category ? { category } : {}), ...(search ? { q: search } : {}), ...(color ? { color } : {}), ...(size ? { size } : {}), ...(stock ? { inStock: 'true' } : {}), ...(mall ? { isMall: 'true' } : {}) });
   const { data, error, loading } = useResource<{ items: Product[]; total: number }>(`/products?${params}`);
   return <>
     <section className="hero">
       <div className="hero-copy">
         <div className="eyebrow"><span/> NEXORA ATELIER // SS 2026 RUNWAY &amp; EDITORIAL ARCHIVE</div>
-        <h1>KIẾN TẠO PHONG CÁCH.<br/><span>ĐỊNH HÌNH BẢN SẮC.</span></h1>
-        <p>Nền tảng thương mại thời trang đương đại kết hợp AI Styling &amp; Mạng xã hội OOTD.<br/>Khám phá các thiết kế nguyên bản từ các xưởng may thủ công &amp; nhà mốt độc lập.</p>
+        <h1 style={{ textWrap: 'balance', letterSpacing: '-0.02em', fontSize: 'clamp(28px, 3.2vw, 44px)', fontWeight: 700, lineHeight: 1.25 }}>
+          Nghệ Thuật May Đo.<br/>
+          <span style={{ color: 'var(--brand-indigo)' }}>Bản Sắc Đương Đại.</span>
+        </h1>
+        <p>Tuyển tập thiết kế may đo cao cấp từ các nhà mốt độc lập. Chuẩn mực trong từng phom dáng, nguyên bản trong từng thớ sợi tự nhiên.</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <a className="button" href="#trang-phuc">Khám Phá Bộ Sưu Tập <ArrowUpRight size={18}/></a>
           <Link className="button subtle" href="/phoi-do" style={{ background: '#FFFFFF', border: '1px solid var(--line)', color: 'var(--ink)' }}>
@@ -41,7 +32,10 @@ export default function Home() {
         </div>
       </div>
       <div className="hero-art">
-        <img src="/products/outfit.svg" alt="Minh họa phối sơ mi linen và quần suông màu nâu"/>
+        <img
+          src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80"
+          alt="NEXORA Runway &amp; Editorial Archive"
+        />
         <div className="editor-note">
           <span>EDITORIAL SELECTION // 01</span>
           <strong>Normandy Linen &amp; Sartorial Cut</strong>
@@ -52,47 +46,84 @@ export default function Home() {
     </section>
     <div className="values-strip">
       <span>100% NGUYÊN BẢN CHÍNH HÃNG</span>
-      <i>✳</i>
+      <i>●</i>
       <span>ĐỒNG KIỂM TRƯỚC KHI NHẬN HÀNG</span>
-      <i>✳</i>
+      <i>●</i>
       <span>PHÒNG THỬ ĐỒ MIX &amp; MATCH AI</span>
-      <i>✳</i>
+      <i>●</i>
       <span>ATELIER SPA &amp; CHĂM SÓC ĐỒ HIỆU</span>
-      <i>✳</i>
+      <i>●</i>
       <span>THU CŨ ĐỔI MỚI TRADE-IN MINH BẠCH</span>
     </div>
-    <section className="section" style={{ paddingBottom: 0 }}>
-      <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: '#fff', padding: '22px 30px', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <span style={{ background: '#4F46E5', color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 2, letterSpacing: 1, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-            <Zap size={12} fill="#fff"/> FLASH SALE ĐỘC QUYỀN (CART-FLASH-03)
-          </span>
-          <h2 style={{ color: '#fff', margin: '8px 0 4px', fontSize: 24, fontWeight: 600 }}>Giờ Vàng Săn Deal · Khóa Giữ Giá 15 Phút</h2>
-          <p style={{ margin: 0, color: '#94a3b8', fontSize: 12 }}>Phân lập tồn kho độc lập &amp; khóa giá chống race-condition. Tự động hoàn lại kho chung khi quá hạn.</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 11, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1 }}>Kết thúc sau</span>
-          <div style={{ display: 'flex', gap: 5, fontFamily: 'monospace', fontSize: 17, fontWeight: 700, alignItems: 'center' }}>
-            <span style={{ background: 'rgba(255,255,255,0.1)', padding: '5px 8px', borderRadius: 2, border: '1px solid rgba(255,255,255,0.15)' }}>{String(timeLeft.hours).padStart(2, '0')}</span>:
-            <span style={{ background: 'rgba(255,255,255,0.1)', padding: '5px 8px', borderRadius: 2, border: '1px solid rgba(255,255,255,0.15)' }}>{String(timeLeft.minutes).padStart(2, '0')}</span>:
-            <span style={{ background: '#4F46E5', padding: '5px 8px', borderRadius: 2 }}>{String(timeLeft.seconds).padStart(2, '0')}</span>
+
+    {/* Editorial Stories & Atelier Chapters */}
+    <section className="section" style={{ paddingTop: 24, paddingBottom: 0 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ height: 220, overflow: 'hidden', position: 'relative' }}>
+            <img
+              src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80"
+              alt="Chất liệu mộc tự nhiên"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            <span style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(9, 9, 11, 0.85)', color: '#FFFFFF', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 2 }}>
+              CHẤT LIỆU MỘC // 01
+            </span>
+          </div>
+          <div style={{ padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, margin: '0 0 6px', color: 'var(--ink)' }}>Sợi Lanh Normandy &amp; Lụa Tơ Tằm</h3>
+              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>Chất liệu dệt thủ công thoáng khí, phom dáng rủ nhẹ nhàng tôn vinh vẻ đẹp nguyên bản.</p>
+            </div>
+            <Link href="/san-pham?category=AO" style={{ marginTop: 14, fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              Khám phá chất liệu <ArrowUpRight size={14}/>
+            </Link>
           </div>
         </div>
-      </div>
-    </section>
-    <section className="section" style={{ paddingTop: 16, paddingBottom: 0 }}>
-      <div style={{ background: '#0f172a', color: '#fff', padding: '24px 30px', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20, borderLeft: '4px solid #EF4444' }}>
-        <div style={{ maxWidth: 640 }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(239, 68, 68, 0.2)', color: '#FCA5A5', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, border: '1px solid rgba(239, 68, 68, 0.4)' }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#EF4444', display: 'inline-block', boxShadow: '0 0 6px #EF4444' }}/>
-            NEXORA LIVE RUNWAY (SOC-LIVE-01) · 1.428 ĐANG XEM
-          </span>
-          <h2 style={{ color: '#fff', margin: '10px 0 6px', fontSize: 24, fontWeight: 600 }}>Sàn Diễn Trực Tiếp: BST Mùa Đông 2026</h2>
-          <p style={{ margin: 0, color: '#94a3b8', fontSize: 13, lineHeight: 1.6 }}>Trải nghiệm chốt đơn 1-chạm không rời luồng phát, tương tác trực tiếp với Stylist và săn các deal ghim độc quyền giảm tới 35%.</p>
+
+        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ height: 220, overflow: 'hidden', position: 'relative' }}>
+            <img
+              src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=800&q=80"
+              alt="Kỹ nghệ may đo cao cấp"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            <span style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(9, 9, 11, 0.85)', color: '#FFFFFF', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 2 }}>
+              ATELIER TAILORING // 02
+            </span>
+          </div>
+          <div style={{ padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, margin: '0 0 6px', color: 'var(--ink)' }}>Kỹ Nghệ May Đo &amp; Phom Dáng Cấu Trúc</h3>
+              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>Đường may sắc sảo, đường cắt tỉ mỉ từ các nghệ nhân may đo độc lập tuyển chọn.</p>
+            </div>
+            <Link href="/san-pham?category=AO_KHOAC" style={{ marginTop: 14, fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              Xem bộ sưu tập <ArrowUpRight size={14}/>
+            </Link>
+          </div>
         </div>
-        <Link href="/live" className="button" style={{ background: '#EF4444', borderColor: '#EF4444', color: '#fff', padding: '12px 24px', fontWeight: 600, gap: 10 }}>
-          Vào xem trực tiếp <ArrowUpRight size={18}/>
-        </Link>
+
+        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ height: 220, overflow: 'hidden', position: 'relative' }}>
+            <img
+              src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80"
+              alt="Digital Runway & Mix Studio"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+            <span style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(9, 9, 11, 0.85)', color: '#FFFFFF', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 2 }}>
+              DIGITAL RUNWAY // 03
+            </span>
+          </div>
+          <div style={{ padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, margin: '0 0 6px', color: 'var(--ink)' }}>Studio Phối Đồ AI &amp; Sàn Diễn Độc Quyền</h3>
+              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>Trải nghiệm thử trang phục ảo và khám phá cảm hứng phong cách từ cộng đồng OOTD.</p>
+            </div>
+            <Link href="/phoi-do" style={{ marginTop: 14, fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              Thử phối trang phục <ArrowUpRight size={14}/>
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -226,9 +257,9 @@ export default function Home() {
               palette: 'Tone Cát Sa Mạc & Trắng Ngà',
               harmony: '99/100 Tone-sur-Tone',
               tag: 'Phóng khoáng · 100% Linen',
-              top: { name: 'Áo sơ mi cổ trụ Premium Linen', price: 420000, img: '/products/shirt.svg', shop: 'NÉP Studio' },
-              bottom: { name: 'Quần short linen mộc tự nhiên', price: 390000, img: '/products/pants.svg', shop: 'NÉP Studio' },
-              outer: { name: 'Áo khoác safari kaki đũi', price: 650000, img: '/products/jacket.svg', shop: 'NÉP Studio' },
+              top: { name: 'Áo sơ mi cổ trụ Premium Linen', price: 420000, img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80', shop: 'NÉP Studio' },
+              bottom: { name: 'Quần short linen mộc tự nhiên', price: 390000, img: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=600&q=80', shop: 'NÉP Studio' },
+              outer: { name: 'Áo khoác safari kaki đũi', price: 650000, img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=80', shop: 'NÉP Studio' },
               originalTotal: 1460000,
               comboTotal: 1314000,
               desc: 'Tuyển tập sợi lanh dệt thưa thoáng khí từ vùng Normandy, kết hợp gam màu cát đất ấm và trắng ngà đem lại cảm giác dạo bước nhẹ nhõm bên bờ biển mùa hè.',
@@ -239,9 +270,9 @@ export default function Home() {
               palette: 'Tone Xám Melange & Đen Tuyển',
               harmony: '98/100 Tone-sur-Tone',
               tag: 'Chỉn chu · Sartorial Cut',
-              top: { name: 'Áo Polo dệt kim Merino sợi dài', price: 490000, img: '/products/shirt.svg', shop: 'Lụa & Co' },
-              bottom: { name: 'Quần tây xếp ly kép phom suông', price: 580000, img: '/products/pants.svg', shop: 'Lụa & Co' },
-              outer: { name: 'Áo khoác Blazer Linen hai hàng khuy', price: 890000, img: '/products/jacket.svg', shop: 'Lụa & Co' },
+              top: { name: 'Áo Polo dệt kim Merino sợi dài', price: 490000, img: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80', shop: 'Lụa & Co' },
+              bottom: { name: 'Quần tây xếp ly kép phom suông', price: 580000, img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80', shop: 'Lụa & Co' },
+              outer: { name: 'Áo khoác Blazer Linen hai hàng khuy', price: 890000, img: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80', shop: 'Lụa & Co' },
               originalTotal: 1960000,
               comboTotal: 1764000,
               desc: 'Ngôn ngữ thiết kế Quiet Luxury tối giản, cấu trúc ve áo mềm mại không độn vai kết hợp phom quần tây Ý sartorial tôn dáng chuẩn mực trong mọi buổi đàm phán.',
@@ -252,9 +283,9 @@ export default function Home() {
               palette: 'Tone Ngà Óng & Nâu Đất',
               harmony: '97/100 Tone-sur-Tone',
               tag: 'Thủ công · 100% Tơ Tằm',
-              top: { name: 'Áo sơ mi lụa tơ tằm dệt tay', price: 750000, img: '/products/shirt.svg', shop: 'NEXORA Atelier' },
-              bottom: { name: 'Quần culottes lụa cát mềm rủ', price: 680000, img: '/products/pants.svg', shop: 'NEXORA Atelier' },
-              outer: { name: 'Khăn lụa bỏ túi & Áo choàng nhẹ', price: 420000, img: '/products/jacket.svg', shop: 'NEXORA Atelier' },
+              top: { name: 'Áo sơ mi lụa tơ tằm dệt tay', price: 750000, img: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80', shop: 'NEXORA Atelier' },
+              bottom: { name: 'Quần culottes lụa cát mềm rủ', price: 680000, img: 'https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?auto=format&fit=crop&w=600&q=80', shop: 'NEXORA Atelier' },
+              outer: { name: 'Khăn lụa bỏ túi & Áo choàng nhẹ', price: 420000, img: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80', shop: 'NEXORA Atelier' },
               originalTotal: 1850000,
               comboTotal: 1665000,
               desc: '100% sợi tơ tằm nguyên bản thủ công từ thủ phủ tơ lụa Bảo Lộc, tạo độ rủ mềm mại như làn da thứ hai với ánh óng ả tự nhiên tuyệt mỹ.',
@@ -288,7 +319,7 @@ export default function Home() {
                     <img
                       src={piece.item.img}
                       alt={piece.item.name}
-                      style={{ width: '100%', height: 110, objectFit: 'contain', margin: '4px 0' }}
+                      style={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 2, margin: '4px 0' }}
                     />
                     <div style={{ fontSize: 11, fontWeight: 600, lineHeight: 1.3, margin: '4px 0 2px', minHeight: 28, overflow: 'hidden' }}>
                       {piece.item.name}
@@ -363,6 +394,6 @@ export default function Home() {
       {filters && <div className="filters"><label>Màu sắc<select value={color} onChange={e => setColor(e.target.value)}><option value="">Mọi màu</option>{['Đen', 'Trắng', 'Kem', 'Nâu', 'Xanh'].map(c => <option key={c}>{c}</option>)}</select></label><label>Kích cỡ<select value={size} onChange={e => setSize(e.target.value)}><option value="">Mọi size</option>{['S', 'M', 'L'].map(s => <option key={s}>{s}</option>)}</select></label><label className="check"><input type="checkbox" checked={stock} onChange={e => setStock(e.target.checked)}/>Chỉ món còn hàng</label><label className="check"><input type="checkbox" checked={mall} onChange={e => setMall(e.target.checked)}/>Chỉ NEXORA Mall (Chính hãng)</label><button className="text-button" onClick={() => { setColor(''); setSize(''); setStock(false); setMall(false); setSearch(''); setQuery(''); }}>Xóa bộ lọc</button></div>}
       {loading ? <Loading/> : error ? <Notice error>{error}</Notice> : data?.items.length ? <div className="product-grid">{data.items.map(p => <ProductCard key={p.id} product={p}/>)}</div> : <Notice>Chưa có món phù hợp bộ lọc. Bạn thử màu hoặc size khác nhé.</Notice>}
     </section>
-    <section className="community-banner"><div><p className="eyebrow">COMMUNITY LOOKBOOK // #NEXORA_OOTD</p><h2>Cảm Hứng Phong Cách <em>Thực Tế Từ Cộng Đồng.</em></h2><p>Cùng một chiếc áo, hàng trăm câu chuyện phong cách.<br/>Ghé xem mọi người đang mặc gì hôm nay.</p><Link href="/cong-dong" className="button light">Khám phá cộng đồng OOTD<ArrowUpRight size={19}/></Link></div><img src="/products/community.svg" alt="Minh họa các cách kết hợp áo và quần"/><span className="community-stamp">NEXORA<br/>STYLE HUB<br/>↗</span></section>
+    <section className="community-banner"><div><p className="eyebrow">COMMUNITY LOOKBOOK // #NEXORA_OOTD</p><h2>Cảm Hứng Phong Cách <em>Thực Tế Từ Cộng Đồng.</em></h2><p>Cùng một chiếc áo, hàng trăm câu chuyện phong cách.<br/>Ghé xem mọi người đang mặc gì hôm nay.</p><Link href="/cong-dong" className="button light">Khám phá cộng đồng OOTD<ArrowUpRight size={19}/></Link></div><img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80" alt="Cộng đồng thời trang NEXORA OOTD"/><span className="community-stamp">NEXORA<br/>STYLE HUB<br/>↗</span></section>
   </>;
 }
