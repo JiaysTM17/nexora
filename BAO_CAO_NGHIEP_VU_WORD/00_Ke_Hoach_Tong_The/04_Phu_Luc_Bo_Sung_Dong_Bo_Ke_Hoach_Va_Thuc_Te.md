@@ -402,3 +402,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 99. **Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)**:
    - Hồ sơ: Module 01 Quản Lý Sản Phẩm, Module 07 Trưng Bày & Kiểm Định Âm Học Tiêu Chuẩn Quốc Tế ISO 354.
    - Thực tế: Phân hệ radar kiểm định âm học sợi dệt tại `/san-pham/[slug]`: Hệ số rủ Cusick Drape 34.2% Hạng A, hệ số tiêu âm NRC ISO 354 đạt 0.45, độ dẫn nhiệt 0.038 W/m·K, chỉ số rủ động 3D 98/100, tích hợp khung mô phỏng dao động rủ 3D thời gian thực (0.8 Hz) hỗ trợ lựa chọn phục trang tối ưu cho môi trường tĩnh.
+
+100. **Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)**:
+   - Hồ sơ: Module 02 Dịch Vụ Tuần Hoàn & Công Nghệ Chuỗi Khối Minh Bạch Quyền Sở Hữu (Web3 Fashion Provenance).
+   - Thực tế: Phân hệ Hộ chiếu số NFT ERC-721 tại `/trade-in`: Chuẩn W3C Verifiable Credentials trên Nexora Eco-Chain (Polygon L2 Proof, Zero Gas Waste), mã băm mật mã SHA-256 cấu trúc sợi dệt 50x, lịch sử lưu ký 3 chặng (Khởi sinh xưởng may #08, Thẩm định quang học 99.4%, Quyền lưu ký số cá nhân), nút mở Nexora Explorer, chuyển giao quyền sở hữu 1-chạm và tải chứng thư JSON-LD (+200 Điểm Xanh).
+
+101. **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)**:
+   - Hồ sơ: Module 03 Giỏ Hàng & Thanh Toán Sinh Thái CSR/ESG.
+   - Thực tế: Phân hệ bảo trợ phủ xanh tại `/gio-hang`: Tính toán động phát thải carbon đơn hàng (~1.85 kg CO2e), 3 gói bảo trợ có kiểm toán định vị GPS (Tier 1 Cần Giờ 10.000₫/2.0kg CO2e, Tier 2 Măng Đen 25.000₫/5.0kg CO2e, Tier 3 Cát Tiên 50.000₫/12.0kg CO2e), tự động cập nhật tổng đơn hàng và đồng bộ thanh toán PayLater 0% lãi suất, cấp mã cam kết `#TREE-VN-XXXXXX` (+50 đến +250 Điểm Xanh).

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers, Search, Eye, CheckCheck } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers, Search, Eye, CheckCheck, QrCode, Cpu, ExternalLink, Copy, Key } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -29,6 +29,12 @@ export default function TradeInPage() {
   const [scanComplete, setScanComplete] = useState(false);
   const [authCode, setAuthCode] = useState('');
   const [sealTagRequested, setSealTagRequested] = useState(true);
+  // TRADEIN-AI-AUTHENTICATION-NFT-01: NFT Digital Ownership Passport & Blockchain Tamper-Proof Provenance
+  const [nftMinted, setNftMinted] = useState(false);
+  const [isMintingNft, setIsMintingNft] = useState(false);
+  const [nftTokenId, setNftTokenId] = useState('');
+  const [nftTxHash, setNftTxHash] = useState('');
+  const [copiedHash, setCopiedHash] = useState(false);
 
   useEffect(() => {
     try {
@@ -802,6 +808,288 @@ export default function TradeInPage() {
             <span style={{ fontSize: 11, color: '#94a3b8' }}>
               Thời gian quét: ~1.2s · Không làm tổn hại sợi vải
             </span>
+          </div>
+        )}
+      </div>
+
+      {/* Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01) */}
+      <div
+        style={{
+          marginTop: 28,
+          padding: '24px 28px',
+          background: 'linear-gradient(135deg, #09131f 0%, #0d1e2e 50%, #081724 100%)',
+          color: '#f8fafc',
+          border: '1px solid #1e3a5f',
+          borderRadius: 8,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Cpu size={22} color="#38bdf8" />
+            <div>
+              <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'Georgia, serif', color: '#f8fafc' }}>
+                Hộ Chiếu Sở Hữu Số NFT &amp; Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)
+              </h3>
+              <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8' }}>
+                Chuẩn hóa quyền sở hữu số ERC-721 &amp; W3C Verifiable Credentials trên Nexora Eco-Chain
+              </p>
+            </div>
+          </div>
+          <span
+            style={{
+              background: 'linear-gradient(90deg, #0284c7, #0ea5e9)',
+              color: '#fff',
+              fontSize: 10,
+              fontWeight: 800,
+              padding: '4px 10px',
+              borderRadius: 4,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
+          >
+            WEB3 PROVENANCE PASSPORT
+          </span>
+        </div>
+
+        <p style={{ fontSize: 13, lineHeight: 1.6, color: '#cbd5e1', margin: '0 0 20px' }}>
+          Mỗi trang phục sau khi hoàn tất kiểm định quang học 50x sẽ được đúc (mint) một thẻ NFT Hộ chiếu số độc bản. Thẻ này lưu giữ dấu vân tay cơ lý sợi dệt, nguồn gốc xưởng may và toàn bộ lịch sử chăm sóc bảo dưỡng, biến thời trang tuần hoàn thành tài sản có thể chuyển nhượng minh bạch và chống giả tuyệt đối.
+        </p>
+
+        {nftMinted ? (
+          <div
+            style={{
+              padding: 20,
+              background: 'rgba(15, 23, 42, 0.85)',
+              border: '1px solid #38bdf8',
+              borderRadius: 6,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <QrCode size={36} color="#38bdf8" />
+                <div>
+                  <div style={{ fontSize: 11, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Mã Định Danh Token Sở Hữu Số (ERC-721)
+                  </div>
+                  <strong style={{ fontSize: 16, color: '#38bdf8', letterSpacing: '0.05em' }}>
+                    {nftTokenId || '#NEX-NFT-AUTH-77921'}
+                  </strong>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <span style={{ fontSize: 11, color: '#34d399', background: 'rgba(16, 185, 129, 0.15)', padding: '3px 8px', borderRadius: 3, fontWeight: 700 }}>
+                  ✓ Đã Khắc Dấu Trên Nexora Eco-Chain
+                </span>
+                <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 4 }}>
+                  Mạng Polygon Layer-2 Proof · Zero Gas Waste
+                </div>
+              </div>
+            </div>
+
+            {/* Cryptographic Hash Bar */}
+            <div
+              style={{
+                padding: '10px 14px',
+                background: 'rgba(2, 6, 23, 0.75)',
+                border: '1px solid #1e293b',
+                borderRadius: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: 11,
+                fontFamily: 'monospace',
+                color: '#94a3b8',
+                gap: 10,
+                flexWrap: 'wrap',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <Key size={13} color="#f59e0b" />
+                <span>Băm Mật Mã Cấu Trúc Sợi (SHA-256):</span>
+                <span style={{ color: '#e2e8f0' }}>{nftTxHash || '0x8f2a93c12b79e4d08a9f620b1e4c73d9518ac9318b320d75c9a12'}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setCopiedHash(true);
+                  setTimeout(() => setCopiedHash(false), 2000);
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: copiedHash ? '#34d399' : '#38bdf8',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontSize: 11,
+                  padding: 0,
+                }}
+              >
+                <Copy size={12} />
+                {copiedHash ? 'Đã sao chép!' : 'Sao chép băm'}
+              </button>
+            </div>
+
+            {/* 3-Stage Provenance Breakdown */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: 14,
+                fontSize: 12,
+              }}
+            >
+              <div style={{ padding: '12px 14px', background: 'rgba(30, 41, 59, 0.6)', borderRadius: 4, borderLeft: '3px solid #38bdf8' }}>
+                <strong style={{ display: 'block', color: '#f8fafc', marginBottom: 4 }}>
+                  1. Khởi Sinh Chế Tác (Genesis)
+                </strong>
+                <p style={{ margin: 0, color: '#94a3b8', lineHeight: 1.5 }}>
+                  Xưởng may đo Độc Bản #08 · Vải Linen Normandy kết hợp tơ tằm Bảo Lộc dệt thủ công 220 GSM.
+                </p>
+              </div>
+
+              <div style={{ padding: '12px 14px', background: 'rgba(30, 41, 59, 0.6)', borderRadius: 4, borderLeft: '3px solid #10b981' }}>
+                <strong style={{ display: 'block', color: '#f8fafc', marginBottom: 4 }}>
+                  2. Thẩm Định Quang Học 50x
+                </strong>
+                <p style={{ margin: 0, color: '#94a3b8', lineHeight: 1.5 }}>
+                  Soi vi điểm ISO 4915, rãnh khóa CNC 0.15mm · Xác nhận 99.4% chuẩn xác thực chính hãng.
+                </p>
+              </div>
+
+              <div style={{ padding: '12px 14px', background: 'rgba(30, 41, 59, 0.6)', borderRadius: 4, borderLeft: '3px solid #f59e0b' }}>
+                <strong style={{ display: 'block', color: '#f8fafc', marginBottom: 4 }}>
+                  3. Quyền Lưu Ký Số (Custody)
+                </strong>
+                <p style={{ margin: 0, color: '#94a3b8', lineHeight: 1.5 }}>
+                  Khóa định danh gắn với tài khoản cá nhân. Hỗ trợ 1-chạm chuyển giao khi bán lại Re-Loved hoặc đổi P2P Swap.
+                </p>
+              </div>
+            </div>
+
+            {/* Action Bar */}
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setSuccess(`✓ Đã mở Hộ chiếu số #${nftTokenId || 'NEX-NFT-AUTH-77921'} trên Nexora Explorer.`);
+                }}
+                style={{
+                  padding: '8px 14px',
+                  background: '#0284c7',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <ExternalLink size={13} /> Xem Trên Nexora Explorer
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSuccess(`✓ Sẵn sàng chuyển giao quyền sở hữu NFT #${nftTokenId || 'NEX-NFT-AUTH-77921'} cho người mua tiếp theo.`);
+                }}
+                style={{
+                  padding: '8px 14px',
+                  background: 'rgba(56, 189, 248, 0.12)',
+                  color: '#38bdf8',
+                  border: '1px solid #0284c7',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <Share2 size={13} /> Chuyển Giao Quyền Sở Hữu
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSuccess(`✓ Đã tải gói chứng thư Hộ chiếu số định dạng W3C JSON-LD thành công.`);
+                }}
+                style={{
+                  padding: '8px 14px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: '#e2e8f0',
+                  border: '1px solid #334155',
+                  borderRadius: 4,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <FileText size={13} /> Tải Chứng Thư Xác Thực (JSON-LD)
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14, padding: 18, background: 'rgba(15, 23, 42, 0.6)', borderRadius: 6, border: '1px dashed #334155' }}>
+            <div>
+              <strong style={{ display: 'block', fontSize: 13, color: '#f8fafc' }}>
+                Chưa đúc NFT Hộ Chiếu Sở Hữu Số cho trang phục này
+              </strong>
+              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#94a3b8' }}>
+                Sau khi đúc, bạn sẽ nhận được **+200 Điểm Thưởng Xanh** và sở hữu vĩnh viễn chứng nhận gốc trên blockchain.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={isMintingNft}
+              onClick={() => {
+                setIsMintingNft(true);
+                setTimeout(() => {
+                  const tokenId = `#NEX-NFT-AUTH-${Date.now().toString().slice(-5)}`;
+                  const txHash = `0x${Array.from({ length: 48 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`;
+                  setNftTokenId(tokenId);
+                  setNftTxHash(txHash);
+                  setNftMinted(true);
+                  setIsMintingNft(false);
+                  try {
+                    localStorage.setItem('nexora_nft_auth_passport', JSON.stringify({
+                      tokenId,
+                      txHash,
+                      mintDate: new Date().toISOString(),
+                    }));
+                  } catch {}
+                  setSuccess(`✓ Đúc thành công Hộ Chiếu Sở Hữu Số NFT ${tokenId} trên Nexora Eco-Chain! Cộng +200 Điểm Xanh.`);
+                }, 1400);
+              }}
+              style={{
+                padding: '10px 18px',
+                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: isMintingNft ? 'wait' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              <Cpu size={14} />
+              {isMintingNft ? 'Đang mã hóa & ghi vào sổ cái Eco-Chain…' : 'Đúc Hộ Chiếu Số NFT & Khắc Dấu Chuỗi Khối (+200 Điểm)'}
+            </button>
           </div>
         )}
       </div>

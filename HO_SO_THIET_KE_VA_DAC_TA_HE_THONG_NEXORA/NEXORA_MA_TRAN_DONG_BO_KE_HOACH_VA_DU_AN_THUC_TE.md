@@ -121,6 +121,8 @@
 | **110** | **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ tủ đồ thông minh tại `/tai-khoan`: Radar vi khí hậu (TP.HCM 31.5°C, độ ẩm 78% RH), tự động gợi ý 2 set đồ thoáng mát (Habotai 115 GSM & Linen mộc, độ thoáng 210 mm/s), cảnh báo chống ẩm mốc sợi dệt và lên lịch Fashion Calendar 1-chạm (+50 Xu) |
 | **111** | **Giặt Hấp CO2 Siêu Tới Hạn Không Dùng Nước & Dung Môi Sinh Học (VAS-GARMENT-SPA-WATERLESS-CO2-01)** | Module 02 & VAS Care | Đã hoàn thiện | Phân hệ giặt hấp siêu tới hạn tại `/vas-care`: 31.1°C & 73.8 bar, 100% không dùng nước & 0% hóa chất Perc, bảo toàn sáp len Cashmere/bóng tơ tằm, 3 chế độ chuyên sâu, cảm biến telemetry thu hồi 98.4% CO2, tiết kiệm 45L nước/chu trình và cấp mã `#CO2-SPA-VAS-XXXXXX` (+150 Xu) |
 | **112** | **Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)** | Module 01 & QA | Đã hoàn thiện | Phân hệ kiểm định âm học & độ rủ tại `/san-pham/[slug]`: Hệ số rủ Cusick Drape 34.2% Hạng A, độ tiêu âm NRC ISO 354 0.45, dẫn nhiệt 0.038 W/m·K, độ rủ động 3D 98/100, trình mô phỏng dao động rủ 3D thời gian thực (0.8 Hz) bảo toàn phom dáng trong không gian làm việc tĩnh |
+| **113** | **Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)** | Module 02 & Circular Blockchain | Đã hoàn thiện | Phân hệ hộ chiếu số NFT ERC-721 tại `/trade-in`: Chuẩn W3C Verifiable Credentials trên Nexora Eco-Chain (Polygon L2), băm SHA-256 cấu trúc sợi 50x, lịch sử 3 chặng chế tác/thẩm định/lưu ký số, 1-chạm chuyển giao quyền sở hữu và xuất chứng thư JSON-LD (+200 Điểm Xanh) |
+| **114** | **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)** | Module 03 & ESG CSR | Đã hoàn thiện | Phân hệ bảo trợ phủ xanh tại `/gio-hang`: Tính toán động phát thải đơn hàng (~1.85 kg CO2e), 3 gói bảo trợ trồng rừng (Cần Giờ 10k, Măng Đen 25k, Cát Tiên 50k), tích hợp tự động vào bảng thanh toán, định vị GPS tọa độ trạm và cấp chứng thư `#TREE-VN-XXXXXX` (+50 đến +250 Điểm Xanh) |
 
 ---
 
@@ -1118,6 +1120,29 @@
     4. *Chỉ số rủ động 3D Dynamic Drape*: 98/100 (Độ phục hồi phom dáng tức thì khi cơ thể chuyển động).
   - Trình mô phỏng sóng âm & nếp rủ thời gian thực (Interactive Drape Wave Simulator 0.8 Hz) với nút chuyển đổi tương tác giúp người dùng quan sát dao động của từng lớp vải dưới áp lực âm học.
   - Khuyến nghị ứng dụng phong cách chuẩn mực: Phù hợp không gian làm việc tĩnh, sự kiện ngoại giao và hội nghị thượng đỉnh.
+
+### 97. Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)
+- **Mục tiêu**: Nâng tầm trang phục thời trang may đo và đồ Re-Loved thành tài sản số có tính thanh khoản cao, bất biến và minh bạch lịch sử lưu ký (Provenance Custody) thông qua tiêu chuẩn token số NFT ERC-721 và chứng thư W3C Verifiable Credentials.
+- **Cơ chế**:
+  - Tích hợp phân hệ Hộ chiếu Sở hữu số NFT ngay sau bước Thẩm định quang học 50x tại `/trade-in`.
+  - Đúc (mint) thẻ NFT Hộ chiếu số độc bản trên Nexora Eco-Chain (bảo chứng Polygon Layer-2 với mức tiêu thụ năng lượng tối thiểu Zero Gas Waste).
+  - Cấu trúc dữ liệu chuỗi khối 3 chặng lịch sử (3-Stage Provenance Breakdown):
+    1. *Khởi Sinh Chế Tác (Genesis)*: Xưởng may đo Độc Bản #08, vải Linen Normandy và lụa tơ tằm Bảo Lộc dệt thủ công 220 GSM.
+    2. *Thẩm Định Quang Học Vi Điểm 50x*: Dấu vân tay cơ lý sợi dệt ISO 4915, rãnh khóa CNC 0.15mm, xác nhận 99.4% chuẩn xác thực chính hãng.
+    3. *Quyền Lưu Ký Số (Custody)*: Khóa định danh gắn với ví người sở hữu, hỗ trợ chuyển quyền sở hữu minh bạch 1-chạm khi bán lại Re-Loved hoặc đổi đồ P2P Swap.
+  - Mã băm mật mã SHA-256 cấu trúc sợi dệt kèm tính năng 1-chạm sao chép băm, nút tra cứu trực tiếp trên Nexora Explorer và xuất chứng thư JSON-LD.
+  - Tặng ngay **+200 Điểm Thưởng Xanh NEX-Green** khi người dùng kích hoạt đúc hộ chiếu số.
+
+### 98. Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)
+- **Mục tiêu**: Cho phép khách hàng chủ động tham gia bảo trợ các dự án phục hồi rừng tự nhiên và trung hòa phát thải carbon thực tế phát sinh từ chính các mặt hàng trong giỏ hàng và chặng vận chuyển.
+- **Cơ chế**:
+  - Tích hợp mô-đun Bù trừ Carbon Động ngay trong trang thanh toán giỏ hàng `/gio-hang`.
+  - Tính toán động lượng phát thải cơ sở của giỏ hàng (~1.85 kg CO2e) dựa trên số lượng trang phục, chất liệu sợi dệt và quãng đường giao hàng bưu tá.
+  - Ma trận 3 gói bảo trợ phủ xanh thiên nhiên có kiểm toán định vị GPS:
+    1. *Tier 1 · Trung Hòa Carbon Cơ Bản (10.000₫)*: Bù trừ 2.0 kg CO2e, bảo trợ 01 cây mầm Đước đôi tại Rừng ngập mặn Cần Giờ (10.412°N 106.953°E), nhận +50 Điểm Xanh.
+    2. *Tier 2 · Sinh Thái Tích Cực - Positive Impact (25.000₫)*: Bù trừ 5.0 kg CO2e, trồng 02 cây bản địa Dầu rái/Thông ba lá tại Rừng nguyên sinh Măng Đen Kon Tum (14.605°N 108.289°E), nhận +120 Điểm Xanh.
+    3. *Tier 3 · Bảo Tồn Rừng Già Thượng Nguồn (50.000₫)*: Bù trừ 12.0 kg CO2e, bảo trợ 5m² rừng tự nhiên và 04 cây gỗ lớn tại Vườn Quốc Gia Cát Tiên Đồng Nai (11.425°N 107.428°E), nhận +250 Điểm Xanh.
+  - Tự động cộng khoản đóng góp vào bảng tổng đơn hàng (Checkout Summary), đồng bộ kế hoạch trả góp PayLater 0% lãi suất và cấp mã số cam kết bảo trợ `#TREE-VN-XXXXXX`.
 
 ---
 

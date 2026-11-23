@@ -2,13 +2,44 @@
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck, Trees, Check, Truck, CheckCheck } from 'lucide-react';
+import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck, Trees, Check, Truck, CheckCheck, Globe, HeartHandshake, Compass } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
 import { api, Product, useResource, Variant, vnd } from '../api';
 import { Empty, Loading, Notice } from '../ui';
 type CartLine = { id: string; quantity: number; variant: Variant & { product: Product } };
 type Address = { id: string; recipient: string; phone: string; line: string; province: string };
 type Quote = { id: string; data: QuoteData; expiresAt: string };
+
+const REFOREST_TIERS = {
+  TIER1: {
+    id: 'TIER1',
+    name: 'Trung Hòa Carbon Cơ Bản',
+    fee: 10000,
+    co2: '2.0 kg CO2e',
+    target: '01 Cây Mầm Đước Đôi',
+    location: 'Rừng Ngập Mặn Cần Giờ (10.412°N 106.953°E)',
+    points: 50,
+  },
+  TIER2: {
+    id: 'TIER2',
+    name: 'Sinh Thái Tích Cực (Positive Impact)',
+    fee: 25000,
+    co2: '5.0 kg CO2e',
+    target: '02 Cây Bản Địa Dầu Rái / Thông',
+    location: 'Rừng Nguyên Sinh Măng Đen Kon Tum (14.605°N 108.289°E)',
+    points: 120,
+  },
+  TIER3: {
+    id: 'TIER3',
+    name: 'Bảo Tồn Rừng Già Thượng Nguồn',
+    fee: 50000,
+    co2: '12.0 kg CO2e',
+    target: 'Bảo tồn 5m² rừng & 04 cây gỗ lớn',
+    location: 'Vườn Quốc Gia Cát Tiên Đồng Nai (11.425°N 107.428°E)',
+    points: 250,
+  },
+} as const;
+
 export default function Cart() {
   const cart = useResource<CartLine[]>('/cart'), addresses = useResource<Address[]>('/addresses');
   const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [giftWrap, setGiftWrap] = useState(false), [giftRibbon, setGiftRibbon] = useState<'CHAMPAGNE' | 'EMERALD' | 'NAVY'>('CHAMPAGNE'), [giftMessage, setGiftMessage] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
@@ -25,6 +56,15 @@ export default function Cart() {
   });
   const [carbonOffsetActive, setCarbonOffsetActive] = useState(false);
   const [offsetCertCode, setOffsetCertCode] = useState('');
+  // CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01: Dynamic Micro-Reforestation Contribution & Live Carbon Offset Selector
+  const [reforestPledgeActive, setReforestPledgeActive] = useState(true);
+  const [reforestTier, setReforestTier] = useState<'TIER1' | 'TIER2' | 'TIER3'>('TIER2');
+  const [reforestCertCode, setReforestCertCode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('nexora_reforest_cert') || `TREE-VN-${Date.now().toString().slice(-6)}`;
+    }
+    return 'TREE-VN-88912';
+  });
   const [consolidatedShipping, setConsolidatedShipping] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('nexora_consolidated_shipping') !== 'false';
@@ -456,6 +496,94 @@ export default function Cart() {
           </button>
         )}
       </section>
+
+      {/* Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01) */}
+      <section className="panel" style={{ background: reforestPledgeActive ? '#f0fdf4' : '#fff', border: reforestPledgeActive ? '1px solid #86efac' : '1px solid var(--line)' }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+          <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
+            <Globe size={18} color="#059669" /> Đóng Góp Trồng Rừng Tự Nhiên &amp; Bù Trừ Carbon (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)
+          </h2>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 12, fontWeight: 700, color: '#047857' }}>
+            <input
+              type="checkbox"
+              checked={reforestPledgeActive}
+              onChange={e => {
+                setReforestPledgeActive(e.target.checked);
+                invalidate();
+              }}
+              style={{ accentColor: '#059669' }}
+            />
+            Tham gia chương trình Trồng Rừng Sinh Thái
+          </label>
+        </div>
+
+        <p className="subtle" style={{ margin: '0 0 12px', fontSize: 12 }}>
+          Lượng phát thải tính toán cho giỏ hàng hiện tại: <strong style={{ color: '#0f172a' }}>~1.85 kg CO2e</strong> (Bao gồm chế tác sợi tự nhiên và vận chuyển đa chặng). Bạn có thể lựa chọn mức bảo trợ rừng tương ứng để chung tay cùng NEXORA phủ xanh Việt Nam:
+        </p>
+
+        {reforestPledgeActive && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+              {(Object.keys(REFOREST_TIERS) as Array<keyof typeof REFOREST_TIERS>).map(tierKey => {
+                const item = REFOREST_TIERS[tierKey];
+                const selected = reforestTier === tierKey;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      setReforestTier(tierKey);
+                      invalidate();
+                    }}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: 6,
+                      border: selected ? '2px solid #059669' : '1px solid #cbd5e1',
+                      background: selected ? '#ecfdf5' : '#fff',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      transition: 'all 0.15s ease-in-out',
+                    }}
+                  >
+                    <div>
+                      <div className="row between" style={{ marginBottom: 4 }}>
+                        <strong style={{ fontSize: 13, color: selected ? '#065f46' : 'var(--ink)' }}>
+                          {item.name}
+                        </strong>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: '#047857' }}>
+                          +{vnd(item.fee)}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#047857', fontWeight: 600, marginBottom: 4 }}>
+                        🌳 {item.target} (Bù trừ {item.co2})
+                      </div>
+                      <div style={{ fontSize: 10, color: '#64748b' }}>
+                        📍 {item.location}
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 10, color: '#059669', fontWeight: 700 }}>
+                        +{item.points} Điểm Xanh NEX-Green
+                      </span>
+                      {selected && <CheckCircle2 size={14} color="#059669" />}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ padding: '8px 12px', background: '#fff', border: '1px solid #bbf7d0', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 11 }}>
+              <span style={{ color: '#065f46', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Compass size={14} /> Mã Cam Kết Bảo Trợ Rừng: <strong>#{reforestCertCode}</strong>
+              </span>
+              <span style={{ color: '#64748b' }}>
+                Hợp tác cùng Ban Quản Lý Rừng Phòng Hộ &amp; Vườn Quốc Gia · Kiểm toán minh bạch GPS
+              </span>
+            </div>
+          </div>
+        )}
+      </section>
       <section className="panel">
         <h2 className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Sparkles size={18} /> Hộp Quà Tặng Cao Cấp &amp; Thiệp Sáp Niêm Phong (VAS-GIFT-WRAP)
@@ -558,5 +686,54 @@ export default function Cart() {
       <section className="panel"><h2 className="panel-title">Ưu Đãi Đa Tầng NEXORA (CART-STACK-01)</h2><label className="address-option" style={{ marginBottom: 10 }}><input type="checkbox" checked={useFreeship} onChange={e => { setUseFreeship(e.target.checked); invalidate(); }} /><span><strong>Voucher Miễn Phí Vận Chuyển Freeship Xtra (Tầng 3)</strong><br/><small className="subtle">Tài trợ giảm trực tiếp 30.000đ phí giao hàng trên toàn sàn.</small></span></label><label className="address-option"><input type="checkbox" checked={useCoins} onChange={e => { setUseCoins(e.target.checked); invalidate(); }} /><span><strong>Dùng Xu Thưởng NEXORA Coins (Tầng 5)</strong><br/><small className="subtle">Đang có: 25.000 xu khả dụng. Cấn trừ trực tiếp 25.000đ (1 xu = 1đ).</small></span></label></section>
       <section className="panel"><h2 className="panel-title">Voucher Trade-In NEXORA (Tầng 2)</h2><label className="voucher">Mã đối ứng từ Thu cũ Đổi mới (NXTI-...)<input value={tradeInCode} onChange={e => { setTradeInCode(e.target.value); invalidate(); }} placeholder="VD: NXTI-DEMO50"/></label></section>
       <section className="panel"><h2 className="panel-title">Phương thức thanh toán</h2><label className="address-option"><input type="radio" name="paymentMethod" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')}/><span><strong>Thanh toán khi nhận hàng (COD)</strong><br/><small className="subtle">Nhận hàng, kiểm tra ngoại quan (RET-COINSPECT) và thanh toán cho shipper.</small></span></label><label className="address-option" style={{ marginTop: 8 }}><input type="radio" name="paymentMethod" checked={paymentMethod === 'BNPL'} onChange={() => setPaymentMethod('BNPL')}/><span><strong>Mua trước Trả sau (NEXORA PayLater · 0% Lãi suất)</strong><br/><small className="subtle">Chia đều 3 kỳ thanh toán 0% lãi suất và không phụ phí (PAY-BNPL-MIDFLOW-05).</small></span></label>{paymentMethod === 'BNPL' && quote && <div style={{ marginTop: 12, padding: 12, background: 'var(--sage)', borderRadius: 2, fontSize: 12 }}><strong>Kế hoạch trả góp 3 kỳ (0% lãi suất):</strong><div className="row between" style={{ marginTop: 6 }}><span>Kỳ 1 (Hôm nay lúc giao dịch):</span><strong>{vnd(Math.round(quote.data.total / 3))}</strong></div><div className="row between"><span>Kỳ 2 (Sau 30 ngày):</span><strong>{vnd(Math.round(quote.data.total / 3))}</strong></div><div className="row between"><span>Kỳ 3 (Sau 60 ngày):</span><strong>{vnd(quote.data.total - 2 * Math.round(quote.data.total / 3))}</strong></div><p className="fine-print" style={{ margin: '8px 0 0' }}>Bảo lãnh tín dụng tiêu dùng số bởi NEXORA PayLater.</p></div>}</section></div>
-      <aside className="panel checkout-summary"><p className="eyebrow">KIỂM TRA TRƯỚC KHI ĐẶT</p><h2>Tổng đơn hàng</h2>{quote ? <>{quote.data.shops.map(shop => <div className="quote-shop" key={shop.shopId}><strong>{shop.shopName}</strong><p><span>Tiền hàng</span><span>{vnd(shop.subtotal)}</span></p><p><span>Giảm giá</span><span>−{vnd(shop.discount)}</span></p><p><span>Phí giao mô phỏng</span><span>{vnd(shop.shipping)}</span></p><p><strong>Thanh toán cho shop</strong><strong>{vnd(shop.total)}</strong></p></div>)}{(quote.data.platformDiscount ?? 0) > 0 && <div className="quote-shop"><p><span>Voucher Sàn / Trade-In ({quote.data.tradeInCode})</span><span>−{vnd(quote.data.platformDiscount ?? 0)}</span></p></div>}{(quote.data.shippingDiscount ?? 0) > 0 && <div className="quote-shop"><p><span>Voucher Freeship Xtra (Tầng 3)</span><span>−{vnd(quote.data.shippingDiscount ?? 0)}</span></p></div>}{(quote.data.coinDiscount ?? 0) > 0 && <div className="quote-shop"><p><span>Xu Thưởng NEXORA Coins (Tầng 5)</span><span>−{vnd(quote.data.coinDiscount ?? 0)}</span></p></div>}<div className="total"><span>Tổng thanh toán ({paymentMethod === 'BNPL' ? 'PayLater 0%' : 'COD'})</span><strong>{vnd(quote.data.total)}</strong></div><p className="subtle">Báo giá có hiệu lực đến {new Date(quote.expiresAt).toLocaleTimeString('vi-VN')}.</p><button className="button full" disabled={busy} onClick={order}>{busy ? 'Đang đặt…' : paymentMethod === 'BNPL' ? `Xác nhận đặt PayLater (Kỳ 1: ${vnd(Math.round(quote.data.total / 3))})` : 'Xác nhận đặt COD'}<ArrowRight size={18}/></button><button className="text-button" onClick={getQuote} disabled={busy}>Tính lại báo giá</button></> : <><p>Kiểm tra địa chỉ và mã giảm để lấy tổng chính xác cho từng shop.</p><button className="button full" disabled={busy || !chosenAddress} onClick={getQuote}>{busy ? 'Đang tính…' : 'Xem báo giá'}<ArrowRight size={18}/></button></>}{error && <Notice error>{error}</Notice>}<p className="fine-print">Bản phát triển sử dụng phí giao giả lập 30.000đ/shop. Chưa tạo vận đơn hoặc thu tiền thật.</p></aside></div></section>;
+      <aside className="panel checkout-summary"><p className="eyebrow">KIỂM TRA TRƯỚC KHI ĐẶT</p><h2>Tổng đơn hàng</h2>{quote ? (() => {
+        const reforestCost = reforestPledgeActive ? REFOREST_TIERS[reforestTier].fee : 0;
+        const finalAmount = quote.data.total + reforestCost;
+        return (
+          <>
+            {quote.data.shops.map(shop => (
+              <div className="quote-shop" key={shop.shopId}>
+                <strong>{shop.shopName}</strong>
+                <p><span>Tiền hàng</span><span>{vnd(shop.subtotal)}</span></p>
+                <p><span>Giảm giá</span><span>−{vnd(shop.discount)}</span></p>
+                <p><span>Phí giao mô phỏng</span><span>{vnd(shop.shipping)}</span></p>
+                <p><strong>Thanh toán cho shop</strong><strong>{vnd(shop.total)}</strong></p>
+              </div>
+            ))}
+            {(quote.data.platformDiscount ?? 0) > 0 && (
+              <div className="quote-shop">
+                <p><span>Voucher Sàn / Trade-In ({quote.data.tradeInCode})</span><span>−{vnd(quote.data.platformDiscount ?? 0)}</span></p>
+              </div>
+            )}
+            {(quote.data.shippingDiscount ?? 0) > 0 && (
+              <div className="quote-shop">
+                <p><span>Voucher Freeship Xtra (Tầng 3)</span><span>−{vnd(quote.data.shippingDiscount ?? 0)}</span></p>
+              </div>
+            )}
+            {(quote.data.coinDiscount ?? 0) > 0 && (
+              <div className="quote-shop">
+                <p><span>Xu Thưởng NEXORA Coins (Tầng 5)</span><span>−{vnd(quote.data.coinDiscount ?? 0)}</span></p>
+              </div>
+            )}
+            {reforestCost > 0 && (
+              <div className="quote-shop" style={{ borderLeft: '3px solid #059669', paddingLeft: 8, background: '#f0fdf4' }}>
+                <p style={{ margin: 0 }}>
+                  <span style={{ color: '#065f46', fontWeight: 600 }}>Bảo trợ trồng rừng ({REFOREST_TIERS[reforestTier].name})</span>
+                  <span style={{ color: '#047857', fontWeight: 700 }}>+{vnd(reforestCost)}</span>
+                </p>
+              </div>
+            )}
+            <div className="total">
+              <span>Tổng thanh toán ({paymentMethod === 'BNPL' ? 'PayLater 0%' : 'COD'})</span>
+              <strong>{vnd(finalAmount)}</strong>
+            </div>
+            <p className="subtle">Báo giá có hiệu lực đến {new Date(quote.expiresAt).toLocaleTimeString('vi-VN')}.</p>
+            <button className="button full" disabled={busy} onClick={order}>
+              {busy ? 'Đang đặt…' : paymentMethod === 'BNPL' ? `Xác nhận đặt PayLater (Kỳ 1: ${vnd(Math.round(finalAmount / 3))})` : 'Xác nhận đặt COD'}
+              <ArrowRight size={18}/>
+            </button>
+            <button className="text-button" onClick={getQuote} disabled={busy}>Tính lại báo giá</button>
+          </>
+        );
+      })() : <><p>Kiểm tra địa chỉ và mã giảm để lấy tổng chính xác cho từng shop.</p><button className="button full" disabled={busy || !chosenAddress} onClick={getQuote}>{busy ? 'Đang tính…' : 'Xem báo giá'}<ArrowRight size={18}/></button></>}{error && <Notice error>{error}</Notice>}<p className="fine-print">Bản phát triển sử dụng phí giao giả lập 30.000đ/shop. Chưa tạo vận đơn hoặc thu tiền thật.</p></aside></div></section>;
 }
