@@ -119,6 +119,8 @@
 | **108** | **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)** | Module 02 & Admin ESG | Đã hoàn thiện | Phân hệ quản trị tuần hoàn toàn sàn tại `/admin`: Cứu 12.840 kg vải khỏi bãi chôn lấp (+18.4%), tỷ lệ thu hồi Trade-In 78.6%, 3.420h buồng vô trùng VAS, 2.850 kg Bio-Felt tiêu âm, 3 kênh phân bổ tái sinh (Upcycling 35%, Re-Loved 45%, Bio-Felt 20%), xuất báo cáo EPR ISO 14040 |
 | **109** | **Ma Trận Nguồn Gốc Sợi Dệt & Chuỗi Cung Ứng Farm-to-Closet (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Phân hệ minh bạch nguồn gốc chuỗi cung ứng tại `/seller`: Quản lý 3 cấp độ (Tier 1 Cắt may ILO 138/182, Tier 2 Nhuộm tự nhiên Zero Azo Dyes & QCVN 40, Tier 3 Nông trại bản địa Lâm Đồng/Tây Nguyên/Normandy), mã blockchain `#TRACE-FARM-VN99218` |
 | **110** | **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ tủ đồ thông minh tại `/tai-khoan`: Radar vi khí hậu (TP.HCM 31.5°C, độ ẩm 78% RH), tự động gợi ý 2 set đồ thoáng mát (Habotai 115 GSM & Linen mộc, độ thoáng 210 mm/s), cảnh báo chống ẩm mốc sợi dệt và lên lịch Fashion Calendar 1-chạm (+50 Xu) |
+| **111** | **Giặt Hấp CO2 Siêu Tới Hạn Không Dùng Nước & Dung Môi Sinh Học (VAS-GARMENT-SPA-WATERLESS-CO2-01)** | Module 02 & VAS Care | Đã hoàn thiện | Phân hệ giặt hấp siêu tới hạn tại `/vas-care`: 31.1°C & 73.8 bar, 100% không dùng nước & 0% hóa chất Perc, bảo toàn sáp len Cashmere/bóng tơ tằm, 3 chế độ chuyên sâu, cảm biến telemetry thu hồi 98.4% CO2, tiết kiệm 45L nước/chu trình và cấp mã `#CO2-SPA-VAS-XXXXXX` (+150 Xu) |
+| **112** | **Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)** | Module 01 & QA | Đã hoàn thiện | Phân hệ kiểm định âm học & độ rủ tại `/san-pham/[slug]`: Hệ số rủ Cusick Drape 34.2% Hạng A, độ tiêu âm NRC ISO 354 0.45, dẫn nhiệt 0.038 W/m·K, độ rủ động 3D 98/100, trình mô phỏng dao động rủ 3D thời gian thực (0.8 Hz) bảo toàn phom dáng trong không gian làm việc tĩnh |
 
 ---
 
@@ -1092,6 +1094,30 @@
     2. *Set 02 · Smart Casual Công Sở Điều Hòa*: Áo thun Mercerized Cotton chống ẩm kết hợp Blazer Linen thô không lót, chịu dải chênh lệch nhiệt 24°C - 32°C và giữ ve áo sắc nét.
   - Hướng dẫn bảo quản sợi mùa ẩm: Nhắc nhở sử dụng túi hút ẩm hữu cơ Bio-Silica và móc treo gỗ sồi tự nhiên.
   - Tính năng 1-chạm đưa set đồ thích ứng vào Lịch Trình Phong Cách (Fashion Calendar) kèm phần thưởng **+50 Xu Xanh**.
+
+### 95. Giặt Hấp CO2 Siêu Tới Hạn Không Dùng Nước & Dung Môi Sinh Học (VAS-GARMENT-SPA-WATERLESS-CO2-01)
+- **Mục tiêu**: Tiên phong ứng dụng công nghệ làm sạch xa xỉ không dùng nước (Supercritical CO2 Textile Cleansing) nhằm bảo tồn tuyệt đối cấu trúc sợi protein nhạy cảm (Cashmere, Tơ tằm, Len lông cừu Merino) và triệt tiêu hoàn toàn hóa chất giặt khô độc hại Perchloroethylene (Perc).
+- **Cơ chế**:
+  - Tích hợp phân hệ Giặt Hấp CO2 Siêu Tới Hạn ngay trong trang dịch vụ chăm sóc cao cấp `/vas-care`.
+  - Thiết lập trạng thái vật lý siêu tới hạn: Duy trì áp suất 73.8 bar và nhiệt độ ôn hòa 31.1°C, đưa CO2 lỏng vào pha siêu tới hạn thâm nhập sâu vào từng kẽ xơ vải, hòa tan dầu mỡ và bụi bẩn mà không gây trương nở sợi hay mất lớp sáp bảo vệ tự nhiên.
+  - 3 quy trình trị liệu sợi dệt thượng hạng:
+    1. *Cashmere Tự Nhiên Bảo Toàn Sáp (25 phút)*: 100% không làm xơ rối lông tơ, giữ nguyên độ xốp mịn nguyên bản.
+    2. *Lụa Tơ Tằm Cúc Xà Cừ (18 phút)*: Giữ trọn độ bóng quang học tự nhiên, bảo vệ tuyệt đối các chi tiết nút xà cừ và đính kết kim hoàn.
+    3. *Wool Suit & Tweed Cao Cấp (30 phút)*: Định hình phom dáng ve áo, không co rút sợi và không đọng mùi hóa chất tồn dư.
+  - Bảng đồng hồ Telemetry áp suất và nhiệt độ thời gian thực: Áp suất 73.8 bar, nhiệt độ buồng 31.2°C, tỷ lệ thu hồi tái sinh CO2 đạt 98.4%, bảo tồn 45 Lít nước ngọt/chu trình so với giặt ướt công nghiệp.
+  - Cấp mã số dịch vụ giặt hấp `#CO2-SPA-VAS-XXXXXX` và cộng ngay **+150 Điểm Thưởng Xanh NEX-Green**.
+
+### 96. Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)
+- **Mục tiêu**: Lượng hóa chất lượng cơ lý và khả năng kiểm soát âm học của sợi dệt cao cấp, hỗ trợ người mặc lựa chọn trang phục vừa vặn cho các môi trường yên tĩnh (văn phòng điều hành, phòng thu âm, thính phòng hòa nhạc).
+- **Cơ chế**:
+  - Tích hợp bảng thông số Radar Tiêu Âm & Độ Rủ (Acoustic Drape Radar) tại trang chi tiết sản phẩm `/san-pham/[slug]`.
+  - 4 chỉ số cơ lý âm học và hình thái học sợi dệt:
+    1. *Hệ số rủ Cusick Drape Coefficient*: 34.2% (Grade A - Dòng chảy tự nhiên, nếp rủ mềm mại không gãy góc).
+    2. *Hệ số hấp thụ âm thanh NRC (ISO 354)*: 0.45 (Cấu trúc sợi dệt xốp hấp thụ hiệu quả tạp âm dải tần trung và cao trong văn phòng).
+    3. *Độ dẫn nhiệt Thermal Conductivity*: 0.038 W/m·K (Khả năng cách nhiệt và điều hòa thân nhiệt tối ưu).
+    4. *Chỉ số rủ động 3D Dynamic Drape*: 98/100 (Độ phục hồi phom dáng tức thì khi cơ thể chuyển động).
+  - Trình mô phỏng sóng âm & nếp rủ thời gian thực (Interactive Drape Wave Simulator 0.8 Hz) với nút chuyển đổi tương tác giúp người dùng quan sát dao động của từng lớp vải dưới áp lực âm học.
+  - Khuyến nghị ứng dụng phong cách chuẩn mực: Phù hợp không gian làm việc tĩnh, sự kiện ngoại giao và hội nghị thượng đỉnh.
 
 ---
 

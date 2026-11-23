@@ -394,3 +394,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 97. **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)**:
    - Hồ sơ: Module 06 Mạng Xã Hội OOTD, Module 07 Trải Nghiệm Khách Hàng & Quản Trị Tủ Đồ Số Digital Wardrobe.
    - Thực tế: Phân hệ tủ đồ thích ứng thời tiết tại `/tai-khoan`: Trạm Radar vi khí hậu (31.5°C, độ ẩm 78% RH), AI gợi ý 2 set đồ thoáng mát (Habotai 115 GSM & Linen mộc thoáng khí 210 mm/s), cảnh báo ẩm mốc sợi tự nhiên và đồng bộ Fashion Calendar 1-chạm (+50 Xu Xanh).
+
+98. **Giặt Hấp CO2 Siêu Tới Hạn Không Dùng Nước & Dung Môi Sinh Học (VAS-GARMENT-SPA-WATERLESS-CO2-01)**:
+   - Hồ sơ: Module 02 Dịch Vụ Giá Trị Gia Tăng VAS Care & Giặt Hấp Xa Xỉ Xanh Không Hóa Chất.
+   - Thực tế: Phân hệ giặt hấp siêu tới hạn tại `/vas-care`: 31.1°C & 73.8 bar trạng thái CO2 siêu tới hạn, 100% không dùng nước ngọt & 0% dung môi độc hại Perchloroethylene, bảo toàn sáp tự nhiên Cashmere và độ bóng lụa tơ tằm, 3 quy trình trị liệu sợi, cảm biến telemetry thu hồi 98.4% khí CO2, tiết kiệm 45L nước/mẻ, cấp mã `#CO2-SPA-VAS-XXXXXX` (+150 Điểm Xanh).
+
+99. **Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)**:
+   - Hồ sơ: Module 01 Quản Lý Sản Phẩm, Module 07 Trưng Bày & Kiểm Định Âm Học Tiêu Chuẩn Quốc Tế ISO 354.
+   - Thực tế: Phân hệ radar kiểm định âm học sợi dệt tại `/san-pham/[slug]`: Hệ số rủ Cusick Drape 34.2% Hạng A, hệ số tiêu âm NRC ISO 354 đạt 0.45, độ dẫn nhiệt 0.038 W/m·K, chỉ số rủ động 3D 98/100, tích hợp khung mô phỏng dao động rủ 3D thời gian thực (0.8 Hz) hỗ trợ lựa chọn phục trang tối ưu cho môi trường tĩnh.

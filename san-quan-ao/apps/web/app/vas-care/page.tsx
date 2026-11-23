@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn, Sun, Zap, Thermometer } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn, Sun, Zap, Thermometer, RotateCcw, Droplets, Wind } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -94,6 +94,9 @@ export default function VasCarePage() {
   const [sterilizationPreset, setSterilizationPreset] = useState<'SILK_CASHMERE' | 'LEATHER_BAGS' | 'EVENING_GOWNS'>('SILK_CASHMERE');
   const [sterilizationBooked, setSterilizationBooked] = useState(false);
   const [sterilizationTicket, setSterilizationTicket] = useState('');
+  const [co2Preset, setCo2Preset] = useState<'CASHMERE' | 'SILK' | 'WOOL_SUIT'>('CASHMERE');
+  const [co2Booked, setCo2Booked] = useState(false);
+  const [co2Ticket, setCo2Ticket] = useState('');
 
   function runGarmentDiagnosis() {
     let grade = 'Cấp II · Tổn thương sắc tố bề mặt sợi (Reversible)';
@@ -199,6 +202,14 @@ export default function VasCarePage() {
         const parsed = JSON.parse(storedSter);
         setSterilizationBooked(true);
         setSterilizationTicket(parsed.ticket);
+      }
+      const storedCo2 = localStorage.getItem('nexora_vas_co2_spa');
+      if (storedCo2) {
+        const parsedCo2 = JSON.parse(storedCo2);
+        if (parsedCo2.ticket) {
+          setCo2Ticket(parsedCo2.ticket);
+          setCo2Booked(true);
+        }
       }
     } catch {}
   }, []);
@@ -1192,6 +1203,174 @@ export default function VasCarePage() {
             </button>
             <span style={{ fontSize: 11, color: '#94a3b8' }}>
               Miễn phí 100% khi kết hợp cùng dịch vụ Spa Giặt Hấp hoặc Đặt lịch Atelier VIP
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Công Nghệ Giặt Không Nước CO2 Siêu Tới Hạn · Supercritical CO2 Waterless Laundry (VAS-GARMENT-SPA-WATERLESS-CO2-01) */}
+      <div
+        style={{
+          marginTop: 24,
+          padding: '20px 24px',
+          background: 'linear-gradient(135deg, #042f2e 0%, #115e59 100%)',
+          border: '1px solid #14b8a6',
+          borderRadius: 8,
+          color: '#fff',
+        }}
+      >
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <div>
+            <h3 style={{ fontSize: 16, margin: 0, display: 'flex', alignItems: 'center', gap: 8, color: '#2dd4bf' }}>
+              <RotateCcw size={20} color="#2dd4bf" /> Giặt Không Nước CO2 Siêu Tới Hạn · Supercritical CO2 Wash (VAS-GARMENT-SPA-WATERLESS-CO2-01)
+            </h3>
+            <p style={{ margin: '4px 0 0', fontSize: 11, color: '#99f6e4' }}>
+              Đột phá công nghệ giặt cao cấp tại 31.1°C &amp; 73.8 bar: 100% không dùng nước sạch, không dung môi dầu mỏ Perc độc hại, triệt tiêu co rút nhiệt và bảo toàn sợi len/cashmere/lụa nguyên bản.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#134e4a', color: '#5eead4', padding: '4px 12px', borderRadius: 20, fontWeight: 700, border: '1px solid #14b8a6', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <Droplets size={13} /> 100% ZERO WASTEWATER
+          </span>
+        </div>
+
+        {/* 3 Chu trình chăm sóc chuyên biệt */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10, marginBottom: 16 }}>
+          {[
+            {
+              id: 'CASHMERE',
+              name: 'Chu Trình Cashmere & Vicuña Tuyệt Phẩm',
+              time: '25 Phút',
+              desc: 'Chiết xuất bụi bẩn và dầu thừa bằng CO2 thể lỏng ở áp suất siêu tới hạn, không vón cục và không tạo ma sát cơ học làm xơ sợi.',
+              specs: 'Bảo toàn độ bồng: 100% · Độ co rút: 0.00%',
+            },
+            {
+              id: 'SILK',
+              name: 'Chu Trình Lụa Vẽ Thủ Công & Cẩn Xà Cừ',
+              time: '18 Phút',
+              desc: 'Không làm nhòe sắc tố khoáng tự nhiên hay bong tróc keo dán xà cừ sơn mài truyền thống trên tà áo.',
+              specs: 'Giữ màu nguyên bản: 99.8% · Không nếp gãy tơ',
+            },
+            {
+              id: 'WOOL_SUIT',
+              name: 'Chu Trình Làm Sạch Phom Áo Blazer Wool',
+              time: '30 Phút',
+              desc: 'Khử mùi sâu trong từng lớp lót đệm vai bằng áp suất CO2 tuần hoàn, giữ nếp là ve áo sắc nét mà không cần ủi nhiệt.',
+              specs: 'Khử mùi vi sinh: 99.9% · Hoàn toàn không mùi hóa chất',
+            },
+          ].map((preset) => {
+            const isSelected = co2Preset === preset.id;
+            return (
+              <div
+                key={preset.id}
+                onClick={() => setCo2Preset(preset.id as any)}
+                style={{
+                  padding: '12px 14px',
+                  background: isSelected ? 'rgba(45, 212, 191, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                  border: `1.5px solid ${isSelected ? '#2dd4bf' : 'rgba(255, 255, 255, 0.1)'}`,
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div className="row between" style={{ marginBottom: 4 }}>
+                  <strong style={{ fontSize: 12, color: isSelected ? '#5eead4' : '#fff' }}>{preset.name}</strong>
+                  <span style={{ fontSize: 10, background: '#134e4a', color: '#2dd4bf', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                    {preset.time}
+                  </span>
+                </div>
+                <p style={{ margin: '0 0 6px', fontSize: 11, color: '#ccfbf1', lineHeight: 1.4 }}>
+                  {preset.desc}
+                </p>
+                <span style={{ fontSize: 10, color: '#5eead4', fontWeight: 600 }}>
+                  ✓ {preset.specs}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Live Telemetry Sensor Bar */}
+        <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '12px 16px', borderRadius: 6, border: '1px solid rgba(45, 212, 191, 0.3)', marginBottom: 14 }}>
+          <div className="row between" style={{ flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#5eead4', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Activity size={14} /> Cảm Biến Giám Sát Buồng Áp Suất Siêu Tới Hạn Thời Gian Thực:
+            </span>
+            <span style={{ fontSize: 10, color: '#99f6e4' }}>
+              Quy trình khép kín Recapture 98.4%
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8 }}>
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px 10px', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#99f6e4' }}>Áp suất vận hành</div>
+              <div style={{ fontWeight: 700, color: '#fff', fontSize: 13 }}>73.8 bar (Supercritical)</div>
+            </div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px 10px', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#99f6e4' }}>Nhiệt độ buồng</div>
+              <div style={{ fontWeight: 700, color: '#5eead4', fontSize: 13 }}>31.2°C (Không co rút)</div>
+            </div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px 10px', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#99f6e4' }}>Nước sạch bảo tồn</div>
+              <div style={{ fontWeight: 700, color: '#38bdf8', fontSize: 13 }}>45 Lít / lượt</div>
+            </div>
+            <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '8px 10px', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#99f6e4' }}>Dung môi Perc tồn dư</div>
+              <div style={{ fontWeight: 700, color: '#34d399', fontSize: 13 }}>0.00% (Hoàn toàn sạch)</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action button */}
+        {co2Booked ? (
+          <div style={{ padding: '12px 16px', background: 'rgba(45, 212, 191, 0.15)', border: '1px solid #2dd4bf', borderRadius: 6 }}>
+            <div className="row between" style={{ flexWrap: 'wrap', gap: 8, marginBottom: 4 }}>
+              <span style={{ color: '#5eead4', fontWeight: 700, fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <CheckCircle2 size={16} /> ĐÃ ĐĂNG KÝ GIẶT CO2 SIÊU TỚI HẠN · PHIẾU: {co2Ticket}
+              </span>
+              <span style={{ fontSize: 10, background: '#0d9488', color: '#fff', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                WATERLESS ECO-SPA
+              </span>
+            </div>
+            <p style={{ margin: 0, color: '#ccfbf1', fontSize: 11 }}>
+              Bưu tá sẽ thu nhận trang phục trong túi niêm phong riêng biệt. Bạn nhận ngay <strong>+150 Điểm Thưởng Xanh NEX-Green</strong> cho hành động tiết kiệm nước sạch và bảo tồn tài nguyên sinh thái.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => {
+                const code = `#CO2-SPA-VAS-${Date.now().toString().slice(-6)}`;
+                setCo2Ticket(code);
+                setCo2Booked(true);
+                try {
+                  localStorage.setItem('nexora_vas_co2_spa', JSON.stringify({
+                    preset: co2Preset,
+                    ticket: code,
+                    time: new Date().toISOString(),
+                  }));
+                } catch {}
+              }}
+              style={{
+                flex: 1,
+                minWidth: 260,
+                padding: '10px 18px',
+                background: '#0d9488',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <RotateCcw size={14} /> Đặt Lịch Giặt Không Nước CO2 Siêu Tới Hạn (+150 Điểm Xanh)
+            </button>
+            <span style={{ fontSize: 11, color: '#99f6e4' }}>
+              Quy chuẩn làm sạch xanh thân thiện với sức khỏe và môi trường
             </span>
           </div>
         )}

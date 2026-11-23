@@ -24,6 +24,8 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [showFabricComparison, setShowFabricComparison] = useState(false);
   const [showDurability, setShowDurability] = useState(false);
   const [showStretchRecovery, setShowStretchRecovery] = useState(false);
+  const [showDrapeRadar, setShowDrapeRadar] = useState(false);
+  const [drapeWaveActive, setDrapeWaveActive] = useState(true);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const [bundleItems, setBundleItems] = useState({ main: true, pants: true, belt: true });
   const [bundleBusy, setBundleBusy] = useState(false);
@@ -1344,6 +1346,95 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     </p>
                   </div>
                 )}
+
+                {/* Radar Đo Lường Độ Rủ Sợi Dệt & Hệ Số Tiêu Âm Tự Nhiên (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01) */}
+                <div style={{ marginTop: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowDrapeRadar(!showDrapeRadar)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '6px 12px',
+                      background: showDrapeRadar ? '#f0fdfa' : '#fff',
+                      border: showDrapeRadar ? '1px solid #0d9488' : '1px solid var(--line)',
+                      borderRadius: 3,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: showDrapeRadar ? '#0f766e' : 'var(--ink)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Volume2 size={13} color={showDrapeRadar ? '#0d9488' : 'var(--clay)'} />
+                    {showDrapeRadar ? 'Thu gọn radar độ rủ & tiêu âm ▲' : '🌊 Radar Độ Rủ & Hệ Số Tiêu Âm ISO 354 (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR) ▼'}
+                  </button>
+
+                  {showDrapeRadar && (
+                    <div style={{ marginTop: 10, padding: 12, background: '#f0fdfa', border: '1px solid #99f6e4', borderRadius: 4 }}>
+                      <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                        <strong style={{ fontSize: 12, color: '#134e4a', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <Award size={15} color="#0d9488" /> Độ Rủ Sóng Vải &amp; Tiêu Âm Không Gian (Cusick Meter &amp; ISO 354)
+                        </strong>
+                        <span style={{ fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                          DRAPE FLUIDITY: GRADE A (34.2%)
+                        </span>
+                      </div>
+
+                      <p style={{ margin: '0 0 10px', fontSize: 11, color: '#115e59', lineHeight: 1.4 }}>
+                        Đo lường độ rủ mềm mại tự nhiên và khả năng hấp thụ tạp âm của cấu trúc dệt sợi {p.material}, giúp trang phục chuyển động mềm mại theo từng bước chân và giảm vang âm trong không gian kiến trúc.
+                      </p>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 10 }}>
+                        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ Số Rủ Cusick</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>34.2% (Grade A Sóng Rủ)</strong>
+                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Sóng vải rủ uyển chuyển, tự duỗi nếp gãy</div>
+                        </div>
+
+                        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ Số Tiêu Âm NRC</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>0.45 NRC (ISO 354)</strong>
+                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Hấp thụ tạp âm văn phòng &amp; phòng họp</div>
+                        </div>
+
+                        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ Số Dẫn Nhiệt</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>0.038 W/m·K</strong>
+                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Cách nhiệt tự nhiên 2 chiều đông - hè</div>
+                        </div>
+
+                        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Độ Rủ Động Học 3D</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>98 / 100 Điểm Sóng</strong>
+                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Phom dáng rủ bồng bềnh theo nhịp bước</div>
+                        </div>
+                      </div>
+
+                      <div style={{ background: '#fff', padding: '8px 12px', borderRadius: 3, border: '1px solid #99f6e4', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                        <span style={{ fontSize: 11, color: '#134e4a' }}>
+                          🌊 <em>Mô phỏng sóng vải 3D:</em> {drapeWaveActive ? 'Đang kích hoạt nhịp rủ sóng 0.8 Hz theo bước đi' : 'Tĩnh vật lý'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setDrapeWaveActive(!drapeWaveActive)}
+                          style={{
+                            fontSize: 10,
+                            padding: '3px 8px',
+                            background: drapeWaveActive ? '#0f766e' : '#fff',
+                            color: drapeWaveActive ? '#fff' : '#0f766e',
+                            border: '1px solid #0f766e',
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {drapeWaveActive ? 'Tạm dừng mô phỏng sóng' : 'Mô phỏng sóng rủ 3D'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Atelier Care Guide */}
