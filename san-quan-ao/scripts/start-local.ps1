@@ -5,7 +5,7 @@ Write-Host ">>> [1/4] Khoi dong PostgreSQL & Redis trong WSL..." -ForegroundColo
 wsl -d Ubuntu -- bash -c "bash '/mnt/d/A - Học Tập/Thương Mại Điện Tử/san-quan-ao/scripts/setup-wsl.sh'"
 
 Write-Host ">>> [2/4] Khoi chay Network Socket Relay..." -ForegroundColor Cyan
-Start-Process wsl -ArgumentList "-d", "Ubuntu", "--", "python3", "/mnt/d/A - Học Tập/Thương Mại Điện Tử/san-quan-ao/scripts/relay.py" -WindowStyle Hidden
+Start-Process wsl -ArgumentList "-d", "Ubuntu", "--", "python3", "'/mnt/d/A - Học Tập/Thương Mại Điện Tử/san-quan-ao/scripts/relay.py'" -WindowStyle Hidden
 Start-Sleep -Seconds 2
 
 Write-Host ">>> [3/4] Khoi dong Backend API NestJS (Port 4000)..." -ForegroundColor Cyan
