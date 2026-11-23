@@ -111,7 +111,7 @@ export default function AccountPage() {
     }
     return [
       {
-        id: 'ORD-BESPOKE-9921',
+        id: '#NX-BESPOKE-9921',
         productName: 'Áo Khoác Blazer Linen Normandy Khâu Tay Độc Bản',
         variant: 'Xanh Navy Đậm / Size 48',
         monogram: 'ELENA-VU',
@@ -123,12 +123,12 @@ export default function AccountPage() {
       },
     ];
   });
-  // CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01: Bespoke Atelier 5-Stage Crafting Progress & Escrow 30% Deposit Ledger
+  // Bespoke Atelier 5-Stage Crafting Progress & Escrow 30% Deposit Ledger
   const [activeBespokeStep, setActiveBespokeStep] = useState(3);
   const [liveCameraFeedOpen, setLiveCameraFeedOpen] = useState(false);
   const [homeFittingRequested, setHomeFittingRequested] = useState(false);
 
-  // USER-STYLE-AFFILIATE-INCOME-STATEMENT-01: Creator Affiliate Income Statement & Automated PIT Withholding Compliance
+  // Creator Affiliate Income Statement & Automated PIT Withholding Compliance
   const [taxReportDownloaded, setTaxReportDownloaded] = useState(false);
   const [selectedTaxQuarter, setSelectedTaxQuarter] = useState<'Q4_2026' | 'Q3_2026'>('Q4_2026');
   const [hibernationOpen, setHibernationOpen] = useState(false);
@@ -157,6 +157,12 @@ export default function AccountPage() {
             try {
               localStorage.setItem('nexora_fashion_passport', JSON.stringify(vault.passport));
             } catch {}
+          }
+          if (vault?.bespoke && Array.isArray(vault.bespoke) && vault.bespoke.length > 0) {
+            setBespokeOrders((prev) => {
+              const combined = [...vault.bespoke, ...prev.filter(p => !vault.bespoke.some((v: any) => v.id === p.id))];
+              return combined;
+            });
           }
         })
         .catch(() => {});
@@ -2126,19 +2132,19 @@ export default function AccountPage() {
           {/* Escrow 15-day Release Schedule */}
           <div style={{ fontSize: 11, color: '#475569', marginBottom: 14, background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
             <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>
-              Lịch trình giải ngân Escrow 15 ngày chống hoàn hàng (Domain D10-04):
+              Lịch trình tất toán hoa hồng Escrow 15 ngày:
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div className="row between">
-                <span>• Đơn #ORD-KOC-8891 (Áo Linen Normandy) · Hoa hồng ròng: 180.000₫</span>
+                <span>• Đơn #NX-KOC-8891 (Áo Linen Normandy) · Hoa hồng ròng: 180.000₫</span>
                 <span style={{ color: '#059669', fontWeight: 600 }}>Giải ngân ngày mai (Hết 15 ngày)</span>
               </div>
               <div className="row between">
-                <span>• Đơn #ORD-KOC-8914 (Combo Lụa Bảo Lộc) · Hoa hồng ròng: 420.000₫</span>
+                <span>• Đơn #NX-KOC-8914 (Combo Lụa Bảo Lộc) · Hoa hồng ròng: 420.000₫</span>
                 <span style={{ color: '#d97706', fontWeight: 600 }}>Còn 5 ngày trong Escrow</span>
               </div>
               <div className="row between">
-                <span>• Đơn #ORD-KOC-8952 (Blazer Sartorial) · Hoa hồng ròng: 650.000₫</span>
+                <span>• Đơn #NX-KOC-8952 (Blazer Sartorial) · Hoa hồng ròng: 650.000₫</span>
                 <span style={{ color: '#64748b' }}>Còn 11 ngày trong Escrow</span>
               </div>
             </div>

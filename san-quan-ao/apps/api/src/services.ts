@@ -227,7 +227,7 @@ export class VaultController {
     const logs = await this.db.auditLog.findMany({
       where: {
         actorId: req.user.id,
-        action: { in: ['VAULT_PASSPORT', 'VAULT_LOOKBOOK', 'VAULT_BESPOKE', 'VAULT_BOOKING', 'VAULT_SWAP'] },
+        action: { in: ['VAULT_PASSPORT', 'VAULT_LOOKBOOK', 'VAULT_BESPOKE', 'VAULT_BOOKING', 'VAULT_SWAP', 'VAULT_CIRCULAR_PASSPORT'] },
       },
       orderBy: { createdAt: 'desc' },
       take: 100,
@@ -238,6 +238,7 @@ export class VaultController {
     const bespoke = logs.filter(l => l.action === 'VAULT_BESPOKE').map(l => l.data);
     const bookings = logs.filter(l => l.action === 'VAULT_BOOKING').map(l => l.data);
     const swaps = logs.filter(l => l.action === 'VAULT_SWAP').map(l => l.data);
+    const circularPassports = logs.filter(l => l.action === 'VAULT_CIRCULAR_PASSPORT').map(l => l.data);
 
     return {
       passport: passportLog?.data ?? null,
@@ -245,6 +246,7 @@ export class VaultController {
       bespoke,
       bookings,
       swaps,
+      circularPassports,
     };
   }
 
@@ -358,5 +360,24 @@ export class VaultController {
       },
     });
     return { ok: true, swap: data };
+  }
+
+  @Post('circular-passport')
+  async saveCircularPassport(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      fabric: z.string().max(50),
+      code: z.string().max(80),
+      time: z.string().optional(),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_CIRCULAR_PASSPORT',
+        entityId: data.code,
+        data: data as any,
+      },
+    });
+    return { ok: true, passport: data };
   }
 }

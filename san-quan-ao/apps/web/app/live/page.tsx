@@ -63,7 +63,15 @@ export default function LiveRoom() {
         setSavedLookbooks(JSON.parse(savedLooks));
       }
     } catch {}
-  }, []);
+
+    if (user) {
+      api<{ lookbooks?: any[] }>('/vault').then(res => {
+        if (res?.lookbooks && res.lookbooks.length > 0) {
+          setSavedLookbooks(res.lookbooks);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
 
   function captureRunwayLook() {
     if (!pinnedProduct) return;
@@ -82,6 +90,7 @@ export default function LiveRoom() {
       try {
         localStorage.setItem('nexora_saved_runway_looks', JSON.stringify(updated));
       } catch {}
+      void api('/vault/lookbook', 'POST', newLook).catch(() => {});
       setCapturingLook(false);
       setLookCapturedNotice(`✓ Đã chụp & lưu Lookbook "${newLook.title}" (${angleName}) vào bộ sưu tập cá nhân!`);
       setTimeout(() => setLookCapturedNotice(''), 4500);

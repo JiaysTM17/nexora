@@ -29,7 +29,7 @@ export default function TradeInPage() {
   const [scanComplete, setScanComplete] = useState(false);
   const [authCode, setAuthCode] = useState('');
   const [sealTagRequested, setSealTagRequested] = useState(true);
-  // TRADEIN-AI-AUTHENTICATION-NFT-01: NFT Digital Ownership Passport & Blockchain Tamper-Proof Provenance
+  // Digital Ownership Certificate & Blockchain Tamper-Proof Provenance
   const [nftMinted, setNftMinted] = useState(false);
   const [isMintingNft, setIsMintingNft] = useState(false);
   const [nftTokenId, setNftTokenId] = useState('');
@@ -108,7 +108,7 @@ export default function TradeInPage() {
         <Notice>Vui lòng <Link href="/dang-nhap">đăng nhập</Link> để gửi yêu cầu Trade-In và nhận Voucher đối ứng.</Notice>
       ) : (
         <>
-          {/* Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR-01) */}
+          {/* Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì */}
           {(() => {
             const simData = {
               SHIRT: { name: 'Áo Sơ Mi Lụa / Linen Cao Cấp', basePrice: 1250000, category: 'Áo khoác', defaultBrand: 'NEXORA Atelier' },
@@ -134,7 +134,7 @@ export default function TradeInPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <Calculator size={18} color="var(--gold-dark)" />
                     <strong style={{ fontSize: 14, color: '#9a3412' }}>
-                      Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR)
+                      Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì · Chuẩn Giám Định AI
                     </strong>
                   </div>
                   <span style={{ fontSize: 11, background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
@@ -306,7 +306,7 @@ export default function TradeInPage() {
             </div>
           </div>
 
-          {/* Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà & Cấp Túi Niêm Phong (TRADEIN-COURIER-SLOT-01) */}
+          {/* Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà & Cấp Túi Niêm Phong */}
           <div
             style={{
               marginTop: 24,
@@ -321,7 +321,7 @@ export default function TradeInPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Truck size={18} color="var(--gold-dark)" />
                 <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
-                  Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)
+                  Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà · White-Glove Courier
                 </strong>
               </div>
               <span style={{ fontSize: 10, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
@@ -338,7 +338,7 @@ export default function TradeInPage() {
                 <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
                   <div>
                     <strong style={{ fontSize: 13, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <CheckCircle2 size={16} /> Đã Xếp Lịch Thu Gom #TRADEIN-PICKUP-889
+                      <CheckCircle2 size={16} /> Đã Xếp Lịch Thu Gom #NX-PICKUP-889
                     </strong>
                     <p style={{ margin: '4px 0 0', fontSize: 12, color: '#334155', lineHeight: 1.5 }}>
                       • Khung giờ hẹn: <strong>{pickupSlot === 'MORNING' ? 'Buổi sáng (08:00 - 12:00)' : pickupSlot === 'AFTERNOON' ? 'Buổi chiều (13:30 - 17:30)' : 'Buổi tối (18:00 - 21:00)'}</strong><br />
@@ -416,7 +416,7 @@ export default function TradeInPage() {
         </>
       )}
 
-      {/* Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn (TRADEIN-FABRIC-RECYCLING-INDEX-01) */}
+      {/* Hộ Chiếu Tái Chế Sợi Dệt & Vòng Đời Tái Sinh Tuần Hoàn */}
       <div
         style={{
           marginTop: 24,
@@ -431,7 +431,7 @@ export default function TradeInPage() {
             <Recycle size={18} color="#059669" />
             <div>
               <strong style={{ fontSize: 14, color: '#0f172a' }}>
-                Hộ Chiếu Tái Chế Sợi Dệt &amp; Vòng Đời Tuần Hoàn LCA (TRADEIN-FABRIC-RECYCLING-INDEX-01)
+                Hộ Chiếu Tái Chế Sợi Dệt &amp; Vòng Đời Tuần Hoàn LCA · Zero Landfill
               </strong>
               <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
                 Đo lường lượng tài nguyên bảo tồn và phân bổ 3 hướng tái sinh cho trang phục thu cũ.
@@ -556,20 +556,22 @@ export default function TradeInPage() {
               </span>
             </div>
             <p style={{ margin: '4px 0 0', color: '#047857', fontSize: 11 }}>
-              Hộ chiếu đã được lưu trữ vào ví cá nhân (`localStorage`). Bạn đã góp phần giảm thiểu rác thải thời trang và đóng góp vào mục tiêu phát thải ròng bằng 0 (Net-Zero).
+              Hộ chiếu số đã được lưu trữ an toàn vào Kho Lưu Trữ Thời Trang Cá Nhân (Nexora Atelier Vault). Bạn đã góp phần giảm thiểu rác thải thời trang và đóng góp vào mục tiêu phát thải ròng bằng 0 (Net-Zero).
             </p>
           </div>
         ) : (
           <button
             type="button"
             onClick={() => {
+              const passportData = {
+                fabric: lcaFabricType,
+                code: `PASSPORT-LCA-${Date.now().toString().slice(-6)}`,
+                time: new Date().toISOString(),
+              };
               try {
-                localStorage.setItem('nexora_circular_passport', JSON.stringify({
-                  fabric: lcaFabricType,
-                  code: `PASSPORT-LCA-${Date.now().toString().slice(-6)}`,
-                  time: new Date().toISOString(),
-                }));
+                localStorage.setItem('nexora_circular_passport', JSON.stringify(passportData));
               } catch {}
+              void api('/vault/circular-passport', 'POST', passportData).catch(() => {});
               setPassportGenerated(true);
             }}
             style={{
@@ -593,7 +595,7 @@ export default function TradeInPage() {
         )}
       </div>
 
-      {/* Quang Học Vi Điểm 50x & Thẩm Định Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01) */}
+      {/* Quang Học Vi Điểm 50x & Thẩm Định Xác Thực Đồ Cũ */}
       <div
         style={{
           marginTop: 28,
@@ -611,7 +613,7 @@ export default function TradeInPage() {
             </div>
             <div>
               <strong style={{ fontSize: 15, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 8 }}>
-                Quang Học Vi Điểm 50x &amp; Thẩm Định Xác Thực Đồ Cũ (TRADEIN-AI-AUTHENTICATION-SCAN-01)
+                Quang Học Vi Điểm 50x &amp; Thẩm Định Xác Thực Đồ Cũ · Micro-Optical AI Inspection
               </strong>
               <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
                 Soi quang học 50x phân tích mật độ sợi dệt, độ sâu rãnh khắc CNC và tem dệt nhiệt chống hàng giả.
@@ -812,7 +814,7 @@ export default function TradeInPage() {
         )}
       </div>
 
-      {/* Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01) */}
+      {/* Hộ Chiếu Sở Hữu Số & Sổ Cái Xác Thực Bất Biến */}
       <div
         style={{
           marginTop: 28,
@@ -829,7 +831,7 @@ export default function TradeInPage() {
             <Cpu size={22} color="#38bdf8" />
             <div>
               <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--font-sans)', color: '#f8fafc' }}>
-                Hộ Chiếu Sở Hữu Số NFT &amp; Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)
+                Hộ Chiếu Sở Hữu Số &amp; Sổ Cái Xác Thực Bất Biến · Digital Ownership Certificate
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8' }}>
                 Chuẩn hóa quyền sở hữu số ERC-721 &amp; W3C Verifiable Credentials trên Nexora Eco-Chain

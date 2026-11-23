@@ -1181,7 +1181,7 @@ export default function VasCarePage() {
             <button
               type="button"
               onClick={() => {
-                const code = `#STERILIZE-VAS-${Date.now().toString().slice(-6)}`;
+                const code = `#NX-STERILIZE-${Date.now().toString().slice(-6)}`;
                 setSterilizationTicket(code);
                 setSterilizationBooked(true);
                 try {
@@ -1349,7 +1349,7 @@ export default function VasCarePage() {
             <button
               type="button"
               onClick={() => {
-                const code = `#CO2-SPA-VAS-${Date.now().toString().slice(-6)}`;
+                const code = `#NX-CO2-SPA-${Date.now().toString().slice(-6)}`;
                 setCo2Ticket(code);
                 setCo2Booked(true);
                 try {
