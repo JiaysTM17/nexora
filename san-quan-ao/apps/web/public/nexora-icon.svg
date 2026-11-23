@@ -1,6 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Master Gradients for X-Nexus (Original Brand Colors) -->
+    <!-- Background Squircle Gradient for iOS/macOS App Store -->
+    <linearGradient id="iconBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </linearGradient>
+
+    <!-- Master Gradients for X-Nexus -->
     <linearGradient id="xGradIndigo" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#4F46E5" />
       <stop offset="100%" stop-color="#06B6D4" />
@@ -12,11 +18,19 @@
     </linearGradient>
 
     <filter id="iconShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#4F46E5" flood-opacity="0.25" />
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#4F46E5" flood-opacity="0.18" />
+    </filter>
+
+    <filter id="subtleBorder" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#CBD5E1" flood-opacity="0.5" />
     </filter>
   </defs>
 
-  <!-- Transparent Background (No White Base) -->
+  <!-- Pure White Base -->
+  <rect width="512" height="512" fill="#FFFFFF" />
+
+  <!-- App Squircle Container with subtle border -->
+  <rect x="24" y="24" width="464" height="464" rx="108" ry="108" fill="url(#iconBg)" stroke="#E2E8F0" stroke-width="2" filter="url(#subtleBorder)" />
 
   <!-- HERO 'X' INTERLOCKING GLYPH -->
   <g transform="translate(96, 96)" filter="url(#iconShadow)">

@@ -204,7 +204,7 @@ export default function MixMatchPage() {
             <Sparkles size={14} color="var(--clay)" />
             NEXORA EDITORIAL STUDIO · CAT-MIX-MATCH-01
           </p>
-          <h1 style={{ margin: '4px 0 8px', fontSize: 28, fontFamily: 'Georgia, serif' }}>
+          <h1 style={{ margin: '4px 0 8px', fontSize: 28, fontFamily: 'var(--serif)' }}>
             Phòng Thử Đồ Mix &amp; Match
           </h1>
           <p className="subtle" style={{ margin: 0, maxWidth: 600 }}>
@@ -471,7 +471,7 @@ export default function MixMatchPage() {
 
               <div className="row between" style={{ fontSize: 11, marginBottom: 6 }}>
                 <span style={{ color: '#475569' }}>Chỉ số hòa hợp tổng thể (Overall Synergy):</span>
-                <strong style={{ color: '#0f766e', fontSize: 13, fontFamily: 'Georgia, serif' }}>95.0 / 100</strong>
+                <strong style={{ color: '#0f766e', fontSize: 13, fontFamily: 'var(--serif)' }}>95.0 / 100</strong>
               </div>
 
               {showRadarAnalysis && (

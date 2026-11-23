@@ -23,12 +23,48 @@ export default function Home() {
   const params = new URLSearchParams({ ...(category ? { category } : {}), ...(search ? { q: search } : {}), ...(color ? { color } : {}), ...(size ? { size } : {}), ...(stock ? { inStock: 'true' } : {}), ...(mall ? { isMall: 'true' } : {}) });
   const { data, error, loading } = useResource<{ items: Product[]; total: number }>(`/products?${params}`);
   return <>
-    <section className="hero"><div className="hero-copy"><div className="eyebrow"><span/> TỦ ĐỒ CỦA BẠN, CÂU CHUYỆN CỦA BẠN</div><h1>Mỗi ngày,<br/>một cách <em>là mình.</em></h1><p>Khám phá những món đồ dễ yêu từ các shop Việt.<br/>Tìm cảm hứng mới từ những người có gu giống bạn.</p><a className="button" href="#trang-phuc">Tìm món đồ của bạn<ArrowUpRight size={20}/></a><div className="hero-proof"><span><Check size={15}/> Chọn đúng màu, đúng size</span><span><Check size={15}/> Mua từ shop độc lập</span></div></div><div className="hero-art"><img src="/products/outfit.svg" alt="Minh họa phối sơ mi linen và quần suông màu nâu"/><div className="editor-note"><span>THE EVERYDAY EDIT / 01</span><strong>Đơn giản. Nhưng có gu.</strong><Link href="/cong-dong">Xem cách phối <ArrowUpRight size={16}/></Link></div><div className="vertical-note">LESS EFFORT. MORE YOU.</div></div></section>
-    <div className="values-strip"><span>CHẤT LIỆU THOẢI MÁI</span><i>✳</i><span>PHONG CÁCH CỦA RIÊNG BẠN</span><i>✳</i><span>KẾT NỐI CÁC SHOP VIỆT</span><i>✳</i><span>CẢM HỨNG MỖI NGÀY</span></div>
+    <section className="hero">
+      <div className="hero-copy">
+        <div className="eyebrow"><span/> NEXORA ATELIER // SS 2026 RUNWAY &amp; EDITORIAL ARCHIVE</div>
+        <h1>KIẾN TẠO PHONG CÁCH.<br/><span>ĐỊNH HÌNH BẢN SẮC.</span></h1>
+        <p>Nền tảng thương mại thời trang đương đại kết hợp AI Styling &amp; Mạng xã hội OOTD.<br/>Khám phá các thiết kế nguyên bản từ các xưởng may thủ công &amp; nhà mốt độc lập.</p>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <a className="button" href="#trang-phuc">Khám Phá Bộ Sưu Tập <ArrowUpRight size={18}/></a>
+          <Link className="button subtle" href="/phoi-do" style={{ background: '#FFFFFF', border: '1px solid var(--line)', color: 'var(--ink)' }}>
+            <Sparkles size={16} /> Studio Phối Đồ AI
+          </Link>
+        </div>
+        <div className="hero-proof">
+          <span><Check size={14}/> Đồng kiểm ngoại quan tại chỗ</span>
+          <span><Check size={14}/> 100% Chất liệu cao cấp tự nhiên</span>
+          <span><Check size={14}/> Nhà mốt độc lập tuyển chọn</span>
+        </div>
+      </div>
+      <div className="hero-art">
+        <img src="/products/outfit.svg" alt="Minh họa phối sơ mi linen và quần suông màu nâu"/>
+        <div className="editor-note">
+          <span>EDITORIAL SELECTION // 01</span>
+          <strong>Normandy Linen &amp; Sartorial Cut</strong>
+          <Link href="/phoi-do">Mở Studio Mix &amp; Match <ArrowUpRight size={16}/></Link>
+        </div>
+        <div className="vertical-note">LESS EFFORT. MORE YOU.</div>
+      </div>
+    </section>
+    <div className="values-strip">
+      <span>100% NGUYÊN BẢN CHÍNH HÃNG</span>
+      <i>✳</i>
+      <span>ĐỒNG KIỂM TRƯỚC KHI NHẬN HÀNG</span>
+      <i>✳</i>
+      <span>PHÒNG THỬ ĐỒ MIX &amp; MATCH AI</span>
+      <i>✳</i>
+      <span>ATELIER SPA &amp; CHĂM SÓC ĐỒ HIỆU</span>
+      <i>✳</i>
+      <span>THU CŨ ĐỔI MỚI TRADE-IN MINH BẠCH</span>
+    </div>
     <section className="section" style={{ paddingBottom: 0 }}>
       <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: '#fff', padding: '22px 30px', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <span style={{ background: 'var(--clay)', color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 2, letterSpacing: 1, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ background: '#4F46E5', color: '#fff', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 2, letterSpacing: 1, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
             <Zap size={12} fill="#fff"/> FLASH SALE ĐỘC QUYỀN (CART-FLASH-03)
           </span>
           <h2 style={{ color: '#fff', margin: '8px 0 4px', fontSize: 24, fontWeight: 600 }}>Giờ Vàng Săn Deal · Khóa Giữ Giá 15 Phút</h2>
@@ -39,7 +75,7 @@ export default function Home() {
           <div style={{ display: 'flex', gap: 5, fontFamily: 'monospace', fontSize: 17, fontWeight: 700, alignItems: 'center' }}>
             <span style={{ background: 'rgba(255,255,255,0.1)', padding: '5px 8px', borderRadius: 2, border: '1px solid rgba(255,255,255,0.15)' }}>{String(timeLeft.hours).padStart(2, '0')}</span>:
             <span style={{ background: 'rgba(255,255,255,0.1)', padding: '5px 8px', borderRadius: 2, border: '1px solid rgba(255,255,255,0.15)' }}>{String(timeLeft.minutes).padStart(2, '0')}</span>:
-            <span style={{ background: 'var(--clay)', padding: '5px 8px', borderRadius: 2 }}>{String(timeLeft.seconds).padStart(2, '0')}</span>
+            <span style={{ background: '#4F46E5', padding: '5px 8px', borderRadius: 2 }}>{String(timeLeft.seconds).padStart(2, '0')}</span>
           </div>
         </div>
       </div>
@@ -62,13 +98,13 @@ export default function Home() {
 
     {/* Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime (CAT-TRENDING-BOARD-02) */}
     <section className="section" style={{ paddingTop: 20, paddingBottom: 0 }}>
-      <div style={{ padding: '24px 28px', background: '#faf8f5', border: '1px solid var(--line)', borderRadius: 4 }}>
+      <div style={{ padding: '24px 28px', background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4 }}>
         <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
           <div>
-            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--clay)' }}>
+            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--brand-indigo)' }}>
               <TrendingUp size={14} /> NEXORA TREND RADAR · REALTIME SALES VELOCITY (CAT-TRENDING-BOARD-02)
             </p>
-            <h2 style={{ margin: '4px 0 0', fontSize: 20, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+            <h2 style={{ margin: '4px 0 0', fontSize: 22, fontWeight: 750, color: 'var(--ink)' }}>
               Bảng Xếp Hạng Xu Hướng Tuần Này
             </h2>
           </div>
@@ -111,7 +147,7 @@ export default function Home() {
               }}
             >
               <div className="row between" style={{ marginBottom: 6 }}>
-                <span style={{ fontSize: 18, fontWeight: 700, fontFamily: 'Georgia, serif', color: 'var(--clay)' }}>
+                <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--brand-indigo)' }}>
                   {trend.rank}
                 </span>
                 <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
@@ -124,7 +160,7 @@ export default function Home() {
               <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
                 {trend.desc}
               </p>
-              <span style={{ display: 'inline-block', marginTop: 10, fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--clay)', fontWeight: 600 }}>
+              <span style={{ display: 'inline-block', marginTop: 10, fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--brand-indigo)', fontWeight: 600 }}>
                 • {trend.tag}
               </span>
             </div>
@@ -133,19 +169,19 @@ export default function Home() {
       </div>
     </section>
 
-    {/* Bộ Sưu Tập Nhộng Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01) */}
+    {/* Bộ Sưu Tập Capsule Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01) */}
     <section className="section" style={{ paddingTop: 20, paddingBottom: 0 }}>
-      <div style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 4, padding: '24px 28px' }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, padding: '24px 28px' }}>
         <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
           <div>
-            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--clay)' }}>
+            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--brand-indigo)' }}>
               <Layers size={14} /> THE SEASONAL CAPSULE EDIT · STYLE STUDIO (CAT-CAPSULE-LOOKBOOK-01)
             </p>
-            <h2 style={{ margin: '4px 0 0', fontSize: 22, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
-              Bộ Sưu Tập Nhộng &amp; Gợi Ý Phối Đồ Trọn Set
+            <h2 style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 750, color: 'var(--ink)' }}>
+              Bộ Sưu Tập Capsule &amp; Gợi Ý Phối Đồ Trọn Set
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
-              Tuyển tập 3 phong cách thiết yếu được các Senior Stylist căn chỉnh sắc độ hòa hợp và áp dụng chiết khấu Combo Saver -10%.
+              Tuyển tập 3 phong cách thiết yếu được các Senior Stylist căn chỉnh sắc độ chuẩn mực và áp dụng chiết khấu Combo Saver -10%.
             </p>
           </div>
           <Link href="/phoi-do" className="button" style={{ fontSize: 12, padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -165,10 +201,10 @@ export default function Home() {
               type="button"
               onClick={() => setActiveCapsule(tab.id)}
               style={{
-                background: activeCapsule === tab.id ? '#111' : '#faf9f5',
-                color: activeCapsule === tab.id ? '#fff' : 'var(--ink)',
+                background: activeCapsule === tab.id ? '#09090B' : '#F8FAFC',
+                color: activeCapsule === tab.id ? '#FFFFFF' : 'var(--ink)',
                 border: '1px solid var(--line)',
-                padding: '6px 14px',
+                padding: '7px 16px',
                 borderRadius: 20,
                 fontSize: 12,
                 fontWeight: activeCapsule === tab.id ? 700 : 500,
@@ -242,7 +278,7 @@ export default function Home() {
                       border: '1px solid var(--line)',
                       borderRadius: 3,
                       padding: 10,
-                      background: '#faf9f5',
+                      background: '#FFFFFF',
                       textAlign: 'center',
                     }}
                   >
@@ -257,7 +293,7 @@ export default function Home() {
                     <div style={{ fontSize: 11, fontWeight: 600, lineHeight: 1.3, margin: '4px 0 2px', minHeight: 28, overflow: 'hidden' }}>
                       {piece.item.name}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--clay)', fontWeight: 700 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink)', fontWeight: 700 }}>
                       {vnd(piece.item.price)}
                     </div>
                   </div>
@@ -267,7 +303,7 @@ export default function Home() {
               {/* Lookbook Editorial Details */}
               <div style={{ padding: '8px 10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                  <span style={{ fontSize: 11, background: '#f5f0e8', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                  <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                     {cur.palette}
                   </span>
                   <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
@@ -275,7 +311,7 @@ export default function Home() {
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: 18, fontFamily: 'Georgia, serif', margin: '4px 0 8px' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 700, margin: '4px 0 8px' }}>
                   {cur.title}
                 </h3>
 
@@ -283,7 +319,7 @@ export default function Home() {
                   {cur.desc}
                 </p>
 
-                <div style={{ background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 16px', marginBottom: 14 }}>
+                <div style={{ background: '#F8FAFC', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 16px', marginBottom: 14 }}>
                   <div className="row between" style={{ fontSize: 12, color: 'var(--muted)', textDecoration: 'line-through' }}>
                     <span>Tổng giá trị lẻ 3 món:</span>
                     <span>{vnd(cur.originalTotal)}</span>
@@ -295,7 +331,7 @@ export default function Home() {
                         -10%
                       </span>
                     </span>
-                    <strong style={{ color: 'var(--clay)', fontSize: 16 }}>{vnd(cur.comboTotal)}</strong>
+                    <strong style={{ color: 'var(--brand-indigo)', fontSize: 16 }}>{vnd(cur.comboTotal)}</strong>
                   </div>
                 </div>
 
@@ -322,11 +358,11 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="section" id="trang-phuc"><div className="section-heading"><div><p className="eyebrow">CHỌN ÍT HƠN, YÊU NHIỀU HƠN</p><h2>Thêm một món <em>hợp mình.</em></h2></div><span className="subtle">{data ? `${data.total} thiết kế đang chờ bạn` : 'Tìm thiết kế dành cho bạn'}</span></div>
+    <section className="section" id="trang-phuc"><div className="section-heading"><div><p className="eyebrow">THE ATELIER COLLECTION // CURATED APPAREL</p><h2>Tuyển Tập Thiết Kế <em>Nguyên Bản.</em></h2></div><span className="subtle">{data ? `${data.total} thiết kế đang chờ bạn` : 'Tìm thiết kế dành cho bạn'}</span></div>
       <div className="catalog-toolbar"><div className="tabs" aria-label="Danh mục">{[['', 'Tất cả'], ['ao', 'Áo'], ['quan', 'Quần'], ['vay', 'Váy & đầm'], ['ao-khoac', 'Áo khoác & Blazer']].map(([id, name]) => <button key={id} className={category === id ? 'selected' : ''} onClick={() => setCategory(id)}>{name}</button>)}</div><div className="toolbar-right"><form className="search" onSubmit={e => { e.preventDefault(); setSearch(query); }}><Search size={17}/><input aria-label="Tìm tên sản phẩm" placeholder="Tìm món bạn thích…" value={query} onChange={e => setQuery(e.target.value)}/><button type="submit" aria-label="Tìm kiếm"><ArrowRight size={17}/></button></form><button className="filter-button" onClick={() => setFilters(!filters)} aria-expanded={filters}><SlidersHorizontal size={17}/>Bộ lọc</button></div></div>
       {filters && <div className="filters"><label>Màu sắc<select value={color} onChange={e => setColor(e.target.value)}><option value="">Mọi màu</option>{['Đen', 'Trắng', 'Kem', 'Nâu', 'Xanh'].map(c => <option key={c}>{c}</option>)}</select></label><label>Kích cỡ<select value={size} onChange={e => setSize(e.target.value)}><option value="">Mọi size</option>{['S', 'M', 'L'].map(s => <option key={s}>{s}</option>)}</select></label><label className="check"><input type="checkbox" checked={stock} onChange={e => setStock(e.target.checked)}/>Chỉ món còn hàng</label><label className="check"><input type="checkbox" checked={mall} onChange={e => setMall(e.target.checked)}/>Chỉ NEXORA Mall (Chính hãng)</label><button className="text-button" onClick={() => { setColor(''); setSize(''); setStock(false); setMall(false); setSearch(''); setQuery(''); }}>Xóa bộ lọc</button></div>}
       {loading ? <Loading/> : error ? <Notice error>{error}</Notice> : data?.items.length ? <div className="product-grid">{data.items.map(p => <ProductCard key={p.id} product={p}/>)}</div> : <Notice>Chưa có món phù hợp bộ lọc. Bạn thử màu hoặc size khác nhé.</Notice>}
     </section>
-    <section className="community-banner"><div><p className="eyebrow">CẢM HỨNG TỪ CỘNG ĐỒNG OOTD</p><h2>Đồ quen.<br/><em>Cách phối mới.</em></h2><p>Cùng một chiếc áo, hàng trăm câu chuyện phong cách.<br/>Ghé xem mọi người đang mặc gì hôm nay.</p><Link href="/cong-dong" className="button light">Khám phá cộng đồng OOTD<ArrowUpRight size={19}/></Link></div><img src="/products/community.svg" alt="Minh họa các cách kết hợp áo và quần"/><span className="community-stamp">NEXORA<br/>STYLE HUB<br/>↗</span></section>
+    <section className="community-banner"><div><p className="eyebrow">COMMUNITY LOOKBOOK // #NEXORA_OOTD</p><h2>Cảm Hứng Phong Cách <em>Thực Tế Từ Cộng Đồng.</em></h2><p>Cùng một chiếc áo, hàng trăm câu chuyện phong cách.<br/>Ghé xem mọi người đang mặc gì hôm nay.</p><Link href="/cong-dong" className="button light">Khám phá cộng đồng OOTD<ArrowUpRight size={19}/></Link></div><img src="/products/community.svg" alt="Minh họa các cách kết hợp áo và quần"/><span className="community-stamp">NEXORA<br/>STYLE HUB<br/>↗</span></section>
   </>;
 }

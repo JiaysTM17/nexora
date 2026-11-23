@@ -56,8 +56,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [searchQuery]);
   return <UserContext.Provider value={{ user, refresh }}>
-    <div className="announcement">NEXORA — HỆ SINH THÁI THỜI TRANG & CỘNG ĐỒNG PHỐI ĐỒ THẾ HỆ MỚI <span>Khám phá ngay ↗</span></div>
-    <header className="header"><Link href="/" className="logo" aria-label="NEXORA, trang chủ"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '30px', width: 'auto' }} /></Link>
+    <div className="announcement">NEXORA ATELIER — THE NEXT ERA OF FASHION COMMERCE &amp; LIFESTYLE COMMUNITY <span>Khám phá ngay ↗</span></div>
+    <header className="header"><Link href="/" className="logo" aria-label="NEXORA, trang chủ"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '38px', width: 'auto' }} /></Link>
       <nav className={open ? 'nav open' : 'nav'} aria-label="Điều hướng chính"><Link className={path === '/' || path.startsWith('/san-pham') ? 'active' : ''} href="/">Khám phá</Link><Link className={path === '/phoi-do' ? 'active' : ''} href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link className={path === '/live' ? 'active' : ''} href="/live" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 7, height: 7, borderRadius: '50%', background: '#EF4444', display: 'inline-block', boxShadow: '0 0 6px #EF4444' }}/>Trực tiếp (Live)</Link><Link className={path === '/cong-dong' ? 'active' : ''} href="/cong-dong">Cộng đồng OOTD</Link><Link className={path === '/trade-in' ? 'active' : ''} href="/trade-in">Trade-In</Link><Link className={path === '/vas-care' ? 'active' : ''} href="/vas-care">VAS Care</Link><Link className={path === '/seller' ? 'active' : ''} href="/seller">Dành cho Shop</Link>{user?.role === 'ADMIN' && <Link className={path === '/admin' ? 'active' : ''} href="/admin">Quản trị</Link>}</nav>
       <div className="header-actions">
         <button
@@ -130,7 +130,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ padding: '8px 10px', background: '#faf8f5', borderRadius: 4, borderLeft: '3px solid var(--clay)' }}>
+                <div style={{ padding: '8px 10px', background: '#F8FAFC', borderRadius: 4, borderLeft: '3px solid var(--brand-indigo)' }}>
                   <strong style={{ display: 'block', color: 'var(--ink)' }}>✨ Smart Fit Fashion Passport</strong>
                   <p style={{ margin: '2px 0 0', color: 'var(--muted)', fontSize: 11 }}>
                     Hồ sơ số đo cá nhân đã sẵn sàng. Hệ thống sẽ tự động so khớp và gợi ý size chuẩn xác khi bạn xem sản phẩm.
@@ -324,7 +324,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       )}
     </header>
     <main>{children}</main>
-    <footer><div><Link href="/" className="logo"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '26px', width: 'auto' }} /></Link><p>The Next Era of Fashion Commerce & Lifestyle Community.</p><p style={{ fontSize: 10, color: 'var(--muted)', marginTop: 8 }}>Vận hành tuân thủ Nghị định 91/2022/NĐ-CP &amp; Nghị định 13/2023/NĐ-CP về Bảo vệ Dữ liệu Cá nhân (PDPD).</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục & Phụ kiện</Link><Link href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link href="/live">Sàn diễn Live (SOC-LIVE-01)</Link><Link href="/cong-dong">Cộng đồng OOTD</Link><Link href="/trade-in">Thu cũ Đổi mới (Trade-In)</Link><Link href="/vas-care">Chăm sóc đồ hiệu (VAS Care)</Link></div><div><p>HỆ SINH THÁI</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng NEXORA</Link><Link href="/dang-ky">Đăng ký tài khoản</Link></div><div className="footer-note"><strong>TIÊU CHUẨN VẬN HÀNH</strong><br/>• Đồng kiểm ngoại quan (RET-COINSPECT)<br/>• Cầu dao an ninh giá (SOC-PRICE-ERROR)<br/>• Mã PIN an ninh giao nhận (FUL-VERIF-05)<br/>• Hóa đơn điện tử VAT TT 78/2021<br/>• Bảo hành &amp; Đổi trả 7–15 ngày</div></footer>
+    <footer><div><Link href="/" className="logo"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '36px', width: 'auto' }} /></Link><p>The Next Era of Fashion Commerce &amp; Lifestyle Community.</p><p style={{ fontSize: 10, color: 'var(--muted)', marginTop: 8 }}>Vận hành tuân thủ Nghị định 91/2022/NĐ-CP &amp; Nghị định 13/2023/NĐ-CP về Bảo vệ Dữ liệu Cá nhân (PDPD).</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục & Phụ kiện</Link><Link href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link href="/live">Sàn diễn Live (SOC-LIVE-01)</Link><Link href="/cong-dong">Cộng đồng OOTD</Link><Link href="/trade-in">Thu cũ Đổi mới (Trade-In)</Link><Link href="/vas-care">Chăm sóc đồ hiệu (VAS Care)</Link></div><div><p>HỆ SINH THÁI</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng NEXORA</Link><Link href="/dang-ky">Đăng ký tài khoản</Link></div><div className="footer-note"><strong>TIÊU CHUẨN VẬN HÀNH</strong><br/>• Đồng kiểm ngoại quan (RET-COINSPECT)<br/>• Cầu dao an ninh giá (SOC-PRICE-ERROR)<br/>• Mã PIN an ninh giao nhận (FUL-VERIF-05)<br/>• Hóa đơn điện tử VAT TT 78/2021<br/>• Bảo hành &amp; Đổi trả 7–15 ngày</div></footer>
   </UserContext.Provider>;
 }
 export function Notice({ children, error = false }: { children: React.ReactNode; error?: boolean }) { return <div role={error ? 'alert' : 'status'} className={error ? 'notice error' : 'notice'}>{children}</div>; }

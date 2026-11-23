@@ -261,7 +261,7 @@ export default function AccountPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <Scissors size={20} color="#b45309" />
               <div>
-                <h2 style={{ margin: 0, fontSize: 15, color: '#78350f', fontFamily: 'Georgia, serif' }}>
+                <h2 style={{ margin: 0, fontSize: 15, color: '#78350f', fontFamily: 'var(--serif)' }}>
                   Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng &amp; Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)
                 </h2>
                 <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
@@ -1190,7 +1190,7 @@ export default function AccountPage() {
                           Chi phí thực tế trên mỗi lần mặc:
                         </span>
                         <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6 }}>
-                          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--clay)', fontFamily: 'Georgia, serif' }}>
+                          <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--clay)', fontFamily: 'var(--serif)' }}>
                             {vnd(currentCpw)}
                           </span>
                           <span style={{ fontSize: 11, color: 'var(--muted)' }}>/ lần diện</span>
@@ -1262,7 +1262,7 @@ export default function AccountPage() {
           <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6 }}>
             <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 2 }}>Tương Thích Sinh Trắc Học Tủ Đồ</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <strong style={{ fontSize: 22, color: '#047857', fontFamily: 'Georgia, serif' }}>98%</strong>
+              <strong style={{ fontSize: 22, color: '#047857', fontFamily: 'var(--serif)' }}>98%</strong>
               <span style={{ fontSize: 11, color: '#059669', fontWeight: 600 }}>Tối ưu tuyệt đối</span>
             </div>
             <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
@@ -1273,7 +1273,7 @@ export default function AccountPage() {
           <div style={{ padding: '12px 14px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 6 }}>
             <span style={{ fontSize: 11, color: '#64748b', display: 'block', marginBottom: 2 }}>Hiệu Suất Tủ Đồ Nhộng (Capsule Utilization)</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <strong style={{ fontSize: 22, color: '#0f172a', fontFamily: 'Georgia, serif' }}>82%</strong>
+              <strong style={{ fontSize: 22, color: '#0f172a', fontFamily: 'var(--serif)' }}>82%</strong>
               <span style={{ fontSize: 11, color: '#2563eb', fontWeight: 600 }}>41 / 50 ngày diện</span>
             </div>
             <p style={{ margin: '4px 0 0', fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
@@ -2029,7 +2029,7 @@ export default function AccountPage() {
       <article className="panel">
         <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: 16, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+            <h2 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--serif)', color: 'var(--ink)' }}>
               Ví Hoa Hồng KOC &amp; Bảng Kê Thuế TNCN (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)
             </h2>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>

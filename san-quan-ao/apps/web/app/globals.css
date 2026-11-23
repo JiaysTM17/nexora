@@ -1,28 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 :root {
-  --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --ink: #111827;
-  --ink-secondary: #374151;
-  --muted: #6B7280;
-  --paper: #FAF9F6;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* International High-Fashion Color Palette */
+  --ink: #09090B;
+  --ink-secondary: #27272A;
+  --muted: #64748B;
+  --paper: #FFFFFF;
   --paper-card: #FFFFFF;
-  --line: #E5E7EB;
-  --line-dark: #D1D5DB;
-  --clay: #B45309;
-  --clay-hover: #92400E;
-  --gold: #C9A96E;
-  --gold-light: #FDF9F0;
-  --sage: #F3F4F6;
+  --paper-subtle: #F8FAFC;
+  --line: #E2E8F0;
+  --line-dark: #CBD5E1;
+  --brand-indigo: #4F46E5;
+  --brand-cyan: #06B6D4;
+  --brand-blue: #3B82F6;
+  --clay: #4F46E5;
+  --clay-hover: #4338CA;
+  --sage: #F1F5F9;
   --emerald: #059669;
-  --rose: #E11D48;
+  --rose: #EF4444;
 }
 
 * {
@@ -49,7 +52,7 @@ body {
 a {
   text-decoration: none;
   color: inherit;
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 button, input, select, textarea {
@@ -71,46 +74,45 @@ button:disabled {
 }
 
 button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-  outline: 2px solid var(--clay);
+  outline: 2px solid var(--brand-indigo);
   outline-offset: 3px;
 }
 
-/* Typography Hierarchy - Tuned for Vietnamese Kerning and Diacritics */
-h1, h2, h3, p {
+/* Typography Hierarchy - International Luxury Standard (Zero broken diacritics) */
+h1, h2, h3, h4, p {
   margin-top: 0;
 }
 
 h1, h2 {
-  font-family: var(--serif);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
+  font-family: var(--font-sans);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   color: var(--ink);
 }
 
 h1 {
-  font-size: clamp(32px, 3.8vw, 48px);
-  margin-bottom: 20px;
+  font-size: clamp(34px, 4.2vw, 56px);
+  margin-bottom: 22px;
 }
 
 h2 {
-  font-size: clamp(24px, 2.5vw, 34px);
-  line-height: 1.3;
+  font-size: clamp(24px, 2.8vw, 36px);
+  line-height: 1.28;
 }
 
 h3 {
   font-family: var(--font-sans);
   font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 
 em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  color: var(--clay);
+  font-style: normal;
+  font-weight: 750;
+  color: var(--brand-indigo);
 }
 
 img {
@@ -123,18 +125,19 @@ small, .subtle {
   font-size: 12px;
 }
 
-/* Top Announcement Banner */
+/* Top Announcement Banner - Editorial Monolith */
 .announcement {
-  height: 36px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0F172A;
+  background: #09090B;
   color: #F8FAFC;
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.08em;
-  gap: 32px;
+  text-transform: uppercase;
+  gap: 36px;
   padding: 0 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -142,22 +145,22 @@ small, .subtle {
 .announcement span {
   letter-spacing: 0.04em;
   font-size: 11px;
-  color: #E2E8F0;
+  color: #94A3B8;
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
 
-/* Header & Navigation */
+/* Header & Navigation - Flagship Minimal Luxury */
 .header {
-  height: 80px;
+  height: 78px;
   padding: 0 4%;
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 42px;
   border-bottom: 1px solid var(--line);
-  background: rgba(250, 249, 246, 0.95);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -173,17 +176,19 @@ small, .subtle {
 .nav {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 22px;
   height: 100%;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .nav a {
   height: 100%;
   display: flex;
   align-items: center;
-  color: #4B5563;
+  color: #475569;
   border-bottom: 2px solid transparent;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -192,12 +197,12 @@ small, .subtle {
 
 .nav a:hover {
   color: var(--ink);
-  border-bottom-color: #9CA3AF;
+  border-bottom-color: #94A3B8;
 }
 
 .nav a.active {
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 700;
   border-bottom-color: var(--ink);
 }
 
@@ -216,32 +221,33 @@ small, .subtle {
   justify-content: center;
   gap: 6px;
   padding: 8px;
-  border-radius: 6px;
-  color: #374151;
+  border-radius: 4px;
+  color: #334155;
   transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .icon-link:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--ink);
 }
 
 .account span {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .mobile-menu {
   display: none;
 }
 
-/* Hero Section */
+/* Hero Section - High-Fashion Editorial Layout */
 .hero {
   display: grid;
   grid-template-columns: 1.05fr 1fr;
   min-height: 560px;
   border-bottom: 1px solid var(--line);
+  background: #FFFFFF;
 }
 
 .hero-copy {
@@ -254,68 +260,65 @@ small, .subtle {
 .eyebrow {
   font-family: var(--font-sans);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
-  color: var(--clay);
+  color: var(--brand-indigo);
 }
 
 .eyebrow > span {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--clay);
+  background: var(--brand-indigo);
 }
 
 .hero h1 {
   font-size: clamp(38px, 4.4vw, 64px);
-  line-height: 1.14;
-  letter-spacing: -0.015em;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
   margin-bottom: 22px;
 }
 
-.hero h1 em {
-  color: var(--clay);
-}
-
 .hero-copy > p {
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.8;
-  color: #4B5563;
+  color: #475569;
   margin-bottom: 30px;
   max-width: 520px;
 }
 
-/* Buttons */
+/* Buttons - Sharp Contemporary Luxury */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: var(--ink);
+  background: #0F172A;
   color: #FFFFFF;
-  border: 1px solid var(--ink);
-  padding: 12px 24px;
-  min-height: 46px;
+  border: 1px solid #0F172A;
+  padding: 13px 26px;
+  min-height: 48px;
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.08);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-decoration: none;
 }
 
 .button:hover {
-  background: #1F2937;
-  border-color: #1F2937;
-  box-shadow: 0 4px 14px rgba(17, 24, 39, 0.15);
+  background: var(--brand-indigo);
+  border-color: var(--brand-indigo);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
   transform: translateY(-1px);
 }
 
@@ -327,7 +330,7 @@ small, .subtle {
 }
 
 .button.light:hover {
-  background: #F9FAFB;
+  background: #F8FAFC;
   border-color: var(--line-dark);
 }
 
@@ -350,6 +353,7 @@ small, .subtle {
   display: flex;
   gap: 20px;
   font-size: 12px;
+  font-weight: 500;
   margin-top: 32px;
   color: var(--muted);
 }
@@ -361,7 +365,8 @@ small, .subtle {
 }
 
 .hero-art {
-  background: #E8E5DF;
+  background: linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%);
+  border-left: 1px solid var(--line);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -378,8 +383,8 @@ small, .subtle {
   position: absolute;
   left: 28px;
   bottom: 28px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
   padding: 18px 24px;
   min-width: 240px;
   border-radius: 4px;
@@ -390,16 +395,17 @@ small, .subtle {
 .editor-note > span {
   display: block;
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   color: var(--muted);
 }
 
 .editor-note > strong {
   display: block;
-  font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 6px 0;
   color: var(--ink);
 }
@@ -409,8 +415,8 @@ small, .subtle {
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  font-weight: 600;
-  color: var(--clay);
+  font-weight: 700;
+  color: var(--brand-indigo);
 }
 
 .vertical-note {
@@ -419,9 +425,9 @@ small, .subtle {
   top: 32px;
   writing-mode: vertical-rl;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.2em;
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(15, 23, 42, 0.4);
 }
 
 /* Values Strip */
@@ -432,16 +438,17 @@ small, .subtle {
   padding: 18px 5%;
   border-bottom: 1px solid var(--line);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: #4B5563;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #334155;
   gap: 20px;
   background: #FFFFFF;
 }
 
 .values-strip i {
-  font-size: 14px;
-  color: var(--clay);
+  font-size: 12px;
+  color: var(--brand-indigo);
   font-style: normal;
 }
 
@@ -494,9 +501,10 @@ small, .subtle {
   border: 1px solid var(--line);
   padding: 8px 18px;
   background: #FFFFFF;
-  color: #4B5563;
-  font-size: 13px;
-  font-weight: 500;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   border-radius: 20px;
   transition: all 0.15s ease;
 }
@@ -510,7 +518,7 @@ small, .subtle {
   color: #FFFFFF;
   background: var(--ink);
   border-color: var(--ink);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .toolbar-right {
@@ -555,7 +563,7 @@ small, .subtle {
   border: 1px solid var(--line);
   background: #FFFFFF;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 8px 14px;
   border-radius: 4px;
   color: var(--ink);
@@ -565,7 +573,7 @@ small, .subtle {
   border-color: var(--line-dark);
 }
 
-/* Product Cards & Grid */
+/* Product Cards & Grid - Editorial Boutique Styling */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -582,19 +590,19 @@ small, .subtle {
   text-decoration: none;
   color: inherit;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0 0 14px;
+  padding: 0 0 16px;
 }
 
 .product-card:hover {
-  border-color: #CBD5E1;
-  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08);
+  border-color: #94A3B8;
+  box-shadow: 0 12px 30px -4px rgba(15, 23, 42, 0.08);
   transform: translateY(-2px);
 }
 
 .product-image {
   position: relative;
   aspect-ratio: 3/4;
-  background: #F1F5F9;
+  background: #F8FAFC;
   overflow: hidden;
 }
 
@@ -613,10 +621,10 @@ small, .subtle {
   position: absolute;
   top: 12px;
   left: 12px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(4px);
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 4px 10px;
   border-radius: 2px;
   letter-spacing: 0.04em;
@@ -647,10 +655,10 @@ small, .subtle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 14px 14px 6px;
+  margin: 14px 16px 6px;
   font-size: 11px;
   color: var(--muted);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .swatches {
@@ -667,16 +675,16 @@ small, .subtle {
 }
 
 .product-card h3 {
-  margin: 0 14px 6px;
-  font-size: 14px;
-  font-weight: 600;
+  margin: 0 16px 6px;
+  font-size: 14.5px;
+  font-weight: 700;
   line-height: 1.4;
 }
 
 .price {
   font-size: 15px;
-  font-weight: 700;
-  margin: 0 14px;
+  font-weight: 800;
+  margin: 0 16px;
   color: var(--ink);
 }
 
@@ -685,8 +693,8 @@ small, .subtle {
   bottom: 12px;
   left: 12px;
   font-size: 11px;
-  font-weight: 600;
-  background: rgba(0,0,0,0.8);
+  font-weight: 700;
+  background: rgba(15, 23, 42, 0.85);
   color: #FFFFFF;
   padding: 4px 10px;
   border-radius: 2px;
@@ -702,7 +710,7 @@ small, .subtle {
 
 .filters label {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   display: grid;
   gap: 6px;
   color: var(--ink);
@@ -728,7 +736,7 @@ small, .subtle {
 .community-banner {
   margin: 0 5% 72px;
   padding: 56px 56px 0;
-  background: #0F172A;
+  background: #09090B;
   color: #F8FAFC;
   display: grid;
   grid-template-columns: 1fr 1.1fr;
@@ -738,14 +746,14 @@ small, .subtle {
 }
 
 .community-banner h2 {
-  font-size: clamp(36px, 4vw, 52px);
+  font-size: clamp(34px, 4vw, 50px);
   line-height: 1.15;
   margin-bottom: 18px;
   color: #FFFFFF;
 }
 
 .community-banner p:not(.eyebrow) {
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.8;
   color: #94A3B8;
 }
@@ -773,13 +781,13 @@ small, .subtle {
   place-content: center;
   text-align: center;
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.1em;
   color: #E2E8F0;
   transform: rotate(12deg);
 }
 
-/* Footer */
+/* Footer - International Fashion House Hierarchy */
 footer {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.4fr;
@@ -814,7 +822,7 @@ footer a:not(.logo) {
 }
 
 footer a:not(.logo):hover {
-  color: var(--ink);
+  color: var(--brand-indigo);
 }
 
 .footer-note {
@@ -827,9 +835,9 @@ footer a:not(.logo):hover {
 /* Notices & Alerts */
 .notice {
   padding: 16px 20px;
-  background: var(--sage);
+  background: #F1F5F9;
   margin: 18px 0;
-  border-left: 3px solid #829876;
+  border-left: 3px solid var(--brand-indigo);
   font-size: 13px;
   border-radius: 2px;
 }
@@ -897,7 +905,7 @@ footer a:not(.logo):hover {
 }
 
 .auth-card h1 {
-  font-size: 34px;
+  font-size: 32px;
   margin-bottom: 8px;
 }
 
@@ -915,7 +923,7 @@ footer a:not(.logo):hover {
   display: grid;
   gap: 6px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink);
 }
 
@@ -931,9 +939,9 @@ footer a:not(.logo):hover {
 }
 
 .form input:focus, .form textarea:focus, .form select:focus, select:focus, .voucher input:focus {
-  border-color: var(--ink);
+  border-color: var(--brand-indigo);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.08);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
 }
 
 .form textarea {
@@ -953,7 +961,7 @@ footer a:not(.logo):hover {
   text-decoration: underline;
   text-underline-offset: 4px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -968,7 +976,7 @@ footer a:not(.logo):hover {
   font-size: 13px;
   color: var(--muted);
   margin-bottom: 24px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .back:hover {
@@ -985,7 +993,7 @@ footer a:not(.logo):hover {
 .detail-image {
   position: relative;
   align-self: start;
-  background: #F1F5F9;
+  background: #F8FAFC;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -1011,13 +1019,13 @@ footer a:not(.logo):hover {
 
 .detail-price {
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--ink);
   margin-bottom: 20px;
 }
 
 .detail-copy > p:not(.detail-price) {
-  color: #4B5563;
+  color: #475569;
   font-size: 14px;
   line-height: 1.7;
 }
@@ -1031,9 +1039,9 @@ footer a:not(.logo):hover {
 
 .spec-pills > span {
   font-size: 12px;
-  font-weight: 500;
-  background: #F3F4F6;
-  color: #374151;
+  font-weight: 600;
+  background: #F1F5F9;
+  color: #334155;
   padding: 6px 12px;
   border-radius: 3px;
 }
@@ -1046,7 +1054,7 @@ fieldset {
 
 legend {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 10px;
   color: var(--ink);
 }
@@ -1067,7 +1075,7 @@ legend {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 3px;
   transition: all 0.15s ease;
 }
@@ -1079,8 +1087,8 @@ legend {
 .choice.chosen {
   border-color: var(--ink);
   box-shadow: inset 0 0 0 1px var(--ink);
-  background: #F9FAFB;
-  font-weight: 600;
+  background: #F8FAFC;
+  font-weight: 700;
 }
 
 .choice > i {
@@ -1130,7 +1138,7 @@ details {
 summary {
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1139,7 +1147,7 @@ summary {
 
 details p {
   font-size: 13px;
-  color: #4B5563;
+  color: #475569;
   margin: 12px 0 4px;
   line-height: 1.7;
 }
@@ -1158,9 +1166,9 @@ th, td {
 }
 
 th {
-  font-weight: 600;
+  font-weight: 700;
   background: #F8FAFC;
-  color: #334155;
+  color: #1E293B;
   white-space: nowrap;
 }
 
@@ -1316,7 +1324,7 @@ th {
   background: #F1F5F9;
   color: #334155;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .badge.cancelled {
@@ -1358,7 +1366,7 @@ th {
 
 .stats small {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1366,7 +1374,7 @@ th {
 
 .stats strong {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--ink);
 }
 
@@ -1413,7 +1421,7 @@ th {
   background: #E2E8F0;
   padding: 4px 10px;
   border-radius: 3px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .form-grid {
@@ -1457,16 +1465,16 @@ th {
   width: 38px;
   height: 38px;
   background: #E2E8F0;
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
   color: var(--ink);
 }
 
 .post-author > div:nth-child(2) {
   flex: 1;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .post-author span {
@@ -1511,7 +1519,7 @@ th {
   background: #FFFFFF;
   padding: 6px 12px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   border: 1px solid var(--line);
@@ -1534,7 +1542,7 @@ th {
 }
 
 .liked {
-  color: var(--clay);
+  color: var(--rose);
 }
 
 .push-right {
@@ -1546,7 +1554,7 @@ th {
   font-size: 13px;
   line-height: 1.7;
   white-space: pre-wrap;
-  color: #374151;
+  color: #334155;
 }
 
 .tagged-products {
@@ -1580,8 +1588,8 @@ th {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--clay);
+  font-weight: 700;
+  color: var(--brand-indigo);
 }
 
 .tag-number {
@@ -1592,7 +1600,7 @@ th {
   border: 1px solid #CBD5E1;
   border-radius: 50%;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .comment {
@@ -1625,7 +1633,7 @@ th {
   padding: 8px 16px;
   border-radius: 4px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .post > .form {
@@ -1649,7 +1657,7 @@ th {
   }
   .nav {
     gap: 14px;
-    font-size: 12px;
+    font-size: 11.5px;
   }
   .hero-copy {
     padding-top: 56px;

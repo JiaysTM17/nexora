@@ -227,7 +227,7 @@ export default function TradeInPage() {
                       <span style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', display: 'block' }}>
                         Ước Tính Voucher Nhận Được:
                       </span>
-                      <strong style={{ fontSize: 20, color: 'var(--clay)', fontFamily: 'Georgia, serif', display: 'block', margin: '4px 0' }}>
+                      <strong style={{ fontSize: 20, color: 'var(--clay)', fontFamily: 'var(--serif)', display: 'block', margin: '4px 0' }}>
                         {vnd(estimatedValue)}
                       </strong>
                       <div style={{ fontSize: 11, color: '#166534', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
@@ -828,7 +828,7 @@ export default function TradeInPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Cpu size={22} color="#38bdf8" />
             <div>
-              <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'Georgia, serif', color: '#f8fafc' }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--serif)', color: '#f8fafc' }}>
                 Hộ Chiếu Sở Hữu Số NFT &amp; Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)
               </h3>
               <p style={{ margin: '2px 0 0', fontSize: 12, color: '#94a3b8' }}>
@@ -1106,7 +1106,7 @@ export default function TradeInPage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
           <ShieldCheck size={22} color="var(--clay)" />
-          <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+          <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--serif)', color: 'var(--ink)' }}>
             Chính sách Bảo chứng Thu cũ &amp; Quyền Cân nhắc 14 Ngày (NEXORA SLA Guarantee)
           </h3>
           <span
