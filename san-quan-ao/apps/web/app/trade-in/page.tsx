@@ -324,7 +324,7 @@ export default function TradeInPage() {
                   Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)
                 </strong>
               </div>
-              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              <span style={{ fontSize: 10, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 WHITE-GLOVE COURIER PICKUP
               </span>
             </div>

@@ -734,8 +734,8 @@ export default function MixMatchPage() {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(15, 23, 42, 0.75)',
-            backdropFilter: 'blur(4px)',
+            background: 'rgba(20, 20, 19, 0.82)',
+            backdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -746,26 +746,26 @@ export default function MixMatchPage() {
         >
           <div
             style={{
-              background: '#ffffff',
-              borderRadius: 8,
+              background: '#FAF8F5',
+              borderRadius: 2,
               maxWidth: 580,
               width: '100%',
               maxHeight: '90vh',
               overflowY: 'auto',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              border: '1px solid #e2e8f0',
-              padding: 24,
+              boxShadow: '0 30px 60px rgba(0, 0, 0, 0.25)',
+              border: '1px solid var(--line)',
+              padding: 28,
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Camera size={19} color="var(--gold-dark)" />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderBottom: '1px solid var(--line)', paddingBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Camera size={20} color="var(--gold-dark)" />
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 16, color: 'var(--ink)' }}>
+                  <h3 style={{ margin: 0, fontSize: 17, fontFamily: 'var(--font-serif)', color: 'var(--ink)' }}>
                     THẺ LOOKBOOK NGHỆ THUẬT HAUTE COUTURE
                   </h3>
-                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                  <div style={{ fontSize: 11, color: 'var(--gold-dark)', letterSpacing: '0.04em' }}>
                     Xuất Thẻ Phối Đồ &amp; Chia Sẻ Lên Cộng Đồng OOTD
                   </div>
                 </div>

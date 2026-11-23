@@ -236,12 +236,12 @@ export default function Community() {
     >
       <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ArrowLeftRight size={18} color="#0f766e" />
+          <ArrowLeftRight size={18} color="var(--gold-dark)" />
           <div>
-            <strong style={{ fontSize: 13, color: '#134e4a' }}>
-              Sàn Đổi Đồ Tủ Áo Tuần Hoàn · NEX-Swap Circle P2P
+            <strong style={{ fontSize: 13, color: 'var(--ink)', fontFamily: 'var(--font-serif)' }}>
+              Atelier Swap Lounge · Sàn Trao Đổi Đồ Hiệu Tuần Hoàn P2P
             </strong>
-            <span style={{ marginLeft: 8, fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+            <span style={{ marginLeft: 8, fontSize: 9.5, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 7px', borderRadius: 2, fontWeight: 700, letterSpacing: '0.06em' }}>
               ESCROW BẢO CHỨNG 1:1
             </span>
           </div>
@@ -251,61 +251,62 @@ export default function Community() {
           onClick={() => setSwapModalOpen(!swapModalOpen)}
           style={{
             fontSize: 11,
-            padding: '4px 10px',
-            background: swapModalOpen ? '#0f766e' : '#fff',
-            color: swapModalOpen ? '#fff' : '#0f766e',
-            border: '1px solid var(--gold-dark)',
-            borderRadius: 4,
+            padding: '5px 12px',
+            background: swapModalOpen ? '#141413' : '#FAF8F5',
+            color: swapModalOpen ? '#FAF8F5' : 'var(--ink)',
+            border: '1px solid var(--line)',
+            borderRadius: 2,
             cursor: 'pointer',
             fontWeight: 600,
+            transition: 'all 0.15s ease',
           }}
         >
           {swapModalOpen ? 'Thu gọn giao diện đổi đồ' : 'Khám phá Sàn Đổi Đồ & Đề Xuất →'}
         </button>
       </div>
 
-      <p style={{ margin: '0 0 10px', fontSize: 11, color: '#115e59', lineHeight: 1.4 }}>
-        Giao lưu phục trang cao cấp trực tiếp giữa các thành viên cộng đồng. Định giá đối ứng công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow an toàn 100% và shipper đồng kiểm 2 chiều VinFast Green Bike.
+      <p style={{ margin: '0 0 10px', fontSize: 11.5, color: 'var(--muted)', lineHeight: 1.5 }}>
+        Giao lưu phục trang cao cấp trực tiếp giữa các thành viên cộng đồng. Định giá đối ứng công bằng (Fair Value Match Score 96%), cọc bảo chứng Escrow an toàn 100% và giao nhận đồng kiểm 2 chiều.
       </p>
 
       {/* 3 Trụ cột an toàn */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 12 }}>
-        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 6, border: '1px solid var(--line)', fontSize: 11 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0f766e', fontWeight: 700, marginBottom: 2 }}>
+        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 2, border: '1px solid var(--line)', fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--gold-dark)', fontWeight: 700, marginBottom: 2 }}>
             <Scale size={13} /> Định Giá Công Bằng 96%
           </div>
           <span style={{ color: '#475569', fontSize: 10 }}>Thuật toán so khớp giá trị thị trường và tự động tính tiền bù trừ chênh lệch.</span>
         </div>
-        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 6, border: '1px solid var(--line)', fontSize: 11 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0f766e', fontWeight: 700, marginBottom: 2 }}>
+        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 2, border: '1px solid var(--line)', fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--gold-dark)', fontWeight: 700, marginBottom: 2 }}>
             <ShieldCheck size={13} /> Escrow Khóa Cọc Trung Gian
           </div>
-          <span style={{ color: '#475569', fontSize: 10 }}>Khoản cọc được giữ an toàn trên NEXORA Trust đến khi hai bên cùng ký nhận hài lòng.</span>
+          <span style={{ color: 'var(--muted)', fontSize: 10 }}>Khoản cọc được giữ an toàn trên NEXORA Trust đến khi hai bên cùng ký nhận hài lòng.</span>
         </div>
-        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 6, border: '1px solid var(--line)', fontSize: 11 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#0f766e', fontWeight: 700, marginBottom: 2 }}>
+        <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 2, border: '1px solid var(--line)', fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--gold-dark)', fontWeight: 700, marginBottom: 2 }}>
             <Repeat size={13} /> Vận Chuyển Đồng Kiểm 2 Chiều
           </div>
-          <span style={{ color: '#475569', fontSize: 10 }}>Shipper VinFast Green giao - nhận cùng thời điểm, đồng kiểm chất liệu tận tay.</span>
+          <span style={{ color: 'var(--muted)', fontSize: 10 }}>Giao - nhận cùng thời điểm, đồng kiểm chất liệu tận tay trước khi xác nhận.</span>
         </div>
       </div>
 
       {/* Swap Status or Form */}
       {swapProposed ? (
-        <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid #0d9488', borderRadius: 6 }}>
+        <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--gold-dark)', borderRadius: 2 }}>
           <div className="row between" style={{ marginBottom: 6 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#0f766e', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <CheckCircle2 size={14} color="#0d9488" /> Hợp Đồng Trao Đổi Đang Thực Hiện: #{swapContractId}
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold-dark)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CheckCircle2 size={14} color="var(--gold-dark)" /> Hợp Đồng Trao Đổi Đang Thực Hiện: #{swapContractId}
             </span>
-            <span style={{ fontSize: 10, background: '#ccfbf1', color: '#0f766e', padding: '2px 8px', borderRadius: 4, fontWeight: 700 }}>
-              ESCROW ĐÃ KHÓA · SHIPPER ĐANG ĐIỀU PHỐI
+            <span style={{ fontSize: 9.5, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              ESCROW ĐÃ KHÓA · ĐANG ĐIỀU PHỐI GIAO NHẬN
             </span>
           </div>
-          <div style={{ fontSize: 11, color: '#334155', lineHeight: 1.5, background: '#f8fafc', padding: '8px 10px', borderRadius: 4, marginBottom: 8 }}>
+          <div style={{ fontSize: 11, color: 'var(--ink)', lineHeight: 1.5, background: '#FAF8F5', padding: '8px 10px', borderRadius: 2, marginBottom: 8, border: '1px solid var(--line)' }}>
             <div>• <strong>Món của bạn:</strong> {mySwapItem} (Định giá: {vnd(mySwapVal)})</div>
             <div>• <strong>Đổi lấy:</strong> {targetSwapItem} (Định giá: {vnd(targetSwapVal)})</div>
             <div>• <strong>Khoản bù trừ chênh lệch:</strong> {vnd(Math.abs(targetSwapVal - mySwapVal))} (Đã khóa tạm giữ vào Escrow)</div>
-            <div>• <strong>Đơn vị vận chuyển:</strong> VinFast Green Electric Courier (Mã lộ trình: #VF-SWAP-992)</div>
+            <div>• <strong>Dịch vụ vận chuyển:</strong> Chuyển phát giao nhận đồng kiểm tận tay (Mã: #SWAP-DELIV-992)</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <button
@@ -320,10 +321,10 @@ export default function Community() {
               style={{
                 fontSize: 11,
                 padding: '4px 10px',
-                background: '#f1f5f9',
-                color: '#475569',
-                border: '1px solid #cbd5e1',
-                borderRadius: 4,
+                background: '#FAF8F5',
+                color: 'var(--muted)',
+                border: '1px solid var(--line)',
+                borderRadius: 2,
                 cursor: 'pointer',
               }}
             >

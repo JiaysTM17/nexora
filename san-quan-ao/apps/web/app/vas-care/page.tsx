@@ -291,7 +291,7 @@ export default function VasCarePage() {
               Biên Bản Đối Chứng Trước &amp; Sau Spa Chuẩn 1000 Lux
             </strong>
           </div>
-          <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+          <span style={{ fontSize: 11, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
             {RESTORATION_SAMPLES[sampleKey].stats}
           </span>
         </div>
@@ -312,7 +312,7 @@ export default function VasCarePage() {
                 padding: '5px 12px',
                 borderRadius: 20,
                 border: sampleKey === item.id ? '1.5px solid var(--gold-dark)' : '1px solid var(--line)',
-                background: sampleKey === item.id ? '#EEF2FF' : '#fff',
+                background: sampleKey === item.id ? '#F3EFEA' : '#fff',
                 color: sampleKey === item.id ? 'var(--gold-dark)' : 'var(--ink)',
                 fontWeight: sampleKey === item.id ? 700 : 500,
                 cursor: 'pointer',
@@ -487,7 +487,7 @@ export default function VasCarePage() {
               </div>
             </div>
           </div>
-          <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+          <span style={{ fontSize: 11, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
             ATELIER CLINIC
           </span>
         </div>
@@ -518,7 +518,7 @@ export default function VasCarePage() {
                     textAlign: 'left',
                     borderRadius: 4,
                     border: selectedGarmentType === item.id ? '1.5px solid var(--gold-dark)' : '1px solid #e2e8f0',
-                    background: selectedGarmentType === item.id ? '#EEF2FF' : '#fff',
+                    background: selectedGarmentType === item.id ? '#F3EFEA' : '#fff',
                     color: selectedGarmentType === item.id ? 'var(--gold-dark)' : '#1e293b',
                     fontWeight: selectedGarmentType === item.id ? 700 : 500,
                     cursor: 'pointer',
@@ -555,7 +555,7 @@ export default function VasCarePage() {
                     textAlign: 'left',
                     borderRadius: 4,
                     border: selectedSymptom === sym.id ? '1.5px solid var(--gold-dark)' : '1px solid #e2e8f0',
-                    background: selectedSymptom === sym.id ? '#EEF2FF' : '#fff',
+                    background: selectedSymptom === sym.id ? '#F3EFEA' : '#fff',
                     color: selectedSymptom === sym.id ? 'var(--gold-dark)' : '#334155',
                     fontWeight: selectedSymptom === sym.id ? 700 : 500,
                     cursor: 'pointer',
