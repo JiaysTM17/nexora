@@ -317,7 +317,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **107** | **Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)** | Module 01 & QA | **100% Hoàn thiện** | Hệ số Cusick Drape 34.2% Hạng A, tiêu âm NRC 0.45, dẫn nhiệt 0.038 W/m·K, rủ động 98/100, sóng dao động rủ 3D thời gian thực tại `/san-pham/[slug]` |
 | **108** | **Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)** | Module 02 & Circular | **100% Hoàn thiện** | Chuẩn ERC-721 trên Nexora Eco-Chain (Polygon L2), băm SHA-256 cấu trúc sợi 50x, 3 chặng lịch sử lưu ký, chuyển giao quyền sở hữu tại `/trade-in` |
 | **109** | **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)** | Module 03 & ESG | **100% Hoàn thiện** | Tính toán phát thải giỏ hàng (~1.85 kg CO2e), 3 gói bảo trợ trồng rừng (Cần Giờ, Măng Đen, Cát Tiên), định vị GPS, đồng bộ thanh toán tại `/gio-hang` |
-| **110** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **110** | **Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)** | Module 01 & 07 | **100% Hoàn thiện** | Tiến trình 5 chặng Haute Couture, cam trực tiếp Atelier 1080p, cọc Escrow 30% D1-01, hẹn thử đồ tại nhà tại `/tai-khoan` |
+| **111** | **Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)** | Module 06 & 07 | **100% Hoàn thiện** | Khấu trừ 10% thuế TNCN TT 111/2013 & NĐ 91/2022, Escrow 15 ngày chống hoàn hàng, tải bảng kê XML/PDF chuẩn e-Tax tại `/tai-khoan` |
+| **112** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

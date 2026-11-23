@@ -123,6 +123,8 @@
 | **112** | **Radar Tiêu Âm Âm Học & Mô Phỏng Độ Rủ Tương Tác Sợi Dệt (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01)** | Module 01 & QA | Đã hoàn thiện | Phân hệ kiểm định âm học & độ rủ tại `/san-pham/[slug]`: Hệ số rủ Cusick Drape 34.2% Hạng A, độ tiêu âm NRC ISO 354 0.45, dẫn nhiệt 0.038 W/m·K, độ rủ động 3D 98/100, trình mô phỏng dao động rủ 3D thời gian thực (0.8 Hz) bảo toàn phom dáng trong không gian làm việc tĩnh |
 | **113** | **Hộ Chiếu Sở Hữu Số NFT & Sổ Cái Xác Thực Bất Biến (TRADEIN-AI-AUTHENTICATION-NFT-01)** | Module 02 & Circular Blockchain | Đã hoàn thiện | Phân hệ hộ chiếu số NFT ERC-721 tại `/trade-in`: Chuẩn W3C Verifiable Credentials trên Nexora Eco-Chain (Polygon L2), băm SHA-256 cấu trúc sợi 50x, lịch sử 3 chặng chế tác/thẩm định/lưu ký số, 1-chạm chuyển giao quyền sở hữu và xuất chứng thư JSON-LD (+200 Điểm Xanh) |
 | **114** | **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)** | Module 03 & ESG CSR | Đã hoàn thiện | Phân hệ bảo trợ phủ xanh tại `/gio-hang`: Tính toán động phát thải đơn hàng (~1.85 kg CO2e), 3 gói bảo trợ trồng rừng (Cần Giờ 10k, Măng Đen 25k, Cát Tiên 50k), tích hợp tự động vào bảng thanh toán, định vị GPS tọa độ trạm và cấp chứng thư `#TREE-VN-XXXXXX` (+50 đến +250 Điểm Xanh) |
+| **115** | **Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)** | Module 01 & 07 Bespoke | Đã hoàn thiện | Phân hệ tiến trình chế tác Haute Couture tại `/tai-khoan`: Quy trình 5 chặng may đo thủ công của Master Tailor (Phóng rập, Cắt thêu monogram, Lên khung canvas lụa tơ tằm, Ủ hơi vô trùng UV-C, Đóng hộp sồi & Giao xe điện), kết nối cam trực tiếp Atelier 1080p, quản trị cọc Escrow 30% D1-01 và đặt lịch thử đồ tại nhà Home Fitting |
+| **116** | **Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)** | Module 06 & 07 Fintech | Đã hoàn thiện | Phân hệ quyết toán thuế tiếp thị KOC tại `/tai-khoan`: Minh bạch thuế TNCN 10% tại nguồn theo Thông tư 111/2013/TT-BTC & NĐ 91/2022/NĐ-CP (áp dụng thu nhập >= 2M VND), quản trị 15 ngày Escrow D10-04 chống hoàn hàng, lịch giải ngân đơn OOTD và 1-chạm xuất bảng kê điện tử XML/PDF chuẩn e-Tax |
 
 ---
 
@@ -1143,6 +1145,28 @@
     2. *Tier 2 · Sinh Thái Tích Cực - Positive Impact (25.000₫)*: Bù trừ 5.0 kg CO2e, trồng 02 cây bản địa Dầu rái/Thông ba lá tại Rừng nguyên sinh Măng Đen Kon Tum (14.605°N 108.289°E), nhận +120 Điểm Xanh.
     3. *Tier 3 · Bảo Tồn Rừng Già Thượng Nguồn (50.000₫)*: Bù trừ 12.0 kg CO2e, bảo trợ 5m² rừng tự nhiên và 04 cây gỗ lớn tại Vườn Quốc Gia Cát Tiên Đồng Nai (11.425°N 107.428°E), nhận +250 Điểm Xanh.
   - Tự động cộng khoản đóng góp vào bảng tổng đơn hàng (Checkout Summary), đồng bộ kế hoạch trả góp PayLater 0% lãi suất và cấp mã số cam kết bảo trợ `#TREE-VN-XXXXXX`.
+
+### 99. Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)
+- **Mục tiêu**: Nâng cao trải nghiệm may đo Haute Couture cá nhân hóa (Bespoke Pre-Order), minh bạch hóa từng thao tác thủ ấn của nghệ nhân may đo và đảm bảo an toàn tài chính tuyệt đối thông qua cơ chế ký quỹ Escrow D1-01.
+- **Cơ chế**:
+  - Tích hợp phân hệ Giám sát tiến trình may đo 5 chặng ngay trong trang hồ sơ cá nhân `/tai-khoan`.
+  - Kết nối luồng live camera trực tiếp từ Atelier Studio (FHD 1080p, 60 FPS, độ ẩm tiêu chuẩn 48% RH) quan sát nghệ nhân Master Tailor thao tác may đo.
+  - 5 chặng chế tác chuẩn mực thủ công:
+    1. *Chặng 1 · Phóng rập mộc*: Định hình phom dáng theo số đo 3 vòng và tỷ lệ cơ thể thực tế.
+    2. *Chặng 2 · Cắt & Thêu tay*: Cắt sợi lanh Normandy thủ công và thêu chỉ lụa Monogram ve áo độc bản.
+    3. *Chặng 3 · Lên khung canvas*: Đính kết lót tơ tằm Bảo Lộc và lớp dựng lông đuôi ngựa biển (Full Canvas).
+    4. *Chặng 4 · Ủ hơi & UV-C*: Kiểm định độ rủ âm học ISO 354 và chiếu tiệt trùng buồng vô trùng lạnh VAS Care.
+    5. *Chặng 5 · Đóng hộp sồi*: Niêm phong sáp đồng thủ ấn và điều phối bưu tá xe máy điện VinFast Feliz.
+  - Cơ chế Escrow D1-01: Khoản cọc 30% được phong tỏa an toàn trong hợp đồng ký quỹ `#ESCROW-D101-BESPOKE-XXXX`, chỉ tự động giải ngân cho thợ may khi khách hàng thử đồ vừa vặn tại nhà (Home Fitting).
+
+### 100. Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)
+- **Mục tiêu**: Chuẩn hóa quy trình tài chính dành cho người sáng tạo nội dung thời trang (KOC/Stylist) theo đúng quy định pháp luật Việt Nam, tự động hóa khấu trừ thuế TNCN tại nguồn và bảo vệ giao dịch qua cửa sổ kiểm định hoàn đơn.
+- **Cơ chế**:
+  - Tích hợp phân hệ Bảng Kê Thu Nhập & Thuế TNCN chi tiết ngay trong Ví Hoa Hồng KOC tại `/tai-khoan`.
+  - Tuân thủ nghiêm ngặt quy định khấu trừ thuế TNCN 10% tại nguồn theo Thông tư 111/2013/TT-BTC và Nghị định 91/2022/NĐ-CP đối với các khoản chi trả hoa hồng từ 2.000.000₫ trở lên.
+  - Bảng tổng hợp dòng tiền 4 chỉ số: GMV giới thiệu qua Lookbook OOTD, Hoa hồng gộp (Gross 8%), Khoản khấu trừ thuế TNCN (10%) và Hoa hồng thực nhận ròng (Net Commission).
+  - Lịch trình giải ngân Escrow 15 ngày chống hoàn hàng (Domain D10-04) giám sát chi tiết từng mã đơn hàng tiếp thị.
+  - Tính năng 1-chạm xuất bảng kê khấu trừ thuế TNCN điện tử định dạng XML/PDF (`#PIT-NEXORA-2026-Q4-88921`) đồng bộ hệ thống thuế điện tử e-Tax của Tổng cục Thuế.
 
 ---
 

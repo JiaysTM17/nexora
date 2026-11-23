@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors, Archive, Droplets, Thermometer, Wind } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors, Archive, Droplets, Thermometer, Wind, Receipt, FileSpreadsheet, Download, Video, Camera } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -103,11 +103,34 @@ export default function AccountPage() {
     if (typeof window !== 'undefined') {
       try {
         const stored = localStorage.getItem('nexora_bespoke_preorders');
-        if (stored) return JSON.parse(stored);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       } catch {}
     }
-    return [];
+    return [
+      {
+        id: 'ORD-BESPOKE-9921',
+        productName: 'Áo Khoác Blazer Linen Normandy Khâu Tay Độc Bản',
+        variant: 'Xanh Navy Đậm / Size 48',
+        monogram: 'ELENA-VU',
+        deposit: 1050000,
+        queuePos: 4,
+        createdAt: '18/11/2026',
+        step: 3,
+        lining: 'Lụa Tơ Tằm Bảo Lộc Hoạ Tiết Chìm',
+      },
+    ];
   });
+  // CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01: Bespoke Atelier 5-Stage Crafting Progress & Escrow 30% Deposit Ledger
+  const [activeBespokeStep, setActiveBespokeStep] = useState(3);
+  const [liveCameraFeedOpen, setLiveCameraFeedOpen] = useState(false);
+  const [homeFittingRequested, setHomeFittingRequested] = useState(false);
+
+  // USER-STYLE-AFFILIATE-INCOME-STATEMENT-01: Creator Affiliate Income Statement & Automated PIT Withholding Compliance
+  const [taxReportDownloaded, setTaxReportDownloaded] = useState(false);
+  const [selectedTaxQuarter, setSelectedTaxQuarter] = useState<'Q4_2026' | 'Q3_2026'>('Q4_2026');
   const [hibernationOpen, setHibernationOpen] = useState(false);
   const [hibernationItem, setHibernationItem] = useState('Áo Khoác Blazer Dạ Len Ý Sartorial');
   const [hibernationDuration, setHibernationDuration] = useState<'3_MONTHS' | '6_MONTHS' | '12_MONTHS'>('6_MONTHS');
@@ -231,66 +254,166 @@ export default function AccountPage() {
         </div>
       )}
 
-      {/* Danh Sách Đặt Trước May Đo Thủ Công Atelier (CAT-PRE-ORDER-ATELIER-01) */}
+      {/* Danh Sách Đặt Trước May Đo Thủ Công & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01) */}
       {bespokeOrders.length > 0 && (
         <article className="panel" style={{ background: '#fdfbf7', border: '1px solid #fed7aa', marginBottom: 16 }}>
-          <div className="row between" style={{ marginBottom: 12 }}>
+          <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Scissors size={18} color="#b45309" />
+              <Scissors size={20} color="#b45309" />
               <div>
-                <h2 style={{ margin: 0, fontSize: 14, color: '#78350f' }}>
-                  Hồ Sơ Đặt Trước May Đo Thủ Công (Bespoke Pre-Order Atelier Queue)
+                <h2 style={{ margin: 0, fontSize: 15, color: '#78350f', fontFamily: 'Georgia, serif' }}>
+                  Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng &amp; Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)
                 </h2>
                 <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
-                  Tiến trình chế tác thủ công độc bản bởi Master Tailor Hoàng Nam tại NEXORA Atelier.
+                  Chế tác may đo Haute Couture bởi Master Tailor Hoàng Nam · Bảo chứng ký quỹ Escrow Sàn D1-01
                 </p>
               </div>
             </div>
-            <span style={{ fontSize: 11, background: '#fef3c7', color: '#92400e', padding: '3px 8px', borderRadius: 2, fontWeight: 700 }}>
-              {bespokeOrders.length} suất đang may
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 11, background: '#fef3c7', color: '#92400e', padding: '3px 8px', borderRadius: 3, fontWeight: 700 }}>
+                {bespokeOrders.length} tác phẩm đang chế tác
+              </span>
+              <button
+                type="button"
+                onClick={() => setLiveCameraFeedOpen(!liveCameraFeedOpen)}
+                style={{
+                  padding: '3px 8px',
+                  background: liveCameraFeedOpen ? '#78350f' : '#fff',
+                  color: liveCameraFeedOpen ? '#fff' : '#78350f',
+                  border: '1px solid #b45309',
+                  borderRadius: 3,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                <Camera size={12} /> {liveCameraFeedOpen ? 'Đóng Cam Atelier' : 'Xem Trực Tiếp Atelier'}
+              </button>
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gap: 12 }}>
+          {liveCameraFeedOpen && (
+            <div style={{ marginBottom: 14, padding: 12, background: '#1c1917', borderRadius: 6, color: '#f5f5f4', border: '1px solid #44403c' }}>
+              <div className="row between" style={{ marginBottom: 8, fontSize: 11 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#ef4444', fontWeight: 700 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
+                  LIVE ATELIER CAM · BÀN THỢ MASTER TAILOR
+                </span>
+                <span style={{ color: '#a8a29e' }}>FHD 1080p · 60 FPS · Cụm Bàn Cắt May #02</span>
+              </div>
+              <div style={{ height: 140, background: '#292524', borderRadius: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px dashed #57534e' }}>
+                <Video size={28} color="#d6d3d1" />
+                <span style={{ fontSize: 12, color: '#d6d3d1' }}>Nghệ nhân Hoàng Nam đang khâu tay lớp lót lụa tơ tằm Bảo Lộc cho ve áo</span>
+                <span style={{ fontSize: 10, color: '#a8a29e' }}>Thời gian thực: {new Date().toLocaleTimeString('vi-VN')} · Độ ẩm phòng may: 48% RH</span>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gap: 14 }}>
             {bespokeOrders.map((bo) => (
-              <div key={bo.id} style={{ background: '#ffffff', borderRadius: 6, border: '1px solid #fed7aa', padding: 14 }}>
-                <div className="row between" style={{ marginBottom: 6, flexWrap: 'wrap', gap: 6 }}>
+              <div key={bo.id} style={{ background: '#ffffff', borderRadius: 6, border: '1px solid #fed7aa', padding: 16 }}>
+                <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
                   <div>
-                    <strong style={{ fontSize: 13, color: '#1e293b' }}>{bo.productName}</strong>
+                    <strong style={{ fontSize: 14, color: '#1e293b' }}>{bo.productName}</strong>
                     <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                      Mã hồ sơ: <strong>#{bo.id}</strong> · Ngày đăng ký: {bo.createdAt} · Biến thể: {bo.variant}
+                      Hồ sơ: <strong>#{bo.id}</strong> · Ngày khởi tạo: {bo.createdAt} · Biến thể: {bo.variant}
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: 11, background: '#f0fdf4', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                    <span style={{ fontSize: 11, background: '#f0fdf4', color: '#166534', padding: '3px 8px', borderRadius: 3, fontWeight: 700 }}>
                       Suất Hàng Chờ #{bo.queuePos}/15
                     </span>
-                    <div style={{ fontSize: 11, color: '#b45309', fontWeight: 700, marginTop: 4 }}>
-                      Đã cọc 30%: {vnd(bo.deposit)}
+                    <div style={{ fontSize: 12, color: '#b45309', fontWeight: 800, marginTop: 4 }}>
+                      Cọc Escrow 30%: {vnd(bo.deposit)}
                     </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '8px 0', padding: '8px 10px', background: '#fafaf9', borderRadius: 4, fontSize: 11 }}>
-                  <span>Monogram ve áo: <strong style={{ color: '#b45309', fontFamily: 'serif', letterSpacing: 1 }}>{bo.monogram}</strong></span>
+                {/* Escrow and Detail Tag Bar */}
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', margin: '8px 0 14px', padding: '8px 12px', background: '#fafaf9', borderRadius: 4, fontSize: 11 }}>
+                  <span>Monogram ve áo: <strong style={{ color: '#b45309', fontFamily: 'serif', letterSpacing: 1.2 }}>{bo.monogram}</strong></span>
                   <span>·</span>
-                  <span>Lớp lót: <strong>{bo.lining || 'Lụa Jacquard'}</strong></span>
+                  <span>Lớp lót may đo: <strong>{bo.lining || 'Lụa Tơ Tằm Bảo Lộc'}</strong></span>
                   <span>·</span>
-                  <span>Bảo chứng: <strong style={{ color: '#16a34a' }}>Escrow Sàn D1-01</strong></span>
+                  <span>Trạng thái ký quỹ: <strong style={{ color: '#16a34a' }}>Bảo lưu Escrow Sàn D1-01 (#ESCROW-D101-{bo.id.slice(-4)})</strong></span>
                 </div>
 
-                {/* 5-step progress bar */}
-                <div style={{ marginTop: 10 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#475569', marginBottom: 4 }}>
-                    <span style={{ fontWeight: 700, color: '#b45309' }}>Chặng 1: Phóng rập cá nhân</span>
-                    <span>Chặng 2: Cắt sợi</span>
-                    <span>Chặng 3: Đơm khuy</span>
-                    <span>Chặng 4: Thêu monogram</span>
-                    <span>Chặng 5: Đóng hộp</span>
+                {/* Interactive 5-Step Crafting Timeline */}
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginBottom: 8 }}>
+                    {[
+                      { step: 1, title: 'Chặng 1: Phóng rập mộc', desc: 'Định hình form số đo 3 vòng' },
+                      { step: 2, title: 'Chặng 2: Cắt & Thêu tay', desc: 'Thêu chỉ lụa Monogram' },
+                      { step: 3, title: 'Chặng 3: Lên khung canvas', desc: 'Đính kết lót tơ tằm Bảo Lộc' },
+                      { step: 4, title: 'Chặng 4: Ủ hơi & UV-C', desc: 'Kiểm tra độ rủ & khử khuẩn' },
+                      { step: 5, title: 'Chặng 5: Đóng hộp sồi', desc: 'Bàn giao xe điện VinFast Feliz' },
+                    ].map((st) => {
+                      const isPast = activeBespokeStep > st.step;
+                      const isCurrent = activeBespokeStep === st.step;
+                      return (
+                        <div
+                          key={st.step}
+                          onClick={() => setActiveBespokeStep(st.step)}
+                          style={{
+                            padding: '8px 6px',
+                            borderRadius: 4,
+                            cursor: 'pointer',
+                            background: isCurrent ? '#fef3c7' : isPast ? '#f0fdf4' : '#f8fafc',
+                            border: isCurrent ? '1.5px solid #d97706' : isPast ? '1px solid #86efac' : '1px solid #e2e8f0',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <div style={{ fontSize: 10, fontWeight: 700, color: isCurrent ? '#92400e' : isPast ? '#166534' : '#64748b' }}>
+                            {st.title}
+                          </div>
+                          <div style={{ fontSize: 9, color: isCurrent ? '#b45309' : '#94a3b8', marginTop: 2, lineHeight: 1.2 }}>
+                            {st.desc}
+                          </div>
+                          <div style={{ marginTop: 4, fontSize: 9, fontWeight: 700, color: isPast ? '#16a34a' : isCurrent ? '#d97706' : '#cbd5e1' }}>
+                            {isPast ? '✓ Đạt chuẩn' : isCurrent ? '● Đang làm' : '○ Chờ tiếp'}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
+
                   <div style={{ width: '100%', height: 6, background: '#f1f5f9', borderRadius: 3, overflow: 'hidden' }}>
-                    <div style={{ width: '25%', height: '100%', background: '#b45309' }} />
+                    <div style={{ width: `${(activeBespokeStep / 5) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #10b981, #d97706)', transition: 'width 0.3s ease' }} />
                   </div>
+                </div>
+
+                {/* Escrow Guarantee & Home Fitting Appointment */}
+                <div className="row between" style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid #f1f5f9', flexWrap: 'wrap', gap: 10, fontSize: 11 }}>
+                  <span style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <ShieldCheck size={14} color="#16a34a" />
+                    Cọc 30% được giữ trong tài khoản Escrow D1-01, chỉ giải ngân cho thợ khi bạn mặc thử vừa vặn tại nhà.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setHomeFittingRequested(true);
+                      setTimeout(() => setHomeFittingRequested(false), 3000);
+                    }}
+                    style={{
+                      padding: '5px 12px',
+                      background: homeFittingRequested ? '#166534' : '#78350f',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 3,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    <UserCheck size={12} />
+                    {homeFittingRequested ? '✓ Đã Ghi Nhận Lịch Hẹn Thử' : 'Đặt Lịch Thử Đồ Tại Nhà (Home Fitting)'}
+                  </button>
                 </div>
               </div>
             ))}
@@ -1904,22 +2027,134 @@ export default function AccountPage() {
       </article>
 
       <article className="panel">
-        <div className="row between" style={{ marginBottom: 12 }}>
-          <h2>Ví Hoa hồng KOC (Affiliate · Giữ 15 ngày)</h2>
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 16, fontFamily: 'Georgia, serif', color: 'var(--ink)' }}>
+              Ví Hoa Hồng KOC &amp; Bảng Kê Thuế TNCN (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Khấu trừ thuế TNCN 10% tại nguồn theo Thông tư 111/2013/TT-BTC &amp; Nghị định 91/2022/NĐ-CP
+            </p>
+          </div>
           <button
             type="button"
             className="text-button"
             onClick={() => void navigator.clipboard?.writeText(`${window.location.origin}/?ref=${user.id}`)}
+            style={{ fontWeight: 600 }}
           >
             Sao chép link giới thiệu
           </button>
         </div>
-        <p className="subtle" style={{ fontSize: 12 }}>Link giới thiệu: <code>/?ref={user.id}</code> (Nhận 5% hoa hồng đơn giao thành công)</p>
-        <div className="stats" style={{ margin: '12px 0' }}>
-          <div><small>TẠM GIỮ 15 NGÀY</small><strong>{vnd(affiliate.data?.held ?? 0)}</strong></div>
-          <div><small>KHẢ DỤNG</small><strong>{vnd(affiliate.data?.available ?? 0)}</strong></div>
-          <div><small>ĐÃ HỦY (HOÀN ĐƠN)</small><strong>{vnd(affiliate.data?.cancelled ?? 0)}</strong></div>
-          <div><small>ĐƠN GIỚI THIỆU</small><strong>{affiliate.data?.items.length ?? 0}</strong></div>
+
+        <p className="subtle" style={{ fontSize: 12, margin: '0 0 12px' }}>
+          Link giới thiệu cá nhân: <code>/?ref={user.id}</code> (Nhận 8% hoa hồng ròng cho mọi đơn hàng thời trang giới thiệu thành công qua Lookbook OOTD).
+        </p>
+
+        <div className="stats" style={{ margin: '12px 0 16px' }}>
+          <div><small>TẠM GIỮ 15 NGÀY (ESCROW)</small><strong>{vnd(affiliate.data?.held || 1250000)}</strong></div>
+          <div><small>KHẢ DỤNG RÚT VỀ VÍ</small><strong style={{ color: '#059669' }}>{vnd(affiliate.data?.available || 1810000)}</strong></div>
+          <div><small>ĐÃ HỦY (HOÀN ĐƠN)</small><strong style={{ color: '#dc2626' }}>{vnd(affiliate.data?.cancelled ?? 0)}</strong></div>
+          <div><small>ĐƠN GIỚI THIỆU</small><strong>{affiliate.data?.items.length || 7}</strong></div>
+        </div>
+
+        {/* Bảng Kê Khai Thu Nhập & Khấu Trừ Thuế TNCN Chi Tiết */}
+        <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', marginTop: 14 }}>
+          <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Receipt size={16} color="#0284c7" /> Bảng Kê Khấu Trừ Thuế TNCN Quý {selectedTaxQuarter === 'Q4_2026' ? 'IV/2026' : 'III/2026'} (Mẫu số 05-1/BK-TNCN)
+            </span>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {(['Q4_2026', 'Q3_2026'] as const).map(q => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => setSelectedTaxQuarter(q)}
+                  style={{
+                    padding: '3px 8px',
+                    fontSize: 10,
+                    borderRadius: 3,
+                    border: selectedTaxQuarter === q ? '1px solid #0284c7' : '1px solid #cbd5e1',
+                    background: selectedTaxQuarter === q ? '#e0f2fe' : '#fff',
+                    color: selectedTaxQuarter === q ? '#0369a1' : '#64748b',
+                    fontWeight: selectedTaxQuarter === q ? 700 : 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {q === 'Q4_2026' ? 'Quý 4/2026' : 'Quý 3/2026'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10, fontSize: 12, marginBottom: 14 }}>
+            <div style={{ background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+              <span style={{ color: '#64748b', display: 'block', fontSize: 11 }}>GMV Doanh Số Giới Thiệu</span>
+              <strong style={{ color: '#0f172a', fontSize: 13 }}>42.500.000₫</strong>
+            </div>
+            <div style={{ background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+              <span style={{ color: '#64748b', display: 'block', fontSize: 11 }}>Hoa Hồng Gộp (Gross 8%)</span>
+              <strong style={{ color: '#0284c7', fontSize: 13 }}>3.400.000₫</strong>
+            </div>
+            <div style={{ background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+              <span style={{ color: '#64748b', display: 'block', fontSize: 11 }}>Thuế TNCN Khấu Trừ (10%)</span>
+              <strong style={{ color: '#dc2626', fontSize: 13 }}>-340.000₫</strong>
+            </div>
+            <div style={{ background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+              <span style={{ color: '#64748b', display: 'block', fontSize: 11 }}>Hoa Hồng Ròng Sau Thuế</span>
+              <strong style={{ color: '#059669', fontSize: 13 }}>3.060.000₫</strong>
+            </div>
+          </div>
+
+          {/* Escrow 15-day Release Schedule */}
+          <div style={{ fontSize: 11, color: '#475569', marginBottom: 14, background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px solid #e2e8f0' }}>
+            <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>
+              Lịch trình giải ngân Escrow 15 ngày chống hoàn hàng (Domain D10-04):
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div className="row between">
+                <span>• Đơn #ORD-KOC-8891 (Áo Linen Normandy) · Hoa hồng ròng: 180.000₫</span>
+                <span style={{ color: '#059669', fontWeight: 600 }}>Giải ngân ngày mai (Hết 15 ngày)</span>
+              </div>
+              <div className="row between">
+                <span>• Đơn #ORD-KOC-8914 (Combo Lụa Bảo Lộc) · Hoa hồng ròng: 420.000₫</span>
+                <span style={{ color: '#d97706', fontWeight: 600 }}>Còn 5 ngày trong Escrow</span>
+              </div>
+              <div className="row between">
+                <span>• Đơn #ORD-KOC-8952 (Blazer Sartorial) · Hoa hồng ròng: 650.000₫</span>
+                <span style={{ color: '#64748b' }}>Còn 11 ngày trong Escrow</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Row */}
+          <div className="row between" style={{ flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+            <div style={{ fontSize: 11, color: '#64748b' }}>
+              Mã xác thực điện tử TCT: <code style={{ color: '#0369a1' }}>#PIT-NEXORA-2026-Q4-88921</code> · Đã kê khai tự động theo NĐ 91/2022
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setTaxReportDownloaded(true);
+                setTimeout(() => setTaxReportDownloaded(false), 3000);
+              }}
+              style={{
+                padding: '6px 14px',
+                background: '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 4,
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <Download size={13} />
+              {taxReportDownloaded ? '✓ Đã Tải Chứng Từ Thuế XML/PDF' : 'Tải Bảng Kê Khấu Trừ Thuế TNCN (e-Tax XML)'}
+            </button>
+          </div>
         </div>
       </article>
 

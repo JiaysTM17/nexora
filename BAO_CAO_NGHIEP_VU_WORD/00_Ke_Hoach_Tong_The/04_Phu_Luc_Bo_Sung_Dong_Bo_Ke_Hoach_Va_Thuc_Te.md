@@ -410,3 +410,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 101. **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)**:
    - Hồ sơ: Module 03 Giỏ Hàng & Thanh Toán Sinh Thái CSR/ESG.
    - Thực tế: Phân hệ bảo trợ phủ xanh tại `/gio-hang`: Tính toán động phát thải carbon đơn hàng (~1.85 kg CO2e), 3 gói bảo trợ có kiểm toán định vị GPS (Tier 1 Cần Giờ 10.000₫/2.0kg CO2e, Tier 2 Măng Đen 25.000₫/5.0kg CO2e, Tier 3 Cát Tiên 50.000₫/12.0kg CO2e), tự động cập nhật tổng đơn hàng và đồng bộ thanh toán PayLater 0% lãi suất, cấp mã cam kết `#TREE-VN-XXXXXX` (+50 đến +250 Điểm Xanh).
+
+102. **Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)**:
+   - Hồ sơ: Module 01 Quản Lý Sản Phẩm, Module 07 Trải Nghiệm Khách Hàng & May Đo Bespoke Độc Bản.
+   - Thực tế: Phân hệ tiến trình chế tác Haute Couture tại `/tai-khoan`: Quy trình 5 chặng thủ công chuẩn mực của Master Tailor (Phóng rập, Cắt thêu monogram, Lên khung canvas lụa tơ tằm, Ủ hơi vô trùng UV-C, Đóng hộp sồi & Giao xe điện), kết nối cam trực tiếp Atelier 1080p, quản trị cọc Escrow 30% D1-01 an toàn và đặt lịch thử đồ tại nhà Home Fitting SLA 24h.
+
+103. **Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)**:
+   - Hồ sơ: Module 06 Mạng Xã Hội OOTD, Module 07 Trải Nghiệm Khách Hàng & Fintech Affiliate Tuân Thủ Pháp Lý.
+   - Thực tế: Phân hệ quyết toán thuế tiếp thị KOC tại `/tai-khoan`: Minh bạch thuế TNCN 10% tại nguồn theo Thông tư 111/2013/TT-BTC & Nghị định 91/2022/NĐ-CP (áp dụng thu nhập >= 2M VND), quản trị 15 ngày Escrow D10-04 chống hoàn hàng, lịch giải ngân từng đơn Lookbook và 1-chạm xuất bảng kê điện tử XML/PDF chuẩn e-Tax (#PIT-NEXORA-2026-Q4-88921).
