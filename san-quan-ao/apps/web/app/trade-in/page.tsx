@@ -132,7 +132,7 @@ export default function TradeInPage() {
               >
                 <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Calculator size={18} color="var(--brand-indigo)" />
+                    <Calculator size={18} color="var(--gold-dark)" />
                     <strong style={{ fontSize: 14, color: '#9a3412' }}>
                       Bộ Giả Lập Định Giá Thu Cũ Đổi Mới Tức Thì (TRADEIN-ESTIMATE-SIMULATOR)
                     </strong>
@@ -163,9 +163,9 @@ export default function TradeInPage() {
                             padding: '6px 10px',
                             fontSize: 11,
                             borderRadius: 3,
-                            border: simCategory === cat.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
+                            border: simCategory === cat.id ? '1px solid var(--gold-dark)' : '1px solid var(--line)',
                             background: simCategory === cat.id ? '#fff' : '#fafafa',
-                            color: simCategory === cat.id ? 'var(--brand-indigo)' : 'var(--ink)',
+                            color: simCategory === cat.id ? 'var(--gold-dark)' : 'var(--ink)',
                             fontWeight: simCategory === cat.id ? 700 : 400,
                             cursor: 'pointer',
                           }}
@@ -197,9 +197,9 @@ export default function TradeInPage() {
                             padding: '6px 10px',
                             fontSize: 11,
                             borderRadius: 3,
-                            border: simGrade === g.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
+                            border: simGrade === g.id ? '1px solid var(--gold-dark)' : '1px solid var(--line)',
                             background: simGrade === g.id ? '#fff' : '#fafafa',
-                            color: simGrade === g.id ? 'var(--brand-indigo)' : 'var(--ink)',
+                            color: simGrade === g.id ? 'var(--gold-dark)' : 'var(--ink)',
                             fontWeight: simGrade === g.id ? 700 : 400,
                             cursor: 'pointer',
                           }}
@@ -227,7 +227,7 @@ export default function TradeInPage() {
                       <span style={{ fontSize: 11, color: 'var(--muted)', textTransform: 'uppercase', display: 'block' }}>
                         Ước Tính Voucher Nhận Được:
                       </span>
-                      <strong style={{ fontSize: 20, color: 'var(--brand-indigo)', fontFamily: 'var(--font-sans)', display: 'block', margin: '4px 0' }}>
+                      <strong style={{ fontSize: 20, color: 'var(--gold-dark)', fontFamily: 'var(--font-sans)', display: 'block', margin: '4px 0' }}>
                         {vnd(estimatedValue)}
                       </strong>
                       <div style={{ fontSize: 11, color: '#166534', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
@@ -273,7 +273,7 @@ export default function TradeInPage() {
                 </select>
               </label>
               <label>Mô tả tình trạng thực tế<textarea name="conditionNote" value={formFields.conditionNote} onChange={e => setFormFields({ ...formFields, conditionNote: e.target.value })} required minLength={5} placeholder="VD: Mới 95%, ít sử dụng, còn hộp và tag..." /></label>
-              <label>URL ảnh chụp chi tiết (tùy chọn)<input name="imageUrl" placeholder="http://localhost:3000/products/outfit.svg" /></label>
+              <label>URL ảnh chụp chi tiết (tùy chọn)<input name="imageUrl" placeholder="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80" /></label>
               <button className="button" disabled={busy}>{busy ? 'Đang định giá AI…' : 'Định giá Vòng 1 ngay'}</button>
             </form>
 
@@ -319,12 +319,12 @@ export default function TradeInPage() {
           >
             <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Truck size={18} color="var(--brand-indigo)" />
+                <Truck size={18} color="var(--gold-dark)" />
                 <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
                   Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà (TRADEIN-COURIER-SLOT-01)
                 </strong>
               </div>
-              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 WHITE-GLOVE COURIER PICKUP
               </span>
             </div>
@@ -396,7 +396,7 @@ export default function TradeInPage() {
                     type="checkbox"
                     checked={securityBag}
                     onChange={(e) => setSecurityBag(e.target.checked)}
-                    style={{ accentColor: 'var(--brand-indigo)' }}
+                    style={{ accentColor: 'var(--gold-dark)' }}
                   />
                   Yêu cầu bưu tá mang kèm Túi Niêm Phong Quang Học Tamper-Evident &amp; Mã QR bảo mật
                 </label>
@@ -1094,7 +1094,7 @@ export default function TradeInPage() {
         )}
       </div>
 
-      {/* Cam kết Bảo chứng Thu cũ & Quyền Cân nhắc 14 ngày (VAS-TRADEIN-REQUOTE) */}
+      {/* Cam kết Bảo chứng Thu cũ & Quyền Cân nhắc 14 ngày */}
       <div
         style={{
           marginTop: 32,
@@ -1105,13 +1105,13 @@ export default function TradeInPage() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-          <ShieldCheck size={22} color="var(--brand-indigo)" />
+          <ShieldCheck size={22} color="var(--gold-dark)" />
           <h3 style={{ margin: 0, fontSize: 16, fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
             Chính sách Bảo chứng Thu cũ &amp; Quyền Cân nhắc 14 Ngày (NEXORA SLA Guarantee)
           </h3>
           <span
             style={{
-              background: 'var(--brand-indigo)',
+              background: 'var(--gold-dark)',
               color: '#fff',
               fontSize: 11,
               fontWeight: 700,
@@ -1134,7 +1134,7 @@ export default function TradeInPage() {
         >
           <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--line)', borderRadius: 6 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, marginBottom: 6, color: 'var(--ink)' }}>
-              <RotateCcw size={16} color="var(--brand-indigo)" />
+              <RotateCcw size={16} color="var(--gold-dark)" />
               <span>Quyền cân nhắc 14 ngày vô điều kiện</span>
             </div>
             <p style={{ margin: 0, color: 'var(--muted)' }}>

@@ -130,7 +130,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ padding: '8px 10px', background: '#F8FAFC', borderRadius: 4, borderLeft: '3px solid var(--brand-indigo)' }}>
+                <div style={{ padding: '8px 10px', background: '#F8FAFC', borderRadius: 4, borderLeft: '3px solid var(--gold-dark)' }}>
                   <strong style={{ display: 'block', color: 'var(--ink)' }}>✨ Smart Fit Fashion Passport</strong>
                   <p style={{ margin: '2px 0 0', color: 'var(--muted)', fontSize: 11 }}>
                     Hồ sơ số đo cá nhân đã sẵn sàng. Hệ thống sẽ tự động so khớp và gợi ý size chuẩn xác khi bạn xem sản phẩm.
@@ -163,7 +163,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <button className="icon-link mobile-menu" onClick={() => setOpen(!open)} aria-label="Mở menu" aria-expanded={open}>{open ? <X/> : <Menu/>}</button>
       </div>
 
-      {/* Live Search & Command Palette (CAT-SEARCH-AUTOCOMPLETE-01) */}
+      {/* Live Search & Command Palette */}
       {searchOpen && (
         <div
           role="dialog"
@@ -276,20 +276,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       <img
-                        src={prod.images[0]?.url || '/products/shirt.svg'}
+                        src={prod.images[0]?.url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80'}
                         alt={prod.name}
-                        style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 3, background: '#eee' }}
+                        style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 3, background: '#F3EFEA' }}
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;
-                          if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                          if (!target.src.includes('unsplash.com')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
                         }}
                       />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: 10, color: 'var(--muted)' }}>{prod.shop.name}</span>
+                          <span style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{prod.shop.name}</span>
                           {prod.shop.isMall && (
-                            <span style={{ fontSize: 9, background: '#1e3a8a', color: '#fff', padding: '1px 4px', borderRadius: 2, fontWeight: 700 }}>
-                              MALL
+                            <span style={{ fontSize: 9, background: 'var(--gold-dark)', color: '#FAF8F5', padding: '1px 5px', borderRadius: 2, fontWeight: 700, letterSpacing: '0.05em' }}>
+                              ATELIER
                             </span>
                           )}
                         </div>
@@ -298,7 +298,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--muted)' }}>{prod.material}</div>
                       </div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--clay)' }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold-dark)' }}>
                         {vnd(Math.min(...prod.variants.map((v) => v.price)))}
                       </div>
                     </Link>
@@ -307,7 +307,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     <Link
                       href={`/tim-kiem?q=${encodeURIComponent(searchQuery)}`}
                       onClick={() => setSearchOpen(false)}
-                      style={{ fontSize: 12, color: 'var(--clay)', fontWeight: 600 }}
+                      style={{ fontSize: 12, color: 'var(--gold-dark)', fontWeight: 600 }}
                     >
                       Xem toàn bộ kết quả cho &quot;{searchQuery}&quot; &rarr;
                     </Link>
@@ -324,7 +324,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       )}
     </header>
     <main>{children}</main>
-    <footer><div><Link href="/" className="logo"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '36px', width: 'auto' }} /></Link><p>The Next Era of Fashion Commerce &amp; Lifestyle Community.</p><p style={{ fontSize: 10, color: 'var(--muted)', marginTop: 8 }}>Vận hành tuân thủ Nghị định 91/2022/NĐ-CP &amp; Nghị định 13/2023/NĐ-CP về Bảo vệ Dữ liệu Cá nhân (PDPD).</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục & Phụ kiện</Link><Link href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link href="/live">Sàn diễn Live (SOC-LIVE-01)</Link><Link href="/cong-dong">Cộng đồng OOTD</Link><Link href="/trade-in">Thu cũ Đổi mới (Trade-In)</Link><Link href="/vas-care">Chăm sóc đồ hiệu (VAS Care)</Link></div><div><p>HỆ SINH THÁI</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng NEXORA</Link><Link href="/dang-ky">Đăng ký tài khoản</Link></div><div className="footer-note"><strong>TIÊU CHUẨN VẬN HÀNH</strong><br/>• Đồng kiểm ngoại quan (RET-COINSPECT)<br/>• Cầu dao an ninh giá (SOC-PRICE-ERROR)<br/>• Mã PIN an ninh giao nhận (FUL-VERIF-05)<br/>• Hóa đơn điện tử VAT TT 78/2021<br/>• Bảo hành &amp; Đổi trả 7–15 ngày</div></footer>
+    <footer><div><Link href="/" className="logo"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '36px', width: 'auto' }} /></Link><p>The Next Era of Fashion Commerce &amp; Lifestyle Community.</p><p style={{ fontSize: 10, color: 'var(--muted)', marginTop: 8 }}>Vận hành tuân thủ Nghị định 91/2022/NĐ-CP &amp; Nghị định 13/2023/NĐ-CP về Bảo vệ Dữ liệu Cá nhân (PDPD).</p></div><div><p>KHÁM PHÁ</p><Link href="/">Trang phục & Phụ kiện</Link><Link href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link href="/live">Sàn diễn Live Runway</Link><Link href="/cong-dong">Cộng đồng OOTD</Link><Link href="/trade-in">Thu cũ Đổi mới (Trade-In)</Link><Link href="/vas-care">Chăm sóc đồ hiệu (VAS Care)</Link></div><div><p>HỆ SINH THÁI</p><Link href="/don-hang">Đơn hàng của bạn</Link><Link href="/seller">Mở shop cùng NEXORA</Link><Link href="/dang-ky">Đăng ký tài khoản</Link></div><div className="footer-note"><strong>TIÊU CHUẨN VẬN HÀNH ATELIER</strong><br/>• Đồng kiểm ngoại quan tận tay<br/>• Bảo vệ giá niêm yết chính hãng<br/>• Mã PIN an toàn bảo mật giao nhận<br/>• Hóa đơn điện tử VAT chuẩn quy định<br/>• Đặc quyền đổi trả &amp; bảo hành 15 ngày</div></footer>
   </UserContext.Provider>;
 }
 export function Notice({ children, error = false }: { children: React.ReactNode; error?: boolean }) { return <div role={error ? 'alert' : 'status'} className={error ? 'notice error' : 'notice'}>{children}</div>; }

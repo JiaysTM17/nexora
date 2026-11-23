@@ -16,7 +16,7 @@ export default function Home() {
         <div className="eyebrow"><span/> NEXORA ATELIER // SS 2026 RUNWAY &amp; EDITORIAL ARCHIVE</div>
         <h1 style={{ textWrap: 'balance', letterSpacing: '-0.02em', fontSize: 'clamp(28px, 3.2vw, 44px)', fontWeight: 700, lineHeight: 1.25 }}>
           Nghệ Thuật May Đo.<br/>
-          <span style={{ color: 'var(--brand-indigo)' }}>Bản Sắc Đương Đại.</span>
+          <span style={{ color: 'var(--gold-dark)' }}>Bản Sắc Đương Đại.</span>
         </h1>
         <p>Tuyển tập thiết kế may đo cao cấp từ các nhà mốt độc lập. Chuẩn mực trong từng phom dáng, nguyên bản trong từng thớ sợi tự nhiên.</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>

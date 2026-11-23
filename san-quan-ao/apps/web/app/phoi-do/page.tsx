@@ -200,20 +200,20 @@ export default function MixMatchPage() {
     <section className="section">
       <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <Sparkles size={14} color="var(--brand-indigo)" />
-            NEXORA EDITORIAL STUDIO · CAT-MIX-MATCH-01
+          <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--gold-dark)' }}>
+            <Sparkles size={14} color="var(--gold-dark)" />
+            ATELIER STYLING STUDIO // MIX &amp; MATCH ARCHIVE
           </p>
-          <h1 style={{ margin: '4px 0 8px', fontSize: 28, fontFamily: 'var(--font-sans)', fontWeight: 750 }}>
-            Phòng Thử Đồ Mix &amp; Match
+          <h1 style={{ margin: '6px 0 10px', fontSize: 'clamp(28px, 3.2vw, 38px)', fontFamily: 'var(--font-serif)', fontWeight: 500, color: 'var(--ink)' }}>
+            Phòng Thử Đồ &amp; Giám Tuyển Bản Phối
           </h1>
-          <p className="subtle" style={{ margin: 0, maxWidth: 600 }}>
-            Tự do phối ghép các mảnh ghép trang phục thời thượng, tính toán bảng màu hài hòa và nhận ngay ưu đãi <strong>Combo Style Saver -10%</strong> khi mua trọn bộ.
+          <p className="subtle" style={{ margin: 0, maxWidth: 620, fontSize: 13, lineHeight: 1.65 }}>
+            Tự do phối ghép các thiết kế may đo độc lập, tính toán bảng màu hài hòa và tự động áp dụng ưu đãi đặc quyền <strong>Combo Style Saver -10%</strong> khi sở hữu trọn bộ.
           </p>
         </div>
 
-        <Link href="/cong-dong" className="button subtle" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Share2 size={16} /> Xem Outfit Cộng Đồng
+        <Link href="/cong-dong" className="button subtle" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
+          <Share2 size={15} /> Xem Outfit Cộng Đồng
         </Link>
       </div>
 
@@ -228,33 +228,33 @@ export default function MixMatchPage() {
         </div>
       )}
 
-      {/* Bộ Lọc Phối Đồ Theo Thời Tiết & Ngữ Cảnh (CAT-OUTFIT-WEATHER-SYNC-01) */}
+      {/* Bộ Lọc Phối Đồ Theo Thời Tiết & Ngữ Cảnh */}
       <div
         style={{
-          marginTop: 20,
-          padding: '14px 18px',
-          background: '#fdfbf7',
-          border: '1px solid #fed7aa',
-          borderRadius: 6,
+          marginTop: 24,
+          padding: '16px 22px',
+          background: '#FAF8F5',
+          border: '1px solid var(--line)',
+          borderRadius: 2,
         }}
       >
-        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Thermometer size={16} color="var(--brand-indigo)" />
-            <strong style={{ fontSize: 13, color: 'var(--ink)' }}>
-              Gợi Ý Phối Đồ Theo Thời Tiết &amp; Dịp Xuất Hiện (CAT-OUTFIT-WEATHER-SYNC-01)
+            <Thermometer size={16} color="var(--gold-dark)" />
+            <strong style={{ fontSize: 13, color: 'var(--ink)', fontFamily: 'var(--font-serif)', fontWeight: 600 }}>
+              Gợi Ý Phối Đồ Theo Thời Tiết &amp; Dịp Xuất Hiện
             </strong>
-            <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
-              AI WEATHER SYNC
+            <span style={{ fontSize: 9.5, letterSpacing: '0.08em', background: 'var(--gold-dark)', color: '#FAF8F5', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              ATELIER CLIMATE SYNC
             </span>
           </div>
-          <span style={{ fontSize: 11, color: 'var(--muted)' }}>
-            Khí hậu địa phương: <strong>{weatherCity === 'SAIGON' ? 'Nhiệt đới nắng ấm (32°C)' : weatherCity === 'HANOI' ? 'Gió mùa Đông Bắc (19°C)' : 'Cao nguyên sương lạnh (14°C)'}</strong>
+          <span style={{ fontSize: 11.5, color: 'var(--muted)' }}>
+            Khí hậu địa phương: <strong style={{ color: 'var(--ink)' }}>{weatherCity === 'SAIGON' ? 'Nhiệt đới nắng ấm (32°C)' : weatherCity === 'HANOI' ? 'Gió mùa Đông Bắc (19°C)' : 'Cao nguyên sương lạnh (14°C)'}</strong>
           </span>
         </div>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>Thành phố / Khí hậu:</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>Khí hậu:</span>
           {[
             { id: 'SAIGON' as const, label: '☀️ Sài Gòn 32°C (Nắng ấm)', tip: 'Linen & Lụa thoáng khí' },
             { id: 'HANOI' as const, label: '⛅ Hà Nội 19°C (Se lạnh)', tip: 'Layering với Blazer' },
@@ -267,10 +267,10 @@ export default function MixMatchPage() {
               style={{
                 fontSize: 11,
                 padding: '6px 14px',
-                borderRadius: 20,
-                border: weatherCity === item.id ? '1.5px solid #09090B' : '1px solid var(--line)',
-                background: weatherCity === item.id ? '#09090B' : '#FFFFFF',
-                color: weatherCity === item.id ? '#FFFFFF' : 'var(--ink)',
+                borderRadius: 2,
+                border: weatherCity === item.id ? '1px solid #141413' : '1px solid var(--line)',
+                background: weatherCity === item.id ? '#141413' : '#FFFFFF',
+                color: weatherCity === item.id ? '#FAF8F5' : 'var(--ink)',
                 fontWeight: weatherCity === item.id ? 700 : 500,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
@@ -280,7 +280,7 @@ export default function MixMatchPage() {
             </button>
           ))}
 
-          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)', marginLeft: 12 }}>Ngữ cảnh:</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', letterSpacing: '0.04em', textTransform: 'uppercase', marginLeft: 12 }}>Ngữ cảnh:</span>
           {[
             { id: 'OFFICE' as const, label: '🏢 Công sở' },
             { id: 'STREET' as const, label: '☕ Dạo phố' },
@@ -292,11 +292,11 @@ export default function MixMatchPage() {
               onClick={() => setOccasion(occ.id)}
               style={{
                 fontSize: 11,
-                padding: '4px 10px',
-                borderRadius: 4,
-                border: occasion === occ.id ? '1px solid var(--ink)' : '1px solid var(--line)',
-                background: occasion === occ.id ? 'var(--ink)' : '#fff',
-                color: occasion === occ.id ? '#fff' : 'var(--muted)',
+                padding: '5px 12px',
+                borderRadius: 2,
+                border: occasion === occ.id ? '1px solid #141413' : '1px solid var(--line)',
+                background: occasion === occ.id ? '#141413' : '#fff',
+                color: occasion === occ.id ? '#FAF8F5' : 'var(--muted)',
                 cursor: 'pointer',
               }}
             >
@@ -362,12 +362,12 @@ export default function MixMatchPage() {
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       onError={(e) => {
                         const target = e.currentTarget as HTMLImageElement;
-                        if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                        target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
                       }}
                     />
                   </div>
                   <div style={{ marginTop: 8 }}>
-                    <span style={{ fontSize: 10, color: 'var(--brand-indigo)', fontWeight: 700 }}>LỚP NGOÀI</span>
+                    <span style={{ fontSize: 10, color: 'var(--gold-dark)', fontWeight: 700 }}>LỚP NGOÀI</span>
                     <h4 style={{ margin: '2px 0', fontSize: 12, lineHeight: 1.3 }}>{selectedOuter.name}</h4>
                     <span style={{ fontSize: 12, fontWeight: 700 }}>{vnd(selectedOuter.price)}</span>
                   </div>
@@ -383,12 +383,12 @@ export default function MixMatchPage() {
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => {
                       const target = e.currentTarget as HTMLImageElement;
-                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                      target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
                     }}
                   />
                 </div>
                 <div style={{ marginTop: 8 }}>
-                  <span style={{ fontSize: 10, color: 'var(--brand-indigo)', fontWeight: 700 }}>ÁO CHÍNH</span>
+                  <span style={{ fontSize: 10, color: 'var(--gold-dark)', fontWeight: 700 }}>ÁO CHÍNH</span>
                   <h4 style={{ margin: '2px 0', fontSize: 12, lineHeight: 1.3 }}>{selectedTop.name}</h4>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>{vnd(selectedTop.price)}</span>
                 </div>
@@ -403,12 +403,12 @@ export default function MixMatchPage() {
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     onError={(e) => {
                       const target = e.currentTarget as HTMLImageElement;
-                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                      target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
                     }}
                   />
                 </div>
                 <div style={{ marginTop: 8 }}>
-                  <span style={{ fontSize: 10, color: 'var(--brand-indigo)', fontWeight: 700 }}>QUẦN / VÁY</span>
+                  <span style={{ fontSize: 10, color: 'var(--gold-dark)', fontWeight: 700 }}>QUẦN / VÁY</span>
                   <h4 style={{ margin: '2px 0', fontSize: 12, lineHeight: 1.3 }}>{selectedBottom.name}</h4>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>{vnd(selectedBottom.price)}</span>
                 </div>
@@ -435,21 +435,21 @@ export default function MixMatchPage() {
               </span>
             </div>
 
-            {/* Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều (CAT-STYLE-COMPATIBILITY-RADAR-01) */}
+            {/* Radar Tương Thích Phong Cách & Chỉ Số Hòa Sắc Đa Chiều */}
             <div
               style={{
-                marginTop: 14,
-                padding: '12px 14px',
-                background: '#f8fafc',
-                border: '1px solid #cbd5e1',
-                borderRadius: 4,
+                marginTop: 16,
+                padding: '14px 16px',
+                background: '#FAF8F5',
+                border: '1px solid var(--line)',
+                borderRadius: 2,
               }}
             >
               <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Award size={15} color="#0d9488" />
-                  <strong style={{ fontSize: 12, color: '#0f172a' }}>
-                    Radar Tương Thích Phong Cách (CAT-STYLE-COMPATIBILITY-RADAR-01)
+                  <Award size={15} color="var(--gold-dark)" />
+                  <strong style={{ fontSize: 12, color: 'var(--ink)', fontFamily: 'var(--font-serif)', fontWeight: 600 }}>
+                    Radar Tương Thích &amp; Đồng Điệu Sắc Thái
                   </strong>
                 </div>
                 <button
@@ -458,25 +458,25 @@ export default function MixMatchPage() {
                   style={{
                     fontSize: 10,
                     padding: '3px 8px',
-                    background: showRadarAnalysis ? '#0f766e' : '#fff',
-                    color: showRadarAnalysis ? '#fff' : '#0f766e',
-                    border: '1px solid #0f766e',
-                    borderRadius: 3,
+                    background: showRadarAnalysis ? 'var(--gold-dark)' : '#fff',
+                    color: showRadarAnalysis ? '#fff' : 'var(--gold-dark)',
+                    border: '1px solid var(--gold-dark)',
+                    borderRadius: 2,
                     cursor: 'pointer',
                     fontWeight: 600,
                   }}
                 >
-                  {showRadarAnalysis ? 'Thu gọn phân tích' : 'Chi tiết 5 Trục Radar (95.0/100) →'}
+                  {showRadarAnalysis ? 'Thu gọn phân tích' : 'Chi tiết 5 Trục Synergy (95.0/100) →'}
                 </button>
               </div>
 
-              <div className="row between" style={{ fontSize: 11, marginBottom: 6 }}>
-                <span style={{ color: '#475569' }}>Chỉ số hòa hợp tổng thể (Overall Synergy):</span>
-                <strong style={{ color: '#0f766e', fontSize: 13, fontFamily: 'var(--font-sans)', fontWeight: 800 }}>95.0 / 100</strong>
+              <div className="row between" style={{ fontSize: 11.5, marginBottom: 6 }}>
+                <span style={{ color: 'var(--muted)' }}>Chỉ số hòa hợp tổng thể (Overall Synergy):</span>
+                <strong style={{ color: 'var(--gold-dark)', fontSize: 15, fontFamily: 'var(--font-serif)', fontWeight: 700 }}>95.0 / 100</strong>
               </div>
 
               {showRadarAnalysis && (
-                <div style={{ marginTop: 8, display: 'grid', gap: 6, fontSize: 11 }}>
+                <div style={{ marginTop: 10, display: 'grid', gap: 6, fontSize: 11 }}>
                   {[
                     { label: '1. Hòa sắc bảng màu (Color Harmony)', score: 96, desc: 'Tông Cát Mộc & Nâu Đất tương hỗ hoàn hảo.' },
                     { label: '2. Cân bằng phom dáng (Silhouette Balance)', score: 94, desc: 'Tỷ lệ 1/3 thân trên ôm nhẹ, 2/3 thân dưới suông rủ thanh thoát.' },
@@ -484,21 +484,21 @@ export default function MixMatchPage() {
                     { label: '4. Tương thích ngữ cảnh (Occasion Fit)', score: 98, desc: 'Linh hoạt biến chuyển từ công sở đến cà phê cuối tuần.' },
                     { label: '5. Thích ứng thời tiết (Climate Fit)', score: 92, desc: 'Thoáng khí, giải nhiệt tự nhiên cho khí hậu nhiệt đới 26–32°C.' },
                   ].map((axis, i) => (
-                    <div key={i} style={{ background: '#fff', padding: '6px 8px', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                      <div className="row between" style={{ marginBottom: 2 }}>
-                        <span style={{ fontWeight: 600, color: '#1e293b' }}>{axis.label}</span>
-                        <strong style={{ color: '#0f766e' }}>{axis.score}%</strong>
+                    <div key={i} style={{ background: '#fff', padding: '8px 10px', borderRadius: 2, border: '1px solid var(--line)' }}>
+                      <div className="row between" style={{ marginBottom: 4 }}>
+                        <span style={{ fontWeight: 600, color: 'var(--ink)' }}>{axis.label}</span>
+                        <strong style={{ color: 'var(--gold-dark)' }}>{axis.score}%</strong>
                       </div>
-                      <div style={{ width: '100%', height: 4, background: '#f1f5f9', borderRadius: 2, overflow: 'hidden', marginBottom: 2 }}>
-                        <div style={{ width: `${axis.score}%`, height: '100%', background: '#0d9488', borderRadius: 2 }} />
+                      <div style={{ width: '100%', height: 3, background: '#f1ede7', borderRadius: 2, overflow: 'hidden', marginBottom: 4 }}>
+                        <div style={{ width: `${axis.score}%`, height: '100%', background: 'var(--gold-dark)', borderRadius: 2 }} />
                       </div>
-                      <span style={{ fontSize: 9, color: '#64748b' }}>{axis.desc}</span>
+                      <span style={{ fontSize: 9.5, color: 'var(--muted)' }}>{axis.desc}</span>
                     </div>
                   ))}
 
                   <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginTop: 4 }}>
                     {['#QuietLuxury', '#EffortlessElegance', '#SlowFashionSynergy'].map((tag) => (
-                      <span key={tag} style={{ fontSize: 9, background: '#ccfbf1', color: '#115e59', padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                      <span key={tag} style={{ fontSize: 9.5, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
                         {tag}
                       </span>
                     ))}
@@ -515,17 +515,17 @@ export default function MixMatchPage() {
                 borderTop: '1px solid var(--line)',
               }}
             >
-              <div className="row between" style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>
-                <span>Tổng giá gốc ({selectedOuter ? '3' : '2'} sản phẩm):</span>
-                <span>{vnd(subtotal)}</span>
+              <div className="row between" style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 4 }}>
+                <span>Tổng giá trị lẻ ({selectedOuter ? '3' : '2'} sản phẩm):</span>
+                <span style={{ textDecoration: 'line-through' }}>{vnd(subtotal)}</span>
               </div>
-              <div className="row between" style={{ fontSize: 13, color: '#059669', fontWeight: 600, marginBottom: 8 }}>
+              <div className="row between" style={{ fontSize: 13, color: '#2D5A3F', fontWeight: 600, marginBottom: 8 }}>
                 <span>Ưu đãi Combo Style Saver (-10%):</span>
                 <span>−{vnd(bundleDiscount)}</span>
               </div>
               <div className="row between" style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 16 }}>
                 <span>Tổng thanh toán Combo:</span>
-                <span style={{ color: 'var(--brand-indigo)', fontWeight: 800 }}>{vnd(finalTotal)}</span>
+                <span style={{ color: 'var(--ink)', fontFamily: 'var(--font-serif)', fontSize: 20, fontWeight: 700 }}>{vnd(finalTotal)}</span>
               </div>
 
               <button
@@ -541,22 +541,21 @@ export default function MixMatchPage() {
               <div style={{ marginTop: 8 }}>
                 <button
                   type="button"
-                  className="button secondary full"
+                  className="button subtle full"
                   onClick={() => setShowLookbookModal(true)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 8,
-                    fontSize: 12,
-                    padding: '9px 14px',
-                    background: '#fdfbf7',
-                    borderColor: '#fed7aa',
-                    color: '#9a3412',
+                    fontSize: 11,
+                    padding: '11px 16px',
+                    color: 'var(--gold-dark)',
+                    border: '1px solid var(--line)',
                   }}
                 >
-                  <Camera size={16} color="#c2410c" />
-                  <span>Xuất Thẻ Lookbook Nghệ Thuật &amp; Chia Sẻ OOTD (CAT-LOOKBOOK-CANVAS-01)</span>
+                  <Camera size={15} color="var(--gold-dark)" />
+                  <span>Xuất Thẻ Monograph Lookbook &amp; Chia Sẻ OOTD</span>
                 </button>
               </div>
             </div>
@@ -568,7 +567,7 @@ export default function MixMatchPage() {
           {/* Section 1: Áo Khoác Ngoài (Outerwear) */}
           <div className="panel">
             <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Layers size={16} color="var(--brand-indigo)" /> Lớp Ngoài (Outerwear)
+              <Layers size={16} color="var(--gold-dark)" /> Lớp Ngoài (Outerwear)
             </h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
               <button
@@ -620,7 +619,7 @@ export default function MixMatchPage() {
           {/* Section 2: Áo Chính (Tops) */}
           <div className="panel">
             <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles size={16} color="var(--brand-indigo)" /> Áo Chính (Tops)
+              <Sparkles size={16} color="var(--gold-dark)" /> Áo Chính (Tops)
             </h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
               {PIECES.filter(p => p.category === 'top').map(p => (
@@ -664,7 +663,7 @@ export default function MixMatchPage() {
           {/* Section 3: Quần / Chân Váy (Bottoms) */}
           <div className="panel">
             <h3 style={{ margin: '0 0 12px', fontSize: 15, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Sparkles size={16} color="var(--brand-indigo)" /> Quần / Chân Váy (Bottoms)
+              <Sparkles size={16} color="var(--gold-dark)" /> Quần / Chân Váy (Bottoms)
             </h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
               {PIECES.filter(p => p.category === 'bottom').map(p => (
@@ -717,7 +716,7 @@ export default function MixMatchPage() {
             }}
           >
             <strong style={{ color: 'var(--ink)', display: 'block', marginBottom: 6 }}>
-              Quyền Lợi Độc Quyền Khi Mua Combo (CAT-MIX-MATCH):
+              Quyền Lợi Độc Quyền Khi Mua Combo:
             </strong>
             <ul style={{ margin: 0, paddingLeft: 18, color: 'var(--muted)' }}>
               <li>Chiết khấu ngay <strong>10%</strong> trên toàn bộ set đồ đã phối.</li>
@@ -729,7 +728,7 @@ export default function MixMatchPage() {
         </div>
       </div>
 
-      {/* Modal Xuất Thẻ Lookbook Nghệ Thuật & Chia Sẻ OOTD (CAT-LOOKBOOK-CANVAS-EXPORT-01) */}
+      {/* Modal Xuất Thẻ Lookbook Nghệ Thuật & Chia Sẻ OOTD */}
       {showLookbookModal && (
         <div
           style={{
@@ -761,13 +760,13 @@ export default function MixMatchPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Camera size={19} color="var(--brand-indigo)" />
+                <Camera size={19} color="var(--gold-dark)" />
                 <div>
                   <h3 style={{ margin: 0, fontSize: 16, color: 'var(--ink)' }}>
                     THẺ LOOKBOOK NGHỆ THUẬT HAUTE COUTURE
                   </h3>
                   <div style={{ fontSize: 11, color: 'var(--muted)' }}>
-                    Xuất Thẻ Phối Đồ &amp; Chia Sẻ Lên Cộng Đồng OOTD (CAT-LOOKBOOK-CANVAS-EXPORT-01)
+                    Xuất Thẻ Phối Đồ &amp; Chia Sẻ Lên Cộng Đồng OOTD
                   </div>
                 </div>
               </div>
@@ -804,9 +803,9 @@ export default function MixMatchPage() {
                     style={{
                       padding: '8px 6px',
                       borderRadius: 4,
-                      border: lookbookTheme === th.id ? '1.5px solid var(--brand-indigo)' : '1px solid #e2e8f0',
+                      border: lookbookTheme === th.id ? '1.5px solid var(--gold-dark)' : '1px solid #e2e8f0',
                       background: lookbookTheme === th.id ? '#EEF2FF' : '#f8fafc',
-                      color: lookbookTheme === th.id ? 'var(--brand-indigo)' : '#334155',
+                      color: lookbookTheme === th.id ? 'var(--gold-dark)' : '#334155',
                       fontWeight: lookbookTheme === th.id ? 700 : 500,
                       cursor: 'pointer',
                       textAlign: 'center',
@@ -863,14 +862,14 @@ export default function MixMatchPage() {
             >
               <div className="row between" style={{ borderBottom: '1px solid rgba(120, 113, 108, 0.2)', paddingBottom: 10, marginBottom: 12 }}>
                 <div>
-                  <span style={{ fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', color: lookbookTheme === 'MIDNIGHT_NOIR' ? '#94a3b8' : 'var(--brand-indigo)', fontWeight: 700 }}>
+                  <span style={{ fontSize: 9.5, letterSpacing: '0.14em', textTransform: 'uppercase', color: lookbookTheme === 'MIDNIGHT_NOIR' ? 'var(--gold-light)' : 'var(--gold-dark)', fontWeight: 700 }}>
                     NEXORA ATELIER EDITORIAL
                   </span>
-                  <h4 style={{ margin: '2px 0 0', fontSize: 14, fontFamily: 'var(--font-sans)', fontWeight: 700 }}>
+                  <h4 style={{ margin: '4px 0 0', fontSize: 16, fontFamily: 'var(--font-serif)', fontWeight: 600 }}>
                     Lookbook #{Date.now().toString().slice(-4)} · {weatherCity} Capsule
                   </h4>
                 </div>
-                <span style={{ fontSize: 10, background: '#16a34a', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                <span style={{ fontSize: 9.5, letterSpacing: '0.04em', background: '#2D5A3F', color: '#FAF8F5', padding: '3px 8px', borderRadius: 2, fontWeight: 700 }}>
                   HARMONY 98/100
                 </span>
               </div>

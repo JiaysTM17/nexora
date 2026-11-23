@@ -199,17 +199,16 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             alt={`${p.name}, màu ${selectedColor}`}
             onError={(e) => {
               const target = e.currentTarget as HTMLImageElement;
-              if (!target.src.includes('/products/shirt.svg')) {
-                target.src = '/products/shirt.svg';
-              }
+              target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
             }}
           />
           <div
             style={{
-              marginTop: 10,
-              padding: '6px 12px',
-              background: '#f4efe6',
-              borderRadius: 4,
+              marginTop: 12,
+              padding: '8px 14px',
+              background: '#FAF8F5',
+              border: '1px solid var(--line)',
+              borderRadius: 2,
               fontSize: 11,
               color: 'var(--muted)',
               display: 'flex',
@@ -218,27 +217,27 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             }}
           >
             <span>📷 Ảnh chụp thực tế sản phẩm (Không dùng AI)</span>
-            <span style={{ fontWeight: 600, color: 'var(--ink)' }}>NEXORA Verified</span>
+            <span style={{ fontWeight: 600, color: 'var(--gold-dark)', letterSpacing: '0.04em' }}>✦ NEXORA Verified</span>
           </div>
         </div>
 
         <div className="detail-copy">
           <div className="row between">
-            <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', color: 'var(--gold-dark)' }}>
               <span>{p.shop.name}</span>
               {p.shop.isMall && (
                 <span
                   style={{
-                    background: 'var(--clay)',
-                    color: '#fff',
-                    fontSize: 10,
+                    background: 'var(--gold-dark)',
+                    color: '#FAF8F5',
+                    fontSize: 9,
                     fontWeight: 700,
                     padding: '2px 8px',
                     borderRadius: 2,
-                    letterSpacing: '0.5px',
+                    letterSpacing: '0.08em',
                   }}
                 >
-                  NEXORA MALL · CHÍNH HÃNG
+                  ATELIER MALL · CHÍNH HÃNG
                 </span>
               )}
               <span style={{ color: 'var(--muted)' }}>/</span>
@@ -247,19 +246,23 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             {user && (
               <button
                 className="icon-link"
-                style={{ border: '1px solid var(--line)', padding: '6px 12px', gap: 6, fontSize: 12 }}
+                style={{ border: '1px solid var(--line)', padding: '6px 14px', gap: 6, fontSize: 11.5, borderRadius: 2 }}
                 disabled={wishBusy}
                 onClick={toggleWishlist}
                 aria-label="Yêu thích"
               >
-                <Heart size={16} fill={p.isWishlisted ? 'var(--clay)' : 'none'} color={p.isWishlisted ? 'var(--clay)' : 'var(--ink)'} />
+                <Heart size={15} fill={p.isWishlisted ? 'var(--gold-dark)' : 'none'} color={p.isWishlisted ? 'var(--gold-dark)' : 'var(--ink)'} />
                 <span>{p.isWishlisted ? 'Đã lưu' : 'Lưu lại'}</span>
               </button>
             )}
           </div>
 
-          <h1>{p.name}</h1>
-          <p className="detail-price">{vnd(variant?.price ?? Math.min(...p.variants.map((v) => v.price)))}</p>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(28px, 3.2vw, 42px)', fontWeight: 500, lineHeight: 1.18, margin: '6px 0 10px', color: 'var(--ink)' }}>
+            {p.name}
+          </h1>
+          <p className="detail-price" style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 600, color: 'var(--ink)', margin: '0 0 16px' }}>
+            {vnd(variant?.price ?? Math.min(...p.variants.map((v) => v.price)))}
+          </p>
 
           <div style={{ margin: '14px 0', fontSize: 13, lineHeight: 1.8 }}>
             {p.description.split('\n\n').map((para, idx) => {
@@ -312,7 +315,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             <span>{p.fit}</span>
           </div>
 
-          {/* Hồ Sơ Năng Lực & Uy Tín Gian Hàng (CAT-SELLER-SCORE-01) */}
+          {/* Hồ Sơ Năng Lực & Uy Tín Gian Hàng */}
           <div
             style={{
               margin: '14px 0',
@@ -446,7 +449,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             <small>{variant ? `Còn ${available} sản phẩm` : 'Chọn size phù hợp với số đo của bạn.'}</small>
           </fieldset>
 
-          {/* Nút Kích Hoạt Mô Phỏng Phom Dáng Silhouette 2D (CAT-VIRTUAL-SILHOUETTE) */}
+          {/* Nút Kích Hoạt Mô Phỏng Phom Dáng Silhouette 2D */}
           <div style={{ margin: '10px 0' }}>
             <button
               type="button"
@@ -465,7 +468,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 cursor: 'pointer',
               }}
             >
-              <Eye size={13} color="var(--clay)" /> 👗 Mô Phỏng Phom Dáng &amp; Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE)
+              <Eye size={13} color="var(--clay)" /> 👗 Mô Phỏng Phom Dáng &amp; Độ Rủ 2D
             </button>
             <button
               type="button"
@@ -484,11 +487,11 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 cursor: 'pointer',
               }}
             >
-              <Sparkles size={13} color="#0d9488" /> 🪞 Gương Thử Đồ AR &amp; Độ Rủ (USER-VIRTUAL-TRYON-AR)
+              <Sparkles size={13} color="#0d9488" /> 🪞 Gương Thử Đồ AR &amp; Độ Rủ
             </button>
           </div>
 
-          {/* Bộ Đếm Tồn Kho Thủ Công Thời Gian Thực & Khóa Giữ Hàng 180s (CAT-REALTIME-STOCK-RESERVATION-01 · D6-02/D6-03) */}
+          {/* Bộ Đếm Tồn Kho Thủ Công Thời Gian Thực & Khóa Giữ Hàng 180s (Atelier Stock Reservation 180s) */}
           <div
             style={{
               margin: '12px 0',
@@ -633,7 +636,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             />
           </label>
 
-          {/* NEXORA Care+ Fashion Warranty Extension (VAS-WARRANTY-EXT) */}
+          {/* NEXORA Care+ Fashion Warranty Extension */}
           <div
             style={{
               margin: '16px 0',
@@ -689,7 +692,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             </Link>
           )}
 
-          {/* Đặt Trước May Đo Giới Hạn & Theo Dõi Nghệ Nhân (CAT-PRE-ORDER-ATELIER-01) */}
+          {/* Đặt Trước May Đo Giới Hạn & Theo Dõi Nghệ Nhân */}
           <div style={{ marginTop: 10 }}>
             <button
               type="button"
@@ -718,7 +721,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             </Notice>
           )}
 
-          {/* Đăng Ký Thông Báo Có Hàng & Giảm Giá (USER-STOCK-ALERT-01) */}
+          {/* Đăng Ký Thông Báo Có Hàng & Giảm Giá */}
           <div style={{ marginTop: 10 }}>
             {subscribedAlert ? (
               <div
@@ -762,12 +765,12 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   } catch {}
                 }}
               >
-                <BellRing size={15} /> Nhận thông báo khi có hàng lại hoặc giảm giá (USER-STOCK-ALERT-01)
+                <BellRing size={15} /> Nhận thông báo khi có hàng lại hoặc giảm giá
               </button>
             )}
           </div>
 
-          {/* La Bàn Phong Cách & Phụ Kiện Gợi Ý Phối Cùng (CAT-STYLE-COMPASS-01) */}
+          {/* La Bàn Phong Cách & Phụ Kiện Gợi Ý Phối Cùng */}
           <div
             style={{
               margin: '14px 0',
@@ -781,7 +784,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <Compass size={16} color="var(--clay)" />
                 <strong style={{ fontSize: 13, color: '#9a3412' }}>
-                  La Bàn Phong Cách · Phụ Kiện Hoàn Thiện Set Đồ (CAT-STYLE-COMPASS)
+                  La Bàn Phong Cách · Phụ Kiện Hoàn Thiện Set Đồ
                 </strong>
               </div>
               <Link
@@ -797,9 +800,9 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {[
-                { name: 'Thắt Lưng Da Bò Ý Khóa Đồng', brand: 'Massimo Dutti', price: 450000, img: '/products/jacket.svg' },
-                { name: 'Khăn Lụa Bỏ Túi Dệt Tay', brand: 'Bảo Lộc Silk', price: 220000, img: '/products/scarf.svg' },
-                { name: 'Mũ Cói Đan Tay Panama', brand: 'Normandy', price: 380000, img: '/products/shoes.svg' },
+                { name: 'Thắt Lưng Da Bò Ý Khóa Đồng', brand: 'Massimo Dutti', price: 450000, img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80' },
+                { name: 'Khăn Lụa Bỏ Túi Dệt Tay', brand: 'Bảo Lộc Silk', price: 220000, img: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=400&q=80' },
+                { name: 'Mũ Cói Đan Tay Panama', brand: 'Normandy', price: 380000, img: 'https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?auto=format&fit=crop&w=400&q=80' },
               ].map((acc, idx) => (
                 <div
                   key={idx}
@@ -818,7 +821,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     style={{ width: '100%', height: 60, objectFit: 'contain', marginBottom: 4 }}
                     onError={(e) => {
                       const t = e.currentTarget as HTMLImageElement;
-                      if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg';
+                      if (!t.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80')) t.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
                     }}
                   />
                   <strong style={{ fontSize: 11, display: 'block', lineHeight: 1.3, color: 'var(--ink)' }}>
@@ -852,7 +855,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             </div>
           </div>
 
-          {/* Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm (Complete Look Saver · CAT-BUNDLE-DISCOUNT-01) */}
+          {/* Mua Trọn Bộ Hoàn Chỉnh Tiết Kiệm (Complete Look Saver) */}
           {(() => {
             const mainPrice = variant?.price ?? Math.min(...p.variants.map((v) => v.price));
             let subtotal = 0;
@@ -878,7 +881,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Percent size={16} color="#d97706" />
                     <strong style={{ fontSize: 13, color: '#92400e' }}>
-                      Mua Trọn Bộ Hoàn Chỉnh · Tiết Kiệm -12% (CAT-BUNDLE-DISCOUNT)
+                      Mua Trọn Bộ Hoàn Chỉnh · Tiết Kiệm -12%
                     </strong>
                   </div>
                   <span
@@ -1112,7 +1115,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
           <details open>
             <summary>
-              <Leaf size={18} color="var(--clay)" /> Hộ Chiếu Minh Bạch Chất Liệu &amp; Xuất Xứ (CAT-FABRIC-TRACE-01)
+              <Leaf size={18} color="var(--clay)" /> Hộ Chiếu Minh Bạch Chất Liệu &amp; Xuất Xứ
             </summary>
             <div style={{ marginTop: 12, fontSize: 12, lineHeight: 1.7 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, marginBottom: 12 }}>
@@ -1142,7 +1145,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 </div>
               </div>
 
-              {/* Ma Trận So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON-01) */}
+              {/* Ma Trận So Sánh Cảm Giác & Độ Bền Vải */}
               <div style={{ marginBottom: 12 }}>
                 <button
                   type="button"
@@ -1161,7 +1164,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     cursor: 'pointer',
                   }}
                 >
-                  <Sparkles size={13} color="var(--clay)" /> 🔬 {showFabricComparison ? 'Đóng bảng so sánh chất liệu' : 'Bảng So Sánh Cảm Giác & Độ Bền Vải (CAT-FABRIC-COMPARISON)'}
+                  <Sparkles size={13} color="var(--clay)" /> 🔬 {showFabricComparison ? 'Đóng bảng so sánh chất liệu' : 'Bảng So Sánh Cảm Giác & Độ Bền Vải'}
                 </button>
 
                 {showFabricComparison && (
@@ -1211,7 +1214,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 )}
               </div>
 
-              {/* Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY-INDEX-01) */}
+              {/* Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy */}
               <div style={{ marginBottom: 12 }}>
                 <button
                   type="button"
@@ -1230,7 +1233,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     cursor: 'pointer',
                   }}
                 >
-                  <Award size={13} color="#059669" /> 🧪 {showDurability ? 'Thu gọn kiểm định độ bền' : 'Chỉ Số Độ Bền Sợi Dệt & Ma Sát Giặt Máy (CAT-FABRIC-DURABILITY)'}
+                  <Award size={13} color="#059669" /> 🧪 {showDurability ? 'Thu gọn kiểm định độ bền' : 'Chỉ Số Độ Bền Sợi Dệt & Ma Sát Giặt Máy'}
                 </button>
 
                 {showDurability && (
@@ -1277,7 +1280,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 )}
               </div>
 
-              {/* Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên (CAT-FABRIC-STRETCH-RECOVERY-01) */}
+              {/* Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên */}
               <div style={{ marginTop: 12 }}>
                 <button
                   type="button"
@@ -1297,7 +1300,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   }}
                 >
                   <Activity size={13} color={showStretchRecovery ? '#16a34a' : 'var(--clay)'} />
-                  {showStretchRecovery ? 'Thu gọn chỉ số phục hồi ▲' : '🌀 Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn (CAT-FABRIC-STRETCH-RECOVERY) ▼'}
+                  {showStretchRecovery ? 'Thu gọn chỉ số phục hồi ▲' : '🌀 Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn ▼'}
                 </button>
 
                 {showStretchRecovery && (
@@ -1347,7 +1350,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   </div>
                 )}
 
-                {/* Radar Đo Lường Độ Rủ Sợi Dệt & Hệ Số Tiêu Âm Tự Nhiên (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR-01) */}
+                {/* Radar Đo Lường Độ Rủ Sợi Dệt & Hệ Số Tiêu Âm Tự Nhiên */}
                 <div style={{ marginTop: 8 }}>
                   <button
                     type="button"
@@ -1367,7 +1370,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     }}
                   >
                     <Volume2 size={13} color={showDrapeRadar ? '#0d9488' : 'var(--clay)'} />
-                    {showDrapeRadar ? 'Thu gọn radar độ rủ & tiêu âm ▲' : '🌊 Radar Độ Rủ & Hệ Số Tiêu Âm ISO 354 (CAT-ACOUSTIC-FABRIC-DRAPE-RADAR) ▼'}
+                    {showDrapeRadar ? 'Thu gọn radar độ rủ & tiêu âm ▲' : '🌊 Radar Độ Rủ & Hệ Số Tiêu Âm ISO 354 ▼'}
                   </button>
 
                   {showDrapeRadar && (
@@ -1448,7 +1451,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 </ul>
               </div>
 
-              {/* Hướng Dẫn Âm Thanh & Cảm Âm Chất Liệu (CAT-FABRIC-VOICE-GUIDE-01) */}
+              {/* Hướng Dẫn Âm Thanh & Cảm Âm Chất Liệu */}
               <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--line)' }}>
                 <button
                   type="button"
@@ -1468,7 +1471,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   }}
                 >
                   <Headphones size={13} color="var(--clay)" />
-                  {showVoiceGuide ? 'Đóng trải nghiệm âm thanh ▲' : '🎧 Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói (CAT-FABRIC-VOICE-GUIDE) ▼'}
+                  {showVoiceGuide ? 'Đóng trải nghiệm âm thanh ▲' : '🎧 Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói ▼'}
                 </button>
 
                 {showVoiceGuide && (
@@ -1581,11 +1584,11 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             </div>
           </details>
 
-          {/* Trợ Lý Phong Cách AI Stylist Riêng Cho Sản Phẩm (CAT-AI-STYLING-CONVERSATION-01) */}
+          {/* Trợ Lý Phong Cách AI Stylist Riêng Cho Sản Phẩm */}
           <details open>
             <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <MessageSquare size={18} color="var(--clay)" /> Hỏi Đáp Phong Cách Cùng AI Stylist (CAT-AI-STYLING-CONVERSATION-01)
+                <MessageSquare size={18} color="var(--clay)" /> Hỏi Đáp Phong Cách Cùng AI Stylist
               </span>
               <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 24/7 INTERACTIVE STYLING
@@ -1776,7 +1779,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
         </div>
       </div>
 
-      {/* Modal Mô Phỏng Phom Dáng & Độ Rủ 2D (CAT-VIRTUAL-SILHOUETTE-01) */}
+      {/* Modal Mô Phỏng Phom Dáng & Độ Rủ 2D */}
       {showSilhouetteModal && (
         <div
           style={{
@@ -2045,7 +2048,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
         </div>
       )}
 
-      {/* Modal Đặt Trước May Đo Thủ Công Atelier (CAT-PRE-ORDER-ATELIER-01) */}
+      {/* Modal Đặt Trước May Đo Thủ Công Atelier */}
       {showBespokeModal && (
         <div
           style={{
@@ -2083,7 +2086,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     XƯỞNG MAY ĐO THỦ CÔNG NEXORA ATELIER
                   </h3>
                   <div style={{ fontSize: 11, color: '#92400e' }}>
-                    Chế Tác Thủ Công Độc Bản (Bespoke Pre-Order Queue · CAT-PRE-ORDER-ATELIER-01)
+                    Chế Tác Thủ Công Độc Bản (Bespoke Pre-Order Queue)
                   </div>
                 </div>
               </div>
@@ -2307,7 +2310,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     </strong>
                   </div>
                   <div style={{ fontSize: 10, color: '#78716c', marginTop: 4 }}>
-                    Phần còn lại 70% sẽ thanh toán khi bưu tá giao hàng tận nhà và khách hàng đồng kiểm ngoại quan (RET-COINSPECT).
+                    Phần còn lại 70% sẽ thanh toán khi bưu tá giao hàng tận nhà và khách hàng đồng kiểm ngoại quan.
                   </div>
                 </div>
 
@@ -2370,7 +2373,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
         </div>
       )}
 
-      {/* Gương Thử Đồ AR & Mô Phỏng Độ Rủ Tương Tác (USER-VIRTUAL-TRYON-AR-01) */}
+      {/* Gương Thử Đồ AR & Mô Phỏng Độ Rủ Tương Tác */}
       {showArMirrorModal && (
         <div
           style={{
@@ -2417,7 +2420,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <Sparkles size={20} color="#0d9488" />
               <h2 style={{ margin: 0, fontSize: 17, color: '#134e4a' }}>
-                Gương Soi Ảo AR &amp; Độ Rủ (USER-VIRTUAL-TRYON-AR-01)
+                Gương Soi Ảo AR &amp; Độ Rủ
               </h2>
             </div>
             <p style={{ margin: '0 0 16px', fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
@@ -2507,7 +2510,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               }}
             >
               <img
-                src={p.images[0]?.url || '/products/shirt.svg'}
+                src={p.images[0]?.url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80'}
                 alt={p.name}
                 style={{
                   maxHeight: '85%',
@@ -2519,7 +2522,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 }}
                 onError={(e) => {
                   const target = e.currentTarget as HTMLImageElement;
-                  if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                  if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
                 }}
               />
 

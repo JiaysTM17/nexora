@@ -192,7 +192,7 @@ export default function LiveRoom() {
         <div>
           <p className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#EF4444', display: 'inline-block', boxShadow: '0 0 8px #EF4444' }} />
-            NEXORA LIVE RUNWAY STUDIO (SOC-LIVE-01)
+            NEXORA LIVE RUNWAY STUDIO
           </p>
           <h1 style={{ fontSize: 36, margin: 0 }}>Sàn Diễn Trực Tiếp &amp; Chốt Đơn 1-Chạm</h1>
           <p className="subtle" style={{ margin: '4px 0 0' }}>Xem người mẫu trình diễn, trao đổi với Stylist và nhận deal độc quyền không gián đoạn luồng phát.</p>
@@ -217,12 +217,12 @@ export default function LiveRoom() {
           <div style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#0a0a0c', borderRadius: 12, overflow: 'hidden', boxShadow: '0 10px 25px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {/* Visual Runway Simulation Backdrop */}
             <img
-              src={pinnedProduct?.images[0]?.url || '/products/blazer.svg'}
+              src={pinnedProduct?.images[0]?.url || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80'}
               alt="Runway Stage"
               style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85, filter: 'contrast(1.05)' }}
               onError={(e) => {
                 const target = e.currentTarget as HTMLImageElement;
-                if (!target.src.includes('/products/blazer.svg')) target.src = '/products/blazer.svg';
+                if (!target.src.includes('https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80';
               }}
             />
 
@@ -281,7 +281,7 @@ export default function LiveRoom() {
             </div>
           </div>
 
-          {/* DEAL SỐC ĐANG GHIM (PINNED PRODUCT CARD - SOC-LIVE-01) */}
+          {/* DEAL SỐC ĐANG GHIM (PINNED RUNWAY ITEM) */}
           {pinnedProduct && (
             <div style={{ marginTop: 20, background: '#fff', border: '1px solid var(--line)', borderRadius: 12, padding: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -295,12 +295,12 @@ export default function LiveRoom() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr auto', gap: 16, alignItems: 'center' }}>
                 <img
-                  src={pinnedProduct.images[0]?.url || '/products/shirt.svg'}
+                  src={pinnedProduct.images[0]?.url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'}
                   alt={pinnedProduct.name}
                   style={{ width: 110, height: 110, objectFit: 'cover', borderRadius: 8, border: '1px solid var(--line)' }}
                   onError={(e) => {
                     const target = e.currentTarget as HTMLImageElement;
-                    if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                    if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
                   }}
                 />
 
@@ -311,7 +311,7 @@ export default function LiveRoom() {
                   </p>
 
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-                    <strong style={{ fontSize: 20, color: 'var(--brand-indigo)' }}>
+                    <strong style={{ fontSize: 20, color: 'var(--gold-dark)' }}>
                       {vnd(Math.round((pinnedProduct.variants[0]?.price ?? 1000000) * 0.65))}
                     </strong>
                     <span style={{ fontSize: 13, textDecoration: 'line-through', color: 'var(--muted)' }}>
@@ -396,7 +396,7 @@ export default function LiveRoom() {
                   onClick={() => { setPinnedIndex(idx); setStockLeft(8); }}
                   style={{
                     background: '#fff',
-                    border: pinnedIndex === idx ? '2px solid var(--brand-indigo)' : '1px solid var(--line)',
+                    border: pinnedIndex === idx ? '2px solid var(--gold-dark)' : '1px solid var(--line)',
                     borderRadius: 8,
                     padding: 10,
                     cursor: 'pointer',
@@ -404,17 +404,17 @@ export default function LiveRoom() {
                   }}
                 >
                   <img
-                    src={p.images[0]?.url || '/products/shirt.svg'}
+                    src={p.images[0]?.url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'}
                     alt={p.name}
                     style={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 6, marginBottom: 8 }}
                     onError={(e) => {
                       const target = e.currentTarget as HTMLImageElement;
-                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                      if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
                     }}
                   />
                   <strong style={{ fontSize: 12, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</strong>
-                  <span style={{ fontSize: 12, color: 'var(--brand-indigo)', fontWeight: 600 }}>{vnd(p.variants[0]?.price ?? 0)}</span>
-                  {pinnedIndex === idx && <span style={{ display: 'block', fontSize: 10, color: 'var(--brand-indigo)', marginTop: 4 }}>● Đang diễn trên sàn</span>}
+                  <span style={{ fontSize: 12, color: 'var(--gold-dark)', fontWeight: 600 }}>{vnd(p.variants[0]?.price ?? 0)}</span>
+                  {pinnedIndex === idx && <span style={{ display: 'block', fontSize: 10, color: 'var(--gold-dark)', marginTop: 4 }}>● Đang diễn trên sàn</span>}
                 </div>
               ))}
             </div>
@@ -540,7 +540,7 @@ export default function LiveRoom() {
         </div>
       </div>
 
-      {/* Khán Giả Bình Chọn Bộ Sưu Tập Kế Tiếp & Mở Khóa Deal Độc Quyền (LIVE-STREAM-POLL-01) */}
+      {/* Khán Giả Bình Chọn Bộ Sưu Tập Kế Tiếp & Mở Khóa Deal Độc Quyền */}
       <div
         style={{
           marginTop: 28,
@@ -554,9 +554,9 @@ export default function LiveRoom() {
         <div className="row between" style={{ marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <BarChart2 size={18} color="var(--brand-indigo)" />
-              <h2 style={{ margin: 0, fontSize: 18 }}>Khán Giả Bình Chọn Set Trình Diễn Tiếp Theo (LIVE-STREAM-POLL-01)</h2>
-              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              <BarChart2 size={18} color="var(--gold-dark)" />
+              <h2 style={{ margin: 0, fontSize: 18 }}>Khán Giả Bình Chọn Set Trình Diễn Tiếp Theo</h2>
+              <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 INTERACTIVE RUNWAY POLL
               </span>
             </div>
@@ -576,21 +576,21 @@ export default function LiveRoom() {
               title: 'Set 1: Áo Blazer Da Ý & Quần Tây Xếp Ly',
               category: 'Contemporary Power Dressing',
               desc: 'Form dáng cấu trúc sắc nét kết hợp chất da cừu nappa bóng mờ sang trọng.',
-              img: '/products/blazer.svg',
+              img: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
             },
             {
               id: 'opt-2',
               title: 'Set 2: Đầm Lụa Satin Sơn Mài Đen Dạ Tiệc',
               category: 'Quiet Luxury Gala',
               desc: 'Tà váy rủ tự nhiên với hiệu ứng bắt sáng mềm mại dưới ánh đèn sàn diễn.',
-              img: '/products/dress.svg',
+              img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
             },
             {
               id: 'opt-3',
               title: 'Set 3: Áo Khoác Măng Tô Dạ Ép Double-Breasted',
               category: 'Winter Atelier Outerwear',
               desc: 'Chất dạ lông cừu thượng hạng dệt thủ công tạo phom đứng ấm áp đẳng cấp.',
-              img: '/products/coat.svg',
+              img: 'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=800&q=80',
             },
           ].map((opt) => {
             const total = pollVotes['opt-1'] + pollVotes['opt-2'] + pollVotes['opt-3'];
@@ -602,7 +602,7 @@ export default function LiveRoom() {
               <div
                 key={opt.id}
                 style={{
-                  border: isSelected ? '2px solid var(--brand-indigo)' : '1px solid var(--line)',
+                  border: isSelected ? '2px solid var(--gold-dark)' : '1px solid var(--line)',
                   borderRadius: 6,
                   padding: 14,
                   background: isSelected ? '#fbf8f3' : '#faf9f5',
@@ -622,7 +622,7 @@ export default function LiveRoom() {
                         style={{ width: '80%', height: '80%', objectFit: 'contain' }}
                         onError={(e) => {
                           const t = e.currentTarget as HTMLImageElement;
-                          if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg';
+                          if (!t.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) t.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
                         }}
                       />
                     </div>
@@ -641,14 +641,14 @@ export default function LiveRoom() {
                   <div style={{ marginBottom: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
                       <span style={{ color: 'var(--muted)' }}>Tỷ lệ bình chọn</span>
-                      <strong style={{ color: isSelected ? 'var(--brand-indigo)' : 'var(--ink)' }}>{percent}% ({count} phiếu)</strong>
+                      <strong style={{ color: isSelected ? 'var(--gold-dark)' : 'var(--ink)' }}>{percent}% ({count} phiếu)</strong>
                     </div>
                     <div style={{ width: '100%', height: 6, background: '#e2e8f0', borderRadius: 3, overflow: 'hidden' }}>
                       <div
                         style={{
                           width: `${percent}%`,
                           height: '100%',
-                          background: isSelected ? 'var(--brand-indigo)' : '#64748b',
+                          background: isSelected ? 'var(--gold-dark)' : '#64748b',
                           transition: 'width 0.4s ease',
                         }}
                       />
@@ -739,13 +739,13 @@ export default function LiveRoom() {
         )}
       </div>
 
-      {/* Lookbook Đa Góc Nhìn Sàn Diễn Catwalk & Hậu Trường (LIVE-RUNWAY-LOOKBOOK-01) */}
+      {/* Lookbook Đa Góc Nhìn Sàn Diễn Catwalk & Hậu Trường */}
       <div style={{ marginTop: 28, padding: '20px 24px', background: '#fff', border: '1px solid var(--line)', borderRadius: 8 }}>
         <div className="row between" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Camera size={18} color="var(--brand-indigo)" />
-              <h2 style={{ margin: 0, fontSize: 18 }}>Lookbook Sàn Diễn Đa Góc Nhìn (LIVE-RUNWAY-LOOKBOOK-01)</h2>
+              <Camera size={18} color="var(--gold-dark)" />
+              <h2 style={{ margin: 0, fontSize: 18 }}>Lookbook Sàn Diễn Đa Góc Nhìn</h2>
               <span style={{ fontSize: 10, background: '#ef4444', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                 RUNWAY 360°
               </span>
@@ -770,9 +770,9 @@ export default function LiveRoom() {
                   borderRadius: 20,
                   fontSize: 11,
                   fontWeight: runwayAngle === ang.id ? 700 : 500,
-                  border: runwayAngle === ang.id ? '1px solid var(--brand-indigo)' : '1px solid var(--line)',
+                  border: runwayAngle === ang.id ? '1px solid var(--gold-dark)' : '1px solid var(--line)',
                   background: runwayAngle === ang.id ? '#EEF2FF' : '#fff',
-                  color: runwayAngle === ang.id ? 'var(--brand-indigo)' : 'var(--ink)',
+                  color: runwayAngle === ang.id ? 'var(--gold-dark)' : 'var(--ink)',
                   cursor: 'pointer',
                 }}
                 onClick={() => setRunwayAngle(ang.id as any)}
@@ -793,7 +793,7 @@ export default function LiveRoom() {
               price: 1250000,
               livePrice: 1062500,
               slug: 'ao-so-mi-lua-to-tam-cao-cap',
-              img: '/products/shirt.svg',
+              img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
               catwalkDesc: 'Tà áo lụa bay nhẹ theo nhịp bước chân, phom suông thanh thoát dưới ánh đèn spotlight vàng ấm.',
               macroDesc: 'Bề mặt sợi tơ dệt mật độ cao 19mm momme, đường kim mũi chỉ 5 mũi/cm chuẩn Haute Couture.',
               backstageDesc: 'Stylist sơ-vin vạt trước, mở 2 khuy cổ tạo nét phóng khoáng tự nhiên trước giờ diễn.',
@@ -805,7 +805,7 @@ export default function LiveRoom() {
               price: 2850000,
               livePrice: 2422500,
               slug: 'ao-khoac-blazer-linen-dang-suong',
-              img: '/products/jacket.svg',
+              img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80',
               catwalkDesc: 'Cầu vai đệm mỏng quyền lực, ve áo nhọn sắc nét tạo phong thái đĩnh đạc tự tin trên sàn diễn.',
               macroDesc: 'Chất da thuộc thảo mộc tự nhiên thơm nhẹ, khuy áo sừng khắc logo NEXORA sắc sảo.',
               backstageDesc: 'Chuyên gia vuốt nhẹ nếp gấp tay áo và hoàn thiện điểm nhấn bằng thắt lưng da bò Ý.',
@@ -817,7 +817,7 @@ export default function LiveRoom() {
               price: 1950000,
               livePrice: 1657500,
               slug: 'ao-polo-det-kim-merino',
-              img: '/products/dress.svg',
+              img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
               catwalkDesc: 'Độ rủ óng ả ôm nhẹ theo từng chuyển động cơ thể, tà váy xòe duyên dáng ở cuối sàn runway.',
               macroDesc: 'Sợi lụa satin bắt sáng huyền ảo, viền cổ may giấu chỉ tinh tế hoàn mỹ.',
               backstageDesc: 'Stylist kết hợp cùng khuyên tai ngọc trai tự nhiên và guốc cao gót thanh mảnh.',
@@ -841,7 +841,7 @@ export default function LiveRoom() {
                   style={{ maxHeight: '80%', maxWidth: '80%', objectFit: 'contain' }}
                   onError={(e) => {
                     const t = e.currentTarget as HTMLImageElement;
-                    if (!t.src.includes('/products/shirt.svg')) t.src = '/products/shirt.svg';
+                    if (!t.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) t.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
                   }}
                 />
                 <span
@@ -865,7 +865,7 @@ export default function LiveRoom() {
                     top: 10,
                     right: 10,
                     fontSize: 10,
-                    background: 'var(--brand-indigo)',
+                    background: 'var(--gold-dark)',
                     color: '#fff',
                     padding: '2px 8px',
                     borderRadius: 2,
@@ -891,7 +891,7 @@ export default function LiveRoom() {
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 8 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--brand-indigo)' }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--gold-dark)' }}>
                       {vnd(item.livePrice)}
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--muted)', textDecoration: 'line-through' }}>
@@ -937,13 +937,13 @@ export default function LiveRoom() {
         </div>
       </div>
 
-      {/* Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01) */}
+      {/* Bộ Thu Thập & Chụp Lookbook Sàn Diễn Tức Thời */}
       <div
         style={{
           marginTop: 28,
           padding: '24px 26px',
           background: '#faf9f5',
-          border: '1.5px solid var(--brand-indigo)',
+          border: '1.5px solid var(--gold-dark)',
           borderRadius: 8,
           boxShadow: '0 4px 16px rgba(180, 83, 9, 0.08)',
         }}
@@ -951,18 +951,18 @@ export default function LiveRoom() {
         <div className="row between" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fef3c7', display: 'grid', placeItems: 'center' }}>
-              <Layers size={18} color="var(--brand-indigo)" />
+              <Layers size={18} color="var(--gold-dark)" />
             </div>
             <div>
               <strong style={{ fontSize: 16, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                Chụp &amp; Lưu Lookbook Sàn Diễn Tức Thời (LIVE-INTERACTIVE-RUNWAY-LOOKBOOK-01)
+                Chụp &amp; Lưu Lookbook Sàn Diễn Tức Thời
               </strong>
               <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
                 Bắt trọn khoảnh khắc người mẫu đang sải bước, lưu trữ trọn set phối đồ vào bộ sưu tập cá nhân và hưởng chiết khấu trọn bộ -25%.
               </div>
             </div>
           </div>
-          <span style={{ fontSize: 10, background: 'var(--brand-indigo)', color: '#fff', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
+          <span style={{ fontSize: 10, background: 'var(--gold-dark)', color: '#fff', padding: '3px 10px', borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>
             REALTIME RUNWAY CAPTURE
           </span>
         </div>
@@ -988,12 +988,12 @@ export default function LiveRoom() {
 
               <div style={{ position: 'relative', height: 160, borderRadius: 6, overflow: 'hidden', background: '#1e293b', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <img
-                  src={pinnedProduct?.images[0]?.url || '/products/blazer.svg'}
+                  src={pinnedProduct?.images[0]?.url || 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80'}
                   alt="Current Live Look"
                   style={{ maxHeight: '85%', maxWidth: '85%', objectFit: 'contain' }}
                   onError={(e) => {
                     const t = e.currentTarget as HTMLImageElement;
-                    if (!t.src.includes('/products/blazer.svg')) t.src = '/products/blazer.svg';
+                    if (!t.src.includes('https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80')) t.src = 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80';
                   }}
                 />
                 <div style={{ position: 'absolute', bottom: 8, left: 10, right: 10, display: 'flex', justifyContent: 'space-between', color: '#fff', fontSize: 10, background: 'rgba(0,0,0,0.6)', padding: '3px 8px', borderRadius: 3 }}>
@@ -1057,14 +1057,14 @@ export default function LiveRoom() {
                 const setDiscounted = Math.round(totalOriginal * 0.75);
 
                 return (
-                  <div style={{ padding: '8px 10px', background: '#EEF2FF', border: '1px dashed var(--brand-indigo)', borderRadius: 6, marginBottom: 12 }}>
+                  <div style={{ padding: '8px 10px', background: '#EEF2FF', border: '1px dashed var(--gold-dark)', borderRadius: 6, marginBottom: 12 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                       <span style={{ fontSize: 11, color: 'var(--muted)' }}>Tổng niêm yết (3 món):</span>
                       <span style={{ fontSize: 11, color: 'var(--muted)', textDecoration: 'line-through' }}>{vnd(totalOriginal)}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 2 }}>
                       <span style={{ fontSize: 12, fontWeight: 700, color: '#9a3412' }}>Giá trọn set sàn diễn (-25%):</span>
-                      <strong style={{ fontSize: 15, color: 'var(--brand-indigo)' }}>{vnd(setDiscounted)}</strong>
+                      <strong style={{ fontSize: 15, color: 'var(--gold-dark)' }}>{vnd(setDiscounted)}</strong>
                     </div>
                   </div>
                 );
@@ -1105,7 +1105,7 @@ export default function LiveRoom() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <Bookmark size={14} color="var(--brand-indigo)" /> Bộ Sưu Tập Lookbook Sàn Diễn Đã Lưu ({savedLookbooks.length})
+              <Bookmark size={14} color="var(--gold-dark)" /> Bộ Sưu Tập Lookbook Sàn Diễn Đã Lưu ({savedLookbooks.length})
             </span>
             <span style={{ fontSize: 11, color: 'var(--muted)' }}>
               Được đồng bộ tự động vào Tủ đồ số tại `/tai-khoan`
@@ -1139,7 +1139,7 @@ export default function LiveRoom() {
                     <strong style={{ fontSize: 12, display: 'block', color: 'var(--ink)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {lb.title}
                     </strong>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold-dark)' }}>
                       {vnd(lb.price)}
                     </div>
                   </div>

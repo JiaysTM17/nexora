@@ -273,7 +273,7 @@ export default function VasCarePage() {
         </div>
       </div>
 
-      {/* Thước So Sánh Đối Chứng Trước & Sau Spa 1000 Lux (VAS-BEFORE-AFTER-SLIDER-01) */}
+      {/* Thước So Sánh Đối Chứng Trước & Sau Spa 1000 Lux */}
       <div
         style={{
           margin: '20px 0',
@@ -286,12 +286,12 @@ export default function VasCarePage() {
       >
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Sliders size={18} color="var(--brand-indigo)" />
+            <Sliders size={18} color="var(--gold-dark)" />
             <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
-              Biên Bản Đối Chứng Trước &amp; Sau Spa Chuẩn 1000 Lux (VAS-BEFORE-AFTER-SLIDER-01)
+              Biên Bản Đối Chứng Trước &amp; Sau Spa Chuẩn 1000 Lux
             </strong>
           </div>
-          <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+          <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
             {RESTORATION_SAMPLES[sampleKey].stats}
           </span>
         </div>
@@ -311,9 +311,9 @@ export default function VasCarePage() {
                 fontSize: 11,
                 padding: '5px 12px',
                 borderRadius: 20,
-                border: sampleKey === item.id ? '1.5px solid var(--brand-indigo)' : '1px solid var(--line)',
+                border: sampleKey === item.id ? '1.5px solid var(--gold-dark)' : '1px solid var(--line)',
                 background: sampleKey === item.id ? '#EEF2FF' : '#fff',
-                color: sampleKey === item.id ? 'var(--brand-indigo)' : 'var(--ink)',
+                color: sampleKey === item.id ? 'var(--gold-dark)' : 'var(--ink)',
                 fontWeight: sampleKey === item.id ? 700 : 500,
                 cursor: 'pointer',
               }}
@@ -437,7 +437,7 @@ export default function VasCarePage() {
             max={95}
             value={sliderPos}
             onChange={(e) => setSliderPos(Number(e.target.value))}
-            style={{ width: '100%', accentColor: 'var(--brand-indigo)', cursor: 'ew-resize' }}
+            style={{ width: '100%', accentColor: 'var(--gold-dark)', cursor: 'ew-resize' }}
           />
         </div>
 
@@ -464,7 +464,7 @@ export default function VasCarePage() {
         </div>
       </div>
 
-      {/* Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Hư Tổn Phục Hồi Sinh Học (VAS-GARMENT-DIAGNOSIS-01) */}
+      {/* Bác Sĩ Đồ Hiệu & Bộ Chẩn Đoán Hư Tổn Phục Hồi Sinh Học */}
       <div
         style={{
           margin: '20px 0',
@@ -477,17 +477,17 @@ export default function VasCarePage() {
       >
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Stethoscope size={19} color="var(--brand-indigo)" />
+            <Stethoscope size={19} color="var(--gold-dark)" />
             <div>
               <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
-                Bác Sĩ Đồ Hiệu · Chẩn Đoán Tổn Thương &amp; Lập Phác Đồ Sinh Học (VAS-GARMENT-DIAGNOSIS-01)
+                Bác Sĩ Đồ Hiệu · Chẩn Đoán Tổn Thương &amp; Lập Phác Đồ Sinh Học
               </strong>
               <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
                 Phân tích tình trạng sợi dệt/đồ da và thiết lập phác đồ phục hồi vi điểm chuẩn Atelier 1000 Lux.
               </div>
             </div>
           </div>
-          <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+          <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
             ATELIER CLINIC
           </span>
         </div>
@@ -517,9 +517,9 @@ export default function VasCarePage() {
                     fontSize: 11,
                     textAlign: 'left',
                     borderRadius: 4,
-                    border: selectedGarmentType === item.id ? '1.5px solid var(--brand-indigo)' : '1px solid #e2e8f0',
+                    border: selectedGarmentType === item.id ? '1.5px solid var(--gold-dark)' : '1px solid #e2e8f0',
                     background: selectedGarmentType === item.id ? '#EEF2FF' : '#fff',
-                    color: selectedGarmentType === item.id ? 'var(--brand-indigo)' : '#1e293b',
+                    color: selectedGarmentType === item.id ? 'var(--gold-dark)' : '#1e293b',
                     fontWeight: selectedGarmentType === item.id ? 700 : 500,
                     cursor: 'pointer',
                   }}
@@ -554,9 +554,9 @@ export default function VasCarePage() {
                     fontSize: 11,
                     textAlign: 'left',
                     borderRadius: 4,
-                    border: selectedSymptom === sym.id ? '1.5px solid var(--brand-indigo)' : '1px solid #e2e8f0',
+                    border: selectedSymptom === sym.id ? '1.5px solid var(--gold-dark)' : '1px solid #e2e8f0',
                     background: selectedSymptom === sym.id ? '#EEF2FF' : '#fff',
-                    color: selectedSymptom === sym.id ? 'var(--brand-indigo)' : '#334155',
+                    color: selectedSymptom === sym.id ? 'var(--gold-dark)' : '#334155',
                     fontWeight: selectedSymptom === sym.id ? 700 : 500,
                     cursor: 'pointer',
                   }}
@@ -574,7 +574,7 @@ export default function VasCarePage() {
           style={{
             width: '100%',
             padding: '10px 14px',
-            background: 'var(--brand-indigo)',
+            background: 'var(--gold-dark)',
             color: '#fff',
             border: 'none',
             borderRadius: 4,
@@ -624,7 +624,7 @@ export default function VasCarePage() {
               </div>
               <div className="row between" style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
                 <span style={{ color: '#64748b' }}>Thời gian phục hồi dự kiến:</span>
-                <strong style={{ color: 'var(--brand-indigo)' }}>{diagnosedProtocol.duration}</strong>
+                <strong style={{ color: 'var(--gold-dark)' }}>{diagnosedProtocol.duration}</strong>
               </div>
               <div className="row between" style={{ padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
                 <span style={{ color: '#64748b' }}>Dịch vụ chỉ định:</span>
@@ -761,13 +761,13 @@ export default function VasCarePage() {
               ))}
             </article>
 
-            {/* Két Bảo An & Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01) */}
+            {/* Két Bảo An & Tiến Trình Phục Hồi Vi Điểm */}
             <article className="panel" style={{ marginTop: 16 }}>
               <div className="row between" style={{ marginBottom: 10, flexWrap: 'wrap', gap: 6 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Lock size={16} color="#0d9488" />
                   <strong style={{ fontSize: 13, color: '#115e59' }}>
-                    Két Bảo An &amp; Tiến Trình Phục Hồi Vi Điểm (VAS-RESTORATION-VAULT-TRACKER-01)
+                    Két Bảo An &amp; Tiến Trình Phục Hồi Vi Điểm
                   </strong>
                 </div>
                 <span style={{ fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
@@ -880,12 +880,12 @@ export default function VasCarePage() {
           </div>
         </div>
       ) : (
-        /* Phân Hệ Đặt Lịch Hẹn VIP Tại Flagship Atelier (VAS-ATELIER-BOOKING-01) */
+        /* Phân Hệ Đặt Lịch Hẹn VIP Tại Flagship Atelier */
         <div className="checkout-grid">
           <form className="panel form" onSubmit={submitAtelier}>
             <h2>
               <Building size={18} style={{ display: 'inline', marginRight: 8, verticalAlign: -3 }} />
-              Đặt Lịch Hẹn VIP Tại Atelier (VAS-ATELIER-BOOKING-01)
+              Đặt Lịch Hẹn VIP Tại Atelier
             </h2>
             {atelierSuccess && <Notice>{atelierSuccess}</Notice>}
 
@@ -902,7 +902,7 @@ export default function VasCarePage() {
 
             <div style={{ padding: '10px 14px', background: '#faf9f5', borderRadius: 3, border: '1px solid var(--line)', fontSize: 11, lineHeight: 1.6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: 'var(--ink)' }}>
-                <MapPin size={13} color="var(--brand-indigo)" /> Địa chỉ cơ sở:
+                <MapPin size={13} color="var(--gold-dark)" /> Địa chỉ cơ sở:
               </div>
               <div style={{ color: 'var(--muted)', marginTop: 2 }}>
                 {ATELIER_HUBS.find((h) => h.id === selectedHub)?.address}
@@ -985,7 +985,7 @@ export default function VasCarePage() {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                       <div>
-                        <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--brand-indigo)', fontWeight: 700 }}>
+                        <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--gold-dark)', fontWeight: 700 }}>
                           VIP APPOINTMENT TICKET
                         </span>
                         <h3 style={{ margin: '2px 0', fontSize: 14 }}>{bk.hub}</h3>
@@ -1030,7 +1030,7 @@ export default function VasCarePage() {
         </div>
       )}
 
-      {/* Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01) */}
+      {/* Khử Khuẩn Quang Học UV-C & Buồng Ozone Tinh Khiết */}
       <div
         style={{
           marginTop: 32,
@@ -1049,7 +1049,7 @@ export default function VasCarePage() {
             </div>
             <div>
               <strong style={{ fontSize: 16, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 8 }}>
-                Khử Khuẩn Quang Học UV-C &amp; Buồng Ozone Tinh Khiết (VAS-UV-DISINFECTION-OZONE-01)
+                Khử Khuẩn Quang Học UV-C &amp; Buồng Ozone Tinh Khiết
               </strong>
               <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
                 Tiệt trùng buồng lạnh bảo vệ sợi dệt tự nhiên nhạy cảm nhiệt độ (lụa, cashmere, da thuộc) đạt chuẩn y tế EN 14476.
@@ -1208,7 +1208,7 @@ export default function VasCarePage() {
         )}
       </div>
 
-      {/* Công Nghệ Giặt Không Nước CO2 Siêu Tới Hạn · Supercritical CO2 Waterless Laundry (VAS-GARMENT-SPA-WATERLESS-CO2-01) */}
+      {/* Công Nghệ Giặt Không Nước CO2 Siêu Tới Hạn · Supercritical CO2 Waterless Laundry */}
       <div
         style={{
           marginTop: 24,
@@ -1222,7 +1222,7 @@ export default function VasCarePage() {
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
           <div>
             <h3 style={{ fontSize: 16, margin: 0, display: 'flex', alignItems: 'center', gap: 8, color: '#2dd4bf' }}>
-              <RotateCcw size={20} color="#2dd4bf" /> Giặt Không Nước CO2 Siêu Tới Hạn · Supercritical CO2 Wash (VAS-GARMENT-SPA-WATERLESS-CO2-01)
+              <RotateCcw size={20} color="#2dd4bf" /> Giặt Không Nước CO2 Siêu Tới Hạn · Supercritical CO2 Wash
             </h3>
             <p style={{ margin: '4px 0 0', fontSize: 11, color: '#99f6e4' }}>
               Đột phá công nghệ giặt cao cấp tại 31.1°C &amp; 73.8 bar: 100% không dùng nước sạch, không dung môi dầu mỏ Perc độc hại, triệt tiêu co rút nhiệt và bảo toàn sợi len/cashmere/lụa nguyên bản.
