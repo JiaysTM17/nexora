@@ -27,7 +27,7 @@ export default function Orders() {
       <h1>Đơn hàng của bạn.</h1>
       {notice && <Notice>{notice}</Notice>}
 
-      {/* Thanh Công Cụ Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Chi Tiêu (ORD-BULK-INVOICE-DOWNLOAD-01) */}
+      {/* Thanh Công Cụ Xuất Gộp Hóa Đơn Điện Tử VAT & Báo Cáo Chi Tiêu */}
       <div
         style={{
           margin: '16px 0 24px',
@@ -41,7 +41,7 @@ export default function Orders() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <FileText size={18} color="var(--ink)" />
             <strong style={{ fontSize: 13, color: '#1e293b' }}>
-              Báo Cáo Chi Tiêu Doanh Nghiệp &amp; Hóa Đơn VAT Điện Tử Gộp (ORD-BULK-INVOICE-DOWNLOAD-01)
+              Báo Cáo Chi Tiêu Doanh Nghiệp &amp; Hóa Đơn VAT Điện Tử Gộp
             </strong>
           </div>
           <span style={{ fontSize: 11, background: '#e2e8f0', color: '#334155', padding: '2px 8px', borderRadius: 2, fontWeight: 600 }}>
@@ -117,7 +117,7 @@ export default function Orders() {
               </div>
               {shop.items.map(item => (
                 <div className="cart-line" key={item.id}>
-                  <img src={item.snapshot.image} alt={item.snapshot.name} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg'; }}/>
+                  <img src={item.snapshot.image} alt={item.snapshot.name} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'; }}/>
                   <div className="grow">
                     <strong>{item.snapshot.name}</strong>
                     <p>{item.snapshot.color} / {item.snapshot.size} · SL {item.quantity}</p>
@@ -146,7 +146,7 @@ export default function Orders() {
         </article>
       ))}
 
-      {/* Modal Bảng Kê Chi Tiêu & Hóa Đơn Điện Tử Doanh Nghiệp (ORD-BULK-INVOICE-DOWNLOAD-01) */}
+      {/* Modal Bảng Kê Chi Tiêu & Hóa Đơn Điện Tử Doanh Nghiệp */}
       {showExpenseModal && (
         <div
           role="dialog"

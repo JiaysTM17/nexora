@@ -250,7 +250,7 @@ export default function OrderDetail() {
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--line)', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', fontSize: 11 }}>
               {(address as any).deliverySlot && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f5f0e8', padding: '3px 8px', borderRadius: 3, color: 'var(--ink)' }}>
-                  <Clock size={12} color="var(--brand-indigo)" /> Khung giờ hẹn: <strong>{SLOT_LABELS[(address as any).deliverySlot] ?? (address as any).deliverySlot}</strong>
+                  <Clock size={12} color="var(--gold-dark)" /> Khung giờ hẹn: <strong>{SLOT_LABELS[(address as any).deliverySlot] ?? (address as any).deliverySlot}</strong>
                 </span>
               )}
               {(address as any).ecoPackaging && (
@@ -288,7 +288,7 @@ export default function OrderDetail() {
                 const isCurrent = currentStage === idx;
                 return (
                   <div key={step.key} style={{ display: 'flex', alignItems: 'center', gap: 5, fontWeight: isCurrent ? 700 : 500, color: isPassed ? 'var(--ink)' : 'var(--muted)' }}>
-                    <span style={{ width: 16, height: 16, borderRadius: '50%', background: isPassed ? 'var(--brand-indigo)' : 'var(--line)', color: isPassed ? '#fff' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>
+                    <span style={{ width: 16, height: 16, borderRadius: '50%', background: isPassed ? 'var(--gold-dark)' : 'var(--line)', color: isPassed ? '#fff' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>
                       {isPassed ? '✓' : idx + 1}
                     </span>
                     <span>{step.label}</span>
@@ -311,7 +311,7 @@ export default function OrderDetail() {
                     alt={item.snapshot.name}
                     onError={(e) => {
                       const target = e.currentTarget as HTMLImageElement;
-                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                      if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
                     }}
                     style={{ width: 70, height: 86, objectFit: 'cover', background: 'var(--sage)' }}
                   />
@@ -371,22 +371,22 @@ export default function OrderDetail() {
               </div>
               <div className="row between" style={{ background: '#fff', padding: '8px 12px', borderRadius: 2, marginBottom: 10, flexWrap: 'wrap', gap: 6, border: '1px solid var(--line)' }}>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <KeyRound size={14} style={{ color: 'var(--brand-indigo)' }} />
-                  <strong>Mã PIN an ninh nhận hàng (FUL-VERIF-05):</strong>
+                  <KeyRound size={14} style={{ color: 'var(--gold-dark)' }} />
+                  <strong>Mã PIN an ninh nhận hàng:</strong>
                 </span>
-                <span style={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: 3, color: 'var(--brand-indigo)', fontSize: 15 }}>
+                <span style={{ fontFamily: 'monospace', fontWeight: 700, letterSpacing: 3, color: 'var(--gold-dark)', fontSize: 15 }}>
                   {getSecurityPin(order.code, shop.id)}
                 </span>
               </div>
               <div style={{ fontSize: 11, color: 'var(--muted)', display: 'flex', alignItems: 'flex-start', gap: 6, lineHeight: 1.5 }}>
                 <PackageCheck size={15} style={{ flexShrink: 0, marginTop: 1, color: '#2b522b' }} />
                 <span>
-                  <strong>Đồng kiểm ngoại quan (RET-COINSPECT):</strong> Quý khách được quyền cùng nhân viên giao hàng kiểm tra tem niêm phong, số lượng và quy cách hộp trước khi thanh toán COD/nhận hàng. Vui lòng không cắt tem mác hoặc mặc thử.
+                  <strong>Đồng kiểm ngoại quan:</strong> Quý khách được quyền cùng nhân viên giao hàng kiểm tra tem niêm phong, số lượng và quy cách hộp trước khi thanh toán COD/nhận hàng. Vui lòng không cắt tem mác hoặc mặc thử.
                 </span>
               </div>
               <div style={{ marginTop: 8, padding: '8px 12px', background: '#fff', borderRadius: 2, border: '1px solid var(--line)', fontSize: 11 }}>
                 <strong style={{ display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  ⚖ Nhật ký Biến Thiên Cân Nặng 3 Trạm (FUL-WEIGHT-AUDIT):
+                  ⚖ Nhật ký Biến Thiên Cân Nặng 3 Trạm:
                 </strong>
                 <div className="row between" style={{ color: 'var(--muted)', fontSize: 11 }}>
                   <span>Trạm 1 (Xuất kho): <strong>450g</strong></span>
@@ -415,11 +415,11 @@ export default function OrderDetail() {
                     fontWeight: 600,
                   }}
                 >
-                  <Navigation size={13} color="#38bdf8" /> 📍 Xem Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01)
+                  <Navigation size={13} color="#38bdf8" /> 📍 Xem Lộ Trình Bưu Tá Trực Tuyến
                 </button>
               </div>
 
-              {/* Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01) */}
+              {/* Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh */}
               <div
                 style={{
                   marginTop: 12,
@@ -434,7 +434,7 @@ export default function OrderDetail() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: '#0369a1' }}>
                     <CloudRain size={16} />
-                    <span>Cảnh Báo Thời Tiết &amp; Điều Phối Lộ Trình Thông Minh (ORD-DELIVERY-WEATHER-REROUTE-01)</span>
+                    <span>Cảnh Báo Thời Tiết &amp; Điều Phối Lộ Trình Thông Minh</span>
                   </div>
                   <span style={{ fontSize: 10, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 10, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     <Wind size={11} /> ⛈️ ÁP THẤP NHIỆT ĐỚI · CẤP 1
@@ -529,7 +529,7 @@ export default function OrderDetail() {
                 </div>
               </div>
 
-              {/* Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực (ORD-GREEN-MILE-IMPACT-PASSPORT-01) */}
+              {/* Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực */}
               <div
                 style={{
                   marginTop: 12,
@@ -544,7 +544,7 @@ export default function OrderDetail() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: '#166534' }}>
                     <Leaf size={16} color="#16a34a" />
-                    <span>Hộ Chiếu Chặng Giao Hàng Xanh · Digital Green-Mile Passport (ORD-GREEN-MILE-IMPACT-PASSPORT-01)</span>
+                    <span>Hộ Chiếu Chặng Giao Hàng Xanh · Digital Green-Mile Passport</span>
                   </div>
                   <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     <Zap size={11} /> 100% XE ĐIỆN VINFAST FELIZ
@@ -687,7 +687,7 @@ export default function OrderDetail() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <Scale size={16} color="#dc2626" />
                           <strong style={{ fontSize: 13, color: '#991b1b' }}>
-                            Trọng Tài Sàn Thụ Lý &amp; Phong Tỏa Escrow 45 Ngày (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01)
+                            Trọng Tài Sàn Thụ Lý &amp; Phong Tỏa Escrow 45 Ngày
                           </strong>
                         </div>
                         <span style={{ fontSize: 10, background: '#dc2626', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
@@ -763,13 +763,13 @@ export default function OrderDetail() {
                   <label>
                     Hình thức
                     <select name="kind">
-                      <option value="DOORSTEP_EXCHANGE">Đổi Size Tốc Hành Tận Cửa 24-48h (Shipper đổi tận nhà - RET-QUICK-EXCHANGE-01)</option>
+                      <option value="DOORSTEP_EXCHANGE">Đổi Size Tốc Hành Tận Cửa 24-48h (Shipper đổi tận nhà)</option>
                       <option value="EXCHANGE">Đổi size tiêu chuẩn (Gửi bưu điện hoàn kho)</option>
                       <option value="REFUND">Hoàn trả hàng &amp; hoàn tiền</option>
                     </select>
                   </label>
                   <div style={{ padding: '8px 12px', background: '#f5f0e8', borderRadius: 3, fontSize: 11, lineHeight: 1.5, border: '1px solid var(--line)', marginBottom: 8 }}>
-                    <strong style={{ color: 'var(--ink)' }}>★ Đặc quyền Đổi Size Tận Cửa (RET-QUICK-EXCHANGE-01):</strong> Bưu tá mang áo size mới đến tận nhà, bạn kiểm tra đối chứng và gửi lại áo cũ trong cùng 1 lần giao nhận với chi phí chuyển phát 0đ.
+                    <strong style={{ color: 'var(--ink)' }}>★ Đặc quyền Đổi Size Tận Cửa:</strong> Bưu tá mang áo size mới đến tận nhà, bạn kiểm tra đối chứng và gửi lại áo cũ trong cùng 1 lần giao nhận với chi phí chuyển phát 0đ.
                   </div>
                   <label>Lý do đổi/trả<textarea name="reason" required minLength={5} placeholder="Mô tả tình trạng hoặc size cần đổi..." /></label>
                   <button className="button" disabled={busy === `return:${shop.id}`}>{busy === `return:${shop.id}` ? 'Đang gửi…' : 'Gửi yêu cầu cho shop'}</button>
@@ -790,7 +790,7 @@ export default function OrderDetail() {
         <article className="panel" style={{ marginTop: 16 }}>
           <div className="row between">
             <h2>Kế hoạch Trả góp NEXORA PayLater (0% Lãi suất)</h2>
-            <span className="badge" style={{ background: 'var(--brand-indigo)', color: '#fff' }}>Đã kích hoạt</span>
+            <span className="badge" style={{ background: 'var(--gold-dark)', color: '#fff' }}>Đã kích hoạt</span>
           </div>
           <p className="subtle" style={{ fontSize: 12 }}>Áp dụng theo đặc tả PAY-BNPL-MIDFLOW-05 · 3 kỳ thanh toán 0% phụ phí.</p>
           <div className="table-wrap" style={{ marginTop: 10 }}>
@@ -842,7 +842,7 @@ export default function OrderDetail() {
               setShowInvoiceModal(true);
             }}
           >
-            <Printer size={14} /> In / Xuất Hóa Đơn VAT (ORD-EXPORT-PDF-01)
+            <Printer size={14} /> In / Xuất Hóa Đơn VAT
           </button>
         </summary>
         <div style={{ marginTop: 14, fontSize: 13, lineHeight: 1.8 }}>
@@ -869,7 +869,7 @@ export default function OrderDetail() {
         </div>
       </details>
 
-      {/* Chứng Thư Bù Đắp Carbon Đơn Hàng (Digital Carbon Offset Certificate · ORD-CARBON-CERT-01) */}
+      {/* Chứng Thư Bù Đắp Carbon Đơn Hàng (Digital Carbon Offset Certificate) */}
       <article className="panel" style={{ marginTop: 20, background: '#fcfdfa', border: '1px solid #dcfce7' }}>
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -879,7 +879,7 @@ export default function OrderDetail() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <strong style={{ fontSize: 14, color: '#166534' }}>
-                  Chứng Thư Bù Đắp Carbon Đơn Hàng (ORD-CARBON-CERT-01)
+                  Chứng Thư Bù Đắp Carbon Đơn Hàng
                 </strong>
                 <span style={{ fontSize: 10, background: '#166534', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                   100% ECO NEUTRAL
@@ -919,7 +919,7 @@ export default function OrderDetail() {
         </div>
       </article>
 
-      {/* Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (Reusable Circular Box Return · ORD-ECO-PACK-RETURN-01) */}
+      {/* Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (Reusable Circular Box Return) */}
       <article className="panel" style={{ marginTop: 20, background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -941,7 +941,7 @@ export default function OrderDetail() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <strong style={{ fontSize: 14, color: '#166534' }}>
-                  Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box (ORD-ECO-PACK-RETURN-01)
+                  Thu Hồi Thùng Đóng Gói Tuần Hoàn Eco-Box
                 </strong>
                 <span style={{ fontSize: 10, background: '#166534', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                   ZERO WASTE
@@ -1076,7 +1076,7 @@ export default function OrderDetail() {
         )}
       </article>
 
-      {/* Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01) */}
+      {/* Đánh Giá Bưu Tá Xe Điện & Thưởng Tip Thân Thiện */}
       <article className="panel" style={{ marginTop: 20, background: '#fff', border: '1px solid var(--line)', borderRadius: 8 }}>
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1098,7 +1098,7 @@ export default function OrderDetail() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
-                  Đánh Giá Bưu Tá Xe Điện &amp; Thưởng Tip Thân Thiện (ORD-DELIVERY-FEEDBACK-01)
+                  Đánh Giá Bưu Tá Xe Điện &amp; Thưởng Tip Thân Thiện
                 </strong>
                 <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                   GREEN COURIER RATING
@@ -1230,9 +1230,9 @@ export default function OrderDetail() {
                         padding: '4px 10px',
                         fontSize: 11,
                         borderRadius: 20,
-                        border: active ? '1px solid var(--brand-indigo)' : '1px solid #cbd5e1',
+                        border: active ? '1px solid var(--gold-dark)' : '1px solid #cbd5e1',
                         background: active ? '#fdf8ea' : '#fff',
-                        color: active ? 'var(--brand-indigo)' : '#475569',
+                        color: active ? 'var(--gold-dark)' : '#475569',
                         fontWeight: active ? 600 : 400,
                         cursor: 'pointer',
                       }}
@@ -1247,7 +1247,7 @@ export default function OrderDetail() {
             {/* Courier Tip Selection */}
             <div style={{ marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                <Coffee size={14} color="var(--brand-indigo)" />
+                <Coffee size={14} color="var(--gold-dark)" />
                 <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink)' }}>
                   Thưởng tip động viên bưu tá xanh (tùy chọn):
                 </label>
@@ -1267,9 +1267,9 @@ export default function OrderDetail() {
                       padding: '5px 12px',
                       fontSize: 11,
                       borderRadius: 4,
-                      border: courierTip === tip.value ? '2px solid var(--brand-indigo)' : '1px solid #cbd5e1',
+                      border: courierTip === tip.value ? '2px solid var(--gold-dark)' : '1px solid #cbd5e1',
                       background: courierTip === tip.value ? '#fdf8ea' : '#fff',
-                      color: courierTip === tip.value ? 'var(--brand-indigo)' : '#334155',
+                      color: courierTip === tip.value ? 'var(--gold-dark)' : '#334155',
                       fontWeight: courierTip === tip.value ? 700 : 400,
                       cursor: 'pointer',
                     }}
@@ -1311,7 +1311,7 @@ export default function OrderDetail() {
         )}
       </article>
 
-      {/* Modal Lộ Trình Bưu Tá Trực Tuyến (ORD-TRACKING-MAP-01) */}
+      {/* Modal Lộ Trình Bưu Tá Trực Tuyến */}
       {showTrackingMap && (() => {
         const targetShop = order.shops.find(s => s.id === showTrackingMap);
         const trackingNum = targetShop?.shipment?.tracking ?? `NX-EXP-2026-${showTrackingMap.slice(0, 6)}`;
@@ -1608,7 +1608,7 @@ export default function OrderDetail() {
                   <strong>Quy tắc nhận hàng an toàn NEXORA:</strong>
                   <ul style={{ margin: '4px 0 0', paddingLeft: 16, lineHeight: 1.5 }}>
                     <li>Đọc mã PIN bảo mật <strong>{getSecurityPin(order.code, targetShop?.id ?? '')}</strong> cho bưu tá trước khi nhận hàng.</li>
-                    <li>Được quyền đồng kiểm ngoại quan (RET-COINSPECT) quy cách hộp và tem niêm phong.</li>
+                    <li>Được quyền đồng kiểm ngoại quan quy cách hộp và tem niêm phong.</li>
                     <li>Kiểm tra cân nặng bưu kiện đúng dung sai đã đăng ký (450g ± 2g).</li>
                   </ul>
                 </div>
@@ -1618,7 +1618,7 @@ export default function OrderDetail() {
         );
       })()}
 
-      {/* Modal Xuất / In Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 (ORD-EXPORT-PDF-01) */}
+      {/* Modal Xuất / In Hóa Đơn Điện Tử VAT Đạt Chuẩn TT 78 */}
       {showInvoiceModal && (
         <div
           role="dialog"
@@ -1661,7 +1661,7 @@ export default function OrderDetail() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <FileText size={18} color="var(--brand-indigo)" />
+                <FileText size={18} color="var(--gold-dark)" />
                 <strong style={{ fontSize: 14 }}>Bản Thể Hiện Hóa Đơn Điện Tử Hợp Chuẩn (TT 78/2021/TT-BTC)</strong>
               </div>
               <div style={{ display: 'flex', gap: 10 }}>
@@ -1844,7 +1844,7 @@ export default function OrderDetail() {
         </div>
       )}
 
-      {/* Modal Chứng Thư Bù Đắp Carbon Chuẩn Haute Couture (ORD-CARBON-CERT-01) */}
+      {/* Modal Chứng Thư Bù Đắp Carbon Chuẩn Haute Couture */}
       {showCarbonCertModal && (
         <div
           role="dialog"

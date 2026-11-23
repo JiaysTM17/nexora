@@ -84,7 +84,7 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
           Tìm thấy <strong>{items.length}</strong> sản phẩm phù hợp {palette && palette !== 'ALL' ? `(Sắc thái: ${PALETTE_FAMILIES.find(p => p.id === palette)?.name})` : ''}
         </p>
         {palette && palette !== 'ALL' && (
-          <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+          <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
             HÒA SẮC TONE-SUR-TONE 98/100
           </span>
         )}
@@ -103,7 +103,7 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
                     alt={p.name}
                     onError={(e) => {
                       const target = e.currentTarget as HTMLImageElement;
-                      if (!target.src.includes('/products/shirt.svg')) target.src = '/products/shirt.svg';
+                      if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80';
                     }}
                   />
                 )}
@@ -116,7 +116,7 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
                   {p.shop.isMall && (
                     <span
                       style={{
-                        background: 'var(--brand-indigo)',
+                        background: 'var(--gold-dark)',
                         color: '#fff',
                         fontSize: 9,
                         fontWeight: 700,
@@ -237,7 +237,7 @@ function SearchPage() {
               applyFilters(q, category, priceRange, e.target.checked);
             }}
           />
-          <strong style={{ color: 'var(--brand-indigo)' }}>NEXORA Mall</strong> (Chính hãng 100%)
+          <strong style={{ color: 'var(--gold-dark)' }}>NEXORA Mall</strong> (Chính hãng 100%)
         </label>
 
         {(q || category || priceRange || mallOnly || palette !== 'ALL' || gsmTier !== 'ALL') && (
@@ -252,7 +252,7 @@ function SearchPage() {
         )}
       </div>
 
-      {/* Bộ Lọc Sắc Thái Bảng Màu & Hòa Sắc Tone-Sur-Tone (CAT-VISUAL-PALETTE-SEARCH-01) */}
+      {/* Bộ Lọc Sắc Thái Bảng Màu & Hòa Sắc Tone-Sur-Tone */}
       <div
         style={{
           margin: '0 0 16px',
@@ -264,9 +264,9 @@ function SearchPage() {
       >
         <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Palette size={15} color="var(--brand-indigo)" />
+            <Palette size={15} color="var(--gold-dark)" />
             <strong style={{ fontSize: 12, color: '#9a3412' }}>
-              Lọc Theo Sắc Thái Bảng Màu Tự Nhiên (CAT-VISUAL-PALETTE-SEARCH-01)
+              Lọc Theo Sắc Thái Bảng Màu Tự Nhiên
             </strong>
           </div>
           <span style={{ fontSize: 11, color: '#78350f' }}>
@@ -288,7 +288,7 @@ function SearchPage() {
                 borderRadius: 20,
                 fontSize: 11,
                 cursor: 'pointer',
-                border: palette === p.id ? '1.5px solid var(--brand-indigo)' : '1px solid var(--line)',
+                border: palette === p.id ? '1.5px solid var(--gold-dark)' : '1px solid var(--line)',
                 background: palette === p.id ? 'var(--line)' : '#fff',
                 color: palette === p.id ? '#7c2d12' : '#9a3412',
                 fontWeight: palette === p.id ? 700 : 500,
@@ -311,7 +311,7 @@ function SearchPage() {
         </div>
       </div>
 
-      {/* Bộ Lọc Định Lượng Sợi Dệt GSM & Độ Dày Trang Phục (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01) */}
+      {/* Bộ Lọc Định Lượng Sợi Dệt GSM & Độ Dày Trang Phục */}
       <div
         style={{
           margin: '0 0 28px',
@@ -325,7 +325,7 @@ function SearchPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <Layers size={15} color="#0284c7" />
             <strong style={{ fontSize: 12, color: '#0369a1' }}>
-              Lọc Theo Định Lượng Sợi Dệt GSM (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)
+              Lọc Theo Định Lượng Sợi Dệt GSM
             </strong>
           </div>
           <span style={{ fontSize: 11, color: '#0284c7' }}>
