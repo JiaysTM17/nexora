@@ -57,69 +57,69 @@ export default function Home() {
     </div>
 
     {/* Editorial Stories & Atelier Chapters */}
-    <section className="section" style={{ paddingTop: 24, paddingBottom: 0 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
-        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ height: 220, overflow: 'hidden', position: 'relative' }}>
+    <section className="section" style={{ paddingTop: 36, paddingBottom: 0 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(0,0,0,0.02)' }}>
+          <div style={{ height: 230, overflow: 'hidden', position: 'relative' }}>
             <img
               src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80"
               alt="Chất liệu mộc tự nhiên"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
-            <span style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(9, 9, 11, 0.85)', color: '#FFFFFF', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 2 }}>
-              CHẤT LIỆU MỘC // 01
+            <span style={{ position: 'absolute', top: 14, left: 14, background: 'rgba(20, 20, 19, 0.88)', color: 'var(--gold-light)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.14em', padding: '4px 10px', borderRadius: 2 }}>
+              01 / CHẤT LIỆU MỘC
             </span>
           </div>
-          <div style={{ padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ padding: '22px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, margin: '0 0 6px', color: 'var(--ink)' }}>Sợi Lanh Normandy &amp; Lụa Tơ Tằm</h3>
-              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>Chất liệu dệt thủ công thoáng khí, phom dáng rủ nhẹ nhàng tôn vinh vẻ đẹp nguyên bản.</p>
+              <h3 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 8px', color: 'var(--ink)' }}>Sợi Lanh Normandy &amp; Lụa Tơ Tằm</h3>
+              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.65, margin: 0 }}>Chất liệu dệt thủ công thoáng khí, phom dáng rủ nhẹ nhàng tôn vinh vẻ đẹp nguyên bản và bền bỉ cùng thời gian.</p>
             </div>
-            <Link href="/san-pham?category=AO" style={{ marginTop: 14, fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <Link href="/san-pham?category=AO" style={{ marginTop: 16, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--gold-dark)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               Khám phá chất liệu <ArrowUpRight size={14}/>
             </Link>
           </div>
         </div>
 
-        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ height: 220, overflow: 'hidden', position: 'relative' }}>
+        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(0,0,0,0.02)' }}>
+          <div style={{ height: 230, overflow: 'hidden', position: 'relative' }}>
             <img
               src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=800&q=80"
               alt="Kỹ nghệ may đo cao cấp"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
-            <span style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(9, 9, 11, 0.85)', color: '#FFFFFF', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 2 }}>
-              ATELIER TAILORING // 02
+            <span style={{ position: 'absolute', top: 14, left: 14, background: 'rgba(20, 20, 19, 0.88)', color: 'var(--gold-light)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.14em', padding: '4px 10px', borderRadius: 2 }}>
+              02 / ATELIER TAILORING
             </span>
           </div>
-          <div style={{ padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ padding: '22px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, margin: '0 0 6px', color: 'var(--ink)' }}>Kỹ Nghệ May Đo &amp; Phom Dáng Cấu Trúc</h3>
-              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>Đường may sắc sảo, đường cắt tỉ mỉ từ các nghệ nhân may đo độc lập tuyển chọn.</p>
+              <h3 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 8px', color: 'var(--ink)' }}>Kỹ Nghệ May Đo &amp; Phom Dáng Cấu Trúc</h3>
+              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.65, margin: 0 }}>Đường may sắc sảo, đường cắt tỉ mỉ từ các nghệ nhân may đo độc lập tuyển chọn đạt chuẩn sartorial quốc tế.</p>
             </div>
-            <Link href="/san-pham?category=AO_KHOAC" style={{ marginTop: 14, fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <Link href="/san-pham?category=AO_KHOAC" style={{ marginTop: 16, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--gold-dark)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               Xem bộ sưu tập <ArrowUpRight size={14}/>
             </Link>
           </div>
         </div>
 
-        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ height: 220, overflow: 'hidden', position: 'relative' }}>
+        <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 2, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 16px rgba(0,0,0,0.02)' }}>
+          <div style={{ height: 230, overflow: 'hidden', position: 'relative' }}>
             <img
               src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80"
               alt="Digital Runway & Mix Studio"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
-            <span style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(9, 9, 11, 0.85)', color: '#FFFFFF', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 8px', borderRadius: 2 }}>
-              DIGITAL RUNWAY // 03
+            <span style={{ position: 'absolute', top: 14, left: 14, background: 'rgba(20, 20, 19, 0.88)', color: 'var(--gold-light)', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.14em', padding: '4px 10px', borderRadius: 2 }}>
+              03 / DIGITAL RUNWAY
             </span>
           </div>
-          <div style={{ padding: '20px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ padding: '22px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, margin: '0 0 6px', color: 'var(--ink)' }}>Studio Phối Đồ AI &amp; Sàn Diễn Độc Quyền</h3>
-              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>Trải nghiệm thử trang phục ảo và khám phá cảm hứng phong cách từ cộng đồng OOTD.</p>
+              <h3 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 8px', color: 'var(--ink)' }}>Studio Phối Đồ AI &amp; Sàn Diễn Độc Quyền</h3>
+              <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.65, margin: 0 }}>Trải nghiệm thử trang phục ảo theo thời gian thực và đón nhận cảm hứng phong cách từ cộng đồng OOTD thượng lưu.</p>
             </div>
-            <Link href="/phoi-do" style={{ marginTop: 14, fontSize: 12, fontWeight: 700, color: 'var(--brand-indigo)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <Link href="/phoi-do" style={{ marginTop: 16, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--gold-dark)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               Thử phối trang phục <ArrowUpRight size={14}/>
             </Link>
           </div>
@@ -127,72 +127,72 @@ export default function Home() {
       </div>
     </section>
 
-    {/* Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime (CAT-TRENDING-BOARD-02) */}
-    <section className="section" style={{ paddingTop: 20, paddingBottom: 0 }}>
-      <div style={{ padding: '24px 28px', background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4 }}>
-        <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+    {/* Bảng Xếp Hạng Xu Hướng Thời Trang Tuần Realtime */}
+    <section className="section" style={{ paddingTop: 32, paddingBottom: 0 }}>
+      <div style={{ padding: '28px 32px', background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 2, boxShadow: '0 4px 16px rgba(0,0,0,0.02)' }}>
+        <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
           <div>
-            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--brand-indigo)' }}>
-              <TrendingUp size={14} /> NEXORA TREND RADAR · REALTIME SALES VELOCITY (CAT-TRENDING-BOARD-02)
+            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--gold-dark)' }}>
+              <TrendingUp size={14} /> EDITORIAL FORECAST // SS 2026 RUNWAY INSIGHTS
             </p>
-            <h2 style={{ margin: '4px 0 0', fontSize: 22, fontWeight: 750, color: 'var(--ink)' }}>
-              Bảng Xếp Hạng Xu Hướng Tuần Này
+            <h2 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 600, color: 'var(--ink)' }}>
+              Điểm Nhấn Xu Hướng &amp; Cấu Trúc May Đo
             </h2>
           </div>
-          <Link href="/phoi-do" className="button subtle" style={{ fontSize: 12, padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <Link href="/phoi-do" className="button subtle" style={{ fontSize: 11, padding: '9px 18px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <Sparkles size={14} /> Phòng Thử Đồ Mix &amp; Match →
           </Link>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 18 }}>
           {[
             {
-              rank: '#1',
+              rank: '01',
               title: 'Quiet Luxury & Phom Rộng Phóng Khoáng',
               growth: '+142%',
-              desc: 'Áo khoác blazer linen cấu trúc nhẹ phối quần tây ống suông cạp cao xếp ly nhẹ.',
+              desc: 'Áo khoác blazer linen cấu trúc nhẹ phối quần tây ống suông cạp cao xếp ly đôi.',
               tag: 'Thịnh hành nhất',
             },
             {
-              rank: '#2',
+              rank: '02',
               title: 'Chất Liệu Tự Nhiên & Dệt Thô Mộc',
               growth: '+98%',
-              desc: 'Sơ mi 100% Premium Linen & Cotton Compact Pima mềm mát bền màu.',
+              desc: 'Sơ mi 100% Premium Linen & Cotton Compact Pima mềm mát, bề mặt dệt sống động.',
               tag: 'Tăng trưởng nhanh',
             },
             {
-              rank: '#3',
+              rank: '03',
               title: 'Tone Màu Đất & Phong Cách Sartorial',
               growth: '+85%',
-              desc: 'Trench coat dạ wool dệt chéo màu nâu cát ấm cổ điển thượng lưu.',
+              desc: 'Trench coat dạ wool dệt chéo màu nâu cát ấm cổ điển, phom vai Ý thanh thoát.',
               tag: 'Được yêu thích',
             },
           ].map(trend => (
             <div
               key={trend.rank}
               style={{
-                padding: '16px 18px',
-                background: '#fff',
+                padding: '20px 22px',
+                background: '#FAF8F5',
                 border: '1px solid var(--line)',
-                borderRadius: 4,
+                borderRadius: 2,
               }}
             >
-              <div className="row between" style={{ marginBottom: 6 }}>
-                <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--brand-indigo)' }}>
+              <div className="row between" style={{ marginBottom: 8 }}>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 700, color: 'var(--gold-dark)' }}>
                   {trend.rank}
                 </span>
-                <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                <span style={{ fontSize: 10.5, background: '#EBF3EE', color: '#2D5A3F', padding: '3px 8px', borderRadius: 2, fontWeight: 700 }}>
                   {trend.growth}
                 </span>
               </div>
-              <h4 style={{ margin: '0 0 6px', fontSize: 14, lineHeight: 1.4, color: 'var(--ink)' }}>
+              <h4 style={{ margin: '0 0 6px', fontFamily: 'var(--font-serif)', fontSize: 16, fontWeight: 600, lineHeight: 1.4, color: 'var(--ink)' }}>
                 {trend.title}
               </h4>
-              <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+              <p style={{ margin: 0, fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.6 }}>
                 {trend.desc}
               </p>
-              <span style={{ display: 'inline-block', marginTop: 10, fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, color: 'var(--brand-indigo)', fontWeight: 600 }}>
-                • {trend.tag}
+              <span style={{ display: 'inline-block', marginTop: 12, fontSize: 9.5, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gold-dark)', fontWeight: 700 }}>
+                ✦ {trend.tag}
               </span>
             </div>
           ))}
@@ -200,28 +200,28 @@ export default function Home() {
       </div>
     </section>
 
-    {/* Bộ Sưu Tập Capsule Mùa Mới · Capsule Lookbook Studio (CAT-CAPSULE-LOOKBOOK-01) */}
-    <section className="section" style={{ paddingTop: 20, paddingBottom: 0 }}>
-      <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 4, padding: '24px 28px' }}>
-        <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+    {/* Bộ Sưu Tập Capsule Mùa Mới · Capsule Lookbook Studio */}
+    <section className="section" style={{ paddingTop: 32, paddingBottom: 0 }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 2, padding: '28px 32px', boxShadow: '0 4px 16px rgba(0,0,0,0.02)' }}>
+        <div className="row between" style={{ alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
           <div>
-            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--brand-indigo)' }}>
-              <Layers size={14} /> THE SEASONAL CAPSULE EDIT · STYLE STUDIO (CAT-CAPSULE-LOOKBOOK-01)
+            <p className="eyebrow" style={{ margin: 0, display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--gold-dark)' }}>
+              <Layers size={14} /> ATELIER CAPSULE EDIT // HARMONY OF FABRIC
             </p>
-            <h2 style={{ margin: '4px 0 0', fontSize: 24, fontWeight: 750, color: 'var(--ink)' }}>
-              Bộ Sưu Tập Capsule &amp; Gợi Ý Phối Đồ Trọn Set
+            <h2 style={{ margin: '6px 0 0', fontSize: 24, fontWeight: 600, color: 'var(--ink)' }}>
+              Bộ Sưu Tập Capsule &amp; Nghệ Thuật Phối Đồ
             </h2>
-            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
-              Tuyển tập 3 phong cách thiết yếu được các Senior Stylist căn chỉnh sắc độ chuẩn mực và áp dụng chiết khấu Combo Saver -10%.
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12.5, color: 'var(--muted)' }}>
+              Ba bản phối may đo thiết yếu được cố vấn sắc độ bởi các Senior Stylist, tôn vinh chất liệu tự nhiên cùng ưu đãi Combo Saver -10%.
             </p>
           </div>
-          <Link href="/phoi-do" className="button" style={{ fontSize: 12, padding: '8px 16px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <Link href="/phoi-do" className="button" style={{ fontSize: 11, padding: '9px 18px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <Sparkles size={14} /> Mở Studio Phối Đồ Tự Do →
           </Link>
         </div>
 
         {/* Lookbook Tabs */}
-        <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--line)', paddingBottom: 10, marginBottom: 16, overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid var(--line)', paddingBottom: 12, marginBottom: 20, overflowX: 'auto' }}>
           {[
             { id: 0, name: 'The Normandy Summer Edit', tag: '100% Linen' },
             { id: 1, name: 'The Minimal Executive Edit', tag: 'Sartorial Cut' },
@@ -232,18 +232,20 @@ export default function Home() {
               type="button"
               onClick={() => setActiveCapsule(tab.id)}
               style={{
-                background: activeCapsule === tab.id ? '#09090B' : '#F8FAFC',
-                color: activeCapsule === tab.id ? '#FFFFFF' : 'var(--ink)',
-                border: '1px solid var(--line)',
-                padding: '7px 16px',
-                borderRadius: 20,
-                fontSize: 12,
+                background: activeCapsule === tab.id ? '#141413' : '#FAF8F5',
+                color: activeCapsule === tab.id ? '#FAF8F5' : 'var(--ink)',
+                border: activeCapsule === tab.id ? '1px solid #141413' : '1px solid var(--line)',
+                padding: '8px 18px',
+                borderRadius: 2,
+                fontSize: 11.5,
                 fontWeight: activeCapsule === tab.id ? 700 : 500,
+                letterSpacing: '0.04em',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
               }}
             >
-              {tab.name} <small style={{ opacity: 0.75, fontSize: 10 }}>({tab.tag})</small>
+              {tab.name} <small style={{ opacity: 0.75, fontSize: 10, letterSpacing: '0.02em' }}>({tab.tag})</small>
             </button>
           ))}
         </div>
@@ -295,9 +297,9 @@ export default function Home() {
           const cur = edits[activeCapsule];
 
           return (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, alignItems: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, alignItems: 'center' }}>
               {/* 3 Pieces Visual Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
                 {[
                   { role: 'Áo chính (Top)', item: cur.top },
                   { role: 'Quần/Váy (Bottom)', item: cur.bottom },
@@ -307,24 +309,24 @@ export default function Home() {
                     key={i}
                     style={{
                       border: '1px solid var(--line)',
-                      borderRadius: 3,
-                      padding: 10,
+                      borderRadius: 2,
+                      padding: 12,
                       background: '#FFFFFF',
                       textAlign: 'center',
                     }}
                   >
-                    <span style={{ fontSize: 9, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 700, display: 'block', marginBottom: 6 }}>
+                    <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--gold-dark)', fontWeight: 700, display: 'block', marginBottom: 8 }}>
                       {piece.role}
                     </span>
                     <img
                       src={piece.item.img}
                       alt={piece.item.name}
-                      style={{ width: '100%', height: 130, objectFit: 'cover', borderRadius: 2, margin: '4px 0' }}
+                      style={{ width: '100%', height: 135, objectFit: 'cover', borderRadius: 2, margin: '4px 0' }}
                     />
-                    <div style={{ fontSize: 11, fontWeight: 600, lineHeight: 1.3, margin: '4px 0 2px', minHeight: 28, overflow: 'hidden' }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 500, lineHeight: 1.35, margin: '6px 0 2px', minHeight: 32, overflow: 'hidden' }}>
                       {piece.item.name}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--ink)', fontWeight: 700 }}>
+                    <div style={{ fontSize: 11.5, color: 'var(--ink)', fontWeight: 700 }}>
                       {vnd(piece.item.price)}
                     </div>
                   </div>
@@ -332,25 +334,25 @@ export default function Home() {
               </div>
 
               {/* Lookbook Editorial Details */}
-              <div style={{ padding: '8px 10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                  <span style={{ fontSize: 11, background: '#EEF2FF', color: 'var(--brand-indigo)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              <div style={{ padding: '8px 12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <span style={{ fontSize: 10.5, letterSpacing: '0.04em', background: '#F3EFEA', color: 'var(--gold-dark)', padding: '3px 10px', borderRadius: 2, fontWeight: 700 }}>
                     {cur.palette}
                   </span>
-                  <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                  <span style={{ fontSize: 10.5, letterSpacing: '0.04em', background: '#EBF3EE', color: '#2D5A3F', padding: '3px 10px', borderRadius: 2, fontWeight: 700 }}>
                     {cur.harmony}
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: 18, fontWeight: 700, margin: '4px 0 8px' }}>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 600, margin: '6px 0 10px' }}>
                   {cur.title}
                 </h3>
 
-                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, margin: '0 0 14px' }}>
+                <p style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.65, margin: '0 0 16px' }}>
                   {cur.desc}
                 </p>
 
-                <div style={{ background: '#F8FAFC', border: '1px solid var(--line)', borderRadius: 3, padding: '12px 16px', marginBottom: 14 }}>
+                <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 2, padding: '14px 18px', marginBottom: 16 }}>
                   <div className="row between" style={{ fontSize: 12, color: 'var(--muted)', textDecoration: 'line-through' }}>
                     <span>Tổng giá trị lẻ 3 món:</span>
                     <span>{vnd(cur.originalTotal)}</span>
@@ -358,11 +360,11 @@ export default function Home() {
                   <div className="row between" style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginTop: 4 }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       Giá trọn bộ Combo Style Saver:
-                      <span style={{ fontSize: 10, background: '#166534', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                      <span style={{ fontSize: 9.5, background: 'var(--gold-dark)', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
                         -10%
                       </span>
                     </span>
-                    <strong style={{ color: 'var(--brand-indigo)', fontSize: 16 }}>{vnd(cur.comboTotal)}</strong>
+                    <strong style={{ color: 'var(--gold-dark)', fontSize: 17, fontFamily: 'var(--font-serif)' }}>{vnd(cur.comboTotal)}</strong>
                   </div>
                 </div>
 
@@ -370,16 +372,16 @@ export default function Home() {
                   <Link
                     href={`/phoi-do`}
                     className="button"
-                    style={{ flex: 1, fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                    style={{ flex: 1, fontSize: 11, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                   >
-                    <Sparkles size={15} /> Thử Phối Đồ Tại Studio
+                    <Sparkles size={14} /> Thử Phối Đồ Tại Studio
                   </Link>
                   <Link
                     href={`/tim-kiem?q=${encodeURIComponent(cur.id === 'normandy' ? 'Linen' : cur.id === 'executive' ? 'Blazer' : 'Lụa')}`}
                     className="button secondary"
-                    style={{ fontSize: 13, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                    style={{ fontSize: 11, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                   >
-                    <Eye size={15} /> Khám Phá
+                    <Eye size={14} /> Khám Phá
                   </Link>
                 </div>
               </div>

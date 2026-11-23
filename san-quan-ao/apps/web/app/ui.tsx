@@ -328,26 +328,27 @@ export function Shell({ children }: { children: React.ReactNode }) {
   </UserContext.Provider>;
 }
 export function Notice({ children, error = false }: { children: React.ReactNode; error?: boolean }) { return <div role={error ? 'alert' : 'status'} className={error ? 'notice error' : 'notice'}>{children}</div>; }
-export function Loading() { return <div className="loading" role="status"><span/>Đang tải dữ liệu…</div>; }
+export function Loading() { return <div className="loading" role="status"><span/>Đang chuẩn bị bộ sưu tập…</div>; }
 export function Empty({ title, detail, href = '/', action = 'Khám phá trang phục' }: { title: string; detail: string; href?: string; action?: string }) { return <div className="empty"><ShoppingBag size={40} strokeWidth={1}/><h2>{title}</h2><p>{detail}</p><Link className="button" href={href}>{action}<ArrowUpRight size={18}/></Link></div>; }
 export function ProductCard({ product }: { product: Product }) {
   const colors = [...new Map(product.variants.map(v => [v.color, v.colorHex])).entries()];
   const available = product.variants.some(v => v.inventory && v.inventory.onHand > v.inventory.reserved);
+  const fallbackImg = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
   return (
     <Link href={`/san-pham/${product.slug}`} className="product-card">
       <div className="product-image">
         <img
-          src={product.images[0]?.url}
+          src={product.images[0]?.url || fallbackImg}
           alt={product.name}
           onError={(e) => {
             const target = e.currentTarget as HTMLImageElement;
-            if (!target.src.includes('/products/shirt.svg')) {
-              target.src = '/products/shirt.svg';
+            if (!target.src.includes('unsplash.com')) {
+              target.src = fallbackImg;
             }
           }}
         />
         <span className="product-tag">{product.material}</span>
-        <span className="card-arrow"><ArrowUpRight size={20}/></span>
+        <span className="card-arrow"><ArrowUpRight size={18}/></span>
         {!available && <span className="sold-out">Tạm hết hàng</span>}
       </div>
       <div className="product-meta">
@@ -356,16 +357,16 @@ export function ProductCard({ product }: { product: Product }) {
           {product.shop.isMall && (
             <span
               style={{
-                background: 'var(--clay)',
-                color: '#fff',
-                fontSize: 9,
+                background: 'var(--gold-dark)',
+                color: '#FAF8F5',
+                fontSize: 8.5,
                 fontWeight: 700,
                 padding: '1px 5px',
                 borderRadius: 2,
-                letterSpacing: '0.4px',
+                letterSpacing: '0.6px',
               }}
             >
-              MALL
+              ATELIER MALL
             </span>
           )}
         </span>
