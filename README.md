@@ -309,7 +309,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **99** | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)** | Module 03 & 04 | **100% Hoàn thiện** | Thuật toán gom tuyến đa xưởng về trạm Micro-Hub, bưu tá xe điện Feliz giao tận cửa, tiết kiệm 35k cước ship tại `/gio-hang` |
 | **100** | **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)** | Module 01 & 07 | **100% Hoàn thiện** | 4 phân khúc GSM (Mỏng <150 GSM, Vừa 150-260 GSM, Dày >260 GSM), lọc theo độ rủ sợi dệt tại `/tim-kiem` |
 | **101** | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)** | Module 06 & Circular | **100% Hoàn thiện** | 3 cặp đổi mẫu thuật toán Fair Value Matrix, chỉ số hao mòn & tính bù trừ cọc Escrow tại `/cong-dong` |
-| **102** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **102** | **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải (ORD-GREEN-MILE-IMPACT-PASSPORT-01)** | Module 03 & 04 | **100% Hoàn thiện** | Hộ chiếu xe điện VinFast Feliz, giảm −0.42kg CO2e, cảm biến Telemetry pin 84% & tốc độ 28.5 km/h tại `/don-hang/[id]` |
+| **103** | **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)** | Module 02 & Admin ESG | **100% Hoàn thiện** | Quản trị cứu 12.8 tấn vải, 3 luồng tái sinh (Upcycling, Re-Loved, Bio-Felt) và xuất báo cáo EPR ISO 14040 tại `/admin` |
+| **104** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

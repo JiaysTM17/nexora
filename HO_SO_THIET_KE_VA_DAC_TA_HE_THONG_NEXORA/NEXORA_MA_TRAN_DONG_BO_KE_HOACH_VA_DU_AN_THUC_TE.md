@@ -115,6 +115,8 @@
 | **104** | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01)** | Module 03 & 04 | Đã hoàn thiện | Tự động gom đơn đa xưởng về trạm Micro-Hub trước khi bưu tá xe điện Feliz giao tận cửa tại `/gio-hang`: Tiết kiệm 35.000₫ cước vận chuyển, giảm −0.38kg CO2e, 2 chế độ Single Eco Drop (+100 Điểm Xanh) hoặc Expedite Partial |
 | **105** | **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01)** | Module 01 & 07 | Đã hoàn thiện | Bộ lọc định lượng sợi dệt chuyên sâu tại `/tim-kiem`: 4 phân khúc GSM chuẩn quốc tế (Mỏng nhẹ nhiệt đới <150 GSM, Trung bình bốn mùa 150-260 GSM, Dày dặn cấu trúc >260 GSM, Tất cả), lọc theo cấu trúc dệt vải và độ rủ phom dáng |
 | **106** | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)** | Module 06 & Circular | Đã hoàn thiện | Phân hệ trực quan hóa trao đổi P2P tại `/cong-dong`: 3 cặp đổi mẫu minh họa thuật toán Fair Value Matrix và Wear & Tear Index, tự động tính bù trừ cọc Escrow D1-01, đo lường giảm thiểu CO2e/nước và nạp nhanh hợp đồng 1-chạm |
+| **107** | **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực (ORD-GREEN-MILE-IMPACT-PASSPORT-01)** | Module 03 & 04 | Đã hoàn thiện | Phân hệ Hộ chiếu Xanh chặng giao hàng cuối tại `/don-hang/[id]`: Đội xe điện VinFast Feliz (#EV-NEXORA-882), lộ trình 8.4 km, cắt giảm −0.42kg CO2e, tương đương hấp thụ ~0.021 cây xanh/ngày, cảm biến Telemetry pin 84% & vận tốc 28.5 km/h, thưởng +100 Điểm Xanh |
+| **108** | **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)** | Module 02 & Admin ESG | Đã hoàn thiện | Phân hệ quản trị tuần hoàn toàn sàn tại `/admin`: Cứu 12.840 kg vải khỏi bãi chôn lấp (+18.4%), tỷ lệ thu hồi Trade-In 78.6%, 3.420h buồng vô trùng VAS, 2.850 kg Bio-Felt tiêu âm, 3 kênh phân bổ tái sinh (Upcycling 35%, Re-Loved 45%, Bio-Felt 20%), xuất báo cáo EPR ISO 14040 |
 
 ---
 
@@ -1048,6 +1050,27 @@
     2. *Cặp Đổi 02 · Denim Nhật & Wool Blend*: Sơ Mi Denim Nhật Dệt Thủ Công (Size L, Mới 92%) ↔ Quần Tây Xếp Ly Wool Blend (Size 32, Mới 94%) | Match 96.5% | Bù 100.000₫ Escrow | Tiết kiệm 3.9kg CO2e & 2.800L nước.
     3. *Cặp Đổi 03 · Phụ Kiện Da Thảo Mộc*: Túi Da Veg-Tan Nhuộm Thảo Mộc (Mới 90%) ↔ Khăn Lụa Tơ Tằm + Loafer Da Lộn (Size 38, Mới 96%) | Match 98.1% | Đối tác bù 50.000₫ vào ví bạn | Giảm 6.2kg CO2e, tái chế 100% vòng đời.
   - Người dùng có thể nhấn 1-chạm vào bất kỳ cặp trao đổi nào để tự động điền thông số vào hợp đồng Escrow bảo chứng và tiến hành ký kết.
+
+### 91. Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực (ORD-GREEN-MILE-IMPACT-PASSPORT-01)
+- **Mục tiêu**: Nâng cao tính minh bạch về dấu chân carbon và thúc đẩy hành vi tiêu dùng sinh thái thông qua hộ chiếu giao hàng xanh chặng cuối (Digital Green-Mile Passport).
+- **Cơ chế**:
+  - Tích hợp mô-đun Hộ Chiếu Xanh ngay trong chi tiết vận đơn tại `/don-hang/[id]`.
+  - Giám sát luồng xe máy điện VinFast Feliz (#EV-NEXORA-882) xuất phát từ Micro-Hub trung tâm (Quận 1) đến tận tay khách hàng.
+  - Đo lường thực tế các chỉ số môi trường: Quãng đường di chuyển 8.4 km Eco Route, cắt giảm thực chứng −0.42 kg CO2e so với động cơ đốt trong truyền thống, tỷ lệ hấp thụ sinh thái quy đổi ~0.021 cây xanh đô thị/ngày.
+  - Bảng cảm biến Telemetry thời gian thực: Dung lượng pin LFP 84% (đủ 45km), vận tốc trung bình 28.5 km/h, chế độ lái Eco Mode an toàn.
+  - Cấp chứng thư số `#GREEN-MILE-VN8921` và tặng ngay **+100 Điểm Thưởng Xanh NEX-Green** khi người nhận ký xác nhận kiện hàng.
+
+### 92. Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)
+- **Mục tiêu**: Quản trị tổng thể bức tranh tuần hoàn nguyên vật liệu thời trang toàn sàn và đáp ứng quy chuẩn Trách nhiệm Mở rộng của Nhà sản xuất (EPR) theo Luật Bảo vệ Môi trường 2020 & Nghị định 08/2022/NĐ-CP.
+- **Cơ chế**:
+  - Bổ sung Tab chuyên trách "Kinh tế tuần hoàn EPR" vào Cổng Quản Trị Trung Tâm `/admin`.
+  - Giám sát 4 chỉ số KPI tuần hoàn cốt lõi: 12.840 kg vải dệt cứu khỏi bãi chôn lấp (tăng +18.4% so với quý trước), tỷ lệ thu hồi tái sinh Trade-In đạt 78.6% (5 hạng S/A/B/C/D), 3.420 giờ chiếu buồng vô trùng lạnh VAS Care kéo dài tuổi thọ sợi tự nhiên, và 2.850 kg sợi lanh/len tái sinh thành tấm tiêu âm Bio-Felt.
+  - Ma trận 3 luồng phân bổ tái sinh vật liệu (Material Reclamation Matrix):
+    1. *Upcycling Nghệ Thuật Độc Bản (35% · 4.494 kg)*: Cắt may thành áo chần bông patchwork và túi tote thủ công.
+    2. *Re-Loved Certified (45% · 5.778 kg)*: Làm sạch sinh học, dán tem xác thực và tái phân phối trên Sàn Tuần Hoàn.
+    3. *Bio-Felt Tiêu Âm & Đệm (20% · 2.568 kg)*: Ép nhiệt xơ vụn cùng keo hữu cơ thành vật liệu cách âm kiến trúc.
+  - Bảng đối soát tuân thủ hạn ngạch EPR nhà nước: Tỷ lệ tái chế đạt 16.8% (vượt 112% KPI luật định), kiểm toán vòng đời LCA theo chuẩn ISO 14040/14044 và bảo toàn 34.200 m³ nước sạch.
+  - Hỗ trợ xuất gói báo cáo kiểm toán EPR toàn sàn định dạng chuẩn ISO.
 
 ---
 

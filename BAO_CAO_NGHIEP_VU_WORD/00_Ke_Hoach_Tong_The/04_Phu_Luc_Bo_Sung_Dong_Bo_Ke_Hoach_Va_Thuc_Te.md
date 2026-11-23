@@ -378,3 +378,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 93. **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)**:
    - Hồ sơ: Module 06 Mạng Xã Hội Phong Cách OOTD & Khung Trao Đổi Tuần Hoàn P2P Escrow D1-01.
    - Thực tế: Phân hệ trực quan hóa trao đổi đồ tại `/cong-dong`: 3 cặp đổi mẫu minh họa thuật toán Fair Value Matrix và Wear & Tear Index, đo lường giảm thiểu CO2e/nước sạch, tự động tính bù trừ chênh lệch cọc Escrow và điền nhanh hợp đồng 1-chạm.
+
+94. **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực (ORD-GREEN-MILE-IMPACT-PASSPORT-01)**:
+   - Hồ sơ: Module 03 Giỏ Hàng & Module 04 Logistics Chặng Cuối Xe Máy Điện (VinFast Green Logistics).
+   - Thực tế: Phân hệ Hộ chiếu Xanh chặng cuối tại `/don-hang/[id]`: Giám sát xe điện Feliz (#EV-NEXORA-882), quãng đường 8.4 km, cắt giảm thực chứng −0.42kg CO2e, tương đương hấp thụ ~0.021 cây xanh/ngày, cảm biến Telemetry thời gian thực (pin 84%, tốc độ 28.5 km/h, Eco Mode), cấp mã `#GREEN-MILE-VN8921` và cộng +100 Điểm Xanh.
+
+95. **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)**:
+   - Hồ sơ: Module 02 Dịch Vụ Tuần Hoàn & Cổng Quản Trị Trung Tâm Trách Nhiệm Mở Rộng EPR.
+   - Thực tế: Phân hệ quản trị tuần hoàn toàn sàn tại `/admin`: Cứu 12.840 kg vải khỏi bãi chôn lấp (+18.4%), tỷ lệ thu hồi tái sinh Trade-In 78.6%, 3.420h buồng vô trùng VAS, 2.850 kg Bio-Felt tiêu âm, 3 kênh chuyển dịch vật liệu (Upcycling 35%, Re-Loved 45%, Bio-Felt 20%), xuất báo cáo kiểm toán EPR chuẩn ISO 14040/14044.

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert, Zap } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -58,6 +58,8 @@ export default function OrderDetail() {
   const [courierFeedbackDone, setCourierFeedbackDone] = useState<boolean>(false);
   const [weatherMsgSent, setWeatherMsgSent] = useState<boolean>(false);
   const [weatherRescheduledSlot, setWeatherRescheduledSlot] = useState<string | null>(null);
+  const [showGreenTelemetry, setShowGreenTelemetry] = useState<boolean>(false);
+  const [greenPassportClaimed, setGreenPassportClaimed] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -79,6 +81,8 @@ export default function OrderDetail() {
           if (parsedWeather.msgSent) setWeatherMsgSent(true);
           if (parsedWeather.rescheduledSlot) setWeatherRescheduledSlot(parsedWeather.rescheduledSlot);
         }
+        const savedPassport = localStorage.getItem(`nexora_green_passport_${id}`);
+        if (savedPassport) setGreenPassportClaimed(true);
       }
     } catch {}
   }, [id]);
@@ -518,6 +522,112 @@ export default function OrderDetail() {
                     }}
                   >
                     {weatherRescheduledSlot ? '✓ Đã dời lịch sang ca tối 18:30 - 20:30' : '🕒 Lùi ca giao sang tối (18:30 - 20:30)'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực (ORD-GREEN-MILE-IMPACT-PASSPORT-01) */}
+              <div
+                style={{
+                  marginTop: 12,
+                  padding: '14px 16px',
+                  background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
+                  border: '1px solid #86efac',
+                  borderLeft: '4px solid #16a34a',
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: '#166534' }}>
+                    <Leaf size={16} color="#16a34a" />
+                    <span>Hộ Chiếu Chặng Giao Hàng Xanh · Digital Green-Mile Passport (ORD-GREEN-MILE-IMPACT-PASSPORT-01)</span>
+                  </div>
+                  <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <Zap size={11} /> 100% XE ĐIỆN VINFAST FELIZ
+                  </span>
+                </div>
+
+                <p style={{ margin: '0 0 10px', color: '#14532d', lineHeight: 1.5, fontSize: 11 }}>
+                  Toàn bộ hành trình chặng cuối từ Micro-Hub Bến Nghé Q1 đến địa chỉ nhận hàng được vận hành bằng xe máy điện thế hệ mới, loại bỏ hoàn toàn muội than và giảm thiểu tiếng ồn đô thị.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 10 }}>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #bbf7d0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Quãng đường xanh</div>
+                    <div style={{ fontWeight: 700, color: '#0f172a' }}>8.4 km (Eco Route)</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #bbf7d0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Cắt giảm CO2e</div>
+                    <div style={{ fontWeight: 700, color: '#16a34a' }}>−0.42 kg CO2e</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #bbf7d0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Hấp thụ tương đương</div>
+                    <div style={{ fontWeight: 700, color: '#15803d' }}>~0.021 Cây xanh/ngày</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #bbf7d0' }}>
+                    <div style={{ fontSize: 10, color: '#64748b' }}>Thưởng nhận hàng</div>
+                    <div style={{ fontWeight: 700, color: '#16a34a' }}>+100 Điểm NEX-Green</div>
+                  </div>
+                </div>
+
+                {showGreenTelemetry && (
+                  <div style={{ background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px dashed #86efac', marginBottom: 10, fontSize: 11 }}>
+                    <strong style={{ color: '#15803d', display: 'block', marginBottom: 6 }}>
+                      ⚡ Dữ Liệu Cảm Biến Telemetry Xe Điện Thời Gian Thực (#EV-NEXORA-882):
+                    </strong>
+                    <div className="row between" style={{ color: '#475569', fontSize: 10, flexWrap: 'wrap', gap: 6 }}>
+                      <span>Dung lượng Pin LFP: <strong>84% (Đủ 45km)</strong></span>
+                      <span>Vận tốc trung bình: <strong>28.5 km/h</strong></span>
+                      <span>Chế độ lái: <strong>Eco Green Mode</strong></span>
+                      <span>Mã xác thực Hộ chiếu: <code>#GREEN-MILE-VN8921</code></span>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowGreenTelemetry(!showGreenTelemetry)}
+                    style={{
+                      padding: '5px 12px',
+                      background: '#fff',
+                      color: '#15803d',
+                      border: '1px solid #86efac',
+                      borderRadius: 3,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {showGreenTelemetry ? 'Thu gọn cảm biến Telemetry' : '📊 Xem Cảm Biến Telemetry Xe Điện'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGreenPassportClaimed(true);
+                      setSuccess('✓ Đã xác thực Hộ Chiếu Giao Hàng Xanh #GREEN-MILE-VN8921 và cộng +100 Điểm Xanh vào tài khoản!');
+                      try {
+                        if (id) localStorage.setItem(`nexora_green_passport_${id}`, 'true');
+                      } catch {}
+                    }}
+                    disabled={greenPassportClaimed}
+                    style={{
+                      padding: '5px 12px',
+                      background: greenPassportClaimed ? '#dcfce7' : '#16a34a',
+                      color: greenPassportClaimed ? '#15803d' : '#fff',
+                      border: 'none',
+                      borderRadius: 3,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: greenPassportClaimed ? 'default' : 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    <CheckCircle2 size={13} />
+                    {greenPassportClaimed ? '✓ Đã nhận +100 Điểm Hộ Chiếu Xanh' : 'Nhận Thưởng Hộ Chiếu Xanh (+100 Điểm)'}
                   </button>
                 </div>
               </div>

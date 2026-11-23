@@ -243,5 +243,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Tuyến Gom Hàng Giao Ghép Đa Gian Hàng** | Module 03 & 04 | Đã hoàn thiện | Thuật toán gom tuyến đa xưởng về trạm Micro-Hub, bưu tá xe điện Feliz giao tận cửa, tiết kiệm 35k cước ship tại `/gio-hang` (CART-MULTI-SHOP-SHIPPING-OPTIMIZER-01) |
 | **Bộ Lọc Định Lượng Sợi Dệt GSM & Phân Loại Mùa** | Module 01 & 07 | Đã hoàn thiện | 4 phân khúc GSM (Mỏng <150 GSM, Vừa 150-260 GSM, Dày >260 GSM), lọc theo độ rủ sợi dệt tại `/tim-kiem` (CAT-ADVANCED-FABRIC-WEIGHT-FILTER-01) |
 | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá** | Module 06 & Circular | Đã hoàn thiện | 3 cặp đổi mẫu thuật toán Fair Value Matrix, chỉ số hao mòn & tính bù trừ cọc Escrow tại `/cong-dong` (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01) |
+| **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải** | Module 03 & 04 | Đã hoàn thiện | Hộ chiếu xe điện VinFast Feliz, giảm −0.42kg CO2e, cảm biến Telemetry pin 84% & tốc độ 28.5 km/h tại `/don-hang/[id]` (ORD-GREEN-MILE-IMPACT-PASSPORT-01) |
+| **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR** | Module 02 & Admin ESG | Đã hoàn thiện | Quản trị cứu 12.8 tấn vải, 3 luồng tái sinh (Upcycling, Re-Loved, Bio-Felt) và xuất báo cáo EPR ISO 14040 tại `/admin` (ADMIN-CIRCULAR-ECONOMY-METRICS-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
