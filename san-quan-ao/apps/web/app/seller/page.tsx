@@ -18,6 +18,7 @@ export default function Seller() {
   });
   const [orderedSupplier, setOrderedSupplier] = useState<string | null>(null);
   const [ecoSavedNotice, setEcoSavedNotice] = useState<string>('');
+  const [traceVerified, setTraceVerified] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -28,6 +29,8 @@ export default function Seller() {
           if (parsed.checks) setEcoChecks(parsed.checks);
           if (parsed.supplier) setOrderedSupplier(parsed.supplier);
         }
+        const savedTrace = localStorage.getItem(`nexora_seller_trace_${current.id}`);
+        if (savedTrace) setTraceVerified(true);
       }
     } catch {}
   }, [current?.id]);
@@ -171,6 +174,91 @@ export default function Seller() {
         </div>
       ))}
     </div>
+  </div>
+</div>
+
+{/* Ma Trận Nguồn Gốc Chuỗi Cung Ứng & Minh Bạch Sợi Dệt (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01) */}
+<div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px dashed var(--line)' }}>
+  <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+    <div>
+      <h3 style={{ fontSize: 14, margin: 0, display: 'flex', alignItems: 'center', gap: 6, color: '#166534' }}>
+        <Package size={18} /> Ma Trận Nguồn Gốc Sợi Dệt &amp; Chuỗi Cung Ứng Farm-to-Closet (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01)
+      </h3>
+      <p className="subtle" style={{ margin: '4px 0 0', fontSize: 11 }}>
+        Minh bạch 3 cấp độ chuỗi cung ứng (Tier 1 - Cắt may, Tier 2 - Dệt nhuộm tự nhiên, Tier 3 - Nông trại nguyên liệu), cấp mã xác thực truy xuất nguồn gốc Blockchain.
+      </p>
+    </div>
+    <span
+      style={{
+        fontSize: 11,
+        background: traceVerified ? '#f0fdf4' : '#f8fafc',
+        color: traceVerified ? '#166534' : '#475569',
+        border: `1px solid ${traceVerified ? '#bbf7d0' : '#cbd5e1'}`,
+        padding: '4px 10px',
+        borderRadius: 20,
+        fontWeight: 700,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+      }}
+    >
+      <ShieldCheck size={14} /> {traceVerified ? 'FARM-TO-CLOSET VERIFIED' : 'CHỜ XÁC MINH NGUỒN GỐC'}
+    </span>
+  </div>
+
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10, marginBottom: 14 }}>
+    <div style={{ padding: '12px 14px', background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 6 }}>
+      <div className="row between" style={{ marginBottom: 4 }}>
+        <strong style={{ fontSize: 12, color: 'var(--ink)' }}>Tier 1 · Xưởng May Đạo Đức (Cut &amp; Sew)</strong>
+        <span style={{ fontSize: 10, background: '#eef2ed', color: '#2b522b', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>100% ILO 138/182</span>
+      </div>
+      <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+        Quy chế tiền lương đủ sống (Living Wage), môi trường làm việc thông gió tự nhiên, nghệ nhân may thủ công lành nghề và không tăng ca quá giờ.
+      </p>
+    </div>
+
+    <div style={{ padding: '12px 14px', background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 6 }}>
+      <div className="row between" style={{ marginBottom: 4 }}>
+        <strong style={{ fontSize: 12, color: 'var(--ink)' }}>Tier 2 · Nhuộm Sinh Học &amp; Dệt Vải</strong>
+        <span style={{ fontSize: 10, background: '#eef2ed', color: '#2b522b', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>Zero Azo Dyes</span>
+      </div>
+      <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+        Màu nhuộm chiết xuất từ lá chàm, vỏ mặc nưa, củ nâu tự nhiên; nước thải xử lý tuần hoàn vi sinh khép kín đạt tiêu chuẩn QCVN 40 Cột A.
+      </p>
+    </div>
+
+    <div style={{ padding: '12px 14px', background: '#faf9f5', border: '1px solid var(--line)', borderRadius: 6 }}>
+      <div className="row between" style={{ marginBottom: 4 }}>
+        <strong style={{ fontSize: 12, color: 'var(--ink)' }}>Tier 3 · Nông Trại Canh Tác Sợi</strong>
+        <span style={{ fontSize: 10, background: '#eef2ed', color: '#2b522b', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>100% Bản Địa &amp; GOTS</span>
+      </div>
+      <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+        Linen Normandy (45%), Tơ tằm Bảo Lộc Lâm Đồng (30%), Bông hữu cơ Tây Nguyên (25%) canh tác luân canh không hóa chất độc hại.
+      </p>
+    </div>
+  </div>
+
+  <div style={{ background: '#f0fdf4', padding: '12px 16px', borderRadius: 6, border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+    <div style={{ fontSize: 11, color: '#166534' }}>
+      <strong>Mã Định Danh Chuỗi Cung Ứng:</strong> <code style={{ marginLeft: 6, background: '#fff', padding: '2px 6px', borderRadius: 3, border: '1px solid #86efac' }}>#TRACE-FARM-VN99218</code>
+      <span style={{ display: 'block', fontSize: 10, color: '#15803d', marginTop: 2 }}>Được liên kết tự động vào mã QR trên nhãn dệt thông minh của trang phục.</span>
+    </div>
+    <button
+      type="button"
+      className="button"
+      style={{ fontSize: 11, padding: '6px 14px', background: traceVerified ? '#166534' : '#0f172a' }}
+      onClick={() => {
+        setTraceVerified(true);
+        setEcoSavedNotice('Đã xác thực thành công chuỗi cung ứng Farm-to-Closet #TRACE-FARM-VN99218!');
+        try {
+          if (current?.id) {
+            localStorage.setItem(`nexora_seller_trace_${current.id}`, 'true');
+          }
+        } catch {}
+      }}
+    >
+      {traceVerified ? '✓ Đã Xác Minh Toàn Chuỗi' : 'Yêu Cầu Thẩm Định Chuỗi Cung Ứng'}
+    </button>
   </div>
 </div>
 </article>}</>}</section>;

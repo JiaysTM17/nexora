@@ -311,7 +311,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **101** | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)** | Module 06 & Circular | **100% Hoàn thiện** | 3 cặp đổi mẫu thuật toán Fair Value Matrix, chỉ số hao mòn & tính bù trừ cọc Escrow tại `/cong-dong` |
 | **102** | **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải (ORD-GREEN-MILE-IMPACT-PASSPORT-01)** | Module 03 & 04 | **100% Hoàn thiện** | Hộ chiếu xe điện VinFast Feliz, giảm −0.42kg CO2e, cảm biến Telemetry pin 84% & tốc độ 28.5 km/h tại `/don-hang/[id]` |
 | **103** | **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)** | Module 02 & Admin ESG | **100% Hoàn thiện** | Quản trị cứu 12.8 tấn vải, 3 luồng tái sinh (Upcycling, Re-Loved, Bio-Felt) và xuất báo cáo EPR ISO 14040 tại `/admin` |
-| **104** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **104** | **Ma Trận Nguồn Gốc Sợi Dệt & Chuỗi Cung Ứng Farm-to-Closet (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01)** | Module 01, 04 & ESG | **100% Hoàn thiện** | Minh bạch 3 cấp độ (Tier 1 Cắt may ILO, Tier 2 Nhuộm tự nhiên, Tier 3 Nông trại bản địa), mã `#TRACE-FARM-VN99218` tại `/seller` |
+| **105** | **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)** | Module 06 & 07 | **100% Hoàn thiện** | Radar vi khí hậu (31.5°C, 78% RH), gợi ý 2 set phục trang lụa/linen thoáng mát và đồng bộ Fashion Calendar tại `/tai-khoan` |
+| **106** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 

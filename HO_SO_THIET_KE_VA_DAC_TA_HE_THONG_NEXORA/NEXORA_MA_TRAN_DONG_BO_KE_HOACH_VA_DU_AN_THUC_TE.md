@@ -117,6 +117,8 @@
 | **106** | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01)** | Module 06 & Circular | Đã hoàn thiện | Phân hệ trực quan hóa trao đổi P2P tại `/cong-dong`: 3 cặp đổi mẫu minh họa thuật toán Fair Value Matrix và Wear & Tear Index, tự động tính bù trừ cọc Escrow D1-01, đo lường giảm thiểu CO2e/nước và nạp nhanh hợp đồng 1-chạm |
 | **107** | **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải Thời Gian Thực (ORD-GREEN-MILE-IMPACT-PASSPORT-01)** | Module 03 & 04 | Đã hoàn thiện | Phân hệ Hộ chiếu Xanh chặng giao hàng cuối tại `/don-hang/[id]`: Đội xe điện VinFast Feliz (#EV-NEXORA-882), lộ trình 8.4 km, cắt giảm −0.42kg CO2e, tương đương hấp thụ ~0.021 cây xanh/ngày, cảm biến Telemetry pin 84% & vận tốc 28.5 km/h, thưởng +100 Điểm Xanh |
 | **108** | **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)** | Module 02 & Admin ESG | Đã hoàn thiện | Phân hệ quản trị tuần hoàn toàn sàn tại `/admin`: Cứu 12.840 kg vải khỏi bãi chôn lấp (+18.4%), tỷ lệ thu hồi Trade-In 78.6%, 3.420h buồng vô trùng VAS, 2.850 kg Bio-Felt tiêu âm, 3 kênh phân bổ tái sinh (Upcycling 35%, Re-Loved 45%, Bio-Felt 20%), xuất báo cáo EPR ISO 14040 |
+| **109** | **Ma Trận Nguồn Gốc Sợi Dệt & Chuỗi Cung Ứng Farm-to-Closet (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01)** | Module 01, 04 & ESG | Đã hoàn thiện | Phân hệ minh bạch nguồn gốc chuỗi cung ứng tại `/seller`: Quản lý 3 cấp độ (Tier 1 Cắt may ILO 138/182, Tier 2 Nhuộm tự nhiên Zero Azo Dyes & QCVN 40, Tier 3 Nông trại bản địa Lâm Đồng/Tây Nguyên/Normandy), mã blockchain `#TRACE-FARM-VN99218` |
+| **110** | **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)** | Module 06 & 07 | Đã hoàn thiện | Phân hệ tủ đồ thông minh tại `/tai-khoan`: Radar vi khí hậu (TP.HCM 31.5°C, độ ẩm 78% RH), tự động gợi ý 2 set đồ thoáng mát (Habotai 115 GSM & Linen mộc, độ thoáng 210 mm/s), cảnh báo chống ẩm mốc sợi dệt và lên lịch Fashion Calendar 1-chạm (+50 Xu) |
 
 ---
 
@@ -1071,6 +1073,25 @@
     3. *Bio-Felt Tiêu Âm & Đệm (20% · 2.568 kg)*: Ép nhiệt xơ vụn cùng keo hữu cơ thành vật liệu cách âm kiến trúc.
   - Bảng đối soát tuân thủ hạn ngạch EPR nhà nước: Tỷ lệ tái chế đạt 16.8% (vượt 112% KPI luật định), kiểm toán vòng đời LCA theo chuẩn ISO 14040/14044 và bảo toàn 34.200 m³ nước sạch.
   - Hỗ trợ xuất gói báo cáo kiểm toán EPR toàn sàn định dạng chuẩn ISO.
+
+### 93. Ma Trận Nguồn Gốc Sợi Dệt & Chuỗi Cung Ứng Farm-to-Closet (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01)
+- **Mục tiêu**: Nâng cao mức độ minh bạch của chuỗi cung ứng thời trang may đo, hỗ trợ các xưởng may độc lập chứng minh nguồn gốc xuất xứ nguyên liệu sạch từ nông trại đến tủ đồ người tiêu dùng (Farm-to-Closet).
+- **Cơ chế**:
+  - Tích hợp ma trận thẩm định chuỗi cung ứng 3 cấp độ (3-Tier Supply Chain Matrix) ngay trong Tab Chuẩn Xanh ESG tại Kênh Người Bán `/seller`:
+    1. *Tier 1 · Xưởng May Đạo Đức (Cut & Sew)*: Cam kết tiền lương đủ sống (Living Wage), tiêu chuẩn lao động quốc tế ILO 138/182 không lạm dụng lao động vị thành niên, thợ may thủ công tay nghề cao.
+    2. *Tier 2 · Nhuộm Sinh Học & Dệt Vải*: 100% không sử dụng hóa chất và thuốc nhuộm azo độc hại (Zero Azo Dyes), nước thải dệt nhuộm được lọc tuần hoàn vi sinh khép kín đạt tiêu chuẩn QCVN 40 Cột A.
+    3. *Tier 3 · Nông Trại Canh Tác Sợi Bản Địa*: Tỷ trọng nguyên liệu gồm Linen Normandy Pháp (45%), Lụa tơ tằm Bảo Lộc Lâm Đồng (30%), Bông hữu cơ Tây Nguyên (25%) canh tác luân canh không hóa chất bảo vệ thực vật.
+  - Cấp mã số định danh chuỗi cung ứng Blockchain `#TRACE-FARM-VN99218` tự động liên kết vào mã QR trên nhãn dệt thông minh của trang phục.
+
+### 94. Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)
+- **Mục tiêu**: Giúp người tiêu dùng tối ưu hóa công năng của tủ đồ cá nhân (Digital Wardrobe), chủ động chọn lựa trang phục phù hợp với điều kiện vi khí hậu nhiệt đới gió mùa và bảo vệ độ bền của sợi vải quý.
+- **Cơ chế**:
+  - Tích hợp trạm Radar Vi khí hậu thời gian thực tại `/tai-khoan`: Đo lường nhiệt độ thực tế (31.5°C), nhiệt độ cảm nhận (34.2°C), độ ẩm tương đối (78% RH - ngưỡng nhăn sợi cao) và chỉ số bức xạ tia cực tím (UV-Index 8.2).
+  - Thuật toán AI phân tích tủ đồ đã mua, đề xuất 2 set phục trang thích ứng:
+    1. *Set 01 · Thoát Nhiệt & Kháng Ẩm*: Sơ mi Lụa Habotai 115 GSM kết hợp Quần suông Linen mộc, độ thoáng khí đạt 210 mm/s, thấm hút mồ hôi siêu tốc và không dính rít.
+    2. *Set 02 · Smart Casual Công Sở Điều Hòa*: Áo thun Mercerized Cotton chống ẩm kết hợp Blazer Linen thô không lót, chịu dải chênh lệch nhiệt 24°C - 32°C và giữ ve áo sắc nét.
+  - Hướng dẫn bảo quản sợi mùa ẩm: Nhắc nhở sử dụng túi hút ẩm hữu cơ Bio-Silica và móc treo gỗ sồi tự nhiên.
+  - Tính năng 1-chạm đưa set đồ thích ứng vào Lịch Trình Phong Cách (Fashion Calendar) kèm phần thưởng **+50 Xu Xanh**.
 
 ---
 

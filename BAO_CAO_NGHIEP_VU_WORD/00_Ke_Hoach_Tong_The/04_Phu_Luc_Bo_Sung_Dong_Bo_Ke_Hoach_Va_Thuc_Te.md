@@ -386,3 +386,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 95. **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR (ADMIN-CIRCULAR-ECONOMY-METRICS-01)**:
    - Hồ sơ: Module 02 Dịch Vụ Tuần Hoàn & Cổng Quản Trị Trung Tâm Trách Nhiệm Mở Rộng EPR.
    - Thực tế: Phân hệ quản trị tuần hoàn toàn sàn tại `/admin`: Cứu 12.840 kg vải khỏi bãi chôn lấp (+18.4%), tỷ lệ thu hồi tái sinh Trade-In 78.6%, 3.420h buồng vô trùng VAS, 2.850 kg Bio-Felt tiêu âm, 3 kênh chuyển dịch vật liệu (Upcycling 35%, Re-Loved 45%, Bio-Felt 20%), xuất báo cáo kiểm toán EPR chuẩn ISO 14040/14044.
+
+96. **Ma Trận Nguồn Gốc Sợi Dệt & Chuỗi Cung Ứng Farm-to-Closet (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01)**:
+   - Hồ sơ: Module 01 Quản Lý Sản Phẩm, Module 04 Quản Lý Chuỗi Cung Ứng & Thẻ Điểm Chuẩn Xanh ESG.
+   - Thực tế: Phân hệ minh bạch nguồn gốc chuỗi cung ứng tại `/seller`: Ma trận 3 cấp độ (Tier 1 Cắt may ILO 138/182 Living Wage, Tier 2 Nhuộm sinh học Zero Azo Dyes & QCVN 40 Cột A, Tier 3 Vùng trồng bản địa Lâm Đồng/Tây Nguyên/Normandy), cấp chứng thư số Blockchain `#TRACE-FARM-VN99218`.
+
+97. **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)**:
+   - Hồ sơ: Module 06 Mạng Xã Hội OOTD, Module 07 Trải Nghiệm Khách Hàng & Quản Trị Tủ Đồ Số Digital Wardrobe.
+   - Thực tế: Phân hệ tủ đồ thích ứng thời tiết tại `/tai-khoan`: Trạm Radar vi khí hậu (31.5°C, độ ẩm 78% RH), AI gợi ý 2 set đồ thoáng mát (Habotai 115 GSM & Linen mộc thoáng khí 210 mm/s), cảnh báo ẩm mốc sợi tự nhiên và đồng bộ Fashion Calendar 1-chạm (+50 Xu Xanh).

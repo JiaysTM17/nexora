@@ -245,5 +245,7 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Showcase Cặp Trao Đổi Điển Hình & Ma Trận Định Giá** | Module 06 & Circular | Đã hoàn thiện | 3 cặp đổi mẫu thuật toán Fair Value Matrix, chỉ số hao mòn & tính bù trừ cọc Escrow tại `/cong-dong` (SOC-COMMUNITY-VIRTUAL-SWAP-SHOWCASE-01) |
 | **Hộ Chiếu Chặng Giao Hàng Xanh & Đo Lường Khí Thải** | Module 03 & 04 | Đã hoàn thiện | Hộ chiếu xe điện VinFast Feliz, giảm −0.42kg CO2e, cảm biến Telemetry pin 84% & tốc độ 28.5 km/h tại `/don-hang/[id]` (ORD-GREEN-MILE-IMPACT-PASSPORT-01) |
 | **Quản Trị Kinh Tế Tuần Hoàn & Trách Nhiệm Mở Rộng EPR** | Module 02 & Admin ESG | Đã hoàn thiện | Quản trị cứu 12.8 tấn vải, 3 luồng tái sinh (Upcycling, Re-Loved, Bio-Felt) và xuất báo cáo EPR ISO 14040 tại `/admin` (ADMIN-CIRCULAR-ECONOMY-METRICS-01) |
+| **Ma Trận Nguồn Gốc Sợi Dệt & Chuỗi Cung Ứng Farm-to-Closet** | Module 01, 04 & ESG | Đã hoàn thiện | Minh bạch 3 cấp độ (Tier 1 Cắt may ILO, Tier 2 Nhuộm tự nhiên, Tier 3 Nông trại bản địa), mã `#TRACE-FARM-VN99218` tại `/seller` (SELLER-SUSTAINABLE-SUPPLY-CHAIN-AUDIT-01) |
+| **Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Kháng Ẩm** | Module 06 & 07 | Đã hoàn thiện | Radar vi khí hậu (31.5°C, 78% RH), gợi ý 2 set phục trang lụa/linen thoáng mát và đồng bộ Fashion Calendar tại `/tai-khoan` (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 

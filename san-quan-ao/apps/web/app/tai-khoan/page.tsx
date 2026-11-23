@@ -2,7 +2,7 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors, Archive } from 'lucide-react';
+import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors, Archive, Droplets, Thermometer, Wind } from 'lucide-react';
 import { api, AffiliateSummary, CareBooking, Product, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -122,6 +122,8 @@ export default function AccountPage() {
       { id: 'HIB-8812', item: 'Áo Khoác Blazer Dạ Len Ý Sartorial', duration: '6 Tháng (Gói Mùa Mưa)', fee: 240000, code: 'HIBERNATE-VAULT-8812', date: '18/11/2026' }
     ];
   });
+  const [selectedWeatherOutfit, setSelectedWeatherOutfit] = useState<number>(0);
+  const [weatherScheduleNotice, setWeatherScheduleNotice] = useState<string>('');
 
   function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -1327,6 +1329,132 @@ export default function AccountPage() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Tủ Đồ Cá Nhân Thông Minh Thích Ứng Thời Tiết & Gợi Ý Phối Đồ Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01) */}
+        <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed #cbd5e1' }}>
+          <div className="row between" style={{ marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              <strong style={{ fontSize: 13, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CloudRain size={16} color="#0284c7" /> Tủ Đồ Thông Minh Thích Ứng Thời Tiết &amp; Kháng Ẩm (USER-CLOSET-WEATHER-ADAPTIVE-OUTFIT-01)
+              </strong>
+              <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
+                Radar khí hậu vi mô đối sánh các món đồ trong tủ cá nhân, gợi ý outfit thoáng mát chống bám dính sợi và hướng dẫn bảo quản sợi mùa ẩm.
+              </p>
+            </div>
+            <span style={{ fontSize: 10, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 4, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Sun size={12} /> TP.HCM 31.5°C · ẨM 78% RH
+            </span>
+          </div>
+
+          {/* Micro-Climate Telemetry */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 12 }}>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#64748b' }}>Nhiệt độ cảm nhận</div>
+              <div style={{ fontWeight: 700, color: '#0f172a' }}>34.2°C (Oi bức)</div>
+            </div>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#64748b' }}>Độ ẩm không khí</div>
+              <div style={{ fontWeight: 700, color: '#0284c7' }}>78% RH (Dễ nhăn)</div>
+            </div>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#64748b' }}>Chỉ số tia UV</div>
+              <div style={{ fontWeight: 700, color: '#d97706' }}>UV 8.2 (Cực độ)</div>
+            </div>
+            <div style={{ padding: '8px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 4 }}>
+              <div style={{ fontSize: 10, color: '#64748b' }}>Gợi ý chất liệu</div>
+              <div style={{ fontWeight: 700, color: '#16a34a' }}>Lụa / Linen 115 GSM</div>
+            </div>
+          </div>
+
+          {/* 2 Gợi ý Outfit từ Tủ Đồ Số */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 10, marginBottom: 10 }}>
+            {[
+              {
+                title: 'Set 01 · Thoát Nhiệt & Kháng Ẩm Nhiệt Đới',
+                badge: 'KHUYÊN DÙNG HÔM NAY',
+                items: 'Sơ Mi Lụa Habotai 115 GSM + Quần Suông Linen Mộc',
+                spec: 'Độ thoáng khí 210 mm/s · Khô nhanh 15 phút · Không bám dính mồ hôi',
+                care: 'Treo móc gỗ sồi thoáng gió, tránh ép sát tủ kín',
+              },
+              {
+                title: 'Set 02 · Smart Casual Công Sở Điều Hòa',
+                badge: 'VĂN PHÒNG 24°C - 32°C',
+                items: 'Áo Thun Mercerized Cotton Chống Ẩm + Blazer Linen Thô 1 Lớp',
+                spec: 'Cân bằng nhiệt 2 chiều · Chống sốc nhiệt điều hòa · Ve áo đứng sắc nét',
+                care: 'Đặt túi hút ẩm Bio-Silica trong hộc tủ chứa đồ',
+              },
+            ].map((outfit, oIdx) => (
+              <div
+                key={oIdx}
+                onClick={() => setSelectedWeatherOutfit(oIdx)}
+                style={{
+                  padding: '10px 12px',
+                  background: selectedWeatherOutfit === oIdx ? '#f0fdf4' : '#fff',
+                  border: `1.5px solid ${selectedWeatherOutfit === oIdx ? '#16a34a' : '#e2e8f0'}`,
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div className="row between" style={{ marginBottom: 4 }}>
+                  <strong style={{ fontSize: 12, color: selectedWeatherOutfit === oIdx ? '#166534' : '#1e293b' }}>
+                    {outfit.title}
+                  </strong>
+                  <span style={{ fontSize: 9, background: selectedWeatherOutfit === oIdx ? '#16a34a' : '#64748b', color: '#fff', padding: '1px 5px', borderRadius: 2, fontWeight: 700 }}>
+                    {outfit.badge}
+                  </span>
+                </div>
+                <div style={{ fontSize: 11, color: '#334155', fontWeight: 600, marginBottom: 4 }}>
+                  👕 {outfit.items}
+                </div>
+                <p style={{ margin: '0 0 4px', fontSize: 10, color: '#64748b', lineHeight: 1.4 }}>
+                  ⚡ {outfit.spec}
+                </p>
+                <p style={{ margin: 0, fontSize: 10, color: '#047857', lineHeight: 1.4, fontStyle: 'italic' }}>
+                  🌿 Bảo quản: {outfit.care}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {weatherScheduleNotice && (
+            <div style={{ padding: '6px 12px', background: '#f0fdf4', color: '#166534', borderRadius: 4, fontSize: 11, marginBottom: 8 }}>
+              {weatherScheduleNotice}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              className="button"
+              style={{ fontSize: 11, padding: '5px 12px', background: '#0284c7', color: '#fff' }}
+              onClick={() => {
+                const chosen = selectedWeatherOutfit === 0
+                  ? 'Sơ Mi Lụa Habotai 115 GSM + Quần Suông Linen Mộc'
+                  : 'Áo Thun Mercerized Cotton Chống Ẩm + Blazer Linen Thô 1 Lớp';
+                const newCalEvent = {
+                  id: `ev-weather-${Date.now().toString().slice(-4)}`,
+                  title: `Outfit Thích Ứng Thời Tiết: ${chosen}`,
+                  date: 'Hôm nay',
+                  time: 'Cả ngày',
+                  occasion: 'Thời tiết độ ẩm 78% RH',
+                  outfit: chosen,
+                  weather: '31.5°C · Ẩm cao',
+                  vasReminder: false,
+                };
+                const nextEvents = [newCalEvent, ...fashionEvents];
+                setFashionEvents(nextEvents);
+                try {
+                  localStorage.setItem('nexora_fashion_events', JSON.stringify(nextEvents));
+                } catch {}
+                setWeatherScheduleNotice(`✓ Đã đưa "${chosen}" vào Lịch Trình Phong Cách Fashion Calendar hôm nay!`);
+              }}
+            >
+              <Calendar size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
+              Đưa Vào Lịch Trình Hôm Nay (+50 Xu Xanh)
+            </button>
+          </div>
         </div>
       </article>
 
