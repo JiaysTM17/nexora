@@ -47,6 +47,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [arLighting, setArLighting] = useState<'DAYLIGHT' | 'CANDLE' | 'SPOTLIGHT'>('DAYLIGHT');
   const [arMotion, setArMotion] = useState<'STILL' | 'BREEZE'>('BREEZE');
   const [arSnapshotSaved, setArSnapshotSaved] = useState(false);
+  const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const { user } = useUser();
 
   useEffect(() => {
@@ -185,7 +186,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
     }
   }
 
-  const currentImage = (p.images.find((i) => i.color === selectedColor) ?? p.images[0])?.url;
+  const currentImage = p?.images?.[selectedImgIdx]?.url || (p?.images.find((i) => i.color === selectedColor) ?? p?.images[0])?.url;
 
   return (
     <section className="section detail">
@@ -194,14 +195,45 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
       </Link>
       <div className="detail-grid">
         <div className="detail-image">
-          <img
-            src={currentImage}
-            alt={`${p.name}, màu ${selectedColor}`}
-            onError={(e) => {
-              const target = e.currentTarget as HTMLImageElement;
-              target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
-            }}
-          />
+          <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 2, background: 'var(--paper-subtle)' }}>
+            <img
+              src={currentImage}
+              alt={`${p.name}, màu ${selectedColor}`}
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80';
+              }}
+            />
+          </div>
+
+          {p.images && p.images.length > 1 && (
+            <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
+              {p.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedImgIdx(idx)}
+                  style={{
+                    width: 72,
+                    height: 92,
+                    padding: 0,
+                    border: selectedImgIdx === idx ? '2px solid var(--gold-dark)' : '1px solid var(--line)',
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    background: '#FAF8F5',
+                    cursor: 'pointer',
+                    opacity: selectedImgIdx === idx ? 1 : 0.65,
+                    transition: 'all 0.15s ease',
+                  }}
+                  title={`Xem góc nhìn ${idx + 1}`}
+                >
+                  <img src={img.url} alt={`Góc nhìn ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </button>
+              ))}
+            </div>
+          )}
+
           <div
             style={{
               marginTop: 12,
@@ -377,6 +409,8 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     setColor(c);
                     setSize('');
                     setNotice('');
+                    const matchIdx = p.images.findIndex((img) => img.color === c);
+                    if (matchIdx >= 0) setSelectedImgIdx(matchIdx);
                   }}
                 >
                   <i style={{ background: hex }} />
