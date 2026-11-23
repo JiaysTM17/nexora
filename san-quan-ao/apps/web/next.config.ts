@@ -4,5 +4,8 @@ const config: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    cpus: 2,
+  },
 };
 export default config;
