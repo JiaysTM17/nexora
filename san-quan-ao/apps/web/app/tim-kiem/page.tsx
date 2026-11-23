@@ -256,20 +256,20 @@ function SearchPage() {
       <div
         style={{
           margin: '0 0 16px',
-          padding: '12px 16px',
-          background: '#fdfbf7',
+          padding: '14px 18px',
+          background: '#FAF8F5',
           border: '1px solid var(--line)',
-          borderRadius: 6,
+          borderRadius: 2,
         }}
       >
-        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <Palette size={15} color="var(--gold-dark)" />
-            <strong style={{ fontSize: 12, color: '#9a3412' }}>
+            <strong style={{ fontSize: 12.5, color: 'var(--ink)' }}>
               Lọc Theo Sắc Thái Bảng Màu Tự Nhiên
             </strong>
           </div>
-          <span style={{ fontSize: 11, color: '#78350f' }}>
+          <span style={{ fontSize: 11, color: 'var(--gold-dark)' }}>
             Hòa sắc: <strong>{PALETTE_FAMILIES.find((p) => p.id === palette)?.name}</strong>
           </span>
         </div>
@@ -284,15 +284,16 @@ function SearchPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '4px 10px',
+                padding: '5px 12px',
                 borderRadius: 20,
-                fontSize: 11,
+                fontSize: 11.5,
                 cursor: 'pointer',
                 border: palette === p.id ? '1.5px solid var(--gold-dark)' : '1px solid var(--line)',
-                background: palette === p.id ? 'var(--line)' : '#fff',
-                color: palette === p.id ? '#7c2d12' : '#9a3412',
+                background: palette === p.id ? '#141413' : '#fff',
+                color: palette === p.id ? 'var(--gold-light)' : 'var(--ink)',
                 fontWeight: palette === p.id ? 700 : 500,
                 whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
               }}
             >
               <span
@@ -315,20 +316,20 @@ function SearchPage() {
       <div
         style={{
           margin: '0 0 28px',
-          padding: '12px 16px',
-          background: '#f8fafc',
-          border: '1px solid #cbd5e1',
-          borderRadius: 6,
+          padding: '14px 18px',
+          background: '#FFFFFF',
+          border: '1px solid var(--line)',
+          borderRadius: 2,
         }}
       >
-        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 8 }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Layers size={15} color="#0284c7" />
-            <strong style={{ fontSize: 12, color: '#0369a1' }}>
+            <Layers size={15} color="var(--gold-dark)" />
+            <strong style={{ fontSize: 12.5, color: 'var(--ink)' }}>
               Lọc Theo Định Lượng Sợi Dệt GSM
             </strong>
           </div>
-          <span style={{ fontSize: 11, color: '#0284c7' }}>
+          <span style={{ fontSize: 11, color: 'var(--gold-dark)' }}>
             Độ dày: <strong>{GSM_TIERS.find((g) => g.id === gsmTier)?.range}</strong>
           </span>
         </div>
@@ -343,19 +344,19 @@ function SearchPage() {
                 onClick={() => setGsmTier(g.id)}
                 style={{
                   textAlign: 'left',
-                  padding: '8px 10px',
-                  borderRadius: 4,
-                  fontSize: 11,
+                  padding: '10px 12px',
+                  borderRadius: 2,
+                  fontSize: 11.5,
                   cursor: 'pointer',
-                  border: isSelected ? '1.5px solid #0284c7' : '1px solid #e2e8f0',
-                  background: isSelected ? '#e0f2fe' : '#fff',
-                  color: isSelected ? '#0369a1' : '#334155',
+                  border: isSelected ? '1.5px solid var(--gold-dark)' : '1px solid var(--line)',
+                  background: isSelected ? '#FAF8F5' : '#fff',
+                  color: isSelected ? 'var(--ink)' : 'var(--muted)',
                   fontWeight: isSelected ? 700 : 400,
                   transition: 'all 0.15s ease',
                 }}
               >
-                <div style={{ fontWeight: 600 }}>{g.name}</div>
-                <small style={{ color: '#64748b', display: 'block', fontSize: 10, marginTop: 2 }}>{g.desc}</small>
+                <div style={{ fontWeight: 600, color: isSelected ? 'var(--gold-dark)' : 'var(--ink)' }}>{g.name}</div>
+                <small style={{ color: 'var(--muted)', display: 'block', fontSize: 10, marginTop: 2 }}>{g.desc}</small>
               </button>
             );
           })}

@@ -41,7 +41,7 @@ export default function OrderDetail() {
   const [reviewing, setReviewing] = useState<string | null>(null);
   const [returningShop, setReturningShop] = useState<string | null>(null);
   const [maskedPhone, setMaskedPhone] = useState(true);
-  // ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01: Online Arbitration Portal & 45-Day Escrow Dispute Freeze
+  // Online Arbitration Portal & 45-Day Escrow Dispute Freeze
   const [showDisputeSimulator, setShowDisputeSimulator] = useState(false);
   const [evidenceUploaded, setEvidenceUploaded] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
