@@ -945,6 +945,14 @@ export default function MixMatchPage() {
                     };
                     existing.unshift(card);
                     localStorage.setItem('nexora_saved_lookbooks', JSON.stringify(existing));
+                    if (user) {
+                      api('/vault/lookbook', 'POST', {
+                        id: card.id,
+                        title: card.title,
+                        items: [selectedTop, selectedBottom, selectedOuter].filter(Boolean),
+                        palette: lookbookTheme,
+                      }).catch(() => {});
+                    }
                     setLookbookSaved(true);
                   } catch {}
                 }}

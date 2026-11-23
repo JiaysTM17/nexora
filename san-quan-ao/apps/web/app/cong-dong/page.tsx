@@ -396,6 +396,16 @@ export default function Community() {
                   diff: Math.abs(targetSwapVal - mySwapVal),
                   createdAt: new Date().toISOString(),
                 }));
+                if (user) {
+                  api('/vault/swap', 'POST', {
+                    id: contractId,
+                    myItem: mySwapItem,
+                    myVal: mySwapVal,
+                    targetItem: targetSwapItem,
+                    targetVal: targetSwapVal,
+                    escrowLocked: true,
+                  }).catch(() => {});
+                }
               } catch {}
               setSwapProposed(true);
               setNotice(`✓ Đã tạo hợp đồng đổi đồ #${contractId}! Escrow trung gian đã kích hoạt và thông báo tới chủ nhân món đồ.`);

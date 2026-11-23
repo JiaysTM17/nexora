@@ -258,6 +258,16 @@ export default function VasCarePage() {
     setAtelierBookings(updated);
     try {
       localStorage.setItem('nexora_atelier_bookings', JSON.stringify(updated));
+      if (user) {
+        api('/vault/booking', 'POST', {
+          id: newBooking.id,
+          flagship: newBooking.hub,
+          service: newBooking.service,
+          date: newBooking.date,
+          timeSlot: newBooking.slot,
+          vipPass: newBooking.code,
+        }).catch(() => {});
+      }
     } catch {}
     setAtelierSuccess(`Đặt lịch hẹn VIP tại ${hubObj.name} thành công! Mã xác nhận của bạn: ${newBooking.code}.`);
     setTimeout(() => setAtelierSuccess(''), 6000);

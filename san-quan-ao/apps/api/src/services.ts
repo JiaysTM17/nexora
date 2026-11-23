@@ -216,3 +216,147 @@ export class AffiliateController {
     return { held, available, cancelled, items };
   }
 }
+
+@Controller('vault')
+@UseGuards(SignedIn)
+export class VaultController {
+  constructor(@Inject(Db) private db: Db) {}
+
+  @Get()
+  async getVault(@Req() req: Authed) {
+    const logs = await this.db.auditLog.findMany({
+      where: {
+        actorId: req.user.id,
+        action: { in: ['VAULT_PASSPORT', 'VAULT_LOOKBOOK', 'VAULT_BESPOKE', 'VAULT_BOOKING', 'VAULT_SWAP'] },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+
+    const passportLog = logs.find(l => l.action === 'VAULT_PASSPORT');
+    const lookbooks = logs.filter(l => l.action === 'VAULT_LOOKBOOK').map(l => l.data);
+    const bespoke = logs.filter(l => l.action === 'VAULT_BESPOKE').map(l => l.data);
+    const bookings = logs.filter(l => l.action === 'VAULT_BOOKING').map(l => l.data);
+    const swaps = logs.filter(l => l.action === 'VAULT_SWAP').map(l => l.data);
+
+    return {
+      passport: passportLog?.data ?? null,
+      lookbooks,
+      bespoke,
+      bookings,
+      swaps,
+    };
+  }
+
+  @Post('passport')
+  async savePassport(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      height: z.number().min(100).max(250).optional(),
+      weight: z.number().min(30).max(200).optional(),
+      chest: z.number().min(50).max(180).optional(),
+      waist: z.number().min(40).max(160).optional(),
+      hip: z.number().min(50).max(180).optional(),
+      fitPref: z.string().max(40).optional(),
+      footLength: z.number().optional(),
+      footWidth: z.number().optional(),
+      archType: z.string().max(40).optional(),
+    }).passthrough().parse(body);
+
+    const log = await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_PASSPORT',
+        entityId: req.user.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, passport: log.data };
+  }
+
+  @Post('lookbook')
+  async saveLookbook(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      title: z.string().min(1).max(200),
+      items: z.array(z.any()),
+      harmonyScore: z.number().optional(),
+      palette: z.string().optional(),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_LOOKBOOK',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, lookbook: data };
+  }
+
+  @Post('bespoke')
+  async saveBespoke(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      productName: z.string().min(1).max(200),
+      monogram: z.string().max(50),
+      lining: z.string().max(100),
+      notes: z.string().max(500).optional().default(''),
+      queuePos: z.number().default(7),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_BESPOKE',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, bespoke: data };
+  }
+
+  @Post('booking')
+  async saveBooking(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      flagship: z.string().max(150),
+      service: z.string().max(150),
+      date: z.string(),
+      timeSlot: z.string(),
+      vipPass: z.string(),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_BOOKING',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, booking: data };
+  }
+
+  @Post('swap')
+  async saveSwap(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      myItem: z.string(),
+      myVal: z.number(),
+      targetItem: z.string(),
+      targetVal: z.number(),
+      escrowLocked: z.boolean().default(true),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_SWAP',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, swap: data };
+  }
+}

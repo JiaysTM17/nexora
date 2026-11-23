@@ -1,5 +1,5 @@
 'use client';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Heart, LogOut, MapPin, Package, RefreshCw, ShieldCheck, Sparkles, UserCheck, Layers, Calendar, Sun, CloudRain, Share2, Check, Shirt, ExternalLink, Leaf, Trees, TreePine, Award, Compass, Palette, Footprints, BarChart3, Calculator, TrendingDown, Pin, Image, Clock, Plus, Trash2, CheckCircle2, Scissors, Archive, Droplets, Thermometer, Wind, Receipt, FileSpreadsheet, Download, Video, Camera } from 'lucide-react';
@@ -148,7 +148,22 @@ export default function AccountPage() {
   const [selectedWeatherOutfit, setSelectedWeatherOutfit] = useState<number>(0);
   const [weatherScheduleNotice, setWeatherScheduleNotice] = useState<string>('');
 
-  function savePassport(e: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (user) {
+      api('/vault')
+        .then((vault: any) => {
+          if (vault?.passport) {
+            setPassport((prev) => ({ ...prev, ...vault.passport }));
+            try {
+              localStorage.setItem('nexora_fashion_passport', JSON.stringify(vault.passport));
+            } catch {}
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user]);
+
+  async function savePassport(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const d = new FormData(e.currentTarget);
     const updated = {
@@ -163,7 +178,10 @@ export default function AccountPage() {
       archType: String(d.get('archType') || 'STANDARD'),
     };
     setPassport(updated);
-    localStorage.setItem('nexora_fashion_passport', JSON.stringify(updated));
+    try {
+      localStorage.setItem('nexora_fashion_passport', JSON.stringify(updated));
+      await api('/vault/passport', 'POST', updated);
+    } catch {}
     setPassportSaved(true);
     setTimeout(() => setPassportSaved(false), 3000);
   }

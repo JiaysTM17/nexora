@@ -2367,6 +2367,16 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                         const existing = JSON.parse(localStorage.getItem('nexora_bespoke_preorders') || '[]');
                         existing.unshift(newOrder);
                         localStorage.setItem('nexora_bespoke_preorders', JSON.stringify(existing));
+                        if (user) {
+                          api('/vault/bespoke', 'POST', {
+                            id: newOrder.id,
+                            productName: newOrder.productName,
+                            monogram: newOrder.monogram,
+                            lining: newOrder.lining,
+                            notes: newOrder.notes,
+                            queuePos: newOrder.queuePos,
+                          }).catch(() => {});
+                        }
                       } catch {}
                       setBespokeConfirmed(true);
                     }}
