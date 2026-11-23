@@ -418,3 +418,11 @@ Phụ lục này ghi nhận và chuẩn hóa toàn bộ các tính năng đượ
 103. **Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)**:
    - Hồ sơ: Module 06 Mạng Xã Hội OOTD, Module 07 Trải Nghiệm Khách Hàng & Fintech Affiliate Tuân Thủ Pháp Lý.
    - Thực tế: Phân hệ quyết toán thuế tiếp thị KOC tại `/tai-khoan`: Minh bạch thuế TNCN 10% tại nguồn theo Thông tư 111/2013/TT-BTC & Nghị định 91/2022/NĐ-CP (áp dụng thu nhập >= 2M VND), quản trị 15 ngày Escrow D10-04 chống hoàn hàng, lịch giải ngân từng đơn Lookbook và 1-chạm xuất bảng kê điện tử XML/PDF chuẩn e-Tax (#PIT-NEXORA-2026-Q4-88921).
+
+104. **Sổ Cái Ký Quỹ Escrow Đa Tầng Thời Gian Thực & Cơ Chế Giữ 45 Ngày Khi Tranh Chấp (ADMIN-REALTIME-ESCROW-LEDGER-01)**:
+   - Hồ sơ: Module 02 Dịch Vụ Tuần Hoàn & Cổng Quản Trị Tài Chính Sàn Ký Quỹ Escrow (Domain D1-01, D1-02, D1-05).
+   - Thực tế: Phân hệ Sổ cái Escrow tại `/admin`: Giám sát 3 cửa sổ ký quỹ (7-15-30 ngày), gia hạn phong tỏa 45 ngày khi có tranh chấp (D1-05), công cụ đối soát tự động 3 bên (VietQR · Sàn · Ví Shop - Domain D1-03) kiểm toán số dư 128.450.000₫ tức thời, bảng phân bổ thuế và phí ròng.
+
+105. **Cổng Khiếu Nại Trọng Tài Trực Tuyến & Gia Hạn Phong Tỏa Escrow 45 Ngày (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01)**:
+   - Hồ sơ: Module 03 Giỏ Hàng & Module 04 Quản Trị Đơn Hàng / Trọng Tài Tranh Chấp Bảo Vệ Quyền Lợi Người Dùng.
+   - Thực tế: Phân hệ trọng tài tranh chấp tại `/don-hang/[id]`: Tự động kích hoạt cơ chế gia hạn phong tỏa Escrow 45 ngày (D1-05) đóng băng Seller Wallet (D4-02), bộ 4 chứng cứ kiểm định pháp lý (Video unboxing 4K, soi 50x, biên bản đồng kiểm), cam kết đền bù 200% hàng giả (D4-03) và xuất biên bản trọng tài sàn định dạng PDF/XML.

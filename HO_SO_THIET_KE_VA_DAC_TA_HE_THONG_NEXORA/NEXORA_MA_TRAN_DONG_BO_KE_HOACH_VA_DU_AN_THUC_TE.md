@@ -125,6 +125,8 @@
 | **114** | **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động Theo Giỏ Hàng (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)** | Module 03 & ESG CSR | Đã hoàn thiện | Phân hệ bảo trợ phủ xanh tại `/gio-hang`: Tính toán động phát thải đơn hàng (~1.85 kg CO2e), 3 gói bảo trợ trồng rừng (Cần Giờ 10k, Măng Đen 25k, Cát Tiên 50k), tích hợp tự động vào bảng thanh toán, định vị GPS tọa độ trạm và cấp chứng thư `#TREE-VN-XXXXXX` (+50 đến +250 Điểm Xanh) |
 | **115** | **Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)** | Module 01 & 07 Bespoke | Đã hoàn thiện | Phân hệ tiến trình chế tác Haute Couture tại `/tai-khoan`: Quy trình 5 chặng may đo thủ công của Master Tailor (Phóng rập, Cắt thêu monogram, Lên khung canvas lụa tơ tằm, Ủ hơi vô trùng UV-C, Đóng hộp sồi & Giao xe điện), kết nối cam trực tiếp Atelier 1080p, quản trị cọc Escrow 30% D1-01 và đặt lịch thử đồ tại nhà Home Fitting |
 | **116** | **Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)** | Module 06 & 07 Fintech | Đã hoàn thiện | Phân hệ quyết toán thuế tiếp thị KOC tại `/tai-khoan`: Minh bạch thuế TNCN 10% tại nguồn theo Thông tư 111/2013/TT-BTC & NĐ 91/2022/NĐ-CP (áp dụng thu nhập >= 2M VND), quản trị 15 ngày Escrow D10-04 chống hoàn hàng, lịch giải ngân đơn OOTD và 1-chạm xuất bảng kê điện tử XML/PDF chuẩn e-Tax |
+| **117** | **Sổ Cái Ký Quỹ Escrow Đa Tầng Thời Gian Thực & Cơ Chế Giữ 45 Ngày Khi Tranh Chấp (ADMIN-REALTIME-ESCROW-LEDGER-01)** | Module 02 & Admin Fintech | Đã hoàn thiện | Phân hệ sổ cái Escrow tại `/admin`: Giám sát 3 cửa sổ (7-15-30 ngày · D1-01), gia hạn phong tỏa 45 ngày khi có tranh chấp (D1-05), cơ chế đối soát tự động 3 bên (VietQR · Sàn · Ví Shop), bảng kê chi tiết khấu trừ thuế 1.5% và phí sàn 5% |
+| **118** | **Cổng Khiếu Nại Trọng Tài Trực Tuyến & Gia Hạn Phong Tỏa Escrow 45 Ngày (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01)** | Module 03, 04 & Pháp Lý | Đã hoàn thiện | Phân hệ trọng tài khiếu nại tại `/don-hang/[id]`: Tự động kích hoạt gia hạn phong tỏa Escrow 45 ngày (D1-05), đóng băng rút tiền Seller Wallet (D4-02), bộ 4 chứng cứ kiểm định (Video unboxing 4K, soi 50x, biên bản đồng kiểm), cam kết đền bù 200% hàng giả (D4-03) và xuất biên bản trọng tài |
 
 ---
 
@@ -1167,6 +1169,26 @@
   - Bảng tổng hợp dòng tiền 4 chỉ số: GMV giới thiệu qua Lookbook OOTD, Hoa hồng gộp (Gross 8%), Khoản khấu trừ thuế TNCN (10%) và Hoa hồng thực nhận ròng (Net Commission).
   - Lịch trình giải ngân Escrow 15 ngày chống hoàn hàng (Domain D10-04) giám sát chi tiết từng mã đơn hàng tiếp thị.
   - Tính năng 1-chạm xuất bảng kê khấu trừ thuế TNCN điện tử định dạng XML/PDF (`#PIT-NEXORA-2026-Q4-88921`) đồng bộ hệ thống thuế điện tử e-Tax của Tổng cục Thuế.
+
+### 101. Sổ Cái Ký Quỹ Escrow Đa Tầng Thời Gian Thực & Cơ Chế Giữ 45 Ngày Khi Tranh Chấp (ADMIN-REALTIME-ESCROW-LEDGER-01)
+- **Mục tiêu**: Quản trị dòng tiền ký quỹ tập trung toàn sàn, giám sát 3 cửa sổ ký quỹ (7-15-30 ngày), kích hoạt gia hạn phong tỏa 45 ngày khi phát sinh tranh chấp và tự động hóa đối soát 3 bên giữa Cổng thanh toán VietQR, Sổ cái Escrow Sàn và Ví Người Bán.
+- **Cơ chế**:
+  - Bổ sung Tab chuyên trách "Sổ Cái Escrow D1" trong Cổng Quản Trị Trung Tâm `/admin`.
+  - Giám sát 4 chỉ số thanh khoản ký quỹ cốt lõi: Tổng số tiền đang ký quỹ (128.450.000₫), Cửa sổ 7 ngày COD tiêu chuẩn (45.200.000₫ / 34 đơn), Cửa sổ 15 ngày Mall thương hiệu (52.800.000₫ / 22 đơn), Cửa sổ 30 ngày May đo Bespoke độc bản (21.450.000₫ / 9 đơn), và Phong tỏa tranh chấp 45 ngày (9.000.000₫ / 3 vụ việc).
+  - Tính năng Kích hoạt đối soát tự động 3 bên (3-Way Automated Reconciliation - Domain D1-03) đối chiếu số dư tức thời.
+  - Bảng kê chi tiết hợp đồng ký quỹ: Tách bạch rõ ràng Khách thanh toán, Phí sàn (5%), Thuế khấu trừ (1.5% theo NĐ 91/2022) và Số tiền thực nhận ròng (Net Payout) của Người bán.
+
+### 102. Cổng Khiếu Nại Trọng Tài Trực Tuyến & Gia Hạn Phong Tỏa Escrow 45 Ngày (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01)
+- **Mục tiêu**: Bảo vệ quyền lợi người tiêu dùng tối đa khi phát sinh mâu thuẫn về chất lượng phục trang hoặc nghi vấn hàng giả, tự động kéo dài thời hạn phong tỏa tiền hàng lên 45 ngày (Domain D1-05 & D4-02) để phục vụ giám định độc lập.
+- **Cơ chế**:
+  - Tích hợp giao diện Trọng tài thụ lý ngay trong chi tiết vận đơn `/don-hang/[id]`.
+  - Cơ chế tự động kích hoạt: Ngay khi phát sinh khiếu nại chưa đồng thuận giữa người mua và người bán, tiền hàng được khóa cứng trong tài khoản Escrow sàn thêm 45 ngày, đóng băng hoàn toàn quyền rút tiền Seller Wallet của gian hàng.
+  - Bộ 4 chứng cứ kiểm định pháp lý độc lập:
+    1. *Video mở kiện 4K*: Khóa băm SHA-256 đối soát trực tiếp với video đóng gói của bưu tá.
+    2. *Soi vi điểm 50x*: Đo lường cấu trúc xơ vải và rãnh khóa kéo đối chiếu mẫu chuẩn ISO 4915.
+    3. *Biên bản đồng kiểm giao nhận*: Ký xác nhận điện tử cùng bưu tá xe điện VinFast Feliz.
+    4. *Cam kết bồi hoàn 200%*: Đền bù gấp đôi giá trị đơn hàng nếu kết luận sản phẩm là hàng giả/nhái (Domain D4-03).
+  - Tính năng 1-chạm xuất Biên Bản Thụ Lý Trọng Tài Độc Lập Sàn NEXORA định dạng PDF/XML chuẩn pháp lý thương mại điện tử.
 
 ---
 

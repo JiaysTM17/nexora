@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert, Zap } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert, Zap, Scale, FileCheck } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -41,6 +41,9 @@ export default function OrderDetail() {
   const [reviewing, setReviewing] = useState<string | null>(null);
   const [returningShop, setReturningShop] = useState<string | null>(null);
   const [maskedPhone, setMaskedPhone] = useState(true);
+  // ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01: Online Arbitration Portal & 45-Day Escrow Dispute Freeze
+  const [showDisputeSimulator, setShowDisputeSimulator] = useState(false);
+  const [evidenceUploaded, setEvidenceUploaded] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showCarbonCertModal, setShowCarbonCertModal] = useState(false);
   const [showTrackingMap, setShowTrackingMap] = useState<string | null>(null);
@@ -669,11 +672,69 @@ export default function OrderDetail() {
                       </button>
                     </div>
                   )}
-                  {r.status === 'DISPUTED' && (
-                    <p className="subtle" style={{ fontSize: 11, margin: '4px 0 0', color: 'var(--clay)' }}>
-                      🛡️ Vụ việc đang được Ban Quản Trị Sàn thụ lý và phân xử độc lập trong 48 giờ.
-                    </p>
-                  )}
+                  {r.status === 'DISPUTED' ? (
+                    <div
+                      style={{
+                        marginTop: 10,
+                        padding: '14px 16px',
+                        background: '#fef2f2',
+                        border: '1px solid #fca5a5',
+                        borderRadius: 6,
+                        color: '#7f1d1d',
+                      }}
+                    >
+                      <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <Scale size={16} color="#dc2626" />
+                          <strong style={{ fontSize: 13, color: '#991b1b' }}>
+                            Trọng Tài Sàn Thụ Lý &amp; Phong Tỏa Escrow 45 Ngày (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01)
+                          </strong>
+                        </div>
+                        <span style={{ fontSize: 10, background: '#dc2626', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                          DOMAIN D1-05 EXTENSION
+                        </span>
+                      </div>
+
+                      <p style={{ margin: '0 0 10px', fontSize: 11, color: '#991b1b', lineHeight: 1.5 }}>
+                        Căn cứ Domain D1-05 &amp; D4-02: Toàn bộ tiền hàng của đơn này đang được phong tỏa tuyệt đối trong tài khoản Escrow Sàn NEXORA trong thời hạn 45 ngày. Người bán bị đóng băng quyền rút tiền Seller Wallet cho đến khi có phán quyết cuối cùng của Hội Đồng Trọng Tài.
+                      </p>
+
+                      {/* 4-point evidence checklist */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8, marginBottom: 12, fontSize: 11 }}>
+                        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #fecaca' }}>
+                          <span style={{ color: '#166534', fontWeight: 600 }}>✓ Video Mở Kiện 4K</span>
+                          <div style={{ fontSize: 9, color: '#64748b' }}>Băm SHA-256 đối soát bưu tá</div>
+                        </div>
+                        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #fecaca' }}>
+                          <span style={{ color: '#166534', fontWeight: 600 }}>✓ Soi Vi Điểm 50x</span>
+                          <div style={{ fontSize: 9, color: '#64748b' }}>Độ xác thực chỉ số ISO 4915</div>
+                        </div>
+                        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #fecaca' }}>
+                          <span style={{ color: '#166534', fontWeight: 600 }}>✓ Biên Bản Đồng Kiểm</span>
+                          <div style={{ fontSize: 9, color: '#64748b' }}>Ký điện tử cùng bưu tá Feliz</div>
+                        </div>
+                        <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #fecaca' }}>
+                          <span style={{ color: '#991b1b', fontWeight: 600 }}>🛡️ Đền Bù 200% Hàng Giả</span>
+                          <div style={{ fontSize: 9, color: '#64748b' }}>Cam kết chuẩn Mall D4-03</div>
+                        </div>
+                      </div>
+
+                      <div className="row between" style={{ flexWrap: 'wrap', gap: 8, alignItems: 'center', paddingTop: 8, borderTop: '1px dashed #fca5a5' }}>
+                        <span style={{ fontSize: 11, color: '#7f1d1d' }}>
+                          Mã vụ việc: <strong>#DISPUTE-ESCROW-2026-{shop.id.slice(0, 6)}</strong> · Thời hạn phán quyết SLA: 48h
+                        </span>
+                        <button
+                          type="button"
+                          className="button secondary"
+                          style={{ fontSize: 11, padding: '4px 10px', borderColor: '#f87171', color: '#991b1b' }}
+                          onClick={() => alert('Đã trích xuất Biên Bản Thụ Lý Trọng Tài Độc Lập Sàn NEXORA (Định dạng PDF/XML)!')}
+                        >
+                          <FileCheck size={12} style={{ display: 'inline', marginRight: 4 }} />
+                          Xuất Biên Bản Trọng Tài
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>

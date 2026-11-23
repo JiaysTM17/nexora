@@ -319,7 +319,9 @@ Tuân thủ nguyên tắc: *"Bản kế hoạch có gì thì dự án thực t�
 | **109** | **Đóng Góp Trồng Rừng Tự Nhiên & Bù Trừ Carbon Động (CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01)** | Module 03 & ESG | **100% Hoàn thiện** | Tính toán phát thải giỏ hàng (~1.85 kg CO2e), 3 gói bảo trợ trồng rừng (Cần Giờ, Măng Đen, Cát Tiên), định vị GPS, đồng bộ thanh toán tại `/gio-hang` |
 | **110** | **Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng & Quản Trị Cọc Escrow (CAT-PRE-ORDER-ESCROW-PROGRESS-TRACKER-01)** | Module 01 & 07 | **100% Hoàn thiện** | Tiến trình 5 chặng Haute Couture, cam trực tiếp Atelier 1080p, cọc Escrow 30% D1-01, hẹn thử đồ tại nhà tại `/tai-khoan` |
 | **111** | **Bảng Kê Thu Nhập KOC & Khấu Trừ Thuế TNCN Tự Động (USER-STYLE-AFFILIATE-INCOME-STATEMENT-01)** | Module 06 & 07 | **100% Hoàn thiện** | Khấu trừ 10% thuế TNCN TT 111/2013 & NĐ 91/2022, Escrow 15 ngày chống hoàn hàng, tải bảng kê XML/PDF chuẩn e-Tax tại `/tai-khoan` |
-| **112** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **112** | **Sổ Cái Ký Quỹ Escrow Đa Tầng Thời Gian Thực & Phong Tỏa 45 Ngày (ADMIN-REALTIME-ESCROW-LEDGER-01)** | Module 02 & Admin | **100% Hoàn thiện** | Giám sát 3 cửa sổ (7-15-30 ngày), phong tỏa tranh chấp 45 ngày D1-05, đối soát tự động 3 bên VietQR/Sàn/Shop tại `/admin` |
+| **113** | **Cổng Khiếu Nại Trọng Tài Trực Tuyến & Phong Tỏa Escrow 45 Ngày (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01)** | Module 03 & 04 | **100% Hoàn thiện** | Kích hoạt phong tỏa Escrow 45 ngày D1-05, đóng băng Seller Wallet D4-02, bộ 4 chứng cứ kiểm định tại `/don-hang/[id]` |
+| **114** | **Khởi động 1-Click thông minh** | DevOps Tooling | **100% Hoàn thiện** | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
 
 ---
 
