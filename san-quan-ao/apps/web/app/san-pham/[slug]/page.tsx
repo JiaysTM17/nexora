@@ -2170,7 +2170,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     <strong style={{ color: '#16a34a' }}>Suất #{bespokeQueuePos} / 15 tuần này</strong>
                   </div>
                   <div className="row between">
-                    <span style={{ color: '#71717a' }}>Tiền cọc 30% (Escrow Sàn D1-01):</span>
+                    <span style={{ color: '#71717a' }}>Tiền cọc 30% (Escrow Sàn NEXORA):</span>
                     <strong style={{ color: 'var(--clay)' }}>{vnd(Math.round((variant?.price || p.variants[0]?.price || 0) * 0.3))}</strong>
                   </div>
                 </div>
@@ -2338,7 +2338,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     <strong>{vnd(variant?.price || p.variants[0]?.price || 0)}</strong>
                   </div>
                   <div className="row between" style={{ fontSize: 12, marginTop: 4 }}>
-                    <span style={{ color: '#b45309' }}>Tiền cọc giữ suất 30% (Escrow Sàn D1-01):</span>
+                    <span style={{ color: '#b45309' }}>Tiền cọc giữ suất 30% (Escrow Sàn NEXORA):</span>
                     <strong style={{ color: '#b45309', fontSize: 13 }}>
                       {vnd(Math.round((variant?.price || p.variants[0]?.price || 0) * 0.3))}
                     </strong>

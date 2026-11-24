@@ -668,7 +668,7 @@ export default function OrderDetail() {
                           }
                         }}
                       >
-                        ⚖️ Khiếu nại lên Trọng tài Sàn (RET-DISPUTE SLA 48h)
+                        ⚖️ Khiếu nại lên Hội Đồng Trọng Tài (SLA Phân Xử 48h)
                       </button>
                     </div>
                   )}
@@ -691,12 +691,12 @@ export default function OrderDetail() {
                           </strong>
                         </div>
                         <span style={{ fontSize: 10, background: '#dc2626', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
-                          DOMAIN D1-05 EXTENSION
+                          BẢO CHỨNG PHONG TỎA TRỌNG TÀI
                         </span>
                       </div>
 
                       <p style={{ margin: '0 0 10px', fontSize: 11, color: '#991b1b', lineHeight: 1.5 }}>
-                        Căn cứ Domain D1-05 &amp; D4-02: Toàn bộ tiền hàng của đơn này đang được phong tỏa tuyệt đối trong tài khoản Escrow Sàn NEXORA trong thời hạn 45 ngày. Người bán bị đóng băng quyền rút tiền Seller Wallet cho đến khi có phán quyết cuối cùng của Hội Đồng Trọng Tài.
+                        Quy chế bảo vệ quyền lợi độc quyền Atelier: Toàn bộ tiền hàng của đơn này đang được phong tỏa tuyệt đối trong tài khoản Escrow Sàn NEXORA trong thời hạn 45 ngày. Người bán bị đóng băng quyền rút tiền Seller Wallet cho đến khi có phán quyết công minh cuối cùng của Hội Đồng Trọng Tài.
                       </p>
 
                       {/* 4-point evidence checklist */}
@@ -792,7 +792,7 @@ export default function OrderDetail() {
             <h2>Kế hoạch Trả góp NEXORA PayLater (0% Lãi suất)</h2>
             <span className="badge" style={{ background: 'var(--gold-dark)', color: '#fff' }}>Đã kích hoạt</span>
           </div>
-          <p className="subtle" style={{ fontSize: 12 }}>Áp dụng theo đặc tả PAY-BNPL-MIDFLOW-05 · 3 kỳ thanh toán 0% phụ phí.</p>
+          <p className="subtle" style={{ fontSize: 12 }}>Chương trình đặc quyền Atelier PayLater · 3 kỳ thanh toán 0% lãi suất và 0% phụ phí.</p>
           <div className="table-wrap" style={{ marginTop: 10 }}>
             <table>
               <thead>

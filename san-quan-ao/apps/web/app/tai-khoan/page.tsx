@@ -1355,7 +1355,7 @@ export default function AccountPage() {
 
         {/* Cam kết Fit Guarantee */}
         <div style={{ padding: '10px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 6, fontSize: 11, color: '#065f46', lineHeight: 1.4 }}>
-          <strong>🛡️ Cam Kết Vừa Vặn 100% (Fit Guarantee Assurance):</strong> Nếu bất kỳ sản phẩm nào bạn nhận về có độ lệch &gt;2cm so với thông số Fashion Passport của bạn, bạn được đổi size tốc hành 24-48h tận nhà hoàn toàn 0đ qua dịch vụ <Link href="/don-hang" style={{ color: '#047857', fontWeight: 700, textDecoration: 'underline' }}>RET-QUICK-EXCHANGE-01</Link>.
+          <strong>🛡️ Cam Kết Vừa Vặn 100% (Fit Guarantee Assurance):</strong> Nếu bất kỳ sản phẩm nào bạn nhận về có độ lệch &gt;2cm so với thông số Fashion Passport của bạn, bạn được đổi size tốc hành 24-48h tận nhà hoàn toàn 0đ qua dịch vụ <Link href="/don-hang" style={{ color: '#047857', fontWeight: 700, textDecoration: 'underline' }}>Đổi Size Tốc Hành Atelier</Link>.
         </div>
 
         {/* Nhật Ký Bảo Dưỡng Sợi Dệt & Két Ngủ Đông Phục Trang */}
@@ -2136,15 +2136,15 @@ export default function AccountPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <div className="row between">
-                <span>• Đơn #NX-KOC-8891 (Áo Linen Normandy) · Hoa hồng ròng: 180.000₫</span>
+                <span>• Đơn #NX-PARTNER-8891 (Áo Linen Normandy) · Hoa hồng ròng: 180.000₫</span>
                 <span style={{ color: '#059669', fontWeight: 600 }}>Giải ngân ngày mai (Hết 15 ngày)</span>
               </div>
               <div className="row between">
-                <span>• Đơn #NX-KOC-8914 (Combo Lụa Bảo Lộc) · Hoa hồng ròng: 420.000₫</span>
+                <span>• Đơn #NX-PARTNER-8914 (Combo Lụa Bảo Lộc) · Hoa hồng ròng: 420.000₫</span>
                 <span style={{ color: '#d97706', fontWeight: 600 }}>Còn 5 ngày trong Escrow</span>
               </div>
               <div className="row between">
-                <span>• Đơn #NX-KOC-8952 (Blazer Sartorial) · Hoa hồng ròng: 650.000₫</span>
+                <span>• Đơn #NX-PARTNER-8952 (Blazer Sartorial) · Hoa hồng ròng: 650.000₫</span>
                 <span style={{ color: '#64748b' }}>Còn 11 ngày trong Escrow</span>
               </div>
             </div>
