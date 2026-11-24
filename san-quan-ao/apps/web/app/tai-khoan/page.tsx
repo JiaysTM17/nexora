@@ -289,7 +289,7 @@ export default function AccountPage() {
                   Tiến Trình Chế Tác Đo May Thủ Công 5 Chặng &amp; Cọc Escrow
                 </h2>
                 <p className="subtle" style={{ margin: '2px 0 0', fontSize: 11 }}>
-                  Chế tác may đo Haute Couture bởi Master Tailor Hoàng Nam · Bảo chứng ký quỹ Escrow Sàn D1-01
+                  Chế tác may đo Haute Couture bởi Master Tailor Hoàng Nam · Bảo chứng ký quỹ Escrow Sàn NEXORA
                 </p>
               </div>
             </div>
@@ -362,7 +362,7 @@ export default function AccountPage() {
                   <span>·</span>
                   <span>Lớp lót may đo: <strong>{bo.lining || 'Lụa Tơ Tằm Bảo Lộc'}</strong></span>
                   <span>·</span>
-                  <span>Trạng thái ký quỹ: <strong style={{ color: '#16a34a' }}>Bảo lưu Escrow Sàn D1-01 (#ESCROW-D101-{bo.id.slice(-4)})</strong></span>
+                  <span>Trạng thái ký quỹ: <strong style={{ color: '#16a34a' }}>Bảo lưu Escrow Sàn (#ESCROW-NX-{bo.id.slice(-4)})</strong></span>
                 </div>
 
                 {/* Interactive 5-Step Crafting Timeline */}
@@ -413,7 +413,7 @@ export default function AccountPage() {
                 <div className="row between" style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid #f1f5f9', flexWrap: 'wrap', gap: 10, fontSize: 11 }}>
                   <span style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <ShieldCheck size={14} color="#16a34a" />
-                    Cọc 30% được giữ trong tài khoản Escrow D1-01, chỉ giải ngân cho thợ khi bạn mặc thử vừa vặn tại nhà.
+                    Cọc 30% được giữ trong tài khoản Escrow Sàn NEXORA, chỉ giải ngân cho thợ khi bạn mặc thử vừa vặn tại nhà.
                   </span>
                   <button
                     type="button"

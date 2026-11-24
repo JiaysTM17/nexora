@@ -318,7 +318,7 @@ export default function Admin() {
         }}
         style={{ background: '#0284c7', color: '#fff' }}
       >
-        {reconciling ? 'Đang chạy đối soát 3 bên…' : 'Chạy Đối Soát Tự Động 3 Bên (D1-03)'}
+        {reconciling ? 'Đang chạy đối soát 3 bên…' : 'Chạy Đối Soát Tự Động 3 Bên'}
       </button>
     </div>
 
@@ -334,7 +334,7 @@ export default function Admin() {
         <strong style={{ color: '#0284c7' }}>128.450.000₫</strong>
       </div>
       <div>
-        <small>CỬA SỔ 7 NGÀY (COD D1-01)</small>
+        <small>CỬA SỔ 7 NGÀY (TIÊU CHUẨN COD)</small>
         <strong>45.200.000₫</strong>
         <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block' }}>34 đơn hàng tiêu chuẩn</span>
       </div>
@@ -375,7 +375,7 @@ export default function Admin() {
             {
               code: 'ORD-VN-9921',
               shop: 'NÉP Studio (Mall)',
-              window: '15 Ngày (Mall D1-01)',
+              window: '15 Ngày (Atelier Mall)',
               total: 1850000,
               fee: 92500,
               tax: 27750,
