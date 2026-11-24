@@ -43,7 +43,15 @@ export default function Community() {
       const savedPatron = localStorage.getItem('nexora_creator_patronage');
       if (savedPatron) setPatronHistory(JSON.parse(savedPatron));
     } catch {}
-  }, []);
+
+    if (user) {
+      api<{ patronages?: any[] }>('/vault').then(res => {
+        if (res?.patronages && Array.isArray(res.patronages) && res.patronages.length > 0) {
+          setPatronHistory(res.patronages);
+        }
+      }).catch(() => {});
+    }
+  }, [user]);
 
   function handleSendPatronage(e: FormEvent) {
     e.preventDefault();
@@ -59,6 +67,7 @@ export default function Community() {
     try {
       localStorage.setItem('nexora_creator_patronage', JSON.stringify(updated));
     } catch {}
+    void api('/vault/patronage', 'POST', entry).catch(() => {});
     setNotice(`✓ Bạn đã gửi bảo trợ ${vnd(patronAmount)} đến ${selectedCreator}! Đã cộng +20 Xu Xanh vào tài khoản của bạn.`);
     setPatronOpen(false);
   }

@@ -119,7 +119,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               }}
             >
               <div className="row between" style={{ marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid var(--line)' }}>
-                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Trung Tâm Thông Báo (NOTIF-CENTER-02)</strong>
+                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Trung Tâm Thông Báo Atelier</strong>
                 <button
                   type="button"
                   className="text-button"

@@ -227,7 +227,7 @@ export class VaultController {
     const logs = await this.db.auditLog.findMany({
       where: {
         actorId: req.user.id,
-        action: { in: ['VAULT_PASSPORT', 'VAULT_LOOKBOOK', 'VAULT_BESPOKE', 'VAULT_BOOKING', 'VAULT_SWAP', 'VAULT_CIRCULAR_PASSPORT'] },
+        action: { in: ['VAULT_PASSPORT', 'VAULT_LOOKBOOK', 'VAULT_BESPOKE', 'VAULT_BOOKING', 'VAULT_SWAP', 'VAULT_CIRCULAR_PASSPORT', 'VAULT_PATRONAGE'] },
       },
       orderBy: { createdAt: 'desc' },
       take: 100,
@@ -239,6 +239,7 @@ export class VaultController {
     const bookings = logs.filter(l => l.action === 'VAULT_BOOKING').map(l => l.data);
     const swaps = logs.filter(l => l.action === 'VAULT_SWAP').map(l => l.data);
     const circularPassports = logs.filter(l => l.action === 'VAULT_CIRCULAR_PASSPORT').map(l => l.data);
+    const patronages = logs.filter(l => l.action === 'VAULT_PATRONAGE').map(l => l.data);
 
     return {
       passport: passportLog?.data ?? null,
@@ -247,6 +248,7 @@ export class VaultController {
       bookings,
       swaps,
       circularPassports,
+      patronages,
     };
   }
 
@@ -379,5 +381,26 @@ export class VaultController {
       },
     });
     return { ok: true, passport: data };
+  }
+
+  @Post('patronage')
+  async savePatronage(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      creator: z.string().max(100),
+      amount: z.number().min(1000),
+      msg: z.string().max(500),
+      at: z.string().optional(),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_PATRONAGE',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, patronage: data };
   }
 }
