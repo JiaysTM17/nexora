@@ -223,6 +223,16 @@ export default function Community() {
               setWorkshopRsvp(true);
               try {
                 localStorage.setItem('nexora_workshop_rsvp', 'true');
+                if (user) {
+                  api('/vault/booking', 'POST', {
+                    id: 'WS-LAYER-26',
+                    flagship: 'Flagship Atelier 128 Hai Bà Trưng, Q.1',
+                    service: 'Workshop: Kỹ Thuật Layering Phục Trang May Đo Cao Cấp',
+                    date: 'Thứ 7, 28/11/2026',
+                    timeSlot: '14:30 - 17:00',
+                    vipPass: 'ATELIER-WS-LAYER-26',
+                  }).catch(() => {});
+                }
               } catch {}
               setNotice('✓ Đã đăng ký giữ chỗ Workshop thành công! Mã vé mời VIP đã gửi vào ứng dụng và cộng +200 Điểm Xanh.');
             }}

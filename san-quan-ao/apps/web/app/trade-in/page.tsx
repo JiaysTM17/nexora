@@ -52,13 +52,25 @@ export default function TradeInPage() {
   function handleSchedulePickup(e: FormEvent) {
     e.preventDefault();
     setPickupScheduled(true);
+    const pickupData = {
+      slot: pickupSlot,
+      securityBag,
+      address: pickupAddress,
+      time: new Date().toISOString(),
+    };
     try {
-      localStorage.setItem('nexora_tradein_pickup', JSON.stringify({
-        slot: pickupSlot,
-        securityBag,
-        address: pickupAddress,
-        time: new Date().toISOString(),
-      }));
+      localStorage.setItem('nexora_tradein_pickup', JSON.stringify(pickupData));
+      if (user) {
+        const slotLabel = pickupSlot === 'MORNING' ? 'Buổi sáng (09:00 - 12:00)' : pickupSlot === 'AFTERNOON' ? 'Buổi chiều (14:00 - 17:00)' : 'Buổi tối (18:00 - 20:00)';
+        api('/vault/booking', 'POST', {
+          id: `PICKUP-${Date.now().toString().slice(-6)}`,
+          flagship: 'Bưu tá VinFast Green thu gom tận nơi',
+          service: 'Thu cũ đổi mới Trade-In (Túi niêm phong 1 chiều)',
+          date: new Date().toLocaleDateString('vi-VN'),
+          timeSlot: slotLabel,
+          vipPass: `TRADEIN-PICKUP-${Math.floor(1000 + Math.random() * 9000)}`,
+        }).catch(() => {});
+      }
     } catch {}
     setSuccess('✓ Đã đặt lịch bưu tá VinFast Green đến nhận đồ cũ niêm phong tận nhà thành công!');
   }

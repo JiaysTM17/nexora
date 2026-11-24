@@ -2358,6 +2358,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                         variant: `${selectedColor || 'Mặc định'} · Size ${size || 'Theo Passport'}`,
                         monogram: bespokeMonogram,
                         lining: bespokeLining,
+                        notes: bespokeNotes,
                         deposit: Math.round((variant?.price || p.variants[0]?.price || 0) * 0.3),
                         queuePos: bespokeQueuePos,
                         createdAt: new Date().toLocaleDateString('vi-VN'),
