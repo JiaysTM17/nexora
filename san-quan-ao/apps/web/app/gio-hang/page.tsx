@@ -56,7 +56,7 @@ export default function Cart() {
   });
   const [carbonOffsetActive, setCarbonOffsetActive] = useState(false);
   const [offsetCertCode, setOffsetCertCode] = useState('');
-  // CART-DYNAMIC-CARBON-OFFSET-PLEDGE-01: Dynamic Micro-Reforestation Contribution & Live Carbon Offset Selector
+  // Dynamic Micro-Reforestation Contribution & Live Carbon Offset Selector
   const [reforestPledgeActive, setReforestPledgeActive] = useState(true);
   const [reforestTier, setReforestTier] = useState<'TIER1' | 'TIER2' | 'TIER3'>('TIER2');
   const [reforestCertCode, setReforestCertCode] = useState(() => {

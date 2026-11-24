@@ -715,7 +715,7 @@ export default function OrderDetail() {
                         </div>
                         <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #fecaca' }}>
                           <span style={{ color: '#991b1b', fontWeight: 600 }}>🛡️ Đền Bù 200% Hàng Giả</span>
-                          <div style={{ fontSize: 9, color: '#64748b' }}>Cam kết chuẩn Mall D4-03</div>
+                          <div style={{ fontSize: 9, color: '#64748b' }}>Cam kết chuẩn Atelier Mall (Đổi trả 15 ngày)</div>
                         </div>
                       </div>
 

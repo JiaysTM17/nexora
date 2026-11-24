@@ -50,9 +50,6 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
   else if (priceRange === 'over-2m') queryUrl += `&minPrice=2000000`;
 
   const { data, loading, error } = useResource<ProductsResult>(queryUrl);
-  if (!q && !category && !priceRange && !isMall && (!palette || palette === 'ALL') && (!gsmTier || gsmTier === 'ALL')) {
-    return <p style={{ color: 'var(--muted)', margin: '60px auto', textAlign: 'center' }}>Nhập từ khóa hoặc chọn bộ lọc để tìm kiếm sản phẩm.</p>;
-  }
   if (loading) return <Loading />;
   if (error) return <p style={{ color: 'var(--muted)' }}>Không thể tải kết quả. Vui lòng thử lại.</p>;
 
@@ -66,6 +63,8 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
     const gKws = GSM_KEYWORDS[gsmTier];
     items = items.filter(p => gKws.some(kw => p.name.toLowerCase().includes(kw) || p.material.toLowerCase().includes(kw)));
   }
+
+  const hasFilter = Boolean(q || category || priceRange || isMall || (palette && palette !== 'ALL') || (gsmTier && gsmTier !== 'ALL'));
 
   if (!items.length) {
     return (
@@ -81,7 +80,11 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
     <>
       <div className="row between" style={{ marginBottom: 20 }}>
         <p style={{ fontSize: 11, color: 'var(--muted)', margin: 0 }}>
-          Tìm thấy <strong>{items.length}</strong> sản phẩm phù hợp {palette && palette !== 'ALL' ? `(Sắc thái: ${PALETTE_FAMILIES.find(p => p.id === palette)?.name})` : ''}
+          {hasFilter ? (
+            <>Tìm thấy <strong>{items.length}</strong> sản phẩm phù hợp {palette && palette !== 'ALL' ? `(Sắc thái: ${PALETTE_FAMILIES.find(p => p.id === palette)?.name})` : ''}</>
+          ) : (
+            <>Bộ sưu tập tuyển chọn Atelier (<strong>{items.length}</strong> thiết kế độc bản)</>
+          )}
         </p>
         {palette && palette !== 'ALL' && (
           <span style={{ fontSize: 10, background: '#EEF2FF', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
