@@ -240,6 +240,9 @@ export class VaultController {
     const swaps = logs.filter(l => l.action === 'VAULT_SWAP').map(l => l.data);
     const circularPassports = logs.filter(l => l.action === 'VAULT_CIRCULAR_PASSPORT').map(l => l.data);
     const patronages = logs.filter(l => l.action === 'VAULT_PATRONAGE').map(l => l.data);
+    const events = logs.filter(l => l.action === 'VAULT_EVENT').map(l => l.data);
+    const moodboards = logs.filter(l => l.action === 'VAULT_MOODBOARD').map(l => l.data);
+    const hibernations = logs.filter(l => l.action === 'VAULT_HIBERNATION').map(l => l.data);
 
     return {
       passport: passportLog?.data ?? null,
@@ -249,6 +252,9 @@ export class VaultController {
       swaps,
       circularPassports,
       patronages,
+      events,
+      moodboards,
+      hibernations,
     };
   }
 
@@ -402,5 +408,72 @@ export class VaultController {
       },
     });
     return { ok: true, patronage: data };
+  }
+
+  @Post('event')
+  async saveEvent(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      title: z.string().min(1).max(200),
+      date: z.string().max(100),
+      time: z.string().max(50),
+      occasion: z.string().max(200),
+      outfit: z.string().max(500),
+      weather: z.string().max(200).optional(),
+      vasReminder: z.boolean().default(false),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_EVENT',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, event: data };
+  }
+
+  @Post('moodboard')
+  async saveMoodboard(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      title: z.string().min(1).max(200),
+      palette: z.string().max(50),
+      note: z.string().max(500),
+      tag: z.string().max(100),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_MOODBOARD',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, pin: data };
+  }
+
+  @Post('hibernation')
+  async saveHibernation(@Req() req: Authed, @Body() body: unknown) {
+    const data = z.object({
+      id: z.string().default(() => randomUUID()),
+      item: z.string().min(1).max(200),
+      duration: z.string().max(100),
+      fee: z.number().min(0),
+      code: z.string().max(100),
+      date: z.string().max(100),
+    }).passthrough().parse(body);
+
+    await this.db.auditLog.create({
+      data: {
+        actorId: req.user.id,
+        action: 'VAULT_HIBERNATION',
+        entityId: data.id,
+        data: data as any,
+      },
+    });
+    return { ok: true, hibernation: data };
   }
 }

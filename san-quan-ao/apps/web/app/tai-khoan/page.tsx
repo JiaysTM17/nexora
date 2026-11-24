@@ -164,6 +164,24 @@ export default function AccountPage() {
               return combined;
             });
           }
+          if (vault?.events && Array.isArray(vault.events) && vault.events.length > 0) {
+            setFashionEvents((prev) => {
+              const combined = [...vault.events, ...prev.filter(p => !vault.events.some((v: any) => v.id === p.id))];
+              return combined;
+            });
+          }
+          if (vault?.moodboards && Array.isArray(vault.moodboards) && vault.moodboards.length > 0) {
+            setMoodboardPins((prev) => {
+              const combined = [...vault.moodboards, ...prev.filter(p => !vault.moodboards.some((v: any) => v.id === p.id))];
+              return combined;
+            });
+          }
+          if (vault?.hibernations && Array.isArray(vault.hibernations) && vault.hibernations.length > 0) {
+            setHibernationBooked((prev) => {
+              const combined = [...vault.hibernations, ...prev.filter(p => !vault.hibernations.some((v: any) => v.id === p.id))];
+              return combined;
+            });
+          }
         })
         .catch(() => {});
     }
@@ -1453,6 +1471,7 @@ export default function AccountPage() {
                     setHibernationBooked(updated);
                     try {
                       localStorage.setItem('nexora_garment_hibernation', JSON.stringify(updated));
+                      api('/vault/hibernation', 'POST', newEntry).catch(() => {});
                     } catch {}
                     setHibernationOpen(false);
                   }}
@@ -1652,6 +1671,7 @@ export default function AccountPage() {
               setMoodboardPins(updated);
               try {
                 localStorage.setItem('nexora_style_moodboards', JSON.stringify(updated));
+                api('/vault/moodboard', 'POST', newPin).catch(() => {});
               } catch {}
               setNewPinTitle('');
               setNewPinNote('');
@@ -1807,6 +1827,7 @@ export default function AccountPage() {
               setFashionEvents(updated);
               try {
                 localStorage.setItem('nexora_fashion_events', JSON.stringify(updated));
+                api('/vault/event', 'POST', newEv).catch(() => {});
               } catch {}
               setNewEventTitle('');
               setAddingEvent(false);
