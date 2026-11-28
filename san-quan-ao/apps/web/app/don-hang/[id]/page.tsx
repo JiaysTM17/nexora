@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
-import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert, Zap, Scale, FileCheck } from 'lucide-react';
+import { ArrowLeft, MapPin, ShieldCheck, FileText, Truck, KeyRound, PackageCheck, CheckCircle2, Clock, Leaf, Printer, Download, CheckCircle, ExternalLink, QrCode, Navigation, PhoneCall, MessageSquare, Compass, X, RotateCcw, Sparkles, Star, ThumbsUp, Coffee, CloudRain, Umbrella, Wind, AlertTriangle, ShieldAlert, Zap, Scale, FileCheck, Award } from 'lucide-react';
 import { ORDER_LABELS } from '@mac/contracts';
 import { api, Order, ReturnRequest, useResource, vnd } from '../../api';
 import { Empty, Loading, Notice } from '../../ui';
@@ -44,6 +44,8 @@ export default function OrderDetail() {
   // Online Arbitration Portal & 45-Day Escrow Dispute Freeze
   const [showDisputeSimulator, setShowDisputeSimulator] = useState(false);
   const [evidenceUploaded, setEvidenceUploaded] = useState(false);
+  const [disputeReturnId, setDisputeReturnId] = useState<string | null>(null);
+  const [disputeReason, setDisputeReason] = useState<string>('');
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [showCarbonCertModal, setShowCarbonCertModal] = useState(false);
   const [showTrackingMap, setShowTrackingMap] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export default function OrderDetail() {
   const [ecoMethod, setEcoMethod] = useState<'SHIPPER' | 'BOUTIQUE'>('SHIPPER');
   const [ecoCondition, setEcoCondition] = useState<'INTACT' | 'SLIGHT_CREASE' | 'DAMAGED'>('INTACT');
   const [courierRating, setCourierRating] = useState<number>(5);
-  const [courierTags, setCourierTags] = useState<string[]>(['⚡ Giao đúng giờ hẹn', '👗 Bảo quản form trang phục cẩn thận']);
+  const [courierTags, setCourierTags] = useState<string[]>(['Giao đúng giờ hẹn', 'Bảo quản phom trang phục cẩn thận']);
   const [courierTip, setCourierTip] = useState<number>(10000);
   const [courierComment, setCourierComment] = useState<string>('');
   const [courierFeedbackDone, setCourierFeedbackDone] = useState<boolean>(false);
@@ -63,6 +65,34 @@ export default function OrderDetail() {
   const [weatherRescheduledSlot, setWeatherRescheduledSlot] = useState<string | null>(null);
   const [showGreenTelemetry, setShowGreenTelemetry] = useState<boolean>(false);
   const [greenPassportClaimed, setGreenPassportClaimed] = useState<boolean>(false);
+  const [showCraftCertModal, setShowCraftCertModal] = useState<boolean>(false);
+  const [craftCertCopied, setCraftCertCopied] = useState<boolean>(false);
+  const [showPassportModal, setShowPassportModal] = useState<boolean>(false);
+  const [selectedPassportItem, setSelectedPassportItem] = useState<{
+    id: string;
+    name: string;
+    shopName: string;
+    code: string;
+  } | null>(null);
+  const [itemPassportData, setItemPassportData] = useState<any>(null);
+  const [itemPassportLoading, setItemPassportLoading] = useState<boolean>(false);
+
+  async function openPassportModal(productId: string, name: string, shopName: string) {
+    const code = `NX-DPP-${productId.slice(0, 8).toUpperCase()}-SHA256`;
+    setSelectedPassportItem({ id: productId, name, shopName, code });
+    setShowPassportModal(true);
+    setItemPassportLoading(true);
+    try {
+      const res = await api<{ ok: boolean; passport: any }>(`/products/${productId}/passport`);
+      if (res.ok && res.passport) {
+        setItemPassportData(res.passport);
+      }
+    } catch {
+      // Keep fallback
+    } finally {
+      setItemPassportLoading(false);
+    }
+  }
 
   useEffect(() => {
     try {
@@ -89,6 +119,26 @@ export default function OrderDetail() {
       }
     } catch {}
   }, [id]);
+
+  const [paymentRefNumber, setPaymentRefNumber] = useState('');
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [confirmingPayment, setConfirmingPayment] = useState(false);
+
+  async function handleConfirmPayment(e: FormEvent) {
+    e.preventDefault();
+    if (!paymentRefNumber.trim()) return;
+    setConfirmingPayment(true);
+    setNotice('');
+    try {
+      await api(`/orders/${id}/confirm-payment`, 'POST', { referenceNumber: paymentRefNumber.trim() });
+      setPaymentConfirmed(true);
+      setSuccess('✓ Đã ghi nhận mã giao dịch chuyển khoản! Hệ thống ký quỹ Escrow đang đối soát tự động.');
+    } catch (err) {
+      setNotice((err as Error).message);
+    } finally {
+      setConfirmingPayment(false);
+    }
+  }
 
   function handleCourierFeedback(e: FormEvent) {
     e.preventDefault();
@@ -221,6 +271,92 @@ export default function OrderDetail() {
       </div>
       {notice && <Notice error>{notice}</Notice>}
       {success && <Notice>{success}</Notice>}
+
+      {/* Khung Thông Tin Thanh Toán & Bảo Chứng Escrow Chuyên Sâu */}
+      <div className="panel" style={{ marginBottom: 24, background: order.paymentMethod === 'VIETQR' ? '#FAF8F5' : '#fff', border: order.paymentMethod === 'VIETQR' ? '1px solid var(--gold-dark)' : '1px solid var(--line)' }}>
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <p className="eyebrow" style={{ margin: 0, color: 'var(--gold-dark)' }}>
+            <ShieldCheck size={14} style={{ display: 'inline', marginRight: 4, verticalAlign: -2 }} />
+            PHƯƠNG THỨC THANH TOÁN &amp; BẢO CHỨNG ESCROW
+          </p>
+          <span style={{ fontSize: 10, background: 'var(--gold-dark)', color: '#fff', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+            {order.paymentMethod === 'VIETQR' ? 'VIETQR NAPAS 24/7' : order.paymentMethod === 'BNPL' ? 'PAYLATER 0%' : 'COD ĐỒNG KIỂM'}
+          </span>
+        </div>
+
+        {order.paymentMethod === 'VIETQR' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, alignItems: 'center' }}>
+            <div style={{ textAlign: 'center', background: '#fff', padding: 14, borderRadius: 4, border: '1px solid var(--line)' }}>
+              <img
+                src={order.vietQr?.quickLink ?? `https://img.vietqr.io/image/970422-999988886666-compact2.png?amount=${order.total}&addInfo=${order.code}&accountName=NEXORA%20ESCROW`}
+                alt="VietQR Escrow"
+                style={{ width: 180, height: 180, objectFit: 'contain', margin: '0 auto', display: 'block' }}
+              />
+              <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block', marginTop: 6 }}>
+                Chuẩn EMVCo · CRC-16: <code style={{ fontWeight: 700, color: 'var(--ink)' }}>{order.vietQr?.crc16 ?? 'C4A8'}</code>
+              </span>
+            </div>
+            <div>
+              <strong style={{ fontSize: 13, color: 'var(--ink)', display: 'block', marginBottom: 6 }}>
+                Tài Khoản Ký Quỹ Trung Gian NEXORA Escrow:
+              </strong>
+              <div style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--ink)' }}>
+                <div>• Ngân hàng: <strong>MBBank (Ngân Hàng Quân Đội)</strong></div>
+                <div>• Số tài khoản: <code style={{ fontWeight: 700, fontSize: 13 }}>999988886666</code></div>
+                <div>• Chủ tài khoản: <strong>CÔNG TY CP NEXORA ATELIER ESCROW</strong></div>
+                <div>• Số tiền: <strong style={{ color: 'var(--gold-dark)', fontSize: 13 }}>{vnd(order.total)}</strong></div>
+                <div>• Nội dung chuyển khoản: <code style={{ color: 'var(--gold-dark)', fontWeight: 700, fontSize: 13 }}>{order.code}</code></div>
+              </div>
+
+              {!paymentConfirmed ? (
+                <form onSubmit={handleConfirmPayment} style={{ marginTop: 12, display: 'flex', gap: 6 }}>
+                  <input
+                    placeholder="Nhập mã giao dịch / FT ngân hàng..."
+                    value={paymentRefNumber}
+                    onChange={e => setPaymentRefNumber(e.target.value)}
+                    required
+                    style={{ fontSize: 11, padding: '6px 10px', border: '1px solid var(--line)', borderRadius: 2, flexGrow: 1 }}
+                  />
+                  <button type="submit" className="button" disabled={confirmingPayment} style={{ fontSize: 11, padding: '6px 12px', whiteSpace: 'nowrap' }}>
+                    {confirmingPayment ? 'Đang xác nhận…' : 'Xác Nhận Đã CK'}
+                  </button>
+                </form>
+              ) : (
+                <div style={{ marginTop: 10, padding: '8px 10px', background: '#dcfce7', color: '#166534', borderRadius: 2, fontSize: 11, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle2 size={14} /> Đã ghi nhận mã chuyển khoản: {paymentRefNumber}. Tiền được bảo chứng an toàn trong két Escrow.
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {order.paymentMethod === 'BNPL' && (
+          <div style={{ fontSize: 12, lineHeight: 1.6 }}>
+            <p style={{ margin: '0 0 8px' }}>Chương trình trả góp <strong>NEXORA PayLater 0% lãi suất</strong> (3 kỳ thanh toán):</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+              <div style={{ background: '#fff', padding: 8, borderRadius: 2, border: '1px solid var(--line)' }}>
+                <span className="subtle" style={{ fontSize: 10 }}>Kỳ 1 (Lúc đặt):</span><br />
+                <strong>{vnd(Math.round(order.total / 3))}</strong> · <span style={{ color: '#16a34a' }}>Đã duyệt bảo lãnh</span>
+              </div>
+              <div style={{ background: '#fff', padding: 8, borderRadius: 2, border: '1px solid var(--line)' }}>
+                <span className="subtle" style={{ fontSize: 10 }}>Kỳ 2 (Sau 30 ngày):</span><br />
+                <strong>{vnd(Math.round(order.total / 3))}</strong> · <span className="subtle">Chờ thanh toán</span>
+              </div>
+              <div style={{ background: '#fff', padding: 8, borderRadius: 2, border: '1px solid var(--line)' }}>
+                <span className="subtle" style={{ fontSize: 10 }}>Kỳ 3 (Sau 60 ngày):</span><br />
+                <strong>{vnd(order.total - 2 * Math.round(order.total / 3))}</strong> · <span className="subtle">Chờ thanh toán</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {order.paymentMethod === 'COD' && (
+          <div style={{ fontSize: 12, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <ShieldCheck size={16} color="var(--gold-dark)" />
+            <span>Thanh toán tiền mặt <strong>{vnd(order.total)}</strong> cho bưu tá khi nhận kiện hàng. Áp dụng chính sách đồng kiểm ngoại quan.</span>
+          </div>
+        )}
+      </div>
       {address && (
         <div className="panel" style={{ marginBottom: 24 }}>
           <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
@@ -246,8 +382,13 @@ export default function OrderDetail() {
           <p style={{ margin: '4px 0 0', color: 'var(--muted)', fontSize: 13 }}>
             {address.line}, {address.province}
           </p>
-          {((address as any).deliverySlot || (address as any).ecoPackaging) && (
+          {((address as any).deliverySlot || (address as any).ecoPackaging || order.deliveryEta) && (
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--line)', display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', fontSize: 11 }}>
+              {order.deliveryEta && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f5f0e8', padding: '3px 8px', borderRadius: 3, color: 'var(--ink)' }}>
+                  <Truck size={12} color="var(--gold-dark)" /> Dự kiến giao: <strong>{order.deliveryEta.deliveryDateFrom} - {order.deliveryEta.deliveryDateTo}</strong> ({order.deliveryEta.deliverySlotWindow})
+                </span>
+              )}
               {(address as any).deliverySlot && (
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f5f0e8', padding: '3px 8px', borderRadius: 3, color: 'var(--ink)' }}>
                   <Clock size={12} color="var(--gold-dark)" /> Khung giờ hẹn: <strong>{SLOT_LABELS[(address as any).deliverySlot] ?? (address as any).deliverySlot}</strong>
@@ -318,6 +459,28 @@ export default function OrderDetail() {
                   <div className="grow">
                     <strong>{item.snapshot.name}</strong>
                     <p>{item.snapshot.color} / {item.snapshot.size} · SL {item.quantity}</p>
+                    <div style={{ marginTop: 4, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        style={{
+                          fontSize: 10.5,
+                          padding: '2px 8px',
+                          background: '#f8faf9',
+                          border: '1px solid #10b981',
+                          color: '#065f46',
+                          borderRadius: 2,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          fontWeight: 600,
+                        }}
+                        onClick={() => openPassportModal((item as any).productId || item.id, item.snapshot.name, shop.shop?.name || 'Atelier')}
+                      >
+                        <Award size={11} color="#059669" />
+                        Chứng Thư Xuất Xứ & DPP →
+                      </button>
+                    </div>
                     {shop.status === 'DELIVERED' && (
                       reviewed ? (
                         <span className="subtle" style={{ fontSize: 11 }}>Đã đánh giá {'★'.repeat(item.reviews![0].rating)}</span>
@@ -385,8 +548,8 @@ export default function OrderDetail() {
                 </span>
               </div>
               <div style={{ marginTop: 8, padding: '8px 12px', background: '#fff', borderRadius: 2, border: '1px solid var(--line)', fontSize: 11 }}>
-                <strong style={{ display: 'block', marginBottom: 4, color: '#1e293b' }}>
-                  ⚖ Nhật ký Biến Thiên Cân Nặng 3 Trạm:
+                <strong style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, color: '#1e293b' }}>
+                  <Scale size={13} color="#475569" /> Nhật ký biến thiên cân nặng 3 trạm:
                 </strong>
                 <div className="row between" style={{ color: 'var(--muted)', fontSize: 11 }}>
                   <span>Trạm 1 (Xuất kho): <strong>450g</strong></span>
@@ -415,9 +578,44 @@ export default function OrderDetail() {
                     fontWeight: 600,
                   }}
                 >
-                  <Navigation size={13} color="#38bdf8" /> 📍 Xem Lộ Trình Bưu Tá Trực Tuyến
+                  <Navigation size={13} color="#38bdf8" /> Xem lộ trình bưu tá trực tuyến
                 </button>
               </div>
+
+              {shop.status === 'SHIPPED' && (
+                <div style={{ marginTop: 12, padding: '12px 14px', background: '#ecfdf5', border: '1.5px solid #10b981', borderRadius: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                  <div>
+                    <strong style={{ fontSize: 13, color: '#065f46', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <CheckCircle2 size={16} /> Đã Nhận Hàng Đồng Kiểm Thành Công?
+                    </strong>
+                    <p style={{ margin: '2px 0 0', fontSize: 11, color: '#047857' }}>
+                      Xác nhận sau khi bưu tá giao tận tay và đồng kiểm ngoại quan. Bạn sẽ được tích lũy +100 Điểm Xanh.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="button"
+                    disabled={busy === `confirm:${shop.id}`}
+                    onClick={async () => {
+                      setBusy(`confirm:${shop.id}`);
+                      setNotice('');
+                      setSuccess('');
+                      try {
+                        await api(`/orders/shops/${shop.id}/confirm-receipt`, 'POST');
+                        setSuccess('✓ Đã xác nhận nhận hàng đồng kiểm thành công! Đã mở quyền viết đánh giá sao & tích lũy +100 Điểm Xanh.');
+                        reload();
+                      } catch (err) {
+                        setNotice((err as Error).message);
+                      } finally {
+                        setBusy('');
+                      }
+                    }}
+                    style={{ background: '#059669', borderColor: '#047857', fontSize: 12, padding: '7px 16px', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
+                  >
+                    {busy === `confirm:${shop.id}` ? 'Đang xử lý…' : 'Xác Nhận Đã Nhận Hàng'}
+                  </button>
+                </div>
+              )}
 
               {/* Cảnh Báo Thời Tiết & Điều Phối Lộ Trình Thông Minh */}
               <div
@@ -437,7 +635,7 @@ export default function OrderDetail() {
                     <span>Cảnh Báo Thời Tiết &amp; Điều Phối Lộ Trình Thông Minh</span>
                   </div>
                   <span style={{ fontSize: 10, background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: 10, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                    <Wind size={11} /> ⛈️ ÁP THẤP NHIỆT ĐỚI · CẤP 1
+                    <Wind size={11} /> Áp thấp nhiệt đới · Cấp 1
                   </span>
                 </div>
 
@@ -476,7 +674,7 @@ export default function OrderDetail() {
                     type="button"
                     onClick={() => {
                       setWeatherMsgSent(true);
-                      setSuccess('✓ Đã chuyển lời nhắn động viên ấm áp: "Cứ thong thả giữ an toàn anh nhé!" đến bưu tá.');
+                      setSuccess('Đã chuyển lời nhắn động viên ấm áp: "Cứ thong thả giữ an toàn anh nhé!" đến bưu tá.');
                       try {
                         if (id) {
                           localStorage.setItem(`nexora_weather_reroute_${id}`, JSON.stringify({ msgSent: true, rescheduledSlot: weatherRescheduledSlot }));
@@ -495,7 +693,7 @@ export default function OrderDetail() {
                       cursor: weatherMsgSent ? 'default' : 'pointer',
                     }}
                   >
-                    {weatherMsgSent ? '✓ Đã gửi tin nhắn động viên bưu tá' : '💬 Gửi lời nhắn: "Cứ thong thả giữ an toàn anh nhé!"'}
+                    {weatherMsgSent ? 'Đã gửi lời nhắn đến bưu tá' : 'Gửi lời nhắn: "Cứ thong thả giữ an toàn anh nhé!"'}
                   </button>
                   <button
                     type="button"
@@ -503,7 +701,7 @@ export default function OrderDetail() {
                       const slot = weatherRescheduledSlot ? null : 'Buổi tối (18:30 - 20:30 · Sau khi tạnh mưa)';
                       setWeatherRescheduledSlot(slot);
                       if (slot) {
-                        setSuccess('✓ Đã đăng ký lùi lịch giao sang buổi tối (18:30 - 20:30) hoàn toàn miễn phí!');
+                        setSuccess('Đã đăng ký lùi lịch giao sang buổi tối (18:30 - 20:30) hoàn toàn miễn phí!');
                       } else {
                         setSuccess('Đã chuyển lại thời gian giao thông thường.');
                       }
@@ -524,7 +722,7 @@ export default function OrderDetail() {
                       cursor: 'pointer',
                     }}
                   >
-                    {weatherRescheduledSlot ? '✓ Đã dời lịch sang ca tối 18:30 - 20:30' : '🕒 Lùi ca giao sang tối (18:30 - 20:30)'}
+                    {weatherRescheduledSlot ? 'Đã dời lịch sang ca tối 18:30 - 20:30' : 'Lùi ca giao sang tối (18:30 - 20:30)'}
                   </button>
                 </div>
               </div>
@@ -576,14 +774,14 @@ export default function OrderDetail() {
 
                 {showGreenTelemetry && (
                   <div style={{ background: '#fff', padding: '10px 12px', borderRadius: 4, border: '1px dashed #86efac', marginBottom: 10, fontSize: 11 }}>
-                    <strong style={{ color: '#15803d', display: 'block', marginBottom: 6 }}>
-                      ⚡ Dữ Liệu Cảm Biến Telemetry Xe Điện Thời Gian Thực (#EV-NEXORA-882):
+                    <strong style={{ color: '#15803d', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                      <Zap size={13} color="#16a34a" /> Dữ liệu cảm biến viễn thông xe điện thời gian thực (#EV-NEXORA-882):
                     </strong>
                     <div className="row between" style={{ color: '#475569', fontSize: 10, flexWrap: 'wrap', gap: 6 }}>
-                      <span>Dung lượng Pin LFP: <strong>84% (Đủ 45km)</strong></span>
+                      <span>Dung lượng pin LFP: <strong>84% (Đủ 45km)</strong></span>
                       <span>Vận tốc trung bình: <strong>28.5 km/h</strong></span>
                       <span>Chế độ lái: <strong>Eco Green Mode</strong></span>
-                      <span>Mã xác thực Hộ chiếu: <code>#GREEN-MILE-VN8921</code></span>
+                      <span>Mã xác thực hộ chiếu: <code>#GREEN-MILE-VN8921</code></span>
                     </div>
                   </div>
                 )}
@@ -603,7 +801,7 @@ export default function OrderDetail() {
                       cursor: 'pointer',
                     }}
                   >
-                    {showGreenTelemetry ? 'Thu gọn cảm biến Telemetry' : '📊 Xem Cảm Biến Telemetry Xe Điện'}
+                    {showGreenTelemetry ? 'Thu gọn cảm biến viễn thông' : 'Xem cảm biến viễn thông xe điện'}
                   </button>
                   <button
                     type="button"
@@ -649,27 +847,78 @@ export default function OrderDetail() {
                     {r.kind === 'DOORSTEP_EXCHANGE' ? 'Đổi size tốc hành tận cửa' : r.kind === 'EXCHANGE' ? 'Đổi size' : 'Hoàn trả'} · <strong className={`badge ${r.status.toLowerCase()}`}>{RETURN_LABELS[r.status] ?? r.status}</strong> — {r.reason}
                   </p>
                   {r.status === 'REJECTED' && (
-                    <div style={{ marginTop: 6 }}>
-                      <button
-                        type="button"
-                        className="text-button danger"
-                        style={{ fontSize: 11, padding: 0 }}
-                        onClick={async () => {
-                          const note = prompt('Nhập lý do khiếu nại lên Hội đồng Trọng tài Sàn NEXORA (SLA xử lý 48h):');
-                          if (note && note.trim().length >= 5) {
-                            try {
-                              await api(`/returns/${r.id}/dispute`, 'POST', { reason: note.trim() });
-                              setSuccess('Đã chuyển khiếu nại lên Hội đồng Trọng tài Sàn NEXORA thành công!');
-                              reloadReturns();
-                              reload();
-                            } catch (e) {
-                              setNotice((e as Error).message);
-                            }
-                          }
-                        }}
-                      >
-                        ⚖️ Khiếu nại lên Hội Đồng Trọng Tài (SLA Phân Xử 48h)
-                      </button>
+                    <div style={{ marginTop: 8 }}>
+                      {disputeReturnId === r.id ? (
+                        <div style={{ background: '#fff', border: '1px solid #fca5a5', borderRadius: 4, padding: 12, marginTop: 6 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, color: '#991b1b', fontWeight: 600, fontSize: 12 }}>
+                            <Scale size={14} color="#dc2626" />
+                            <span>Khiếu nại lên Hội đồng Trọng tài Sàn NEXORA (SLA phân xử 48h)</span>
+                          </div>
+                          <textarea
+                            value={disputeReason}
+                            onChange={(e) => setDisputeReason(e.target.value)}
+                            placeholder="Mô tả chi tiết lý do khiếu nại và cung cấp thông tin đối soát..."
+                            rows={3}
+                            style={{
+                              width: '100%',
+                              padding: '8px 10px',
+                              fontSize: 12,
+                              border: '1px solid #cbd5e1',
+                              borderRadius: 3,
+                              boxSizing: 'border-box',
+                              marginBottom: 8,
+                            }}
+                          />
+                          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                            <button
+                              type="button"
+                              className="button secondary"
+                              style={{ fontSize: 11, padding: '4px 10px' }}
+                              onClick={() => {
+                                setDisputeReturnId(null);
+                                setDisputeReason('');
+                              }}
+                            >
+                              Bỏ qua
+                            </button>
+                            <button
+                              type="button"
+                              className="button primary"
+                              style={{ fontSize: 11, padding: '4px 12px', background: '#dc2626', borderColor: '#b91c1c' }}
+                              onClick={async () => {
+                                if (!disputeReason || disputeReason.trim().length < 5) {
+                                  setNotice('Vui lòng nhập tối thiểu 5 ký tự lý do khiếu nại.');
+                                  return;
+                                }
+                                try {
+                                  await api(`/returns/${r.id}/dispute`, 'POST', { reason: disputeReason.trim() });
+                                  setSuccess('Đã chuyển hồ sơ khiếu nại lên Hội đồng Trọng tài Sàn NEXORA thành công.');
+                                  setDisputeReturnId(null);
+                                  setDisputeReason('');
+                                  reloadReturns();
+                                  reload();
+                                } catch (e) {
+                                  setNotice((e as Error).message);
+                                }
+                              }}
+                            >
+                              Gửi khiếu nại trọng tài
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="text-button danger"
+                          style={{ fontSize: 11, padding: 0, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                          onClick={() => {
+                            setDisputeReturnId(r.id);
+                            setDisputeReason('');
+                          }}
+                        >
+                          <Scale size={12} /> Khiếu nại lên Hội đồng Trọng tài (SLA phân xử 48h)
+                        </button>
+                      )}
                     </div>
                   )}
                   {r.status === 'DISPUTED' ? (
@@ -687,7 +936,7 @@ export default function OrderDetail() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <Scale size={16} color="#dc2626" />
                           <strong style={{ fontSize: 13, color: '#991b1b' }}>
-                            Trọng Tài Sàn Thụ Lý &amp; Phong Tỏa Escrow 45 Ngày
+                            Trọng tài Sàn thụ lý &amp; phong tỏa Escrow 45 ngày
                           </strong>
                         </div>
                         <span style={{ fontSize: 10, background: '#dc2626', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
@@ -714,7 +963,9 @@ export default function OrderDetail() {
                           <div style={{ fontSize: 9, color: '#64748b' }}>Ký điện tử cùng bưu tá Feliz</div>
                         </div>
                         <div style={{ background: '#fff', padding: '8px 10px', borderRadius: 4, border: '1px solid #fecaca' }}>
-                          <span style={{ color: '#991b1b', fontWeight: 600 }}>🛡️ Đền Bù 200% Hàng Giả</span>
+                          <span style={{ color: '#991b1b', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <ShieldCheck size={12} /> Bồi hoàn 200% nếu phát hiện giả mạo
+                          </span>
                           <div style={{ fontSize: 9, color: '#64748b' }}>Cam kết chuẩn Atelier Mall (Đổi trả 15 ngày)</div>
                         </div>
                       </div>
@@ -727,10 +978,10 @@ export default function OrderDetail() {
                           type="button"
                           className="button secondary"
                           style={{ fontSize: 11, padding: '4px 10px', borderColor: '#f87171', color: '#991b1b' }}
-                          onClick={() => alert('Đã trích xuất Biên Bản Thụ Lý Trọng Tài Độc Lập Sàn NEXORA (Định dạng PDF/XML)!')}
+                          onClick={() => setSuccess('Đã trích xuất Biên bản thụ lý Trọng tài Độc lập Sàn NEXORA (Định dạng PDF/XML).')}
                         >
                           <FileCheck size={12} style={{ display: 'inline', marginRight: 4 }} />
-                          Xuất Biên Bản Trọng Tài
+                          Xuất biên bản trọng tài
                         </button>
                       </div>
                     </div>
@@ -915,6 +1166,60 @@ export default function OrderDetail() {
           <div>
             <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Đơn vị bảo chứng:</span>
             <span>Quỹ Rừng Xanh NEXORA &amp; Rừng Phòng Hộ Cần Giờ</span>
+          </div>
+        </div>
+      </article>
+
+      {/* Chứng Thư Xác Thực Nghệ Nhân & Hộ Chiếu Số DPP (Atelier Craftsmanship DPP) */}
+      <article className="panel" style={{ marginTop: 20, background: '#FAF8F5', border: '1px solid var(--line)' }}>
+        <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#F3EFEA', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-dark)', flexShrink: 0 }}>
+              <Award size={20} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+                  Chứng Thư Thủ Công &amp; Hộ Chiếu Số DPP
+                </strong>
+                <span className="badge" style={{ background: '#FEF9C3', color: '#854D0E', border: '1px solid #FDE047', fontSize: 10 }}>
+                  100% SARTORIAL HANDMADE
+                </span>
+              </div>
+              <p className="subtle" style={{ margin: '2px 0 0', fontSize: 12 }}>
+                Độc bản chế tác thủ công bởi Master Tailor, bảo hành đường may trọn đời và lưu trữ lịch sử bảo dưỡng đồ hiệu.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="button"
+            style={{ fontSize: 12, padding: '7px 16px', background: 'var(--ink)', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            onClick={() => setShowCraftCertModal(true)}
+          >
+            <Sparkles size={14} color="var(--gold-light)" /> Mở Chứng Thư Nghệ Nhân &amp; DPP
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--line)', fontSize: 12 }}>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Mã định danh số DPP:</span>
+            <strong style={{ fontFamily: 'monospace', color: 'var(--ink)' }}>
+              NX-DPP-2026-{order.code.slice(0, 8).toUpperCase()}
+            </strong>
+          </div>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Tiêu chuẩn mũi may:</span>
+            <strong>18 SPI (Stitches/Inch) · Cuốn Mép Pháp</strong>
+          </div>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Nguồn gốc xuất xứ:</span>
+            <span>Normandy Flax (Pháp) &amp; Lụa Bảo Lộc</span>
+          </div>
+          <div>
+            <span style={{ color: 'var(--muted)', display: 'block', fontSize: 11 }}>Thẻ bảo hành Atelier:</span>
+            <span style={{ color: '#166534', fontWeight: 600 }}>Bảo hành trọn đời &amp; Spa 2 lần/năm</span>
           </div>
         </div>
       </article>
@@ -1208,11 +1513,11 @@ export default function OrderDetail() {
               </label>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {[
-                  '⚡ Giao đúng giờ hẹn',
-                  '👗 Bảo quản form trang phục cẩn thận',
-                  '🛵 Xe điện êm ái, thân thiện môi trường',
-                  '👔 Đồng phục bưu tá lịch sự, chuẩn mực',
-                  '🛡️ Hỗ trợ đồng kiểm ngoại quan chu đáo',
+                  'Giao đúng giờ hẹn',
+                  'Bảo quản phom trang phục cẩn thận',
+                  'Xe điện êm ái, thân thiện môi trường',
+                  'Đồng phục bưu tá lịch sự, chuẩn mực',
+                  'Hỗ trợ đồng kiểm ngoại quan chu đáo',
                 ].map((tag) => {
                   const active = courierTags.includes(tag);
                   return (
@@ -1942,6 +2247,292 @@ export default function OrderDetail() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Chứng Thư Thủ Công & Hộ Chiếu Số DPP (Atelier Certificate of Craftsmanship) */}
+      {showCraftCertModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.7)',
+          backdropFilter: 'blur(5px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FAF8F5',
+            border: '2px solid var(--gold-dark)',
+            borderRadius: 4,
+            maxWidth: 640,
+            width: '100%',
+            padding: '32px 36px',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+          }}>
+            {/* Certificate Header */}
+            <div style={{ textAlign: 'center', borderBottom: '1px solid var(--line)', paddingBottom: 16, marginBottom: 20 }}>
+              <div style={{ fontSize: 11, letterSpacing: '0.15em', fontWeight: 700, color: 'var(--gold-dark)', textTransform: 'uppercase' }}>
+                NEXORA HAUTE COUTURE ATELIER · GUILD OF MASTER TAILORS
+              </div>
+              <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, color: 'var(--ink)', margin: '6px 0 2px' }}>
+                CHỨNG THƯ XÁC THỰC THỦ CÔNG &amp; HỘ CHIẾU SỐ DPP
+              </h2>
+              <div style={{ fontSize: 11, color: 'var(--muted)' }}>
+                Digital Product Passport · Mã chứng thư: <strong>NX-DPP-2026-{order.code.slice(0, 8).toUpperCase()}</strong>
+              </div>
+            </div>
+
+            {/* Owner & Order Details */}
+            <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 3, padding: '14px 18px', marginBottom: 16, fontSize: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <span style={{ color: 'var(--muted)', fontSize: 11 }}>Chủ sở hữu độc bản:</span>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--ink)' }}>{order.address?.recipient ?? 'Quý Khách Hàng VIP'}</div>
+                  <div style={{ color: 'var(--muted)', fontSize: 11 }}>Mã đơn hàng: {order.code}</div>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--muted)', fontSize: 11 }}>Ngày phát hành chứng thư:</span>
+                  <div style={{ fontWeight: 600 }}>{new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
+                  <div style={{ color: '#166534', fontSize: 11, fontWeight: 600 }}>✓ Trạng thái: Hợp lệ &amp; Bảo hành trọn đời</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Garments in this order */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--gold-dark)', marginBottom: 8 }}>
+                Danh Mục Trang Phục Được Cấp Hộ Chiếu Số
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {order.shops.flatMap(s => s.items).map(item => (
+                  <div key={item.id} style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 3, padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
+                    <div>
+                      <strong>{item.snapshot.name}</strong>
+                      <div style={{ color: 'var(--muted)', fontSize: 11 }}>
+                        Màu: {item.snapshot.color} · Size: {item.snapshot.size} · Số lượng: {item.quantity}
+                      </div>
+                    </div>
+                    <span className="badge" style={{ background: '#F0FDF4', color: '#166534', border: '1px solid #BBF7D0', fontSize: 10 }}>
+                      ✓ SPI 18 · French Seam
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Craftsmanship & Material Traceability Specifications */}
+            <div style={{ background: '#FFFFFF', border: '1px solid var(--line)', borderRadius: 3, padding: '14px 18px', marginBottom: 16, fontSize: 11.5, lineHeight: 1.6 }}>
+              <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--ink)', marginBottom: 6 }}>
+                Thông Số Kỹ Thuật May Đo &amp; Nguồn Gốc Thớ Sợi Tự Nhiên
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                  <span style={{ color: 'var(--muted)' }}>• Mật độ mũi may:</span>{' '}
+                  <strong>18 SPI (Stitches Per Inch)</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--muted)' }}>• Kỹ thuật may ráp:</span>{' '}
+                  <strong>Cuốn mép Pháp (French Seam)</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--muted)' }}>• Thớ sợi tự nhiên:</span>{' '}
+                  <strong>Normandy Flax &amp; Lụa Bảo Lộc</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--muted)' }}>• Cúc áo:</span>{' '}
+                  <strong>Xà cừ tự nhiên khâu hoa thị</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Seals and QR Code */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: '#F5F0E8', border: '1px dashed var(--gold-dark)', borderRadius: 3, marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <QrCode size={44} color="var(--ink)" />
+                <div style={{ fontSize: 10.5, color: 'var(--ink)' }}>
+                  <div>Mã QR xác thực trên hệ sinh thái Atelier</div>
+                  <div style={{ color: 'var(--gold-dark)', fontWeight: 600 }}>Tích hợp NFC &amp; Blockchain Ledger</div>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ width: 80, height: 80, borderRadius: '50%', border: '2px double var(--gold-dark)', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--gold-dark)' }}>
+                  <Sparkles size={16} />
+                  <strong style={{ fontSize: 8, letterSpacing: '0.06em', marginTop: 1 }}>NEXORA</strong>
+                  <span style={{ fontSize: 7, fontWeight: 700 }}>HAUTE GUILD</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="row between">
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  type="button"
+                  className="button secondary"
+                  style={{ fontSize: 11, padding: '6px 12px' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(`NX-DPP-2026-${order.code.slice(0, 8).toUpperCase()}`);
+                    setCraftCertCopied(true);
+                    setTimeout(() => setCraftCertCopied(false), 2500);
+                  }}
+                >
+                  {craftCertCopied ? '✓ Đã sao chép mã DPP' : 'Sao chép mã DPP'}
+                </button>
+                <button
+                  type="button"
+                  className="button secondary"
+                  style={{ fontSize: 11, padding: '6px 14px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                  onClick={() => window.print()}
+                >
+                  <Printer size={13} /> In Bản Chứng Thư
+                </button>
+              </div>
+
+              <button
+                type="button"
+                className="button"
+                style={{ fontSize: 11, padding: '6px 16px', background: 'var(--ink)' }}
+                onClick={() => setShowCraftCertModal(false)}
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Item-Level Material Provenance & DPP Modal */}
+      {showPassportModal && selectedPassportItem && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.7)',
+          backdropFilter: 'blur(5px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 4,
+            width: '100%',
+            maxWidth: 640,
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: 24,
+            boxShadow: '0 24px 48px rgba(0,0,0,0.18)',
+            border: '1px solid var(--line)',
+          }}>
+            <div className="row between" style={{ alignItems: 'flex-start', borderBottom: '1px solid var(--line)', paddingBottom: 12, marginBottom: 16 }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#ecfdf5', color: '#047857', padding: '2px 8px', borderRadius: 2, fontSize: 10.5, fontWeight: 700, marginBottom: 4 }}>
+                  <Award size={13} /> CHỨNG THƯ XUẤT XỨ VẬT LIỆU (DPP · COA)
+                </div>
+                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 600, color: 'var(--ink)' }}>
+                  {selectedPassportItem.name}
+                </h3>
+                <span style={{ fontSize: 11.5, color: 'var(--muted)' }}>
+                  Chế tác bởi Atelier: {selectedPassportItem.shopName}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassportModal(false)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {itemPassportLoading ? (
+              <div style={{ padding: '30px 0', textAlign: 'center', color: 'var(--muted)' }}>
+                Đang xác thực dữ liệu nguồn gốc...
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', padding: '10px 14px', borderRadius: 3 }}>
+                  <div style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 700 }}>
+                    MÃ ĐỊNH DANH DUY NHẤT
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: 'var(--ink)' }}>
+                    {itemPassportData?.certificateCode || selectedPassportItem.code}
+                  </div>
+                  <div style={{ fontSize: 10.5, color: '#059669', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                    <CheckCircle2 size={12} /> Đã kiểm định và lưu giữ trọn đời trong Fashion Vault của bạn
+                  </div>
+                </div>
+
+                <div style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '12px 14px' }}>
+                  <strong style={{ display: 'block', fontSize: 11.5, marginBottom: 8, color: 'var(--ink)' }}>
+                    Thông Số Nguồn Gốc &amp; Canh Sợi
+                  </strong>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 11 }}>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Nguồn gốc xuất xứ:</span>
+                      <strong>{itemPassportData?.originLocation || 'Normandy (Pháp) & Xưởng NÉP Atelier (Hà Nội)'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Thành phần xơ sợi:</span>
+                      <strong>{itemPassportData?.fiberComposition || '100% Linen tự nhiên dệt mộc hữu cơ'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Cấu trúc &amp; Định lượng:</span>
+                      <strong>{itemPassportData?.weaveDensity || '185 GSM · Plain Weave'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Mã lô sợi (Yarn Lot):</span>
+                      <strong style={{ fontFamily: 'monospace' }}>{itemPassportData?.yarnLot || `LOT-NX-2026`}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '12px 14px' }}>
+                  <div className="row between" style={{ marginBottom: 6 }}>
+                    <strong style={{ fontSize: 11.5, color: 'var(--ink)' }}>Đội Ngũ Nghệ Nhân Chế Tác</strong>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, color: '#92400e', background: '#fef3c7', padding: '1px 6px', borderRadius: 2 }}>
+                      Tổng: {itemPassportData?.totalCraftHours || 34} giờ thủ công
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {(itemPassportData?.artisans || [
+                      { role: 'Nghệ nhân rập chính', name: 'Đỗ Văn Thành', experienceYears: 24, handcraftHours: 14 },
+                      { role: 'Thợ may ráp mí cuộn', name: 'Nguyễn Thị Mai', experienceYears: 18, handcraftHours: 16 },
+                      { role: 'Kiểm tra chất lượng', name: 'Lê Hoàng Yến', experienceYears: 12, handcraftHours: 4 },
+                    ]).map((a: any, i: number) => (
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, background: '#fcfcfb', padding: '6px 10px', borderRadius: 2, border: '1px solid var(--line)' }}>
+                        <span><strong>{a.name}</strong> · <span style={{ color: 'var(--muted)', fontSize: 10 }}>{a.role}</span></span>
+                        <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--gold-dark)' }}>{a.handcraftHours}h</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="row between" style={{ marginTop: 6 }}>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setShowPassportModal(false)}
+                  >
+                    Đóng
+                  </button>
+                  <Link
+                    href={`/tai-khoan?tab=passports&code=${itemPassportData?.certificateCode || selectedPassportItem.code}`}
+                    className="button"
+                    style={{ background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)', textDecoration: 'none', fontSize: 12 }}
+                  >
+                    Xem Trong Fashion Vault Của Bạn →
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

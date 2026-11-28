@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Award, Leaf, CheckCircle2, ShieldCheck, Download, RefreshCw, MapPin, Zap } from 'lucide-react';
+import { Award, Leaf, CheckCircle2, ShieldCheck, Download, RefreshCw, MapPin, Zap, Scissors, Shirt, Package, Sparkles } from 'lucide-react';
 import { api, CareBooking, Shop, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice } from '../ui';
 type Shipment = { id: string; tracking: string; status: string; codAmount: number; shopOrder: { shop: { name: string }; order: { code: string } } };
@@ -12,15 +12,134 @@ type TaxReportItem = { shopId: string; shopName: string; slug: string; taxCode: 
 type TaxReport = { decree: string; period: string; generatedAt: string; summary: { totalShops: number; totalRevenue: number; totalTaxWithheld: number }; items: TaxReportItem[] };
 type AdminProduct = { id: string; name: string; slug: string; status: string; material: string; shop: { id: string; name: string; slug: string }; variants: Array<{ id: string; sku: string; price: number; color: string; size: string; inventory?: { onHand: number; reserved: number } }>; images: Array<{ url: string }> };
 type Dispute = { id: string; shopId: string; kind: string; reason: string; status: string; createdAt: string; user?: { name: string; email: string }; items: { id: string; quantity: number; refundAmount: number; orderItem: { shopOrder: { id: string; order: { code: string }; shop: { name: string } } } }[] };
+
+type AdminBespokeOrder = {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  shopName: string;
+  stage: string;
+  styleName: string;
+  fabricChoice: string;
+  totalAmount: number;
+  deposit: number;
+  toileFittingDate?: string;
+  qaAudit?: { certified: boolean; grade: string; inspector: string; note: string; auditedAt: string };
+  createdAt: string;
+  isHeritageFabric?: boolean;
+  fabricCertificate?: string;
+  fabricBoltCode?: string;
+  fabricName?: string;
+  depositCredited?: number;
+};
+
+type AdminBespokeResponse = {
+  kpis: {
+    totalOrders: number;
+    activeOrders: number;
+    readyToShip: number;
+    certifiedCount: number;
+    reworkCount: number;
+    heritageFabricCount?: number;
+    networkCapacityLimit: number;
+    capacityLoadPct: number;
+  };
+  orders: AdminBespokeOrder[];
+};
+
+type AdminSwatchOrder = {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  shopName: string;
+  productName: string;
+  swatches: string[];
+  depositFee: number;
+  status: string;
+  carrier?: string;
+  trackingNumber?: string;
+  voucherCode?: string;
+  createdAt: string;
+};
+
+type AdminSwatchResponse = {
+  kpis: {
+    totalOrders: number;
+    dispatchedCount: number;
+    processingCount: number;
+    totalDepositEscrow: number;
+    voucherIssuedCount: number;
+    dispatchRatePct: number;
+  };
+  swatchOrders: AdminSwatchOrder[];
+};
+
+type AdminFitting = {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  shopName: string;
+  status: string;
+  preferredDate: string;
+  timeSlot: string;
+  address: string;
+  conciergeTailorName?: string;
+  conversionAmount?: number;
+  createdAt: string;
+};
+
+type AdminFittingResponse = {
+  kpis: {
+    totalFittings: number;
+    completedFittings: number;
+    convertedFittings: number;
+    totalConvertedRevenue: number;
+    conversionRatePct: number;
+  };
+  fittings: AdminFitting[];
+};
+
+type AdminFabricReservation = {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  fabricId: string;
+  fabricName: string;
+  origin: string;
+  meters: number;
+  pricePerMeter: number;
+  totalAmount: number;
+  depositAmount: number;
+  status: string;
+  certificateCode: string;
+  purposeNote: string;
+  createdAt: string;
+};
+
+type AdminFabricVaultResponse = {
+  kpis: {
+    totalBolts: number;
+    totalReservations: number;
+    totalMeterageReserved: number;
+    totalDepositHeld: number;
+    totalReservationValue: number;
+  };
+  reservations: AdminFabricReservation[];
+};
 export default function Admin() {
   const overview = useResource<Record<string,number>>('/admin/overview'), shops = useResource<(Shop & { taxCode?: string; isMall?: boolean })[]>('/admin/shops'), reports = useResource<Report[]>('/admin/reports'), shipments = useResource<Shipment[]>('/admin/shipments'), audit = useResource<Audit[]>('/admin/audit');
   const tradeIns = useResource<TradeInRequest[]>('/admin/services/trade-ins'), careList = useResource<CareBooking[]>('/admin/services/care'), affiliate = useResource<AdminAffiliate>('/admin/affiliate'), taxReport = useResource<TaxReport>('/admin/tax-report'), disputes = useResource<Dispute[]>('/admin/disputes');
   const products = useResource<AdminProduct[]>('/admin/products');
+  const bespokeData = useResource<AdminBespokeResponse>('/admin/bespoke');
+  const swatchData = useResource<AdminSwatchResponse>('/admin/swatch-orders');
+  const fittingData = useResource<AdminFittingResponse>('/admin/concierge/fittings');
+  const fabricVaultData = useResource<AdminFabricVaultResponse>('/admin/fabric-vault');
   const [tab, setTab] = useState('shops'), [error, setError] = useState(''), [busy, setBusy] = useState(false);
   const [evPriorityMode, setEvPriorityMode] = useState(true);
   const [reconciliationDone, setReconciliationDone] = useState(false);
   const [reconciling, setReconciling] = useState(false);
   const [exportNotice, setExportNotice] = useState('');
+  const [adminNotice, setAdminNotice] = useState('');
 
   useEffect(() => {
     try {
@@ -32,12 +151,12 @@ export default function Admin() {
     } catch {}
   }, []);
 
-  async function action(path: string, data: unknown) { setBusy(true); setError(''); try { await api(path, 'POST', data); overview.reload(); shops.reload(); reports.reload(); shipments.reload(); audit.reload(); tradeIns.reload(); careList.reload(); affiliate.reload(); taxReport.reload(); disputes.reload(); products.reload(); } catch(e) { setError((e as Error).message); } finally { setBusy(false); } }
+  async function action(path: string, data: unknown) { setBusy(true); setError(''); try { await api(path, 'POST', data); overview.reload(); shops.reload(); reports.reload(); shipments.reload(); audit.reload(); tradeIns.reload(); careList.reload(); affiliate.reload(); taxReport.reload(); disputes.reload(); products.reload(); bespokeData.reload(); swatchData.reload(); fittingData.reload(); fabricVaultData.reload(); } catch(e) { setError((e as Error).message); } finally { setBusy(false); } }
   if (overview.loading) return <Loading/>;
   if (overview.error) return <section className="section"><Notice error>{overview.error}</Notice><Link className="button" href="/dang-nhap">Tài khoản</Link></section>;
-  return <section className="section"><p className="eyebrow">QUẢN TRỊ SÀN</p><h1>Nhìn rõ từng hoạt động.</h1><div className="stats">{Object.entries(overview.data ?? {}).map(([key, value]) => <div key={key}><small>{({ shops: 'SHOP', orders: 'ĐƠN HÀNG', reports: 'BÁO CÁO CHỜ', users: 'TÀI KHOẢN' } as Record<string,string>)[key]}</small><strong>{value}</strong></div>)}</div><div className="tabs portal-tabs">{[['shops','Duyệt shop'],['disputes','Trọng tài Khiếu nại'],['circuit','Cầu dao khẩn cấp'],['tax','Thuế NĐ 91/2022'],['reports','Kiểm duyệt'],['shipments','Giao hàng mô phỏng'],['tradein','Thẩm định Trade-In'],['care','VAS Care'],['affiliate','KOC Affiliate'],['audit','Nhật ký'],['esg','Thẩm định ESG & Xanh'],['circular','Kinh tế tuần hoàn EPR'],['escrow','Sổ cái Escrow Atelier']].map(([id,label]) => <button className={id === tab ? 'selected' : ''} key={id} onClick={() => setTab(id)}>{label}</button>)}</div>{error && <Notice error>{error}</Notice>}{tab === 'shops' && shops.data?.map(shop => <div className="panel" key={shop.id}><div className="row between"><h2>{shop.name} {shop.isMall && <span className="badge" style={{ background: 'var(--gold-dark)', color: '#fff' }}>NEXORA Mall</span>}</h2><span className="badge">{shop.status}</span></div><p>{shop.origin} · MST: <code>{shop.taxCode || 'Chưa kê khai'}</code></p><form className="inline-form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/admin/shops/${shop.id}/status`, { status: d.get('status'), reason: d.get('reason') }); }}><select name="status" aria-label="Quyết định shop"><option value="APPROVED">Duyệt / mở lại shop</option><option value="SUSPENDED">Tạm ngưng shop</option></select><input name="reason" aria-label="Lý do quyết định" placeholder="Lý do quyết định" required minLength={5}/><button className="button" disabled={busy}>Lưu quyết định</button></form><div className="row" style={{ marginTop: 12 }}><button className="button secondary" style={{ fontSize: 12, padding: '6px 12px' }} disabled={busy} onClick={() => action(`/admin/shops/${shop.id}/mall`, { isMall: !shop.isMall, taxCode: shop.taxCode })}>{shop.isMall ? 'Gỡ huy hiệu NEXORA Mall' : 'Cấp huy hiệu NEXORA Mall'}</button></div></div>)}
+  return <section className="section"><p className="eyebrow">QUẢN TRỊ SÀN</p><h1>Nhìn rõ từng hoạt động.</h1><div className="stats">{Object.entries(overview.data ?? {}).map(([key, value]) => <div key={key}><small>{({ shops: 'SHOP', orders: 'ĐƠN HÀNG', reports: 'BÁO CÁO CHỜ', users: 'TÀI KHOẢN' } as Record<string,string>)[key]}</small><strong>{value}</strong></div>)}</div><div className="tabs portal-tabs">{[['shops','Duyệt shop'],['disputes','Trọng tài Khiếu nại'],['circuit','Cầu dao khẩn cấp'],['tax','Thuế NĐ 91/2022'],['bespoke','May đo Bespoke & KCS'],['swatches','Hộp mẫu vải & Voucher'],['fittings','Thử đồ Concierge'],['fabricvault','Kho Vải Di Sản'],['reports','Kiểm duyệt'],['shipments','Giao hàng mô phỏng'],['tradein','Thẩm định Trade-In'],['care','VAS Care'],['affiliate','KOC Affiliate'],['audit','Nhật ký'],['esg','Thẩm định ESG & Xanh'],['circular','Kinh tế tuần hoàn EPR'],['escrow','Sổ cái Escrow Atelier']].map(([id,label]) => <button className={id === tab ? 'selected' : ''} key={id} onClick={() => setTab(id)}>{label}</button>)}</div>{adminNotice && <Notice>{adminNotice}</Notice>}{error && <Notice error>{error}</Notice>}{tab === 'shops' && shops.data?.map(shop => <div className="panel" key={shop.id}><div className="row between"><h2>{shop.name} {shop.isMall && <span className="badge" style={{ background: 'var(--gold-dark)', color: '#fff' }}>NEXORA Mall</span>}</h2><span className="badge">{shop.status}</span></div><p>{shop.origin} · MST: <code>{shop.taxCode || 'Chưa kê khai'}</code></p><form className="inline-form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/admin/shops/${shop.id}/status`, { status: d.get('status'), reason: d.get('reason') }); }}><select name="status" aria-label="Quyết định shop"><option value="APPROVED">Duyệt / mở lại shop</option><option value="SUSPENDED">Tạm ngưng shop</option></select><input name="reason" aria-label="Lý do quyết định" placeholder="Lý do quyết định" required minLength={5}/><button className="button" disabled={busy}>Lưu quyết định</button></form><div className="row" style={{ marginTop: 12 }}><button className="button secondary" style={{ fontSize: 12, padding: '6px 12px' }} disabled={busy} onClick={() => action(`/admin/shops/${shop.id}/mall`, { isMall: !shop.isMall, taxCode: shop.taxCode })}>{shop.isMall ? 'Gỡ huy hiệu NEXORA Mall' : 'Cấp huy hiệu NEXORA Mall'}</button></div></div>)}
 {tab === 'disputes' && <div className="stack"><div className="row between"><div><h2>Hội Đồng Trọng Tài Sàn NEXORA</h2><p className="subtle">Giải quyết các vụ khiếu nại đổi size / hoàn trả tranh chấp đa phương (Quy trình Xử lý Tranh chấp SLA 48h).</p></div></div>{!disputes.data?.length ? <Notice>Hiện không có vụ việc tranh chấp nào cần sàn phân xử.</Notice> : disputes.data.map(d => <div className="panel" key={d.id}><div className="row between"><h2>{d.items[0]?.orderItem?.shopOrder?.order?.code} · {d.items[0]?.orderItem?.shopOrder?.shop?.name}</h2><span className="badge" style={{ background: '#7f1d1d', color: '#fff' }}>Trọng tài thụ lý</span></div><p>Người mua: <strong>{d.user?.name}</strong> ({d.user?.email}) · Tiền khiếu nại hoàn: <strong style={{ color: 'var(--gold-dark)' }}>{vnd(d.items.reduce((s, i) => s + i.refundAmount, 0))}</strong></p><div style={{ background: '#f8fafc', padding: '10px 14px', borderLeft: '3px solid #3b82f6', margin: '8px 0', fontSize: 13 }}><strong>Nội dung &amp; Diễn biến khiếu nại:</strong><p style={{ margin: '4px 0 0' }}>{d.reason}</p></div><form className="inline-form" onSubmit={e => { e.preventDefault(); const form = e.currentTarget, formData = new FormData(form); void action(`/admin/disputes/${d.id}/arbitrate`, { decision: formData.get('decision'), note: formData.get('note') }); }}><select name="decision" aria-label="Phán quyết trọng tài"><option value="REFUND">Xử người mua thắng (Hoàn tiền &amp; Trừ ví shop)</option><option value="REJECT">Xử người bán đúng (Bác khiếu nại)</option></select><input name="note" placeholder="Căn cứ &amp; lý lẽ ban hành phán quyết" required minLength={5}/><button className="button" disabled={busy}>Ban hành phán quyết</button></form></div>)}</div>}
-{tab === 'circuit' && <div className="stack"><div className="row between"><div><h2>Cầu Dao Ngắt Mạch Khẩn Cấp (Cầu Dao Bảo Vệ An Toàn Giá)</h2><p className="subtle">Khóa gỡ sản phẩm lập tức khỏi sàn khi phát hiện lỗi định giá hoặc lỗi hệ thống nghiêm trọng.</p></div></div>{!products.data?.length ? <Notice>Không có sản phẩm nào trong danh mục.</Notice> : <div className="table-wrap"><table><thead><tr><th>Sản phẩm</th><th>Gian hàng</th><th>Biến thể &amp; Giá</th><th>Trạng thái</th><th>Hành động bảo vệ</th></tr></thead><tbody>{products.data.map(p => <tr key={p.id}><td><strong>{p.name}</strong><br/><small className="subtle">{p.material}</small></td><td>{p.shop.name}</td><td>{p.variants.slice(0, 3).map(v => <div key={v.id} style={{ fontSize: 12 }}>{v.sku} ({v.color}/{v.size}): <strong>{vnd(v.price)}</strong> (Tồn {v.inventory?.onHand ?? 0})</div>)}</td><td><span className="badge" style={{ background: p.status === 'ACTIVE' ? '#166534' : '#7f1d1d', color: '#fff' }}>{p.status}</span></td><td>{p.status === 'ACTIVE' ? <form className="inline-form" onSubmit={e => { e.preventDefault(); const form = e.currentTarget, d = new FormData(form); const reason = String(d.get('reason') || 'Sự cố lỗi giá - Ngắt cầu dao an ninh khẩn cấp'); void action(`/admin/products/${p.id}/circuit-breaker`, { reason }); }}><input name="reason" placeholder="Lý do ngắt cầu dao" defaultValue="Lỗi giá khẩn cấp" minLength={5} required style={{ fontSize: 12, padding: '4px 8px' }} /><button className="button" style={{ background: '#dc2626', borderColor: '#dc2626', color: '#fff', fontSize: 12, padding: '6px 12px' }} disabled={busy}>Ngắt Cầu Dao</button></form> : <span className="subtle" style={{ color: '#dc2626', fontSize: 12, fontWeight: 600 }}>Đã khóa an ninh (HIDDEN)</span>}</td></tr>)}</tbody></table></div>}</div>}{tab === 'tax' && <div className="stack"><div className="row between"><div><h2>Cổng Trích xuất Dữ liệu Thuế Định kỳ</h2><p className="subtle">Tuân thủ Điều 19a Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC · Kỳ: <strong>{taxReport.data?.period}</strong></p></div><button className="button secondary" onClick={() => { const blob = new Blob([JSON.stringify(taxReport.data, null, 2)], { type: 'application/json' }); const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = `tax-report-${Date.now()}.json`; a.click(); }}>Xuất gói JSON Etax</button></div><div className="stats"><div><small>TỔNG GIAN HÀNG</small><strong>{taxReport.data?.summary.totalShops ?? 0}</strong></div><div><small>DOANH THU ĐƠN HOÀN TẤT</small><strong>{vnd(taxReport.data?.summary.totalRevenue ?? 0)}</strong></div><div><small>THUẾ ĐÃ KHẤU TRỪ (1.5%)</small><strong>{vnd(taxReport.data?.summary.totalTaxWithheld ?? 0)}</strong></div></div>{!taxReport.data?.items.length ? <Notice>Chưa có dữ liệu giao dịch phát sinh thuế trong kỳ.</Notice> : <div className="table-wrap"><table><thead><tr><th>Gian hàng</th><th>Mã số thuế (MST)</th><th>Địa chỉ xuất hàng</th><th>Phân hạng</th><th>Đơn hoàn tất</th><th>Tổng doanh thu</th><th>Thuế đã khấu trừ (1.5%)</th></tr></thead><tbody>{taxReport.data.items.map(r => <tr key={r.shopId}><td><strong>{r.shopName}</strong></td><td><code>{r.taxCode}</code></td><td>{r.origin}</td><td>{r.isMall ? <span className="badge" style={{ background: 'var(--gold-dark)', color: '#fff' }}>Mall</span> : <span className="badge">Shop</span>}</td><td>{r.totalDeliveredOrders}</td><td>{vnd(r.totalRevenue)}</td><td><strong style={{ color: 'var(--gold-dark)' }}>{vnd(r.totalTaxWithheld)}</strong></td></tr>)}</tbody></table></div>}</div>}{tab === 'reports' && (!reports.data?.length ? <Notice>Chưa có báo cáo cần xử lý.</Notice> : reports.data.map(report => <div className="panel" key={report.id}><h2>Bài của {report.post.author.name}</h2><p>{report.post.caption}</p><Notice>Lý do báo cáo — {report.reason}</Notice><form className="inline-form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/admin/posts/${report.postId}/moderate`, { status: d.get('status'), reason: d.get('reason') }); }}><select name="status" aria-label="Quyết định bài viết"><option value="HIDDEN">Ẩn bài</option><option value="PUBLISHED">Giữ công khai</option></select><input name="reason" placeholder="Lý do quyết định" required minLength={5}/><button className="button" disabled={busy}>Xử lý</button></form></div>))}{tab === 'shipments' && <><Notice>Chỉ mô phỏng sự kiện vận chuyển để kiểm thử. Không gửi yêu cầu tới hãng giao.</Notice>{!shipments.data?.length && <p>Shop cần xuất hàng trước khi có vận đơn.</p>}{shipments.data?.map(s => <div className="panel" key={s.id}><h2>{s.shopOrder.order.code} · {s.shopOrder.shop.name}</h2><p>{s.tracking} · {s.status} · COD {vnd(s.codAmount)}</p><div className="row wrap">{[['DELIVERED','Đã giao'],['DELIVERY_FAILED','Giao thất bại'],['RETURNED','Hoàn về']].map(([status, label]) => <button key={status} className="button secondary" disabled={busy} onClick={() => action(`/admin/mock/shipments/${s.id}/event`, { externalId: crypto.randomUUID(), status })}>{label}</button>)}</div></div>)}</>}{tab === 'tradein' && (!tradeIns.data?.length ? <Notice>Chưa có yêu cầu Trade-In nào.</Notice> : tradeIns.data.map(t => <div className="panel" key={t.id}><div className="row between"><h2>{t.brand} · {t.itemName}</h2><span className="badge">{t.status} · Grade {t.grade}</span></div><p>{t.user?.name} ({t.user?.email}) · {t.category} · Ước tính {vnd(t.estimatedValue)}</p><p className="subtle">{t.conditionNote}</p>{t.voucherCode && <p>Voucher đã cấp: <strong>{t.voucherCode}</strong> ({vnd(t.finalValue ?? t.estimatedValue)})</p>}<form className="inline-form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/admin/services/trade-ins/${t.id}/inspect`, { grade: d.get('grade'), finalValue: Number(d.get('finalValue')), status: d.get('status') }); }}><select name="grade" defaultValue={t.grade}>{['S','A','B','C','D'].map(g => <option key={g} value={g}>Grade {g}</option>)}</select><input name="finalValue" type="number" min={0} defaultValue={t.finalValue ?? t.estimatedValue} required placeholder="Giá trị chốt"/><select name="status" defaultValue={t.status === 'AI_PRELIMINARY' ? 'APPROVED' : t.status}><option value="HUB_INSPECTING">Đang giám định tại Hub</option><option value="APPROVED">Duyệt & Cấp Voucher</option><option value="REJECTED">Từ chối thu mua</option></select><button className="button" disabled={busy}>Lưu thẩm định V2</button></form></div>))}{tab === 'care' && (!careList.data?.length ? <Notice>Chưa có đơn VAS Care nào.</Notice> : careList.data.map(c => <div className="panel" key={c.id}><div className="row between"><h2>{c.itemName}</h2><span className="badge">{c.zipSealCode} · {c.status}</span></div><p>{c.user?.name} · {c.serviceType} · Phí {vnd(c.fee)} · Bảo hiểm {vnd(c.insuredValue)}</p><div className="row wrap">{[['SEALED_PICKUP','Đã niêm phong'],['OPTICAL_CHECK','Kiểm tra 8 góc'],['IN_CARE','Đang xử lý Spa'],['RETURNED','Đã hoàn trả']].map(([st, lbl]) => <button key={st} className="button secondary" disabled={busy} onClick={() => action(`/admin/services/care/${c.id}/status`, { status: st })}>{lbl}</button>)}</div></div>))}{tab === 'affiliate' && <div className="stack"><div className="stats"><div><small>ĐANG GIỮ (15 NGÀY)</small><strong>{vnd(affiliate.data?.summary.held ?? 0)}</strong></div><div><small>KHẢ DỤNG</small><strong>{vnd(affiliate.data?.summary.available ?? 0)}</strong></div><div><small>ĐÃ HỦY (HOÀN)</small><strong>{vnd(affiliate.data?.summary.cancelled ?? 0)}</strong></div></div><div className="row"><button className="button secondary" disabled={busy} onClick={() => action('/admin/affiliate/release', {})}>Giải phóng hoa hồng đến hạn</button></div>{!affiliate.data?.earnings.length ? <Notice>Chưa có giao dịch hoa hồng KOC nào.</Notice> : <div className="table-wrap"><table><thead><tr><th>KOC</th><th>Đơn shop</th><th>Hoa hồng</th><th>Trạng thái</th><th>Hết hạn giữ</th></tr></thead><tbody>{affiliate.data.earnings.map(e => <tr key={e.id}><td>{e.kocUser.name} ({e.kocUser.email})</td><td>{e.shopOrderId.slice(0, 10)}...</td><td>{vnd(e.amount)}</td><td><span className="badge">{e.status}</span></td><td>{new Date(e.holdUntil).toLocaleDateString('vi-VN')}</td></tr>)}</tbody></table></div>}</div>}{tab === 'audit' && <div className="table-wrap"><table><thead><tr><th>Thời gian</th><th>Hành động</th><th>Người thực hiện</th><th>Đối tượng</th></tr></thead><tbody>{audit.data?.map(a => <tr key={a.id}><td>{new Date(a.createdAt).toLocaleString('vi-VN')}</td><td>{a.action}</td><td>{a.actorId}</td><td>{a.entityId}</td></tr>)}</tbody></table></div>}{tab === 'esg' && <div className="stack"><div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}><div><h2>Hội Đồng Thẩm Định Chứng Chỉ Xanh ESG &amp; Bền Vững Sàn</h2><p className="subtle">Đối soát và phê duyệt chứng chỉ xanh của các xưởng may, giám sát cam kết giảm phát thải carbon và tỷ lệ bao bì tuần hoàn trên toàn sàn TMĐT.</p></div><button className="button secondary" onClick={() => alert('Đã trích xuất Báo Cáo Kiểm Toán Bền Vững ESG Toàn Sàn Q4/2026 (Định dạng PDF/CSV)!')}>Xuất Báo Cáo ESG Sàn</button></div><div className="stats"><div><small>TỔNG CO2e TRUNG HÒA</small><strong style={{ color: '#166534' }}>142.8 tấn</strong></div><div><small>TỶ LỆ XE ĐIỆN VINFAST</small><strong style={{ color: '#166534' }}>88.6%</strong></div><div><small>XƯỞNG XANH ĐÃ DUYỆT</small><strong style={{ color: '#166534' }}>2 / 2 Shop</strong></div><div><small>CÂY XANH BẢO TRỢ</small><strong style={{ color: '#166534' }}>420 Cây</strong></div></div><div className="table-wrap"><table><thead><tr><th>Gian hàng</th><th>Mã chứng chỉ</th><th>Tiêu chuẩn xác thực</th><th>Thời hạn hiệu lực</th><th>Trạng thái thẩm định</th><th>Quyết định Sàn</th></tr></thead><tbody>{[{ shop: 'NÉP Studio', code: 'CU-889921-GOTS', standard: 'GOTS Organic & OEKO-TEX Standard 100', expiry: '31/12/2027', status: 'VERIFIED' }, { shop: 'Lụa & Co', code: 'CO-LAMDONG-SILK', standard: 'CO Bảo Lộc Silk & QCVN 40 Nước Thải', expiry: '15/10/2027', status: 'VERIFIED' }].map((row, idx) => <tr key={idx}><td><strong>{row.shop}</strong></td><td><code>{row.code}</code></td><td>{row.standard}</td><td>{row.expiry}</td><td><span className="badge" style={{ background: '#166534', color: '#fff' }}>Đã xác minh (VERIFIED)</span></td><td><button className="button secondary" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => alert(`Đã kích hoạt tái thẩm định định kỳ cho ${row.shop}.`)}>Tái thẩm định</button></td></tr>)}</tbody></table></div>
+{tab === 'circuit' && <div className="stack"><div className="row between"><div><h2>Cầu Dao Ngắt Mạch Khẩn Cấp (Cầu Dao Bảo Vệ An Toàn Giá)</h2><p className="subtle">Khóa gỡ sản phẩm lập tức khỏi sàn khi phát hiện lỗi định giá hoặc lỗi hệ thống nghiêm trọng.</p></div></div>{!products.data?.length ? <Notice>Không có sản phẩm nào trong danh mục.</Notice> : <div className="table-wrap"><table><thead><tr><th>Sản phẩm</th><th>Gian hàng</th><th>Biến thể &amp; Giá</th><th>Trạng thái</th><th>Hành động bảo vệ</th></tr></thead><tbody>{products.data.map(p => <tr key={p.id}><td><strong>{p.name}</strong><br/><small className="subtle">{p.material}</small></td><td>{p.shop.name}</td><td>{p.variants.slice(0, 3).map(v => <div key={v.id} style={{ fontSize: 12 }}>{v.sku} ({v.color}/{v.size}): <strong>{vnd(v.price)}</strong> (Tồn {v.inventory?.onHand ?? 0})</div>)}</td><td><span className="badge" style={{ background: p.status === 'ACTIVE' ? '#166534' : '#7f1d1d', color: '#fff' }}>{p.status}</span></td><td>{p.status === 'ACTIVE' ? <form className="inline-form" onSubmit={e => { e.preventDefault(); const form = e.currentTarget, d = new FormData(form); const reason = String(d.get('reason') || 'Sự cố lỗi giá - Ngắt cầu dao an ninh khẩn cấp'); void action(`/admin/products/${p.id}/circuit-breaker`, { reason }); }}><input name="reason" placeholder="Lý do ngắt cầu dao" defaultValue="Lỗi giá khẩn cấp" minLength={5} required style={{ fontSize: 12, padding: '4px 8px' }} /><button className="button" style={{ background: '#dc2626', borderColor: '#dc2626', color: '#fff', fontSize: 12, padding: '6px 12px' }} disabled={busy}>Ngắt Cầu Dao</button></form> : <span className="subtle" style={{ color: '#dc2626', fontSize: 12, fontWeight: 600 }}>Đã khóa an ninh (HIDDEN)</span>}</td></tr>)}</tbody></table></div>}</div>}{tab === 'tax' && <div className="stack"><div className="row between"><div><h2>Cổng Trích xuất Dữ liệu Thuế Định kỳ</h2><p className="subtle">Tuân thủ Điều 19a Nghị định 91/2022/NĐ-CP & Thông tư 40/2021/TT-BTC · Kỳ: <strong>{taxReport.data?.period}</strong></p></div><button className="button secondary" onClick={() => { const blob = new Blob([JSON.stringify(taxReport.data, null, 2)], { type: 'application/json' }); const u = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = u; a.download = `tax-report-${Date.now()}.json`; a.click(); }}>Xuất gói JSON Etax</button></div><div className="stats"><div><small>TỔNG GIAN HÀNG</small><strong>{taxReport.data?.summary.totalShops ?? 0}</strong></div><div><small>DOANH THU ĐƠN HOÀN TẤT</small><strong>{vnd(taxReport.data?.summary.totalRevenue ?? 0)}</strong></div><div><small>THUẾ ĐÃ KHẤU TRỪ (1.5%)</small><strong>{vnd(taxReport.data?.summary.totalTaxWithheld ?? 0)}</strong></div></div>{!taxReport.data?.items.length ? <Notice>Chưa có dữ liệu giao dịch phát sinh thuế trong kỳ.</Notice> : <div className="table-wrap"><table><thead><tr><th>Gian hàng</th><th>Mã số thuế (MST)</th><th>Địa chỉ xuất hàng</th><th>Phân hạng</th><th>Đơn hoàn tất</th><th>Tổng doanh thu</th><th>Thuế đã khấu trừ (1.5%)</th></tr></thead><tbody>{taxReport.data.items.map(r => <tr key={r.shopId}><td><strong>{r.shopName}</strong></td><td><code>{r.taxCode}</code></td><td>{r.origin}</td><td>{r.isMall ? <span className="badge" style={{ background: 'var(--gold-dark)', color: '#fff' }}>Mall</span> : <span className="badge">Shop</span>}</td><td>{r.totalDeliveredOrders}</td><td>{vnd(r.totalRevenue)}</td><td><strong style={{ color: 'var(--gold-dark)' }}>{vnd(r.totalTaxWithheld)}</strong></td></tr>)}</tbody></table></div>}</div>}{tab === 'reports' && (!reports.data?.length ? <Notice>Chưa có báo cáo cần xử lý.</Notice> : reports.data.map(report => <div className="panel" key={report.id}><h2>Bài của {report.post.author.name}</h2><p>{report.post.caption}</p><Notice>Lý do báo cáo — {report.reason}</Notice><form className="inline-form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/admin/posts/${report.postId}/moderate`, { status: d.get('status'), reason: d.get('reason') }); }}><select name="status" aria-label="Quyết định bài viết"><option value="HIDDEN">Ẩn bài</option><option value="PUBLISHED">Giữ công khai</option></select><input name="reason" placeholder="Lý do quyết định" required minLength={5}/><button className="button" disabled={busy}>Xử lý</button></form></div>))}{tab === 'shipments' && <><Notice>Chỉ mô phỏng sự kiện vận chuyển để kiểm thử. Không gửi yêu cầu tới hãng giao.</Notice>{!shipments.data?.length && <p>Shop cần xuất hàng trước khi có vận đơn.</p>}{shipments.data?.map(s => <div className="panel" key={s.id}><h2>{s.shopOrder.order.code} · {s.shopOrder.shop.name}</h2><p>{s.tracking} · {s.status} · COD {vnd(s.codAmount)}</p><div className="row wrap">{[['DELIVERED','Đã giao'],['DELIVERY_FAILED','Giao thất bại'],['RETURNED','Hoàn về']].map(([status, label]) => <button key={status} className="button secondary" disabled={busy} onClick={() => action(`/admin/mock/shipments/${s.id}/event`, { externalId: crypto.randomUUID(), status })}>{label}</button>)}</div></div>)}</>}{tab === 'tradein' && (!tradeIns.data?.length ? <Notice>Chưa có yêu cầu Trade-In nào.</Notice> : tradeIns.data.map(t => <div className="panel" key={t.id}><div className="row between"><h2>{t.brand} · {t.itemName}</h2><span className="badge">{t.status} · Grade {t.grade}</span></div><p>{t.user?.name} ({t.user?.email}) · {t.category} · Ước tính {vnd(t.estimatedValue)}</p><p className="subtle">{t.conditionNote}</p>{t.voucherCode && <p>Voucher đã cấp: <strong>{t.voucherCode}</strong> ({vnd(t.finalValue ?? t.estimatedValue)})</p>}<form className="inline-form" onSubmit={e => { e.preventDefault(); const d = new FormData(e.currentTarget); void action(`/admin/services/trade-ins/${t.id}/inspect`, { grade: d.get('grade'), finalValue: Number(d.get('finalValue')), status: d.get('status') }); }}><select name="grade" defaultValue={t.grade}>{['S','A','B','C','D'].map(g => <option key={g} value={g}>Grade {g}</option>)}</select><input name="finalValue" type="number" min={0} defaultValue={t.finalValue ?? t.estimatedValue} required placeholder="Giá trị chốt"/><select name="status" defaultValue={t.status === 'AI_PRELIMINARY' ? 'APPROVED' : t.status}><option value="HUB_INSPECTING">Đang giám định tại Hub</option><option value="APPROVED">Duyệt & Cấp Voucher</option><option value="REJECTED">Từ chối thu mua</option></select><button className="button" disabled={busy}>Lưu thẩm định V2</button></form></div>))}{tab === 'care' && (!careList.data?.length ? <Notice>Chưa có đơn VAS Care nào.</Notice> : careList.data.map(c => <div className="panel" key={c.id}><div className="row between"><h2>{c.itemName}</h2><span className="badge">{c.zipSealCode} · {c.status}</span></div><p>{c.user?.name} · {c.serviceType} · Phí {vnd(c.fee)} · Bảo hiểm {vnd(c.insuredValue)}</p><div className="row wrap">{[['SEALED_PICKUP','Đã niêm phong'],['OPTICAL_CHECK','Kiểm tra 8 góc'],['IN_CARE','Đang xử lý Spa'],['RETURNED','Đã hoàn trả']].map(([st, lbl]) => <button key={st} className="button secondary" disabled={busy} onClick={() => action(`/admin/services/care/${c.id}/status`, { status: st })}>{lbl}</button>)}</div></div>))}{tab === 'affiliate' && <div className="stack"><div className="stats"><div><small>ĐANG GIỮ (15 NGÀY)</small><strong>{vnd(affiliate.data?.summary.held ?? 0)}</strong></div><div><small>KHẢ DỤNG</small><strong>{vnd(affiliate.data?.summary.available ?? 0)}</strong></div><div><small>ĐÃ HỦY (HOÀN)</small><strong>{vnd(affiliate.data?.summary.cancelled ?? 0)}</strong></div></div><div className="row"><button className="button secondary" disabled={busy} onClick={() => action('/admin/affiliate/release', {})}>Giải phóng hoa hồng đến hạn</button></div>{!affiliate.data?.earnings.length ? <Notice>Chưa có giao dịch hoa hồng KOC nào.</Notice> : <div className="table-wrap"><table><thead><tr><th>KOC</th><th>Đơn shop</th><th>Hoa hồng</th><th>Trạng thái</th><th>Hết hạn giữ</th></tr></thead><tbody>{affiliate.data.earnings.map(e => <tr key={e.id}><td>{e.kocUser.name} ({e.kocUser.email})</td><td>{e.shopOrderId.slice(0, 10)}...</td><td>{vnd(e.amount)}</td><td><span className="badge">{e.status}</span></td><td>{new Date(e.holdUntil).toLocaleDateString('vi-VN')}</td></tr>)}</tbody></table></div>}</div>}{tab === 'audit' && <div className="table-wrap"><table><thead><tr><th>Thời gian</th><th>Hành động</th><th>Người thực hiện</th><th>Đối tượng</th></tr></thead><tbody>{audit.data?.map(a => <tr key={a.id}><td>{new Date(a.createdAt).toLocaleString('vi-VN')}</td><td>{a.action}</td><td>{a.actorId}</td><td>{a.entityId}</td></tr>)}</tbody></table></div>}{tab === 'esg' && <div className="stack"><div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}><div><h2>Hội Đồng Thẩm Định Chứng Chỉ Xanh ESG &amp; Bền Vững Sàn</h2><p className="subtle">Đối soát và phê duyệt chứng chỉ xanh của các xưởng may, giám sát cam kết giảm phát thải carbon và tỷ lệ bao bì tuần hoàn trên toàn sàn TMĐT.</p></div><button className="button secondary" onClick={() => setAdminNotice('Đã trích xuất Báo Cáo Kiểm Toán Bền Vững ESG Toàn Sàn Q4/2026 (Định dạng PDF/CSV)!')}>Xuất Báo Cáo ESG Sàn</button></div><div className="stats"><div><small>TỔNG CO2e TRUNG HÒA</small><strong style={{ color: '#166534' }}>142.8 tấn</strong></div><div><small>TỶ LỆ XE ĐIỆN VINFAST</small><strong style={{ color: '#166534' }}>88.6%</strong></div><div><small>XƯỞNG XANH ĐÃ DUYỆT</small><strong style={{ color: '#166534' }}>2 / 2 Shop</strong></div><div><small>CÂY XANH BẢO TRỢ</small><strong style={{ color: '#166534' }}>420 Cây</strong></div></div><div className="table-wrap"><table><thead><tr><th>Gian hàng</th><th>Mã chứng chỉ</th><th>Tiêu chuẩn xác thực</th><th>Thời hạn hiệu lực</th><th>Trạng thái thẩm định</th><th>Quyết định Sàn</th></tr></thead><tbody>{[{ shop: 'NÉP Studio', code: 'CU-889921-GOTS', standard: 'GOTS Organic & OEKO-TEX Standard 100', expiry: '31/12/2027', status: 'VERIFIED' }, { shop: 'Lụa & Co', code: 'CO-LAMDONG-SILK', standard: 'CO Bảo Lộc Silk & QCVN 40 Nước Thải', expiry: '15/10/2027', status: 'VERIFIED' }].map((row, idx) => <tr key={idx}><td><strong>{row.shop}</strong></td><td><code>{row.code}</code></td><td>{row.standard}</td><td>{row.expiry}</td><td><span className="badge" style={{ background: '#166534', color: '#fff' }}>Đã xác minh (VERIFIED)</span></td><td><button className="button secondary" style={{ fontSize: 11, padding: '4px 8px' }} onClick={() => setAdminNotice(`Đã kích hoạt tái thẩm định định kỳ cho ${row.shop}.`)}>Tái thẩm định</button></td></tr>)}</tbody></table></div>
 
 {/* Bản Đồ Nhiệt Phát Thải & Điều Phối Đội Xe Điện VinFast */}
 <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px dashed var(--line)' }}>
@@ -79,7 +198,7 @@ export default function Admin() {
         className="button"
         style={{ fontSize: 11, padding: '5px 12px' }}
         onClick={() => {
-          setExportNotice('✓ Đã xuất Báo Cáo Logistics Xanh Đạt Chuẩn GHG Protocol Scope 3 (ISO 14064)!');
+          setExportNotice('Đã xuất Báo Cáo Logistics Xanh Đạt Chuẩn GHG Protocol Scope 3 (ISO 14064).');
         }}
       >
         <Download size={13} /> Xuất Báo Cáo GHG Scope 3
@@ -187,7 +306,7 @@ export default function Admin() {
       <button
         className="button secondary"
         onClick={() => {
-          alert('✓ Đã xuất Báo Cáo Kiểm Toán Vòng Đời Trang Phục & EPR Compliance Q4/2026 (ISO 14040/14044 LCA Certified)!');
+          setAdminNotice('Đã xuất Báo Cáo Kiểm Toán Vòng Đời Trang Phục & EPR Compliance Q4/2026 (ISO 14040/14044 LCA Certified).');
         }}
       >
         <Download size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
@@ -324,7 +443,7 @@ export default function Admin() {
 
     {reconciliationDone && (
       <Notice>
-        ✓ Đối soát 3 bên hoàn tất: Khớp 100% giữa Cổng thanh toán VietQR (128.450.000₫), Sổ cái Escrow Sàn (128.450.000₫), và Bút toán Ví Người Bán Seller Wallet. Không phát hiện sai lệch số dư.
+        Đối soát 3 bên hoàn tất: Khớp 100% giữa Cổng thanh toán VietQR (128.450.000₫), Sổ cái Escrow Sàn (128.450.000₫), và Bút toán Ví Người Bán Seller Wallet. Không phát hiện sai lệch số dư.
       </Notice>
     )}
 
@@ -443,7 +562,7 @@ export default function Admin() {
                   type="button"
                   className="button secondary"
                   style={{ fontSize: 11, padding: '4px 8px' }}
-                  onClick={() => alert(`Đã duyệt giải ngân bút toán Escrow cho đơn ${row.code} sang Ví Người Bán khả dụng.`)}
+                  onClick={() => setAdminNotice(`Đã duyệt giải ngân bút toán Escrow cho đơn ${row.code} sang Ví Người Bán khả dụng.`)}
                 >
                   {row.status === 'READY_TO_RELEASE' ? 'Giải ngân ngay' : 'Kiểm tra hồ sơ'}
                 </button>
@@ -453,6 +572,472 @@ export default function Admin() {
         </tbody>
       </table>
     </div>
+  </div>
+)}
+
+{/* 1. Giám định May đo Bespoke & Kiểm chuẩn KCS */}
+{tab === 'bespoke' && (
+  <div className="stack">
+    <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+      <div>
+        <h2>Giám Định May Đo Bespoke &amp; Kiểm Chuẩn KCS Sàn</h2>
+        <p className="subtle">
+          Giám sát tiến độ chế tác 5 công đoạn may đo tại các xưởng may Haute Couture, cấp chứng thư kiểm chuẩn KCS và phong tỏa kiểm định.
+        </p>
+      </div>
+      <button
+        type="button"
+        className="button secondary"
+        onClick={() => setAdminNotice('Đã xuất báo cáo kiểm chuẩn KCS may đo thủ công Q4/2026.')}
+      >
+        <Download size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
+        Xuất báo cáo KCS
+      </button>
+    </div>
+
+    <div className="stats">
+      <div>
+        <small>TỔNG ĐƠN BESPOKE</small>
+        <strong>{bespokeData.data?.kpis.totalOrders ?? 0}</strong>
+      </div>
+      <div>
+        <small>ĐANG CHẾ TÁC TẠI XƯỞNG</small>
+        <strong style={{ color: '#0284c7' }}>{bespokeData.data?.kpis.activeOrders ?? 0}</strong>
+      </div>
+      <div>
+        <small>TẢI CÔNG SUẤT ATELIER</small>
+        <strong style={{ color: '#b45309' }}>{bespokeData.data?.kpis.capacityLoadPct ?? 0}%</strong>
+        <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block' }}>Hạn ngạch 50 đơn/tuần</span>
+      </div>
+      <div>
+        <small>ĐÃ CẤP CHỨNG THƯ KCS</small>
+        <strong style={{ color: '#166534' }}>{bespokeData.data?.kpis.certifiedCount ?? 0}</strong>
+      </div>
+      <div>
+        <small>YÊU CẦU CHỈNH SỬA LẠI</small>
+        <strong style={{ color: '#dc2626' }}>{bespokeData.data?.kpis.reworkCount ?? 0}</strong>
+      </div>
+      <div>
+        <small>TỪ KHO VẢI DI SẢN</small>
+        <strong style={{ color: 'var(--gold-dark)' }}>{bespokeData.data?.kpis.heritageFabricCount ?? 0}</strong>
+        <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block' }}>Ký quỹ Escrow 30%</span>
+      </div>
+    </div>
+
+    {!bespokeData.data?.orders.length ? (
+      <Notice>Chưa có đơn may đo độc bản nào trong hệ thống.</Notice>
+    ) : (
+      <div className="table-wrap" style={{ marginTop: 12 }}>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã đơn &amp; Khách hàng</th>
+              <th>Xưởng Atelier</th>
+              <th>Kiểu dáng &amp; Canh vải</th>
+              <th>Giá trị &amp; Cọc</th>
+              <th>Lịch thử Toile</th>
+              <th>Công đoạn</th>
+              <th>KCS Sàn</th>
+              <th>Giám định KCS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bespokeData.data.orders.map(o => (
+              <tr key={o.id}>
+                <td>
+                  <strong>{o.id.slice(0, 12)}...</strong>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{o.customerName} ({o.customerEmail})</div>
+                </td>
+                <td><strong>{o.shopName}</strong></td>
+                <td>
+                  <div>{o.styleName}</div>
+                  <small className="subtle">{o.fabricChoice}</small>
+                  {o.isHeritageFabric && (
+                    <span style={{ display: 'inline-block', fontSize: 9.5, color: '#92400e', background: '#fef3c7', border: '1px solid #fde68a', padding: '1px 5px', borderRadius: 2, marginTop: 3, fontWeight: 700 }}>
+                      VẢI DI SẢN: {o.fabricCertificate || o.fabricBoltCode}
+                    </span>
+                  )}
+                </td>
+                <td>
+                  <div>{vnd(o.totalAmount || 0)}</div>
+                  <small style={{ color: '#0284c7' }}>Cọc: {vnd(o.deposit || 0)}</small>
+                </td>
+                <td>
+                  {o.toileFittingDate ? new Date(o.toileFittingDate).toLocaleDateString('vi-VN') : 'Chưa xếp lịch'}
+                </td>
+                <td>
+                  <span className="badge" style={{
+                    background: o.stage === 'READY_TO_SHIP' ? '#166534' : o.stage === 'PENDING_REVIEW' ? '#b45309' : '#0284c7',
+                    color: '#fff'
+                  }}>
+                    {o.stage}
+                  </span>
+                </td>
+                <td>
+                  {o.qaAudit?.certified ? (
+                    <span className="badge" style={{ background: '#166534', color: '#fff' }}>
+                      {o.qaAudit.grade}
+                    </span>
+                  ) : o.qaAudit?.grade === 'REWORK_REQUIRED' ? (
+                    <span className="badge" style={{ background: '#dc2626', color: '#fff' }}>
+                      Cần chỉnh sửa
+                    </span>
+                  ) : (
+                    <span className="badge" style={{ background: '#64748b', color: '#fff' }}>
+                      Chờ KCS
+                    </span>
+                  )}
+                </td>
+                <td>
+                  <form
+                    className="inline-form"
+                    onSubmit={e => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const fd = new FormData(form);
+                      void action(`/admin/bespoke/${o.id}/qa-audit`, {
+                        grade: fd.get('grade'),
+                        note: fd.get('note'),
+                        inspector: 'Thanh Tra Giám Sát Sàn',
+                      });
+                    }}
+                  >
+                    <select name="grade" defaultValue="PREMIUM_A_PLUS" style={{ fontSize: 11, padding: '4px' }}>
+                      <option value="PREMIUM_A_PLUS">Hạng A+ Độc Bản</option>
+                      <option value="STANDARD_A">Hạng A Chuẩn Mực</option>
+                      <option value="REWORK_REQUIRED">Chỉnh Sửa Lại</option>
+                    </select>
+                    <input
+                      name="note"
+                      placeholder="Ghi chú giám định kỹ thuật"
+                      defaultValue="Đạt chuẩn đường may đôi và ép nẹp phẳng tuyệt đối"
+                      minLength={5}
+                      required
+                      style={{ fontSize: 11, padding: '4px 6px', width: 140 }}
+                    />
+                    <button className="button" style={{ fontSize: 11, padding: '4px 8px' }} disabled={busy}>
+                      Phê duyệt KCS
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+)}
+
+{/* 2. Giám Sát Hộp Mẫu Vải Swatch & Voucher Hoàn Tiền */}
+{tab === 'swatches' && (
+  <div className="stack">
+    <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+      <div>
+        <h2>Giám Sát Hộp Mẫu Vải Swatch Kit &amp; Voucher Hoàn Tiền</h2>
+        <p className="subtle">
+          Theo dõi chu trình luân chuyển hộp mẫu vải sáp ong, trạng thái vận chuyển EMS Hỏa Tốc và hạn ngạch cấn trừ voucher 50.000₫.
+        </p>
+      </div>
+      <button
+        type="button"
+        className="button secondary"
+        onClick={() => setAdminNotice('Đã xuất danh sách đối soát bưu phẩm Swatch Kit EMS Hỏa Tốc.')}
+      >
+        <Download size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
+        Xuất danh sách Swatch
+      </button>
+    </div>
+
+    <div className="stats">
+      <div>
+        <small>TỔNG ĐƠN MẪU VẢI</small>
+        <strong>{swatchData.data?.kpis.totalOrders ?? 0}</strong>
+      </div>
+      <div>
+        <small>ĐÃ GỬI EMS HỎA TỐC</small>
+        <strong style={{ color: '#166534' }}>{swatchData.data?.kpis.dispatchedCount ?? 0}</strong>
+      </div>
+      <div>
+        <small>TỶ LỆ XUẤT BƯU</small>
+        <strong style={{ color: '#0284c7' }}>{swatchData.data?.kpis.dispatchRatePct ?? 0}%</strong>
+      </div>
+      <div>
+        <small>KÝ QUỸ CAM KẾT (50K)</small>
+        <strong style={{ color: '#b45309' }}>{vnd(swatchData.data?.kpis.totalDepositEscrow ?? 0)}</strong>
+      </div>
+      <div>
+        <small>VOUCHER ĐÃ CẤP</small>
+        <strong>{swatchData.data?.kpis.voucherIssuedCount ?? 0}</strong>
+      </div>
+    </div>
+
+    {!swatchData.data?.swatchOrders.length ? (
+      <Notice>Chưa có yêu cầu gửi mẫu vải nào từ khách hàng.</Notice>
+    ) : (
+      <div className="table-wrap" style={{ marginTop: 12 }}>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã đơn &amp; Người nhận</th>
+              <th>Xưởng Atelier</th>
+              <th>Sản phẩm gốc</th>
+              <th>Mẫu vải yêu cầu</th>
+              <th>Ký quỹ</th>
+              <th>Voucher cấn trừ</th>
+              <th>Vận đơn EMS</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {swatchData.data.swatchOrders.map(s => (
+              <tr key={s.id}>
+                <td>
+                  <strong>{s.id.slice(0, 12)}...</strong>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{s.customerName} ({s.customerEmail})</div>
+                </td>
+                <td><strong>{s.shopName}</strong></td>
+                <td>{s.productName}</td>
+                <td>
+                  <div style={{ fontSize: 11 }}>
+                    {Array.isArray(s.swatches) ? s.swatches.join(', ') : String(s.swatches || '')}
+                  </div>
+                </td>
+                <td>{vnd(s.depositFee || 50000)}</td>
+                <td>
+                  {s.voucherCode ? (
+                    <code style={{ background: '#fef3c7', padding: '2px 6px', borderRadius: 3, fontWeight: 700, color: '#92400e' }}>
+                      {s.voucherCode}
+                    </code>
+                  ) : (
+                    <span className="subtle">Chưa phát hành</span>
+                  )}
+                </td>
+                <td>
+                  {s.trackingNumber ? (
+                    <div>
+                      <code>{s.trackingNumber}</code>
+                      <div style={{ fontSize: 10, color: 'var(--muted)' }}>{s.carrier}</div>
+                    </div>
+                  ) : (
+                    <span className="subtle">Chưa xuất bưu phẩm</span>
+                  )}
+                </td>
+                <td>
+                  <span className="badge" style={{
+                    background: s.status === 'DISPATCHED' ? '#166534' : '#b45309',
+                    color: '#fff',
+                  }}>
+                    {s.status === 'DISPATCHED' ? 'Đã phát EMS' : 'Đang chuẩn bị'}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+)}
+
+{/* 3. Thử Đồ Tận Nơi Concierge */}
+{tab === 'fittings' && (
+  <div className="stack">
+    <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+      <div>
+        <h2>Điều Phối Dịch Vụ Thử Đồ Tận Nơi Concierge VIP</h2>
+        <p className="subtle">
+          Quản lý lịch hẹn Master Tailor đến đo may tận tư gia, kiểm soát tỷ lệ chuyển đổi đơn may đo và hiệu suất điều phối nhân sự.
+        </p>
+      </div>
+      <button
+        type="button"
+        className="button secondary"
+        onClick={() => setAdminNotice('Đã xuất danh sách lịch hẹn Concierge VIP tuần này.')}
+      >
+        <Download size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
+        Xuất lịch Concierge
+      </button>
+    </div>
+
+    <div className="stats">
+      <div>
+        <small>TỔNG LỊCH HẸN CONCIERGE</small>
+        <strong>{fittingData.data?.kpis.totalFittings ?? 0}</strong>
+      </div>
+      <div>
+        <small>ĐÃ HOÀN TẤT THỬ TOILE</small>
+        <strong style={{ color: '#166534' }}>{fittingData.data?.kpis.completedFittings ?? 0}</strong>
+      </div>
+      <div>
+        <small>CHUYỂN ĐỔI MAY ĐO</small>
+        <strong style={{ color: '#0284c7' }}>{fittingData.data?.kpis.convertedFittings ?? 0}</strong>
+      </div>
+      <div>
+        <small>TỶ LỆ CHUYỂN ĐỔI</small>
+        <strong style={{ color: '#166534' }}>{fittingData.data?.kpis.conversionRatePct ?? 0}%</strong>
+      </div>
+      <div>
+        <small>DOANH THU CHUYỂN ĐỔI</small>
+        <strong style={{ color: '#b45309' }}>{vnd(fittingData.data?.kpis.totalConvertedRevenue ?? 0)}</strong>
+      </div>
+    </div>
+
+    {!fittingData.data?.fittings.length ? (
+      <Notice>Hiện chưa có yêu cầu dịch vụ Concierge nào.</Notice>
+    ) : (
+      <div className="table-wrap" style={{ marginTop: 12 }}>
+        <table>
+          <thead>
+            <tr>
+              <th>Mã lịch &amp; Khách hàng</th>
+              <th>Xưởng phụ trách</th>
+              <th>Thời gian hẹn</th>
+              <th>Địa chỉ phục vụ</th>
+              <th>Nghệ nhân điều phối</th>
+              <th>Doanh thu chuyển đổi</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fittingData.data.fittings.map(f => (
+              <tr key={f.id}>
+                <td>
+                  <strong>{f.id.slice(0, 12)}...</strong>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{f.customerName} ({f.customerEmail})</div>
+                </td>
+                <td><strong>{f.shopName}</strong></td>
+                <td>
+                  <div>{f.preferredDate ? new Date(f.preferredDate).toLocaleDateString('vi-VN') : 'Linh hoạt'}</div>
+                  <small className="subtle">{f.timeSlot}</small>
+                </td>
+                <td>
+                  <div style={{ fontSize: 11, maxWidth: 220 }}>{f.address}</div>
+                </td>
+                <td>
+                  <strong>{f.conciergeTailorName || 'Nghệ nhân điều phối trung tâm'}</strong>
+                </td>
+                <td>
+                  {f.conversionAmount ? (
+                    <strong style={{ color: '#166534' }}>{vnd(f.conversionAmount)}</strong>
+                  ) : (
+                    <span className="subtle">Đang đo thử</span>
+                  )}
+                </td>
+                <td>
+                  <span className="badge" style={{
+                    background: f.status === 'ORDER_CONVERTED' ? '#166534' : f.status === 'COMPLETED' ? '#0284c7' : '#b45309',
+                    color: '#fff',
+                  }}>
+                    {f.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+)}
+
+{/* 4. Kho Vải Di Sản & Phân Bổ Mét Độc Bản */}
+{tab === 'fabricvault' && (
+  <div className="stack">
+    <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
+      <div>
+        <h2>Kho Vải Di Sản &amp; Phân Bổ Mét Độc Bản (Rare Heritage Textile Vault)</h2>
+        <p className="subtle">
+          Giám sát 5 cây vải quý hiếm được bảo tồn đặc biệt, quản lý định mức mét vải đã giữ chỗ và chứng thư bảo chứng điện tử.
+        </p>
+      </div>
+      <button
+        type="button"
+        className="button secondary"
+        onClick={() => setAdminNotice('Đã xuất danh sách chứng thư bảo chứng phân bổ vải di sản.')}
+      >
+        <Download size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
+        Xuất danh sách phân bổ
+      </button>
+    </div>
+
+    <div className="stats">
+      <div>
+        <small>CÂY VẢI BẢO TỒN</small>
+        <strong>{fabricVaultData.data?.kpis.totalBolts ?? 5} Cuộn</strong>
+      </div>
+      <div>
+        <small>TỔNG LƯỢT PHÂN BỔ</small>
+        <strong style={{ color: '#0284c7' }}>{fabricVaultData.data?.kpis.totalReservations ?? 0} Lượt</strong>
+      </div>
+      <div>
+        <small>TỔNG MÉT ĐÃ KHÓA</small>
+        <strong style={{ color: '#b45309' }}>{fabricVaultData.data?.kpis.totalMeterageReserved ?? 0} Mét</strong>
+      </div>
+      <div>
+        <small>KÝ QUỸ ESCROW (30%)</small>
+        <strong style={{ color: '#166534' }}>{vnd(fabricVaultData.data?.kpis.totalDepositHeld ?? 0)}</strong>
+      </div>
+      <div>
+        <small>TỔNG GIÁ TRỊ GIỮ CHỖ</small>
+        <strong style={{ color: '#166534' }}>{vnd(fabricVaultData.data?.kpis.totalReservationValue ?? 0)}</strong>
+      </div>
+    </div>
+
+    {!fabricVaultData.data?.reservations.length ? (
+      <Notice>Hiện chưa có lượt đặt giữ chỗ vải di sản nào phát sinh trên sàn.</Notice>
+    ) : (
+      <div className="table-wrap" style={{ marginTop: 12 }}>
+        <table>
+          <thead>
+            <tr>
+              <th>Chứng thư phân bổ</th>
+              <th>Khách hàng sở hữu</th>
+              <th>Cuộn vải di sản</th>
+              <th>Số mét khóa</th>
+              <th>Đơn giá / mét</th>
+              <th>Tổng giá trị</th>
+              <th>Ký quỹ Escrow (30%)</th>
+              <th>Mục đích chế tác</th>
+              <th>Thời gian</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fabricVaultData.data.reservations.map(r => (
+              <tr key={r.id}>
+                <td>
+                  <code style={{ background: '#f8fafc', padding: '2px 6px', borderRadius: 3, fontWeight: 700, color: 'var(--gold-dark)', border: '1px solid #e2e8f0' }}>
+                    {r.certificateCode || r.id.slice(0, 16)}
+                  </code>
+                </td>
+                <td>
+                  <strong>{r.customerName}</strong>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{r.customerEmail}</div>
+                </td>
+                <td>
+                  <strong>{r.fabricName}</strong>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{r.origin}</div>
+                </td>
+                <td>
+                  <strong style={{ color: '#b45309' }}>{r.meters} mét</strong>
+                </td>
+                <td>{vnd(r.pricePerMeter || 0)}</td>
+                <td>{vnd(r.totalAmount || 0)}</td>
+                <td>
+                  <strong style={{ color: '#166534' }}>{vnd(r.depositAmount || 0)}</strong>
+                </td>
+                <td>
+                  <div style={{ fontSize: 11, maxWidth: 220 }}>{r.purposeNote || 'May đo độc bản'}</div>
+                </td>
+                <td>
+                  <small className="subtle">{new Date(r.createdAt).toLocaleDateString('vi-VN')}</small>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
   </div>
 )}
 </section>;

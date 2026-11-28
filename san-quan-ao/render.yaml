@@ -1,0 +1,86 @@
+# ==============================================================================
+# NEXORA Atelier - Render Blueprint Specification (render.yaml)
+# Triển khai toàn bộ Backend (API, Background Worker, Managed PostgreSQL, Redis)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. NEXORA Core API Service (NestJS)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: nexora-api
+    runtime: node
+    region: singapore
+    plan: standard
+    buildCommand: pnpm install --frozen-lockfile && pnpm build:api
+    startCommand: pnpm start:api
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: HOST
+        value: 0.0.0.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nexora-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: nexora-redis
+          property: connectionString
+      - key: SHIPPING_PROVIDER
+        value: mock
+      - key: WEB_ORIGIN
+        sync: false
+        # Nhập domain Vercel của bạn, ví dụ: https://nexora.vercel.app,http://localhost:3000
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE_NONE
+        value: "true"
+      - key: JWT_SECRET
+        generateValue: true
+
+  # ----------------------------------------------------------------------------
+  # 2. NEXORA Background Worker (BullMQ Queues)
+  # ----------------------------------------------------------------------------
+  - type: worker
+    name: nexora-worker
+    runtime: node
+    region: singapore
+    plan: standard
+    buildCommand: pnpm install --frozen-lockfile && pnpm build:worker
+    startCommand: pnpm start:worker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nexora-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: nexora-redis
+          property: connectionString
+
+  # ----------------------------------------------------------------------------
+  # 3. NEXORA Redis Cache & Queue Broker
+  # ----------------------------------------------------------------------------
+  - type: redis
+    name: nexora-redis
+    region: singapore
+    plan: standard
+    maxmemoryPolicy: allkeys-lru
+
+databases:
+  # ----------------------------------------------------------------------------
+  # 4. Managed PostgreSQL Database (Prisma ORM)
+  # ----------------------------------------------------------------------------
+  - name: nexora-db
+    region: singapore
+    plan: standard
+    databaseName: nexora
+    user: nexora_admin

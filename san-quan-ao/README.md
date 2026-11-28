@@ -256,4 +256,205 @@ Tuân thủ nguyên tắc: *"Mọi tính năng có trong Kế hoạch đều có
 | **Sổ Cái Ký Quỹ Escrow Đa Tầng Thời Gian Thực & Phong Tỏa 45 Ngày** | Module 02 & Admin | Đã hoàn thiện | Giám sát 3 cửa sổ (7-15-30 ngày), phong tỏa tranh chấp 45 ngày D1-05, đối soát tự động 3 bên VietQR/Sàn/Shop tại `/admin` (ADMIN-REALTIME-ESCROW-LEDGER-01) |
 | **Cổng Khiếu Nại Trọng Tài Trực Tuyến & Phong Tỏa Escrow 45 Ngày** | Module 03 & 04 | Đã hoàn thiện | Kích hoạt phong tỏa Escrow 45 ngày D1-05, đóng băng Seller Wallet D4-02, bộ 4 chứng cứ kiểm định tại `/don-hang/[id]` (ORD-REALTIME-RETURN-DISPUTE-MEDIATOR-01) |
 | **Khởi động 1-Click thông minh** | DevOps Tooling | Đã hoàn thiện | Script `start-local.ps1` tự động thiết lập relay socket WSL và chạy đồng thời API/Web |
+| **Thuật Toán Đóng Gói Hộp Sinh Thái Best-Fit Decreasing (BFD)** | Module 03 & 04 | Đã hoàn thiện | Thuật toán BFD xếp đồ vào 3 cỡ hộp Kraft Eco, tính toán tải trọng, thể tích và CO2e giảm thải tại `/gio-hang` (CART-BFD-LOGISTICS-PACKING) |
+| **Mã Hóa & Kiểm Thẩm VietQR Chuẩn EMVCo CRC-16-CCITT** | Module 03 & Fintech | Đã hoàn thiện | Sinh mã QR động chuẩn EMVCo TLV và tính toán kiểm dư tuần hoàn đa thức 0x1021 CRC-16 Napas 24/7 (PAY-EMVCO-CRC16-VIETQR) |
+| **Mô Hình Đánh Giá Rủi Ro Gian Lận & Bom Hàng Đa Tiêu Chí** | Module 03 & Risk | Đã hoàn thiện | Mô hình MCDA chấm điểm rủi ro đơn hàng (0-100), phân loại 3 tầng LOW/MEDIUM/HIGH bảo vệ xưởng may (ORD-MCDA-FRAUD-RISK-SCORE) |
+| **Kiểm Định Bất Biến Sổ Cái Ký Quỹ Zero-Sum & Thuế TT 40** | Module 02 & Accounting | Đã hoàn thiện | Kiểm tra bất biến Nợ - Có = 0 trong hạch toán Escrow, tự động khấu trừ 1.5% thuế theo TT 40/2021 (ESCROW-DOUBLE-ENTRY-ZERO-SUM) |
+| **Tiến Trình Đặt Hàng 4 Bước Từ Giỏ Đồ Đến Ký Quỹ Escrow** | Module 03 & UX | Đã hoàn thiện | Stepper mượt mà 4 bước (Giỏ Đồ -> Giao Nhận -> Báo Giá BFD -> Ký Quỹ Escrow) kèm xác nhận mã đơn trực quan (CART-4STEP-CHECKOUT-STEPPER) |
+
+---
+
+## 🧠 Hệ Thống 82 Thuật Toán Chuyên Sâu Tối Ưu Hóa Fullstack & Ký Quỹ Escrow
+
+Hệ thống được trang bị bộ lõi thuật toán chuyên sâu tại `apps/api/src/algorithms.ts`, tích hợp chặt chẽ vào quy trình nghiệp vụ từ giỏ hàng, báo giá, thanh toán ký quỹ đến logistics may đo:
+
+| STT | Mã Định Danh Thuật Toán | Bản Chất Kỹ Thuật & Toán Học | Ứng Dụng Nghiệp Vụ Fullstack |
+| :--- | :--- | :--- | :--- |
+| **01** | `PAY-EMVCO-CRC16-VIETQR` | Chuẩn hóa mã hóa EMVCo TLV + Checksum CRC-16-CCITT (`0x1021`, initial `0xFFFF`, ISO/IEC 13239) | Sinh mã VietQR động theo đơn, chống giả mạo số tiền và tài khoản nhận két Escrow MBBank. |
+| **02** | `CART-BFD-LOGISTICS-PACKING` | Best-Fit Decreasing (BFD) 3D Bin Packing Approximation ($O(n \log n)$) | Tự động tính toán dung lượng hộp Kraft tái sinh (`ECO_S`, `ECO_M`, `ECO_L`), gom kiện và tính toán phát thải carbon giảm được. |
+| **03** | `ORD-MCDA-FRAUD-RISK-SCORE` | Đánh giá rủi ro đa tiêu chí có trọng số (Multi-Criteria Decision Analysis - MCDA) | Chấm điểm rủi ro gian lận / bom hàng (0-100), tự động phê duyệt điều phối hoặc yêu cầu nghệ nhân gọi xác nhận. |
+| **04** | `ESCROW-DOUBLE-ENTRY-ZERO-SUM` | Bất biến kế toán kép cân bằng tuyệt đối ($\sum \text{Debits} \equiv \sum \text{Credits}$) | Bảo toàn dòng tiền ký quỹ trung gian, tự động trích nộp thuế 1.5% theo Thông tư 40/2021/TT-BTC trước khi quyết toán cho xưởng. |
+| **05** | `CART-STACK-COIN-ALLOC` | Phương pháp phân bổ phần dư lớn nhất Hamilton-Hare (Largest Remainder Method) | Chia tỷ lệ chiết khấu voucher/xu nguyên vẹn từng đồng VND, loại trừ triệt để sai số làm tròn số học. |
+| **06** | `OPT-VOUCHER-KNAPSACK-01` | Thuật toán Quy Hoạch Động Balo 0/1 (0/1 Knapsack Dynamic Programming) | Tự động giải bài toán chọn tổ hợp mã giảm giá tối ưu nhất (Shop + Sàn + Trade-In + Freeship) với mức chi tiêu của giỏ hàng. |
+| **07** | `RECONCILE-NAPAS-LEVENSHTEIN` | Đối soát tự động ngân hàng với khoảng cách Levenshtein ($D \le 1$) | So khớp tức thì biến động số dư Napas 24/7, chấp nhận dung sai gõ sai 1 ký tự mã đơn khi khách hàng chuyển khoản thủ công. |
+| **08** | `LOGISTICS-HAVERSINE-ETA` | Công thức cự ly cung tròn Trái Đất Haversine + Phạt trễ thời tiết & Khung giờ hẹn | Tính toán chính xác khoảng cách giữa hub xưởng may và khách hàng, dự báo khung ngày/giờ giao bưu tá xe điện. |
+| **09** | `BIOMETRIC-SMART-FIT-MINKOWSKI` | Khoảng cách Minkowski có trọng số với dung sai cử động (Garment Ease Margins) | Phân tích số đo 3 vòng (ngực/eo/mông) theo đặc tính co giãn của từng chất liệu (Linen, Lụa, Len) để gợi ý size chuẩn xác. |
+| **10** | `BESPOKE-CPM-SCHEDULE` | Phân tích tiến độ đường găng (Critical Path Method - Forward/Backward Pass) | Hoạch định 5 chặng may đo độc bản Haute Couture, tính toán dự trữ thời gian (Slack Time) và cảnh báo nút thắt trễ hạn giao. |
+| **11** | `ROUTING-HUB-AND-SPOKE` | Tối ưu hóa gom tuyến Trục - Nan hoa (Hub-and-Spoke Regional Logistics) | Tự động tính toán chọn Hub trung chuyển vùng (Hà Nội / TP.HCM), gom hàng từ nhiều xưởng may, giảm đến 48% hành trình xe tải. |
+| **12** | `AUDIT-MERKLE-HASH-CHAIN` | Chuỗi khối kiểm toán liên kết bất biến mật mã (SHA-256 Merkle Audit Chain) | Băm liên kết từng giao dịch đơn hàng và két ký quỹ Escrow, chống giả mạo số dư theo NĐ 52/2013/NĐ-CP & 85/2021/NĐ-CP. |
+| **13** | `CAPACITY-ERLANG-C-QUEUE` | Mô hình hàng đợi Erlang-C dự báo công suất nghệ nhân may đo | Ước tính thời gian chờ hàng đợi, tỷ lệ sử dụng công suất xưởng và cam kết ngày giao hàng may thủ công chuẩn xác. |
+| **14** | `MATH-BANKERS-ROUND-BPS` | Làm tròn chẵn nửa Half-Even (Banker's Rounding) & Điểm cơ bản BPS | Triệt tiêu hoàn toàn sai số trôi dấu phẩy động IEEE 754 trong tính toán thuế, hoa hồng KOC và chiết khấu phân bổ. |
+| **15** | `TRADEIN-WEIBULL-DEPRECIATION` | Khấu hao mũ Weibull Survival Decay ($e^{-\lambda t}$) kết hợp hệ số bảo tồn thương hiệu $K_{\text{brand}}$ & chất liệu dệt tự nhiên $K_{\text{fabric}}$ | Định giá thu mua trang phục cũ minh bạch theo vòng đời, kiểm soát khấu hao thực tế và sàn giá thu đổi tại `/trade-in`. |
+| **16** | `CIRCULAR-LCA-ISO14040` | Mô hình Đánh giá Vòng đời ISO 14040/14044 LCA Abatement định lượng $CO_2e$, nước sạch bảo tồn và rác thải dệt may | Cấp Hộ chiếu Sinh thái số (Digital LCA Passport), định lượng rác thải chuyển khỏi bãi chôn lấp và thưởng xu NEXORA Eco-Coins. |
+| **17** | `INSPECT-AHP-LAB-MATRIX` | Ma trận Thẩm định Giám định Quang học Đa Tiêu chí AHP (Analytic Hierarchy Process 1000 Lux ISO 4915) | Đánh giá 4 trục trọng số (Cấu trúc sợi Martindale 25%, Độ bền đường may 50N 25%, Giữ màu quang phổ 25%, Phục hồi vết bẩn sinh học 25%) phân hạng S/A/B/C/D. |
+| **18** | `VOUCHER-ANTI-ARBITRAGE-SIG` | Mã Voucher Mật mã Chống Gian lận & Thao túng Giá (SHA-256 Signature Tag `NXTI-[GRADE][HEX]`) | Sinh voucher ký quỹ thu cũ chống làm giả, liên kết định danh người dùng và kiểm soát thời hạn lưu hành 60 ngày. |
+| **19** | `CARE-ACTUARIAL-RISK-PREMIUM` | Định phí bảo hiểm rủi ro may đo theo nguyên lý Actuarial (Solvency II Capital Buffer & Value-at-Risk $VaR_{99\%}$) | Tính toán phí bảo hiểm vận chuyển & spa đồ hiệu trên giá trị khai báo vượt 10 triệu, 0đ khấu trừ tại `/vas-care`. |
+| **20** | `ZIPSEAL-CRYPTO-CRC16` | Mã niêm phong túi Zip-seal một chiều mật mã quang học chống tráo hàng (ISO 17712 High Security Seal + Checksum CRC-16-CCITT) | Sinh mã `NX-SEAL-[HUB]-[HEX]-[CRC16]` và xác thực chữ ký số chống tráo bọc hàng trong suốt chu trình giao nhận. |
+| **21** | `KINETICS-FIBER-RESTORATION` | Động học giải hấp phụ vết bẩn bậc một ($C(t) = C_0 e^{-kt}$) & Bảo toàn lực kéo sợi dệt (ASTM D5034) | Dự báo tỷ lệ phục hồi cấu trúc vi sợi (Silk, Wool, Leather, Linen), độ bền kéo $\ge 95\%$ và đề xuất phác đồ dung môi sinh học. |
+| **22** | `CO2-SUPERCRITICAL-THERMO` | Nhiệt động học $CO_2$ lỏng siêu tới hạn ($P > 73.8\,\text{bar}$, $T > 31.1^\circ\text{C}$) & Xả áp an toàn ($dP/dt \le 2.2\,\text{bar/min}$) | Làm sạch không dùng nước (100% Waterless), triệt tiêu dung môi độc hại PERC, khử khuẩn Ozone $O_3$ và tuần hoàn thu hồi 98.6% $CO_2$. |
+| **23** | `COLOR-HARMONY-CIELAB-DELTAE00` | Chuyển đổi sRGB $\to$ Linear RGB $\to$ CIE XYZ $\to$ CIELAB ($L^*, a^*, b^*$) và tính toán khoảng cách vi sai màu sắc CIEDE2000 ($\Delta E_{00}$) chuẩn CIE ISO 11664-6 | Đánh giá độ hòa hợp thẩm mỹ trang phục nhiều lớp (Monochrome, Analogous, Complementary, Neutral Luxury), tính điểm hòa sắc (0-100) tại `/phoi-do`. |
+| **24** | `THERMAL-COMFORT-ISO9920-CLO` | Đánh giá tiện nghi nhiệt cơ thể theo chuẩn ISO 9920 & ASHRAE 55 ($I_{\text{cl}}$ tổng hợp lớp áo & lớp khí biên $I_{\text{a}}$) kết hợp chỉ số Predicted Mean Vote (PMV) | Cân bằng nhiệt trang phục theo nhiệt độ môi trường thực tế ($T_{\text{amb}}$), tốc độ gió và độ thoáng khí của sợi dệt (Linen, Lụa, Len). |
+| **25** | `CAPSULE-COMBINATORICS-GRAPH` | Tối ưu hóa đồ thị phân đôi tổ hợp Capsule Wardrobe ($N = \|T\| \times \|B\| \times (\|O\| + 1)$) & Đa dạng hóa Shannon Entropy ($H$) | Tự động sinh ma trận outfit phối hợp từ số lượng tối thiểu trang phục, phân bổ chỉ số đa dạng và lập bảng khấu hao chi phí mỗi lần diện Cost-Per-Wear (CPW 180/365 ngày). |
+| **26** | `COMBO-BUNDLE-HAMILTON-HARE` | Tối ưu hóa định giá Combo Bundle bậc thang (Set 3 món -10%, Set 5 món -15%) với phân bổ phần dư lớn nhất Hamilton-Hare bảo toàn từng đồng VND | Thưởng tích lũy Xu Sinh Thái NEXORA Eco-Coins, kích hoạt thêm giỏ hàng trọn gói 1-chạm không rời Studio Mix & Match. |
+| **27** | `LIVE-VELOCITY-DECAY-STOCK-ALLOC` | Mô hình suy hao vận tốc mũ ($V(t) = e^{-\alpha t}$) & Phân phối cường độ dòng người mua Poisson ($\lambda(t)$) | Phân bổ công bằng hạn ngạch tồn kho flash sale, cấp token khóa giữ hàng động ($\tau_{\text{ttl}}$) chống bot/hoarding tại `/live`. |
+| **28** | `POLL-WILSON-SCORE-INTERVAL` | Khoảng tin cậy cận dưới Wilson Score 95% ($W_i$) & Kỳ vọng hậu nghiệm Bayesian Beta-Binomial ($\text{Dirichlet}$) | Xác thực đồng thuận thống kê chuẩn xác từ bình chọn khán giả trực tiếp, mở khóa Flash Deal Voucher `RUNWAY20` và chuyển outfit người mẫu tại `/live`. |
+| **29** | `STYLIST-SLOT-HUNGARIAN-MATCH` | Thuật toán gán cặp tối ưu đồ thị phân đôi Kuhn-Munkres (Hungarian Bipartite Optimal Matching) | Ghép nối khách hàng VIP với Master Stylist theo Style DNA / Fashion Archetype, phân bổ phòng thử Private Suite và sinh mã đặt hẹn bất biến tại `/live`. |
+| **30** | `RUNWAY-FRAME-ENTROPY-EXTRACT` | Entropy thông tin quang phổ Shannon ($H(X) = -\sum p_i \log_2 p_i$) & Chỉ số hòa hợp Tỷ Lệ Vàng $\Phi \approx 1.618$ | Đo lường độ phức tạp thị giác đa góc máy (Catwalk, Macro 4K, Backstage), chấm điểm giá trị sưu tập Collector Score và cấp chứng thư NFT Provenance SHA-256 tại `/live`. |
+| **31** | `P2P-SWAP-FAIR-VALUE-ESCROW` | Mô hình thẩm định tương đương giá trị trao đổi P2P ($S_{\text{parity}} \in [50, 100\%]$) & Ký quỹ bảo chứng Escrow đối ứng ($\ge 20\% + \|\Delta V\|$) | Khóa cọc bảo chứng an toàn hai chiều, tự động tính khoản bù trừ chênh lệch và định lượng phát thải rác thải/CO2e chuyển khỏi bãi chôn lấp tại `/cong-dong`. |
+| **32** | `PATRONAGE-PIT-TAX-WITHHOLDING` | Thuật toán tự động khấu trừ 10% thuế TNCN tại nguồn theo Điều 25 TT 111/2013/TT-BTC & Điều 19a NĐ 91/2022/NĐ-CP | Tự động phân tách thuế khấu trừ và tiền giải ngân ví KOC Creator Wallet, sinh số hóa đơn điện tử e-Tax `ETAX-TNCN-[YEAR]-[HEX]` và tặng Xu Xanh tại `/cong-dong`. |
+| **33** | `OOTD-SPATIAL-COORDINATE-ALIGN` | Ma trận khoảng cách Euclid 2D chuẩn hóa $d(i, j) \ge d_{\text{min}}$ ($0.08$) & Tối ưu hóa phân tán chống chồng lấn ghim | Đánh giá độ thông thoáng trực quan của các điểm ghim tọa độ sản phẩm trên bài viết OOTD, phân bổ trọng số kích cầu giỏ hàng và đảm bảo trải nghiệm Shop the Look 1-Click tại `/cong-dong`. |
+| **34** | `CHALLENGE-BAYESIAN-PRIZE-DIVIDEND` | Mô hình xếp hạng bình chọn Bayesian Dirichlet-Multinomial làm mịn Laplace & Phân bổ cổ tức quỹ thưởng Hamilton-Hare | Xếp hạng công bằng các bài dự thi thử thách phối đồ `#LinenInTheCity` theo số phiếu và độ tươi mới, chia đều quỹ thưởng 15.000.000đ cho Top 3 chính xác từng đồng VND tại `/cong-dong`. |
+| **35** | `STYLE-ARCHETYPE-MAHALANOBIS-QUIZ` | Không gian vector đặc trưng 4 chiều (Màu sắc, Ngữ cảnh, Cảm thụ, Triết lý), khoảng cách Mahalanobis $D_k^2$ và phân phối xác suất Softmax | Phân loại Style DNA Archetype (`QUIET_LUXURY_CURATOR`, `EARTH_SARTORIALIST`, `MINIMALIST_ARCHITECT`, `SLOW_FASHION_BOHEMIAN`), đo độ tin cậy Shannon Entropy, gợi ý chất liệu và bảng màu tại `/tai-khoan`. |
+| **36** | `FOOTWEAR-ANTHROPOMETRIC-BRANNOK` | Chuẩn ISO 9407 / Mondopoint, Paris Point EU/US/UK, tỷ lệ rộng/dài Brannock (B đến EE) và hiệu chỉnh vòm chân cơ sinh học (Standard, Flat, High) | Đề xuất size giày chính xác 98.4%, chiều dài lót giày khuyến nghị và đệm nâng vòm theo cơ chế sinh học bước đi tại `/tai-khoan`. |
+| **37** | `WARDROBE-CPW-AMORTIZATION-LIFECYCLE` | Mô hình chuỗi Markov khấu hao Tổng Chi Phí Sở Hữu (TCO), cường độ diện đồ (lần/tháng) và ma trận quyết định tuần hoàn Trade-In vs. Lưu giữ | Tính toán chi phí mỗi lần mặc CPW, tiến độ khấu hao và dự báo tuổi thọ sợi tự nhiên theo đặc tính xơ dệt tại `/tai-khoan`. |
+| **38** | `MICROCLIMATE-HUMIDITY-MOLD-RISK` | Nhiệt động lực học hơi nước bão hòa Magnus-Tetens, tính điểm sương $T_{\text{dew}}$ và mô hình phát triển nấm mốc VTT | Đánh giá nguy cơ nồm ẩm nhiệt đới vs. Buồng két ngủ đông Atelier 48% RH, tăng $1.85\times$ tuổi thọ sợi và sinh mã niêm phong SHA-256 tại `/tai-khoan`. |
+| **39** | `POD-PHYSICAL-PIN-WEIGHT-TELEMETRY` | Sinh mã PIN an ninh 6 chữ số tất định & Đối soát cân nặng 3 trạm (Xuất kho, Hub phân loại, Bưu tá giao) với dung sai $\Delta W \le 50\text{g}$ | Xác thực giao nhận đồng kiểm ngoại quan, phát hiện tráo hàng và cấp chứng chỉ băm mật mã SHA-256 Proof of Delivery tại `/don-hang/[id]`. |
+| **40** | `WEATHER-ADAPTIVE-REROUTE-BUFFER` | Mô hình dữ liệu radar mưa dông (mm/h), gió giật Beaufort và xác suất ngập úng đô thị | Tự động tính đệm thời gian dự phòng an toàn (+15 đến +60 phút), nâng cấp bao bì 3 lớp Bio-Cassava và tặng điểm kiên nhẫn NEX-Green tại `/don-hang/[id]`. |
+| **41** | `GREEN-MILE-EV-TELEMETRY-PASSPORT` | Đo lường phát thải carbon chặng cuối xe máy điện VinFast Feliz LFP vs. Xe xăng đô thị ($0.085\text{ kg } CO_2\text{e/km}$) | Tính toán lượng $CO_2e$ cắt giảm ròng, ngày hấp thụ cây xanh bản địa và phát hành chứng thư số Hộ Chiếu Giao Hàng Xanh `#GREEN-MILE-VN[HEX]` tại `/don-hang/[id]`. |
+| **42** | `ONLINE-ARBITRATION-ESCROW-SPLIT` | Mô hình phân xử trọng tài sàn trực tuyến (ODR) định lượng trọng số lỗi 3 bên (Khách mua, Xưởng, Bưu tá) theo Luật Thương mại 2005 & Luật BVQLNTD 2023 | Phân bổ giải ngân hoặc hoàn trả bảo toàn chính xác từng đồng VND két Escrow, sinh mã thỏa ước `DISPUTE-ARB-2026-[HEX]` với SLA giải quyết 48h tại `/don-hang/[id]`. |
+| **43** | `DRAPE-RHEOLOGY-CUSICK-RADAR` | Đo lường hệ số rủ Cusick Drapemeter $F = \frac{A_{\text{draped}} - A_{\text{disc}}}{A_{\text{specimen}} - A_{\text{disc}}} \times 100\%$, mô-men uốn Peirce flexural rigidity $G = w \cdot c^3 \times 10^{-3}$, hệ số dẫn nhiệt Fourier $k$ & điểm số Dynamic Fluidity (0-100) | Đánh giá độ rủ sóng vải, độ đanh chắc và mô phỏng chuyển động trực quan 2D/3D tại `/san-pham/[slug]`. |
+| **44** | `SILHOUETTE-ANTHROPOMETRIC-2D-FIT` | Phân tích đối chiếu chỉ số nhân trắc học 3 vòng ($\Delta E = G_{\text{spec}} - B_{\text{user}}$), tính toán áp lực căng chỉ đường may (Seam Strain Index) & vị trí hạ gấu váy/áo (Hemline Drop) | Dự báo phom dáng chính xác 96%, khuyến nghị size S/M/L theo vóc dáng PETITE/ATHLETIC/CURVY và cảnh báo đứt chỉ tại `/san-pham/[slug]`. |
+| **45** | `BESPOKE-PREORDER-ESCROW-QUEUE` | Quản lý giới hạn công suất xưởng may thủ công Haute Couture (15 suất/tuần FIFO Queue), xác thực chuỗi thêu Monogram cá nhân hóa, bảo toàn ký quỹ Escrow 30% - 70% | Tiếp nhận đơn đặt may đo độc bản, phân bổ phụ phí lót lụa tơ tằm, lập lịch 5 chặng thủ công và phát hành mã chứng thư `#ATELIER-BESPOKE-[TS]-[HEX]` tại `/san-pham/[slug]`. |
+| **46** | `MATERIAL-DPP-ECO-PROVENANCE` | Tuân thủ Chỉ thị DPP 2024 của Liên minh Châu Âu và tiêu chuẩn ISO 14040/14044 LCA, tính toán lượng nước và carbon cắt giảm so với sản phẩm đại trà, định danh nghệ nhân & số giờ thủ công (Fair Wage Index) | Phát hành Hộ chiếu Vật liệu Số Hóa (Digital Product Passport), sinh mã chứng chỉ `NX-DPP-[HEX]-SHA256` và chữ ký số mật mã học tại `/san-pham/[slug]`. |
+| **47** | `TOILE-BIOMECHANICAL-POSTURE-CORRECTION` | Khảo sát mẫu vải mộc Toile (calico prototype), đối chiếu tư thế đứng (Normal, Erect, Stooped) và độ dốc vai (Standard 22°, Sloping 28°, Square 16°), tính toán độ dời đường may vai & bù trừ chiều dài thân | Tự động hiệu chỉnh rập cá nhân hóa, kiểm tra dung sai mí cuộn Pháp (French Seam) và cấp mã băm phê duyệt rập `TOILE-POSTURE-SIG-[HEX]` tại `/seller`. |
+| **48** | `CUTTING-MARKER-YIELD-OPTIMIZER` | Thuật toán xếp hình 2D Guillotine Strip Packing trên khổ vải (140cm - 150cm), tối ưu hóa định mức Marker Efficiency Yield $\ge 85\%$ và độ co ngót ngâm ủ nước Decatizing (+3.5% đến +4.0%) | Kiểm soát thất thoát nguyên liệu, phân loại luồng tái chế vải vụn (Túi lót / Khăn bỏ túi vs. Nỉ ép sinh học) và cấp mã an toàn `#MARKER-[HEX]` tại `/seller`. |
+| **49** | `FITTING-VALET-TSP-DISPATCHER` | Bài toán điều phối hành trình Stylist thử đồ tại gia VIP (Home Fitting Concierge), tải trọng vali 18.5kg, cự ly Haversine xe máy điện VinFast Feliz và cửa sổ tư vấn 45 phút | Tối ưu hóa lộ trình di chuyển, đo lường giảm thải CO2e, dự báo xác suất chuyển đổi đơn may đo (82%) và sinh mã điều phối `#VALET-[DATE]-[HEX]` tại `/seller`. |
+| **50** | `ESCROW-3TIER-SETTLEMENT-WITHHOLDING` | Kiểm chứng bất biến kế toán sổ cái 3 tầng (Khả dụng + Tạm giữ Escrow 7 ngày + Đóng băng khiếu nại) & Tự động khấu trừ 1.5% thuế TMĐT (1.0% GTGT + 0.5% TNCN theo Thông tư 40/2021/TT-BTC) | Bảo toàn đúng từng đồng VND khi rút tiền Napas 24/7, sinh biên lai thuế điện tử `ETAX-TT40-2026-[HEX]` và mã chuyển khoản `#NAPAS-OUT-[TS]-[HEX]` tại `/seller`. |
+| **51** | `CIRCUIT-BREAKER-VOLATILITY-DETECTOR` | Đo lường độ lệch giá tương đối $\delta = \frac{P_{\text{new}} - P_{\text{cur}}}{P_{\text{cur}}}$ và Z-score so với trung vị danh mục, phát hiện bán phá giá Flash Crash ($< -60\%$) hoặc tăng giá ảo ($> +250\%$) | Kích hoạt cầu dao an toàn ngắt mạch khẩn cấp (Circuit Breaker Tripped), cách ly ẩn sản phẩm tự động và sinh mã sự cố `#CIRCUIT-HALT-[HEX]` tại `/admin`. |
+| **52** | `ESCROW-DOUBLE-ENTRY-SOLVENCY-RECONCILE` | Đối soát kế toán kép cân bằng khả năng thanh toán: Số dư quỹ thực gửi ngân hàng (MBBank) $\ge$ Tổng nghĩa vụ toàn sàn (Khả dụng + Tạm giữ 7 ngày + Đóng băng khiếu nại + Hoa hồng giữ + Thuế tạm trích) | Kiểm chứng sai số phân đoạn Fractional Drift $\equiv 0₫$, tính tỷ lệ thanh khoản Solvency Ratio $\ge 100\%$ và phát hành mã chứng thực đối soát số `#SOLVENCY-AUDIT-[DATE]-[HEX]` tại `/admin`. |
+| **53** | `CIRCULAR-EPR-TEXTILE-QUOTA-AUDITOR` | Định lượng Trách nhiệm Mở rộng của Nhà sản xuất theo Điều 54 Luật BVMT 2020 & NĐ 08/2022/NĐ-CP, áp dụng hệ số quy đổi tuần hoàn (Upcycling $1.2\times$, Re-Loved $1.0\times$, Bio-Felt $0.8\times$) | Đánh giá tỷ lệ hoàn thành hạn ngạch thu gom pháp định (15%), tính toán khối lượng vượt/thiếu hụt và cấp chứng chỉ số `#EPR-VN-[YEAR]-[HEX]` tại `/admin`. |
+| **54** | `ARTISAN-QA-FAIR-WAGE-INDEX` | Kiểm định KCS 8 tiêu chuẩn gắt gao Haute Couture (Grainline, French Seam, Khuy xà cừ, Monogram, Decatizing, Lót ngực, Cổ áo, Hạ gấu) & Tỷ lệ lương đủ sống khu vực | Xác nhận xuất xưởng (PREMIUM A+ / STANDARD A vs REWORK), đối soát thu nhập giờ công nghệ nhân $\ge 2.50\times$ mức sàn (Fair Wage Index) và cấp chứng chỉ xuất xưởng độc bản `NX-QA-BESPOKE-[ID]-[HEX]` tại `/admin`. |
+| **55** | `BM25-TFIDF-HYBRID-FABRIC-RETRIEVAL` | Hàm xếp hạng Okapi BM25 cải tiến ($k_1 = 1.2$, $b = 0.75$), tăng trọng số tiêu đề $2.5\times$, chất liệu $2.0\times$ và cộng điểm thưởng sợi sinh thái di sản (+12.5đ) | Tự động chấm điểm độ khớp truy vấn ngôn ngữ tự nhiên, phân tầng liên quan (HIGH, MODERATE, MARGINAL) tại `/tim-kiem`. |
+| **56** | `PALETTE-CHROMATIC-DISTANCE-MATCHER` | Đo lường khoảng cách cảm nhận màu sắc vi sai CIEDE2000 ($\Delta E_{00} \le 30.0$) trong không gian màu sinh lý học CIELAB so với 5 gia đình sắc thái Slow Fashion (Cát Mộc, Lam Chàm, Đất Nung, Đen Sơn Mài, Trắng Ngà) | Gom nhóm màu sắc thông minh theo mã hex biến thể, loại bỏ nhiễu đặt tên màu chủ quan của người bán tại `/tim-kiem`. |
+| **57** | `FABRIC-WEIGHT-GSM-AERODYNAMICS-FILTER` | Phân tích mật độ bề mặt vải (GSM), tính toán độ thoáng khí qua sợi ($cm^3/cm^2/s$ theo ISO 9237) và điện trở nhiệt cản gió ($R_{\text{ct}}$ theo ISO 11092) | Phân tầng chuẩn xác 3 cấp độ: Mỏng nhẹ nhiệt đới ($<150$ GSM), Bốn mùa ($150-260$ GSM), và Dày dặn ve đứng ($>260$ GSM) tại `/tim-kiem`. |
+| **58** | `FACETED-ENTROPY-DIVERSITY-RERANKER` | Giải thuật Cực đại hóa Sự liên quan Biên (Maximal Marginal Relevance - MMR) kết hợp Entropy đa dạng Shannon ($H = -\sum p_i \log_2 p_i$) | Ngăn chặn hiện tượng độc quyền hiển thị từ một gian hàng đơn lẻ (Monopoly limit $\le 3$), bảo toàn tính đa dạng của các xưởng thủ công độc lập tại `/tim-kiem`. |
+| **59** | `EDITORIAL-CURATION-SCORER` | Hàm xếp hạng biên tập viên đa mục tiêu kết hợp tỷ lệ công bằng nghệ nhân Artisan Fair Share ($w_a = 0.35$), điểm thưởng chất liệu sinh thái di sản Sustainable Fabric ($w_s = 0.30$), và hàm suy giảm thời gian Freshness Decay ($e^{-\lambda t}$, half-life 45 ngày) | Tự động giám tuyển bộ sưu tập trang chủ, phân tầng chất lượng (HERITAGE MASTERPIECE, ARTISAN CURATED, FEATURED RUNWAY) tại `/`. |
+| **60** | `EXPONENTIAL-MOMENTUM-TREND-FORECASTER` | Mô hình chuỗi thời gian dự báo đà tăng trưởng xu hướng thời trang chậm theo gia tốc tìm kiếm kết hợp hệ số nhân runway momentum multiplier ($1.0 + 0.1 \times \text{runwayCount}$) | Phân tích biến động vận tốc tăng trưởng, xếp hạng xu hướng (TOP VIRAL MOMENTUM, FAST ACCELERATING, STEADY FAVORITE) và sinh mã chứng thư `#TREND-FC-[HEX]` tại `/`. |
+| **61** | `CAPSULE-CHROMATIC-TOPOLOGICAL-GRAPH-RESOLVER` | Bài toán tìm clique tam giác tương thích tối đa trên đồ thị tương thích sắc thái CIELAB ($\Delta E \le 35.0$) và danh mục nang (Capsule Wardrobe Triad: Áo + Quần/Váy + Khoác) | Tối ưu hóa điểm hài hòa phối đồ nang (Capsule Harmony Index 0-100) và tính toán số lượng outfit khả dĩ (7+ phong cách) tại `/`. |
+| **62** | `HERITAGE-CRAFT-PROVENANCE-AUTHENTICATOR` | Đánh giá độ tin cậy và tính nguyên bản của hàng thủ công di sản dựa trên 4 chiều: Chứng nhận làng nghề/OCOP, Thâm niên nghệ nhân bậc cao, Độ truy vết chuỗi cung ứng sợi, và Tỷ lệ vật liệu tự nhiên bản địa | Tính toán Heritage Trust Score ($\ge 85/100$), cấp huy hiệu di sản và phát hành mã xác thực độc bản `#HERITAGE-VN-[HEX]` tại `/`. |
+| **63** | `PASSWORD-ENTROPY-KDF-POLICY-AUDITOR` | Đo lường dung lượng thông tin Shannon $H = L \log_2(N)$ trên không gian ký tự $N \in [26, 95]$, phân tầng cấp độ bảo mật (VERY_WEAK đến VERY_STRONG), kiểm tra thời gian thực `timingSafeEqual` và tự động phát hiện nâng cấp chuỗi băm di sản (Transparent Rehash Migration) sang chuẩn Scrypt $N=16384, r=8, p=1$ (64MB RAM/hash) | Chống tấn công brute-force phần cứng ASIC/GPU và bảo vệ két số may đo độc bản tại `/dang-nhap` và `/dang-ky`. |
+| **64** | `CRYPTOGRAPHIC-SESSION-ROTATION-INVARIANT` | Cơ chế xoay vòng token cryptographic một chiều với mã băm SHA-256 theo chuỗi tuần tự $k' = k + 1$ và cửa sổ trượt nhàn rỗi (Sliding Window Expiration) | Phát hiện tấn công chiếm quyền điều khiển phiên (Token Replay Attack), lập tức thu hồi đóng băng toàn bộ gia đình phiên (Token Family Revocation) tại `/dang-nhap`. |
+| **65** | `RFC-6238-TOTP-DRIFT-RATE-LIMITER` | Chuẩn mật mã HMAC-SHA1 RFC 6238 với cửa sổ dung sai trôi lệch đồng hồ $W = \pm 1$ bước ($\pm 30\text{s}$), Dynamic Truncation trích xuất 6 chữ số và ngăn chặn phát lại mã OTP trong cùng bước sóng | Chống tấn công dò quét brute-force theo mô hình thùng rò rỉ Leaky Bucket (tối đa 5 lần thử sai / 5 phút) tại `/dang-nhap`. |
+| **66** | `CONTEXTUAL-LOGIN-RISK-VELOCITY-SCORER` | Tính toán cự ly trắc địa Haversine giữa 2 tọa độ đăng nhập liên tiếp, phân tích vận tốc di chuyển vật lý $v = d / \Delta t$, đo lường khoảng cách Jaccard định danh thiết bị trình duyệt và mật độ cảnh báo IP | Phát hiện di chuyển bất khả thi ($v > 900\text{ km/h}$), phân tầng quyết định an ninh thích ứng (Zero-Trust Adaptive Authentication) và phát hành mã sự cố `#SEC-ALERT-[HEX]` tại `/dang-nhap`. |
+| **67** | `BAYESIAN-REVIEW-CREDIBILITY-WEIGHTED-SCORER` | Mô hình Empirical Bayes M-Estimate kết hợp trọng số chất lượng người đánh giá (Verified Purchase, ảnh chi tiết, thâm niên đơn hàng) nhằm loại bỏ sai lệch số mẫu nhỏ và tính toán khoảng tin cậy Wilson Score Lower Bound 95% | Thẩm định chất lượng chân thực của trang phục may đo độc bản tại `/don-hang/[id]` và `/san-pham/[slug]`. |
+| **68** | `SYBIL-COLLUSION-ASTROTURFING-DETECTOR` | Phân tích đột biến tần suất Poisson burst, độ tương đồng văn bản Jaccard n-gram giữa các tài khoản, trùng lặp IP Sybil và sụp đổ entropy phân phối sao rating | Phát hiện và ngăn chặn triệt để seeding đánh giá giả mạo, spam mẫu hoặc review bombing tại `/don-hang/[id]`. |
+| **69** | `REVERSE-LOGISTICS-CARBON-ROUTING-OPTIMIZER` | Giải bài toán định tuyến thu hồi đơn đổi/trả giữa Xưởng nghệ nhân vs Hub trung tâm, tính toán lượng phát thải CO2e cắt giảm khi tích hợp giao hàng mới & thu hồi hàng cũ trong một chuyến (Single Stop Multi-Task) | Tối ưu hóa đổi size tại gia không rỗng chuyến và phát hành mã chứng nhận `#REV-LOG-VN-[HEX]` tại `/don-hang/[id]`. |
+| **70** | `RMA-WEAR-TEAR-DEPRECIATION-RECONDITION-INDEX` | Thẩm định tình trạng vải mộc, nếp nhăn và nguyên vẹn tem niêm phong Haute Couture, tính toán chi phí khử khuẩn ozone / là ủi phục hồi, bảo toàn từng đồng VND giá trị hoàn tiền | Phân bổ vào luồng tuần hoàn phù hợp (Tái kho nguyên giá vs Pre-owned Re-Loved vs Upcycling) và cấp mã `#RMA-KCS-[ID]-[HEX]` tại `/don-hang/[id]`. |
+| **71** | `TACTILE-FABRIC-SWATCH-SPECTRAL-CURATOR` | Đo lường 4 chiều cơ lý dệt theo hệ chuẩn Kawabata KES-FB (Độ nhám SMD, Độ uốn B, Độ dãn kéo EMT, Độ nén LC), tối ưu hóa biên độ trải nghiệm xúc giác trong hộp 5 mẫu vải (từ Lụa Bảo Lộc $1.2\mu\text{m}$ đến Linen Normandy $8.5\mu\text{m}$) | Giám tuyển hộp thẻ mẫu vải tại gia và phát hành con dấu số `#SWATCH-BOX-[HEX]` tại `/swatch-orders` và `/tai-khoan`. |
+| **72** | `SWATCH-TO-BESPOKE-CONVERSION-ESCROW-REBATE` | Quản lý vòng tuần hoàn cọc mẫu vải: Khấu trừ 100% tiền cọc 50.000₫ vào đơn may đo Bespoke kế tiếp, bảo toàn tuyệt đối dòng tiền VND và dự báo xác suất chuyển đổi logit theo thời gian chạm mẫu | Kích hoạt voucher hoàn tiền bảo chứng tự động và cấp mã số `#REBATE-BESPOKE-[HEX]` tại `/swatch-orders`. |
+| **73** | `HOME-FITTING-SUITCASE-CAPACITY-BIN-PACKING` | Bài toán Knapsack đa chiều xếp vali thử đồ tại gia cho Stylist (tải trọng xe máy điện VinFast $\le 18.5\text{kg}$, thể tích $\le 65\text{L}$), cân bằng trọng tâm đối xứng an toàn di chuyển | Tối ưu hóa danh mục vật phẩm tư vấn VIP (Rập Toile, cuộn vải, thước đo số, bàn ủi hơi) và phát hành `#VALET-SUITCASE-[HEX]` tại `/seller` và `/tai-khoan`. |
+| **74** | `FITTING-CORRECTION-BIOMECHANICAL-REVISE-MAPPER` | Chuyển đổi phản hồi thử đồ thực tế (vai kích, nách căng, hạ gấu) thành tọa độ bù trừ đường may Seam Allowance Delta mm cho Master Tailor và kiểm tra bất biến bảo toàn chu vi vòng nách (Độ mọng tay $12-18\text{mm}$) | Phê duyệt hiệu chỉnh rập may đo trước khi đặt kéo cắt vải chính và cấp chứng chỉ `#FIT-REVISE-KCS-[ID]-[HEX]` tại `/concierge/fitting`. |
+| **75** | `ATELIER-DUAL-UNCERTAINTY-SAFETY-STOCK-ROP` | Mô hình Silver-Pyke & Kingman kiểm soát tồn kho dưới bất định kép (Nhu cầu hàng ngày $D$ & Thời gian giao hàng dệt $L$): $SS = Z_{\alpha} \sqrt{\bar{L}\sigma_D^2 + \bar{D}^2\sigma_L^2}$, Điểm đặt hàng lại $ROP = \bar{D}\bar{L} + SS$, tính toán lượng đặt tối ưu EOQ | Ngăn chặn đứt gãy vải may đo cao cấp và phát hành chứng thư `#SAFETY-STOCK-[HEX]` tại `/seller` và `/admin`. |
+| **76** | `MULTI-CHANNEL-FAIR-RATIONING-LARGEST-REMAINDER` | Phân bổ hạn ngạch 2 lớp khi phát hành Limited Drop: Bảo vệ tồn kho cơ sở cam kết (Guaranteed Minimums theo Priority Tier) và tối ưu hạn ngạch dư theo phương pháp Hamilton-Hare Largest Remainder có trọng số kênh | Bảo toàn nghiêm ngặt $\sum q_i \equiv \min(Q_{\text{avail}}, Q_{\text{req}})$, triệt tiêu overselling và cấp mã `#RATIONING-HASH-[HEX]` tại `/seller` và `/gio-hang`. |
+| **77** | `PREORDER-BACKLOG-M-M-C-QUEUE-PDD-FORECASTER` | Lý thuyết xếp hàng $M/D/c$ hoặc Erlang-k cho Atelier Backlog: $W_q = \frac{k_{\text{eff}} - 1}{c \cdot \mu}$, kết hợp chu kỳ may đo $T_{\text{craft}}$, kiểm định $t_{\text{qc}}$ và bù trừ dung sai thống kê khoảng tin cậy 95% ($+1.645 \sigma_{\text{total}}$) | Dự báo chính xác ngày giao hàng cam kết PDD cho đơn may đo độc bản và phát hành chứng chỉ `#PREORDER-QUEUE-[HEX]` tại `/san-pham/[slug]` và `/don-hang/[id]`. |
+| **78** | `MULTI-HUB-LATERAL-TRANSSHIPMENT-CARBON-OPTIMIZER` | Tối ưu hóa đa mục tiêu so sánh Giao tách gói từ từng xưởng (Split Shipment) vs Gom hàng xanh liên xưởng về Hub tập kết (Lateral Transshipment Consolidation): Chi phí logistics, rác thải hộp cứng và phát thải kg CO2e | Giảm thiểu chi phí bao bì và dấu chân carbon giao hàng, phát hành chứng thư tối ưu hóa `#TRANSSHIP-OPT-[HEX]` tại `/gio-hang` và `/seller`. |
+| **79** | `DEADSTOCK-FABRIC-DECAY-DYNAMIC-MARKDOWN` | Mô hình động học Arrhenius-Ekenstam đo lường suy hao độ bền kéo xơ sợi tự nhiên (Lụa, Đũi, Linen) theo thời gian lưu kho và vi khí hậu nhiệt-ẩm, tính toán chiết khấu xả hàng tuần hoàn có bảo vệ mức giá sàn người nông dân | Bảo vệ thu nhập vùng nguyên liệu bản địa, tự động phân hạng vải lưu niên (`PRISTINE_VINTAGE`, `STABLE_MATURE`, `UPCYCLE_GRADE`) và cấp chứng chỉ `#DEADSTOCK-MARKDOWN-[HEX]` tại `/seller` và `/admin`. |
+| **80** | `2D-REMNANT-BOUNDED-KNAPSACK-UPCYCLING-NEST` | Thuật toán Quy hoạch động xếp hình 2D Bounded Knapsack tối ưu hóa phân bổ phụ kiện thời trang thủ công (Khăn pocket square, nơ bowtie, scrunchies, ruy băng lụa) từ các mảnh vải vụn sau cắt rập | Tối đa hóa giá trị thương mại tuần hoàn (Upcycling Value VND), tính toán lượng phát thải CO2e tránh được và phát hành mã `#UPCYCLE-NEST-[HEX]` tại `/seller`. |
+| **81** | `FAIR-TRADE-ARTISAN-LIVING-WAGE-FLOOR-ENGINE` | Chuẩn hóa mức lương đủ sống nghệ nhân Living Wage Benchmark (Nghị định 38/2022/NĐ-CP & Anker Living Wage), cộng điểm thưởng độ tinh xảo đường may, công khai minh bạch 100% cơ cấu giá bán lẻ | Đảm bảo tỷ lệ thu nhập thợ may $\ge 1.5\times$ mức tối thiểu luật định, bảo toàn từng đồng VND theo Hamilton-Hare và cấp chứng nhận đạo đức `#FAIR-TRADE-FLOOR-[HEX]` tại `/san-pham/[slug]` và `/seller`. |
+| **82** | `ELLEN-MACARTHUR-MATERIAL-CIRCULARITY-AUDITOR` | Đánh giá chỉ số tuần hoàn vật liệu Material Circularity Indicator (MCI) theo khung chuẩn Ellen MacArthur Foundation: $LFI = \frac{V \cdot M + W}{2M}$, hệ số công năng sử dụng $X$, kiểm toán tuân thủ trách nhiệm EPR (Nghị định 08/2022/NĐ-CP) | Phân tầng tuần hoàn tái sinh (`REGENERATIVE_HERITAGE`, `HIGH_CIRCULARITY`), thúc đẩy thiết kế bền bỉ trên 250 lần mặc và cấp mã `#MCI-CIRCULARITY-[HEX]` tại `/san-pham/[slug]` và `/admin`. |
+
+---
+
+## 🚀 Kiến Trúc Tách Biệt & Hướng Dẫn Triển Khai Đám Mây (Vercel + Render Deployment)
+
+NEXORA Atelier được thiết kế theo kiến trúc phân lập đám mây hiện đại (**Decoupled Cloud Architecture**), tối ưu hóa hiệu năng, tính mở rộng và khả năng bảo mật bằng cách phân tách độc lập giữa **Lớp Trải Nghiệm Người Dùng (Frontend on Vercel)** và **Lớp Nghiệp Vụ & Dữ Liệu (Backend on Render)**:
+
+```mermaid
+flowchart TD
+    subgraph VERCEL["Vercel Edge Network (Frontend)"]
+        WEB["Next.js 16.4.5 App Router<br/>(SSR, React 19, Lucide Icons)"]
+        PROXY["Next.js API Rewrites Proxy<br/>(/api/v1/:path* → Render)"]
+    end
+
+    subgraph RENDER["Render Cloud Infrastructure (Backend & Data)"]
+        API["NestJS 11 Core API Web Service<br/>(Express, Helmet, Throttler, Swagger)"]
+        WORKER["BullMQ Background Worker<br/>(Email, PDF Invoicing, Audit)"]
+        PG[("Managed PostgreSQL 16<br/>(Prisma ORM, Row-level Locking)")]
+        REDIS[("Managed Redis 7<br/>(Session Cache & Queue Broker)")]
+    end
+
+    CLIENT(("Khách Hàng / Nghệ Nhân<br/>(Web & Mobile Browser)")) -->|HTTPS / WSS| WEB
+    WEB --> PROXY
+    PROXY -->|Zero 3rd-party Cookie Block| API
+    CLIENT -.->|Direct Cross-Origin CORS| API
+    API <--> PG
+    API <--> REDIS
+    WORKER <--> PG
+    WORKER <--> REDIS
+```
+
+### 💎 A. Triển Khai Frontend (Next.js) Lên Vercel
+
+1. **Kết nối Repository**:
+   - Truy cập [Vercel Dashboard](https://vercel.com) -> Chọn **Add New Project** -> Chọn Git Repository `nexora`.
+2. **Cấu hình Thư mục & Lệnh Build (Root & Build Settings)**:
+   - **Root Directory**: Chọn `san-quan-ao` (hoặc `san-quan-ao/apps/web`).
+   - **Framework Preset**: `Next.js`.
+   - **Build Command**: `pnpm --filter @mac/contracts build && pnpm --filter @mac/web build` (đã được cấu hình tự động trong [vercel.json](file:///d:/A%20-%20Học%20Tập/Thương%20Mại%20Điện%20Tử/san-quan-ao/vercel.json)).
+   - **Output Directory**: `apps/web/.next`.
+   - **Install Command**: `pnpm install`.
+3. **Biến môi trường trên Vercel (Environment Variables)**:
+   | Biến môi trường | Giá trị mẫu | Mục đích |
+   | :--- | :--- | :--- |
+   | `NEXT_PUBLIC_API_URL` | `https://nexora-api.onrender.com/api/v1` | URL công khai của NestJS API trên Render |
+   | `API_INTERNAL_URL` | `https://nexora-api.onrender.com` | Kích hoạt Next.js Rewrite Proxy (khuyên dùng để đồng bộ cookie) |
+   | `NEXT_TELEMETRY_DISABLED` | `1` | Tối ưu thời gian build |
+   | `NODE_ENV` | `production` | Chế độ môi trường sản xuất |
+
+---
+
+### 🏛️ B. Triển Khai Backend & Dữ Liệu Lên Render
+
+#### Cách 1: Tự động 100% bằng Render Blueprint (`render.yaml`) — Khuyên dùng
+1. Truy cập [Render Dashboard](https://dashboard.render.com).
+2. Chọn **New** -> **Blueprint**.
+3. Kết nối Github Repository `nexora`. Render sẽ tự động đọc file [render.yaml](file:///d:/A%20-%20Học%20Tập/Thương%20Mại%20Điện%20Tử/san-quan-ao/render.yaml) và khởi tạo đồng thời:
+   - **nexora-api**: Web Service Node.js (Port 10000, Health check `/api/v1/health`).
+   - **nexora-worker**: Background Worker cho tác vụ nền BullMQ.
+   - **nexora-db**: Managed PostgreSQL Database.
+   - **nexora-redis**: Managed Redis Instance.
+4. Bấm **Apply** để hệ thống tự động build, migrate schema và kích hoạt dịch vụ.
+
+#### Cách 2: Triển khai Thủ công từng dịch vụ
+1. **Tạo Database**: Chọn **New PostgreSQL** -> Đặt tên `nexora-db`, Region: `Singapore`.
+2. **Tạo Redis**: Chọn **New Redis** -> Đặt tên `nexora-redis`, Region: `Singapore`.
+3. **Tạo Web Service (API)**:
+   - Root Directory: `san-quan-ao`
+   - Build Command: `pnpm install --frozen-lockfile && pnpm build:api`
+   - Start Command: `pnpm start:api`
+   - Health Check Path: `/api/v1/health`
+   - Environment Variables:
+     - `DATABASE_URL`: Lấy từ kết nối Internal Connection String của `nexora-db`.
+     - `REDIS_URL`: Lấy từ kết nối `nexora-redis`.
+     - `WEB_ORIGIN`: `https://nexora.vercel.app,http://localhost:3000` (cho phép CORS từ Vercel).
+     - `COOKIE_SECURE`: `true`
+     - `COOKIE_SAMESITE_NONE`: `true`
+     - `PORT`: `10000`
+     - `HOST`: `0.0.0.0`
+     - `SHIPPING_PROVIDER`: `mock`
+     - `JWT_SECRET`: Khóa bảo mật ngẫu nhiên 32+ ký tự.
+4. **Tạo Background Worker**:
+   - Build Command: `pnpm install --frozen-lockfile && pnpm build:worker`
+   - Start Command: `pnpm start:worker`
+
+---
+
+### 🛡️ C. Khởi tạo Schema & Dữ Liệu Mẫu Ban Đầu trên Render
+
+Sau khi Render tạo xong cơ sở dữ liệu PostgreSQL, mở tab **Shell** trong dịch vụ `nexora-api` trên Render Dashboard và chạy:
+```bash
+# 1. Đẩy lược đồ Prisma lên PostgreSQL
+pnpm db:push
+
+# 2. Nạp dữ liệu danh mục, làng nghề & xưởng may độc bản ban đầu
+pnpm db:seed
+```
+
+---
+
+## 📜 Bản Quyền & Giấy Phép (License)
+
+Dự án được phát triển bởi **Kiệt Trương & Nhóm Phát Triển NEXORA** — Nền tảng Thương mại Điện tử Thời trang Thế hệ mới.  
+Phát hành theo giấy phép **MIT License**. Mọi quyền sở hữu trí tuệ và tài liệu thiết kế được bảo hộ theo quy định pháp luật hiện hành.
+
 

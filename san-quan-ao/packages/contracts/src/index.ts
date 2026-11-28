@@ -24,6 +24,49 @@ export type QuoteData = {
     ecoPackaging?: boolean;
   };
   provider: 'mock';
+  logisticsPacking?: {
+    totalBoxes: number;
+    totalWeightGrams: number;
+    isConsolidated: boolean;
+    workshopsCount: number;
+    tripsSaved: number;
+    carbonSavedKg: number;
+    courierEfficiencyScore: number;
+  };
+  deliveryEta?: {
+    distanceKm: number;
+    transitHoursMin: number;
+    transitHoursMax: number;
+    deliveryDateFrom: string;
+    deliveryDateTo: string;
+    deliverySlotWindow: string;
+    weatherDelayBufferMinutes: number;
+    logisticsRouteTier: 'INTRA_CITY_EV' | 'REGIONAL_TRUCK' | 'INTER_PROVINCIAL_EXPRESS';
+  };
+  hubAndSpoke?: {
+    isConsolidationBeneficial: boolean;
+    selectedHubName: string;
+    netDistanceSavedKm: number;
+    carbonEmissionSavedKg: number;
+    efficiencyRationale: string;
+  };
+  riskAssessment?: {
+    score: number;
+    tier: 'LOW_RISK' | 'MEDIUM_RISK' | 'HIGH_RISK';
+    autoApproveDispatch: boolean;
+    requiresArtisanPhoneConfirmation: boolean;
+    rationale: string;
+  };
+  vietQr?: {
+    emvCoPayload: string;
+    crc16: string;
+    quickLink: string;
+    bankBin: string;
+    accountNumber: string;
+    amount: number;
+    orderCode: string;
+    storeName: string;
+  };
 };
 export type PublicUser = { id: string; name: string; email: string; role: string };
 export const ORDER_LABELS: Record<string, string> = {

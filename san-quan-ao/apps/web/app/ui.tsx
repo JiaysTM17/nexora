@@ -56,7 +56,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [searchQuery]);
   return <UserContext.Provider value={{ user, refresh }}>
-    <div className="announcement">NEXORA ATELIER — THE NEXT ERA OF FASHION COMMERCE &amp; LIFESTYLE COMMUNITY <span>Khám phá ngay ↗</span></div>
+    <div className="announcement">NEXORA Atelier · Tuyển tập thiết kế may đo cao cấp và cộng đồng thời trang độc lập <span>Khám phá ngay &rarr;</span></div>
     <header className="header"><Link href="/" className="logo" aria-label="NEXORA, trang chủ"><img src="/nexora-logo.svg" alt="NEXORA" style={{ height: '38px', width: 'auto' }} /></Link>
       <nav className={open ? 'nav open' : 'nav'} aria-label="Điều hướng chính"><Link className={path === '/' || path.startsWith('/san-pham') ? 'active' : ''} href="/">Khám phá</Link><Link className={path === '/phoi-do' ? 'active' : ''} href="/phoi-do">Phối đồ (Mix &amp; Match)</Link><Link className={path === '/live' ? 'active' : ''} href="/live" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 7, height: 7, borderRadius: '50%', background: '#EF4444', display: 'inline-block', boxShadow: '0 0 6px #EF4444' }}/>Trực tiếp (Live)</Link><Link className={path === '/cong-dong' ? 'active' : ''} href="/cong-dong">Cộng đồng OOTD</Link><Link className={path === '/trade-in' ? 'active' : ''} href="/trade-in">Trade-In</Link><Link className={path === '/vas-care' ? 'active' : ''} href="/vas-care">VAS Care</Link><Link className={path === '/seller' ? 'active' : ''} href="/seller">Dành cho Shop</Link>{user?.role === 'ADMIN' && <Link className={path === '/admin' ? 'active' : ''} href="/admin">Quản trị</Link>}</nav>
       <div className="header-actions">
@@ -119,7 +119,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               }}
             >
               <div className="row between" style={{ marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid var(--line)' }}>
-                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Trung Tâm Thông Báo Atelier</strong>
+                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Trung tâm thông báo</strong>
                 <button
                   type="button"
                   className="text-button"
@@ -131,19 +131,19 @@ export function Shell({ children }: { children: React.ReactNode }) {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <div style={{ padding: '8px 10px', background: '#F8FAFC', borderRadius: 4, borderLeft: '3px solid var(--gold-dark)' }}>
-                  <strong style={{ display: 'block', color: 'var(--ink)' }}>✨ Smart Fit Fashion Passport</strong>
+                  <strong style={{ display: 'block', color: 'var(--ink)' }}>Hồ sơ số đo Fashion Passport</strong>
                   <p style={{ margin: '2px 0 0', color: 'var(--muted)', fontSize: 11 }}>
                     Hồ sơ số đo cá nhân đã sẵn sàng. Hệ thống sẽ tự động so khớp và gợi ý size chuẩn xác khi bạn xem sản phẩm.
                   </p>
                 </div>
                 <div style={{ padding: '8px 10px', background: '#f0fdf4', borderRadius: 4, borderLeft: '3px solid #059669' }}>
-                  <strong style={{ display: 'block', color: '#166534' }}>🌱 Thưởng sống xanh +50 Xu</strong>
+                  <strong style={{ display: 'block', color: '#166534' }}>Thưởng sống xanh +50 Xu</strong>
                   <p style={{ margin: '2px 0 0', color: '#374151', fontSize: 11 }}>
                     Bạn đã chọn đóng gói xanh Eco Green Box cho đơn hàng gần nhất. Xu thưởng đã được cộng vào tài khoản.
                   </p>
                 </div>
                 <div style={{ padding: '8px 10px', background: '#eff6ff', borderRadius: 4, borderLeft: '3px solid #2563eb' }}>
-                  <strong style={{ display: 'block', color: '#1e40af' }}>⚡ Phòng Thử Đồ Mix &amp; Match</strong>
+                  <strong style={{ display: 'block', color: '#1e40af' }}>Phòng thử đồ Mix &amp; Match</strong>
                   <p style={{ margin: '2px 0 0', color: '#374151', fontSize: 11 }}>
                     Khám phá tính năng phối đồ 3 lớp tại /phoi-do và nhận chiết khấu Combo Style Saver -10% khi mua trọn bộ.
                   </p>

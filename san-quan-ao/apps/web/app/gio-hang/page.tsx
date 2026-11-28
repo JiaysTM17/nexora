@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, Trash2, MapPin, Clock, Leaf, Sparkles, Gift, Split, Send, UserCheck, CheckCircle2, Award, ShieldCheck, Trees, Check, Truck, CheckCheck, Globe, HeartHandshake, Compass } from 'lucide-react';
 import type { QuoteData } from '@mac/contracts';
-import { api, Product, useResource, Variant, vnd } from '../api';
-import { Empty, Loading, Notice } from '../ui';
+import { api, Product, TradeInRequest, useResource, Variant, vnd } from '../api';
+import { Empty, Loading, Notice, useUser } from '../ui';
 type CartLine = { id: string; quantity: number; variant: Variant & { product: Product } };
 type Address = { id: string; recipient: string; phone: string; line: string; province: string };
 type Quote = { id: string; data: QuoteData; expiresAt: string };
@@ -41,8 +41,10 @@ const REFOREST_TIERS = {
 } as const;
 
 export default function Cart() {
+  const { user } = useUser();
   const cart = useResource<CartLine[]>('/cart'), addresses = useResource<Address[]>('/addresses');
-  const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [giftWrap, setGiftWrap] = useState(false), [giftRibbon, setGiftRibbon] = useState<'CHAMPAGNE' | 'EMERALD' | 'NAVY'>('CHAMPAGNE'), [giftMessage, setGiftMessage] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL'>('COD');
+  const userTradeIns = useResource<TradeInRequest[]>(user ? '/trade-in' : null);
+  const [addressId, setAddressId] = useState(''), [quote, setQuote] = useState<Quote | null>(null), [codes, setCodes] = useState<Record<string, string>>({}), [tradeInCode, setTradeInCode] = useState(''), [useFreeship, setUseFreeship] = useState(true), [useCoins, setUseCoins] = useState(false), [deliverySlot, setDeliverySlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON'), [ecoPackaging, setEcoPackaging] = useState(true), [giftWrap, setGiftWrap] = useState(false), [giftRibbon, setGiftRibbon] = useState<'CHAMPAGNE' | 'EMERALD' | 'NAVY'>('CHAMPAGNE'), [giftMessage, setGiftMessage] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false), [newAddress, setNewAddress] = useState(false), [paymentMethod, setPaymentMethod] = useState<'COD' | 'BNPL' | 'VIETQR'>('VIETQR');
   const [splitDelivery, setSplitDelivery] = useState(false);
   const [itemDestinations, setItemDestinations] = useState<Record<string, 'HOME' | 'OFFICE_GIFT'>>({});
   const [giftRecipientName, setGiftRecipientName] = useState('');
@@ -72,11 +74,24 @@ export default function Cart() {
     return true;
   });
   const [consolidationMode, setConsolidationMode] = useState<'SINGLE_DROP' | 'EXPEDITE_PARTIAL'>('SINGLE_DROP');
+  const [createdOrder, setCreatedOrder] = useState<any>(null);
   const key = useRef(''), router = useRouter();
   const chosenAddress = addressId || addresses.data?.[0]?.id;
   const groups = new Map<string, CartLine[]>();
   for (const line of cart.data ?? []) { const shopId = line.variant.product.shop.id; groups.set(shopId, [...(groups.get(shopId) ?? []), line]); }
   const invalidate = () => { setQuote(null); key.current = ''; };
+  async function applyOptimalVouchers() {
+    try {
+      const res = await api<any>('/checkout/optimal-vouchers', 'POST', {});
+      if (res && res.optimalVouchers) {
+        setCodes(prev => ({ ...prev, ...res.optimalVouchers }));
+        if (res.applicableTradeInVoucher?.code) {
+          setTradeInCode(res.applicableTradeInVoucher.code);
+        }
+        invalidate();
+      }
+    } catch {}
+  }
   async function changeLine(lineId: string, quantity?: number) {
     invalidate(); setError(''); try { await api(`/cart/${lineId}`, quantity === undefined ? 'DELETE' : 'PATCH', quantity === undefined ? undefined : { quantity }); cart.reload(); } catch (e) { setError((e as Error).message); }
   }
@@ -101,13 +116,54 @@ export default function Cart() {
       }); setQuote(q); key.current = crypto.randomUUID(); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
   async function order() {
-    if (!quote) return; setBusy(true); setError('');
-    try { const ref = localStorage.getItem('nexora_ref'); await api('/orders', 'POST', { quoteId: quote.id, idempotencyKey: key.current, paymentMethod, ...(ref ? { refUserId: ref } : {}) }); localStorage.removeItem('nexora_ref'); router.push('/don-hang'); } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+    if (!quote) return;
+    setBusy(true);
+    setError('');
+    try {
+      const ref = localStorage.getItem('nexora_ref');
+      const res = await api<any>('/orders', 'POST', {
+        quoteId: quote.id,
+        idempotencyKey: key.current,
+        paymentMethod,
+        ...(ref ? { refUserId: ref } : {}),
+      });
+      localStorage.removeItem('nexora_ref');
+      if (paymentMethod === 'VIETQR') {
+        setCreatedOrder(res);
+      } else {
+        router.push(`/don-hang/${res.id}`);
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
   }
   if (cart.loading) return <Loading/>;
   if (cart.error) return <section className="section"><Notice error>{cart.error}</Notice><Link className="button" href="/dang-nhap">Đăng nhập</Link></section>;
   if (!cart.data?.length) return <Empty title="Giỏ đồ đang chờ bạn." detail="Chọn một món hợp mình để bắt đầu nhé."/>;
-  return <section className="section"><p className="eyebrow">TỪ CẢM HỨNG ĐẾN TỦ ĐỒ</p><h1>Giỏ hàng của bạn.</h1><p className="subtle">Một lần đặt, theo dõi đơn và phí giao riêng từng shop.</p><div className="checkout-grid"><div>{[...groups].map(([shopId, lines]) => <section key={shopId} className="panel"><h2 className="panel-title">{lines[0].variant.product.shop.name}</h2>{lines.map(line => <div className="cart-line" key={line.id}><img src={line.variant.product.images[0]?.url} alt={line.variant.product.name} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'; }}/><div className="grow"><Link href={`/san-pham/${line.variant.product.slug}`}><strong>{line.variant.product.name}</strong></Link><p>{line.variant.color} / Size {line.variant.size}</p><div className="row"><input aria-label={`Số lượng ${line.variant.product.name}`} className="qty-input" type="number" min={1} max={20} value={line.quantity} onChange={e => { const value = Number(e.target.value); if (Number.isInteger(value) && value > 0 && value <= 20) void changeLine(line.id, value); }}/><button className="icon-link" aria-label={`Xóa ${line.variant.product.name}`} onClick={() => changeLine(line.id)}><Trash2 size={16}/></button></div></div><strong>{vnd(line.variant.price * line.quantity)}</strong></div>)}<label className="voucher">Mã giảm của shop<input value={codes[shopId] ?? ''} onChange={e => { setCodes({ ...codes, [shopId]: e.target.value }); invalidate(); }} placeholder={shopId === 'shop-nep' ? 'Thử CHAO50 cho đơn từ 400.000đ' : 'Nhập mã nếu có'}/></label></section>)}
+  return (
+    <section className="section">
+      <p className="eyebrow">TỪ CẢM HỨNG ĐẾN TỦ ĐỒ</p>
+      <h1>Giỏ hàng của bạn.</h1>
+      <p className="subtle">Một lần đặt, theo dõi đơn và phí giao riêng từng shop.</p>
+
+      {/* Thanh Chỉ Dẫn 4 Bước Tiến Trình Thanh Toán (Cart-to-Escrow Stepper) */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, padding: '10px 16px', background: '#fff', border: '1px solid var(--line)', borderRadius: 2, fontSize: 11, flexWrap: 'wrap', gap: 8 }}>
+        {[
+          { num: 1, label: 'Giỏ Đồ & Xưởng May', done: true, current: !quote },
+          { num: 2, label: 'Giao Nhận & Tuyến Xanh', done: Boolean(chosenAddress), current: Boolean(chosenAddress && !quote) },
+          { num: 3, label: 'Báo Giá & Đóng Gói BFD', done: Boolean(quote), current: Boolean(quote) },
+          { num: 4, label: 'Thanh Toán & Ký Quỹ Escrow', done: Boolean(createdOrder), current: Boolean(quote && !createdOrder) },
+        ].map((s) => (
+          <div key={s.num} style={{ display: 'flex', alignItems: 'center', gap: 6, color: s.current ? 'var(--gold-dark)' : s.done ? 'var(--ink)' : 'var(--muted)', fontWeight: s.current ? 700 : 500 }}>
+            <span style={{ width: 18, height: 18, borderRadius: '50%', background: s.done ? 'var(--gold-dark)' : 'var(--line)', color: s.done ? '#fff' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700 }}>
+              {s.done ? '✓' : s.num}
+            </span>
+            <span>{s.label}</span>
+          </div>
+        ))}
+      </div><div className="checkout-grid"><div>{[...groups].map(([shopId, lines]) => <section key={shopId} className="panel"><h2 className="panel-title">{lines[0].variant.product.shop.name}</h2>{lines.map(line => <div className="cart-line" key={line.id}><img src={line.variant.product.images[0]?.url} alt={line.variant.product.name} onError={(e) => { const target = e.currentTarget as HTMLImageElement; if (!target.src.includes('https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80')) target.src = 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80'; }}/><div className="grow"><Link href={`/san-pham/${line.variant.product.slug}`}><strong>{line.variant.product.name}</strong></Link><p>{line.variant.color} / Size {line.variant.size}</p><div className="row"><input aria-label={`Số lượng ${line.variant.product.name}`} className="qty-input" type="number" min={1} max={20} value={line.quantity} onChange={e => { const value = Number(e.target.value); if (Number.isInteger(value) && value > 0 && value <= 20) void changeLine(line.id, value); }}/><button className="icon-link" aria-label={`Xóa ${line.variant.product.name}`} onClick={() => changeLine(line.id)}><Trash2 size={16}/></button></div></div><strong>{vnd(line.variant.price * line.quantity)}</strong></div>)}<label className="voucher">Mã giảm của shop<input value={codes[shopId] ?? ''} onChange={e => { setCodes({ ...codes, [shopId]: e.target.value }); invalidate(); }} placeholder={shopId === 'shop-nep' ? 'Thử CHAO50 hoặc RUNWAY20' : 'Thử RUNWAY20 (-100k)'}/></label><div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}><span style={{ fontSize: 10, color: 'var(--muted)' }}>Ưu đãi shop:</span>{(shopId === 'shop-nep' ? [{ code: 'CHAO50', desc: '-50k' }, { code: 'RUNWAY20', desc: '-100k' }] : [{ code: 'RUNWAY20', desc: '-100k' }]).map(v => (<button key={v.code} type="button" onClick={() => { setCodes({ ...codes, [shopId]: v.code }); invalidate(); }} style={{ padding: '2px 8px', fontSize: 10, borderRadius: 2, border: (codes[shopId] ?? '').toUpperCase() === v.code ? '1px solid var(--gold-dark)' : '1px solid var(--line)', background: (codes[shopId] ?? '').toUpperCase() === v.code ? '#FAF8F5' : '#fff', color: (codes[shopId] ?? '').toUpperCase() === v.code ? 'var(--gold-dark)' : 'var(--ink)', fontWeight: 600, cursor: 'pointer' }}>{v.code} ({v.desc})</button>))}<button type="button" onClick={applyOptimalVouchers} style={{ padding: '2px 8px', fontSize: 10, borderRadius: 2, border: '1px dashed var(--gold-dark)', background: '#FAF8F5', color: 'var(--gold-dark)', fontWeight: 600, cursor: 'pointer' }}>✨ Tối ưu Knapsack</button></div></section>)}
       <section className="panel"><h2 className="panel-title"><MapPin size={18}/>Giao đến</h2>{addresses.error && <Notice error>{addresses.error}</Notice>}{addresses.data?.map(a => <label className="address-option" key={a.id}><input type="radio" name="address" checked={chosenAddress === a.id} onChange={() => { setAddressId(a.id); invalidate(); }}/><span><strong>{a.recipient} · {a.phone}</strong><br/>{a.line}, {a.province}</span></label>)}<button className="text-button" onClick={() => setNewAddress(!newAddress)}>{newAddress ? 'Đóng' : '+ Thêm địa chỉ'}</button>{newAddress && <form onSubmit={addAddress} className="form"><label>Người nhận<input name="recipient" required minLength={2}/></label><label>Số điện thoại<input name="phone" required pattern="0[0-9]{9}" inputMode="tel"/></label><label>Địa chỉ cụ thể<input name="line" required minLength={5}/></label><label>Tỉnh / thành phố<input name="province" required minLength={2}/></label><button className="button" disabled={busy}>Lưu địa chỉ</button></form>}</section>
 
       {/* Phân Tách Địa Chỉ Giao Nhiều Điểm & Tặng Quà */}
@@ -268,7 +324,7 @@ export default function Cart() {
                   fontWeight: consolidationMode === 'EXPEDITE_PARTIAL' ? 700 : 500,
                 }}
               >
-                <div>⚡ 2. Giao tách lẻ theo tiến độ (Expedite Partial)</div>
+                <div>2. Giao tách lẻ theo tiến độ (Expedite Partial)</div>
                 <small style={{ color: '#64748b', display: 'block', marginTop: 2 }}>
                   Shop nào chuẩn bị xong trước sẽ phát hàng trước cho khách cần gấp.
                 </small>
@@ -318,7 +374,7 @@ export default function Cart() {
           />
           <span>
             <strong style={{ color: '#047857', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              🌱 Hộp Giấy Kraft Tự Hủy Eco Green Box (Không nilon)
+              <Leaf size={13} /> Hộp giấy kraft tự hủy Eco Green Box (Không nilon)
               <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
                 +50 XU
               </span>
@@ -355,7 +411,7 @@ export default function Cart() {
           />
           <span>
             <strong style={{ color: '#15803d', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              🌿 Ký Cam Kết Tiêu Dùng Sinh Thái &amp; Giao Hàng Xanh
+              <Leaf size={13} /> Ký cam kết tiêu dùng sinh thái &amp; giao hàng xanh
               <span style={{ fontSize: 10, background: '#16a34a', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
                 +100 ĐIỂM XANH
               </span>
@@ -401,7 +457,7 @@ export default function Cart() {
 
             <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #dcfce7', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
               <span style={{ fontSize: 11, color: '#15803d', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                <Award size={14} /> Kích hoạt danh hiệu: <strong>🌿 Green Shopper Pioneer</strong>
+                <Award size={14} /> Kích hoạt danh hiệu: <strong>Green Shopper Pioneer</strong>
               </span>
               <span style={{ fontSize: 11, background: '#dcfce7', color: '#14532d', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
                 Đã ghi nhận vào hồ sơ cá nhân
@@ -556,10 +612,10 @@ export default function Cart() {
                         </span>
                       </div>
                       <div style={{ fontSize: 11, color: '#047857', fontWeight: 600, marginBottom: 4 }}>
-                        🌳 {item.target} (Bù trừ {item.co2})
+                        Mục tiêu: {item.target} (Bù trừ {item.co2})
                       </div>
                       <div style={{ fontSize: 10, color: '#64748b' }}>
-                        📍 {item.location}
+                        Khu vực: {item.location}
                       </div>
                     </div>
                     <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -684,8 +740,99 @@ export default function Cart() {
         )}
       </section>
       <section className="panel"><h2 className="panel-title">Ưu Đãi Đa Tầng NEXORA</h2><label className="address-option" style={{ marginBottom: 10 }}><input type="checkbox" checked={useFreeship} onChange={e => { setUseFreeship(e.target.checked); invalidate(); }} /><span><strong>Voucher Miễn Phí Vận Chuyển Freeship Xtra (Tầng 3)</strong><br/><small className="subtle">Tài trợ giảm trực tiếp 30.000đ phí giao hàng trên toàn sàn.</small></span></label><label className="address-option"><input type="checkbox" checked={useCoins} onChange={e => { setUseCoins(e.target.checked); invalidate(); }} /><span><strong>Dùng Xu Thưởng NEXORA Coins (Tầng 5)</strong><br/><small className="subtle">Đang có: 25.000 xu khả dụng. Cấn trừ trực tiếp 25.000đ (1 xu = 1đ).</small></span></label></section>
-      <section className="panel"><h2 className="panel-title">Voucher Trade-In NEXORA (Tầng 2)</h2><label className="voucher">Mã đối ứng từ Thu cũ Đổi mới (NXTI-...)<input value={tradeInCode} onChange={e => { setTradeInCode(e.target.value); invalidate(); }} placeholder="VD: NXTI-DEMO50"/></label></section>
-      <section className="panel"><h2 className="panel-title">Phương thức thanh toán</h2><label className="address-option"><input type="radio" name="paymentMethod" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')}/><span><strong>Thanh toán khi nhận hàng (COD)</strong><br/><small className="subtle">Nhận hàng, kiểm tra ngoại quan và thanh toán cho shipper.</small></span></label><label className="address-option" style={{ marginTop: 8 }}><input type="radio" name="paymentMethod" checked={paymentMethod === 'BNPL'} onChange={() => setPaymentMethod('BNPL')}/><span><strong>Mua trước Trả sau (NEXORA PayLater · 0% Lãi suất)</strong><br/><small className="subtle">Chia đều 3 kỳ thanh toán 0% lãi suất và không phụ phí (Thẩm duyệt tức thì · Không cần chứng minh tài chính).</small></span></label>{paymentMethod === 'BNPL' && quote && <div style={{ marginTop: 12, padding: 12, background: 'var(--sage)', borderRadius: 2, fontSize: 12 }}><strong>Kế hoạch trả góp 3 kỳ (0% lãi suất):</strong><div className="row between" style={{ marginTop: 6 }}><span>Kỳ 1 (Hôm nay lúc giao dịch):</span><strong>{vnd(Math.round(quote.data.total / 3))}</strong></div><div className="row between"><span>Kỳ 2 (Sau 30 ngày):</span><strong>{vnd(Math.round(quote.data.total / 3))}</strong></div><div className="row between"><span>Kỳ 3 (Sau 60 ngày):</span><strong>{vnd(quote.data.total - 2 * Math.round(quote.data.total / 3))}</strong></div><p className="fine-print" style={{ margin: '8px 0 0' }}>Bảo lãnh tín dụng tiêu dùng số bởi NEXORA PayLater.</p></div>}</section></div>
+      <section className="panel">
+        <h2 className="panel-title">Voucher Trade-In NEXORA (Tầng 2)</h2>
+        <label className="voucher">
+          Mã đối ứng từ Thu cũ Đổi mới (NXTI-...)
+          <input value={tradeInCode} onChange={e => { setTradeInCode(e.target.value); invalidate(); }} placeholder="VD: NXTI-DEMO50"/>
+        </label>
+        {userTradeIns.data?.filter(t => t.status === 'APPROVED' && !t.redeemedOrderId && t.voucherCode).map(t => (
+          <div key={t.id} style={{ marginTop: 8, padding: '8px 10px', background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+            <span>Mã khả dụng của bạn: <strong>{t.voucherCode}</strong> ({t.brand} · {t.itemName} · Giảm {vnd(t.finalValue || t.estimatedValue)})</span>
+            <button
+              type="button"
+              className="text-button"
+              style={{ fontSize: 11, fontWeight: 700, color: 'var(--gold-dark)' }}
+              onClick={() => {
+                if (t.voucherCode) {
+                  setTradeInCode(t.voucherCode);
+                  invalidate();
+                }
+              }}
+            >
+              Áp dụng ngay →
+            </button>
+          </div>
+        ))}
+      </section>
+
+      <section className="panel">
+        <h2 className="panel-title">Phương thức thanh toán</h2>
+        <label className="address-option" style={{ background: paymentMethod === 'VIETQR' ? '#FAF8F5' : undefined, border: paymentMethod === 'VIETQR' ? '1px solid var(--gold-dark)' : undefined }}>
+          <input type="radio" name="paymentMethod" checked={paymentMethod === 'VIETQR'} onChange={() => setPaymentMethod('VIETQR')}/>
+          <span>
+            <strong style={{ color: paymentMethod === 'VIETQR' ? 'var(--gold-dark)' : undefined, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              Chuyển khoản VietQR tự động (Bảo chứng Escrow 100%)
+              <span style={{ fontSize: 9.5, background: 'var(--gold-dark)', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>
+                KHUYÊN DÙNG HAUTE COUTURE
+              </span>
+            </strong>
+            <br/>
+            <small className="subtle">Quét mã QR qua mọi ứng dụng ngân hàng. Tiền được giữ an toàn trên tài khoản Escrow trung gian của Sàn, chỉ giải ngân cho Xưởng sau khi bạn hài lòng.</small>
+          </span>
+        </label>
+        {paymentMethod === 'VIETQR' && quote && (
+          <div style={{ marginTop: 12, padding: 14, background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 2, fontSize: 11 }}>
+            <strong style={{ fontSize: 12, color: 'var(--gold-dark)', display: 'block', marginBottom: 8 }}>
+              Thông Tin Tài Khoản Ký Quỹ Escrow:
+            </strong>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8, color: 'var(--ink)' }}>
+              <div>• <strong>Ngân hàng:</strong> MBBank (Hội Sở Chính)</div>
+              <div>• <strong>Số tài khoản:</strong> <code style={{ fontSize: 12, fontWeight: 700 }}>999988886666</code></div>
+              <div>• <strong>Chủ tài khoản:</strong> CÔNG TY CỔ PHẦN NEXORA ATELIER ESCROW</div>
+              <div>• <strong>Nội dung CK:</strong> <code style={{ color: 'var(--gold-dark)', fontWeight: 700 }}>#NX-{quote.id.slice(-6).toUpperCase()}</code></div>
+            </div>
+            <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--line)', fontSize: 10, color: '#15803d', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <ShieldCheck size={13} color="#15803d" />
+              Được bảo chứng 100% bởi NEXORA SafeTrade Escrow · Hoàn tiền 100% trong 7 ngày nếu không ưng ý.
+            </div>
+          </div>
+        )}
+        <label className="address-option" style={{ marginTop: 8 }}>
+          <input type="radio" name="paymentMethod" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')}/>
+          <span>
+            <strong>Thanh toán khi nhận hàng (COD)</strong>
+            <br/>
+            <small className="subtle">Nhận hàng, đồng kiểm ngoại quan cùng bưu tá và thanh toán tiền mặt.</small>
+          </span>
+        </label>
+        <label className="address-option" style={{ marginTop: 8 }}>
+          <input type="radio" name="paymentMethod" checked={paymentMethod === 'BNPL'} onChange={() => setPaymentMethod('BNPL')}/>
+          <span>
+            <strong>Mua trước Trả sau (NEXORA PayLater · 0% Lãi suất)</strong>
+            <br/>
+            <small className="subtle">Chia đều 3 kỳ thanh toán 0% lãi suất và không phụ phí (Thẩm duyệt tức thì · Không cần chứng minh tài chính).</small>
+          </span>
+        </label>
+        {paymentMethod === 'BNPL' && quote && (
+          <div style={{ marginTop: 12, padding: 12, background: 'var(--sage)', borderRadius: 2, fontSize: 12 }}>
+            <strong>Kế hoạch trả góp 3 kỳ (0% lãi suất):</strong>
+            <div className="row between" style={{ marginTop: 6 }}>
+              <span>Kỳ 1 (Hôm nay lúc giao dịch):</span>
+              <strong>{vnd(Math.round(quote.data.total / 3))}</strong>
+            </div>
+            <div className="row between">
+              <span>Kỳ 2 (Sau 30 ngày):</span>
+              <strong>{vnd(Math.round(quote.data.total / 3))}</strong>
+            </div>
+            <div className="row between">
+              <span>Kỳ 3 (Sau 60 ngày):</span>
+              <strong>{vnd(quote.data.total - 2 * Math.round(quote.data.total / 3))}</strong>
+            </div>
+            <p className="fine-print" style={{ margin: '8px 0 0' }}>Bảo lãnh tín dụng tiêu dùng số bởi NEXORA PayLater.</p>
+          </div>
+        )}
+      </section></div>
       <aside className="panel checkout-summary"><p className="eyebrow">KIỂM TRA TRƯỚC KHI ĐẶT</p><h2>Tổng đơn hàng</h2>{quote ? (() => {
         const reforestCost = reforestPledgeActive ? REFOREST_TIERS[reforestTier].fee : 0;
         const finalAmount = quote.data.total + reforestCost;
@@ -723,17 +870,97 @@ export default function Cart() {
                 </p>
               </div>
             )}
+            {quote.data.deliveryEta && (
+              <div className="quote-shop" style={{ background: '#fdfbf7', borderLeft: '3px solid var(--gold-dark)', padding: '8px 10px', fontSize: 11 }}>
+                <strong style={{ color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                  <Truck size={13} color="var(--gold-dark)" /> Tuyến Vận Chuyển ({quote.data.deliveryEta.distanceKm}km)
+                </strong>
+                <p style={{ margin: '2px 0' }}><span>Dự kiến giao:</span><strong>{quote.data.deliveryEta.deliveryDateFrom} − {quote.data.deliveryEta.deliveryDateTo}</strong></p>
+                <p style={{ margin: '2px 0' }}><span>Khung giờ hẹn:</span><span>{quote.data.deliveryEta.deliverySlotWindow}</span></p>
+              </div>
+            )}
+            {quote.data.logisticsPacking && (
+              <div className="quote-shop" style={{ background: '#f8fafc', borderLeft: '3px solid #0284c7', padding: '8px 10px', fontSize: 11 }}>
+                <strong style={{ color: '#0369a1', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                  <Leaf size={13} /> Đóng Gói Sinh Thái BFD ({quote.data.logisticsPacking.totalBoxes} hộp Kraft)
+                </strong>
+                <p style={{ margin: '2px 0' }}><span>Trọng lượng dự tính:</span><span>{quote.data.logisticsPacking.totalWeightGrams}g</span></p>
+                <p style={{ margin: '2px 0' }}><span>Tiết kiệm phát thải:</span><span style={{ color: '#16a34a', fontWeight: 600 }}>−{quote.data.logisticsPacking.carbonSavedKg} kg CO2e</span></p>
+                <p style={{ margin: '2px 0' }}><span>Chỉ số tối ưu tuyến:</span><span>{quote.data.logisticsPacking.courierEfficiencyScore}/100</span></p>
+              </div>
+            )}
+            {quote.data.hubAndSpoke?.isConsolidationBeneficial && (
+              <div className="quote-shop" style={{ background: '#f0fdf4', borderLeft: '3px solid #16a34a', padding: '8px 10px', fontSize: 11 }}>
+                <strong style={{ color: '#166534', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+                  <Leaf size={13} /> Gom Tuyến Hub-and-Spoke ({quote.data.hubAndSpoke.selectedHubName})
+                </strong>
+                <p style={{ margin: 0, color: '#15803d', fontSize: 10.5 }}>
+                  {quote.data.hubAndSpoke.efficiencyRationale}
+                </p>
+              </div>
+            )}
+            {quote.data.riskAssessment && (
+              <div className="quote-shop" style={{ background: '#fefce8', borderLeft: '3px solid #ca8a04', padding: '8px 10px', fontSize: 11 }}>
+                <strong style={{ color: '#854d0e', display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+                  <ShieldCheck size={13} /> Thẩm Định Tín Nhiệm Đơn Hàng
+                </strong>
+                <p style={{ margin: 0, color: 'var(--muted)', fontSize: 10.5 }}>{quote.data.riskAssessment.rationale}</p>
+              </div>
+            )}
             <div className="total">
-              <span>Tổng thanh toán ({paymentMethod === 'BNPL' ? 'PayLater 0%' : 'COD'})</span>
+              <span>Tổng thanh toán ({paymentMethod === 'BNPL' ? 'PayLater 0%' : paymentMethod === 'VIETQR' ? 'VietQR Escrow' : 'COD'})</span>
               <strong>{vnd(finalAmount)}</strong>
             </div>
             <p className="subtle">Báo giá có hiệu lực đến {new Date(quote.expiresAt).toLocaleTimeString('vi-VN')}.</p>
             <button className="button full" disabled={busy} onClick={order}>
-              {busy ? 'Đang đặt…' : paymentMethod === 'BNPL' ? `Xác nhận đặt PayLater (Kỳ 1: ${vnd(Math.round(finalAmount / 3))})` : 'Xác nhận đặt COD'}
+              {busy ? 'Đang đặt…' : paymentMethod === 'BNPL' ? `Xác nhận đặt PayLater (Kỳ 1: ${vnd(Math.round(finalAmount / 3))})` : paymentMethod === 'VIETQR' ? 'Xác nhận đặt & Lấy mã VietQR Escrow' : 'Xác nhận đặt COD'}
               <ArrowRight size={18}/>
             </button>
             <button className="text-button" onClick={getQuote} disabled={busy}>Tính lại báo giá</button>
           </>
         );
-      })() : <><p>Kiểm tra địa chỉ và mã giảm để lấy tổng chính xác cho từng shop.</p><button className="button full" disabled={busy || !chosenAddress} onClick={getQuote}>{busy ? 'Đang tính…' : 'Xem báo giá'}<ArrowRight size={18}/></button></>}{error && <Notice error>{error}</Notice>}<p className="fine-print">Bản phát triển sử dụng phí giao giả lập 30.000đ/shop. Chưa tạo vận đơn hoặc thu tiền thật.</p></aside></div></section>;
+      })() : <><p>Kiểm tra địa chỉ và mã giảm để lấy tổng chính xác cho từng shop.</p><button className="button full" disabled={busy || !chosenAddress} onClick={getQuote}>{busy ? 'Đang tính…' : 'Xem báo giá'}<ArrowRight size={18}/></button></>}{error && <Notice error>{error}</Notice>}<p className="fine-print">Bản phát triển sử dụng phí giao giả lập 30.000đ/shop. Chưa tạo vận đơn hoặc thu tiền thật.</p></aside></div>
+
+      {createdOrder && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+          <div className="panel" style={{ maxWidth: 480, width: '100%', background: '#fff', borderRadius: 4, padding: 24, boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 16 }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#dcfce7', color: '#166534', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                <CheckCircle2 size={28} />
+              </div>
+              <h2 style={{ margin: '0 0 6px', fontSize: 20 }}>Đặt Hàng Thành Công!</h2>
+              <p className="subtle" style={{ margin: 0, fontSize: 12 }}>Mã đơn hàng: <strong style={{ color: 'var(--gold-dark)', fontSize: 14 }}>{createdOrder.code}</strong></p>
+            </div>
+
+            <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 4, padding: 16, marginBottom: 16, textAlign: 'center' }}>
+              <img
+                src={`https://img.vietqr.io/image/970422-999988886666-compact2.png?amount=${createdOrder.total}&addInfo=${createdOrder.code}&accountName=NEXORA%20ESCROW`}
+                alt="VietQR Transfer"
+                style={{ width: 180, height: 180, objectFit: 'contain', margin: '0 auto 10px', display: 'block' }}
+              />
+              <span style={{ fontSize: 11, color: 'var(--muted)', display: 'block' }}>
+                Quét mã qua bất kỳ App Ngân hàng nào để nạp tiền vào Két Bảo Chứng Escrow
+              </span>
+              <div style={{ marginTop: 8, fontSize: 12, lineHeight: 1.6, textAlign: 'left', background: '#fff', padding: 10, borderRadius: 2, border: '1px solid var(--line)' }}>
+                <div>• Ngân hàng: <strong>MBBank</strong></div>
+                <div>• STK: <code style={{ fontWeight: 700 }}>999988886666</code></div>
+                <div>• Số tiền: <strong style={{ color: 'var(--gold-dark)' }}>{vnd(createdOrder.total)}</strong></div>
+                <div>• Nội dung CK: <code style={{ color: 'var(--gold-dark)', fontWeight: 700 }}>{createdOrder.code}</code></div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                type="button"
+                className="button full"
+                onClick={() => router.push(`/don-hang/${createdOrder.id}`)}
+              >
+                Theo Dõi Tiến Trình Đơn Hàng →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
 }

@@ -40,10 +40,35 @@ const GSM_KEYWORDS: Record<string, string[]> = {
   HEAVY: ['blazer', 'dạ', 'len', 'khoác', 'áo khoác', 'măng tô', 'da bò', 'wool', 'jacket', 'túi'],
 };
 
-function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { q: string; category?: string; priceRange?: string; isMall?: boolean; palette?: string; gsmTier?: string }) {
+function SearchResults({
+  q,
+  category,
+  priceRange,
+  isMall,
+  palette,
+  gsmTier,
+  material,
+  shop,
+  sort = 'newest',
+  inStockOnly = false,
+}: {
+  q: string;
+  category?: string;
+  priceRange?: string;
+  isMall?: boolean;
+  palette?: string;
+  gsmTier?: string;
+  material?: string;
+  shop?: string;
+  sort?: string;
+  inStockOnly?: boolean;
+}) {
   let queryUrl = `/products?page=1`;
   if (q) queryUrl += `&q=${encodeURIComponent(q)}`;
   if (category) queryUrl += `&category=${encodeURIComponent(category)}`;
+  if (material) queryUrl += `&material=${encodeURIComponent(material)}`;
+  if (shop) queryUrl += `&shop=${encodeURIComponent(shop)}`;
+  if (sort && ['newest', 'name-asc', 'mall-first'].includes(sort)) queryUrl += `&sort=${encodeURIComponent(sort)}`;
   if (isMall) queryUrl += `&isMall=true`;
   if (priceRange === 'under-1m') queryUrl += `&maxPrice=1000000`;
   else if (priceRange === '1m-2m') queryUrl += `&minPrice=1000000&maxPrice=2000000`;
@@ -63,8 +88,18 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
     const gKws = GSM_KEYWORDS[gsmTier];
     items = items.filter(p => gKws.some(kw => p.name.toLowerCase().includes(kw) || p.material.toLowerCase().includes(kw)));
   }
+  if (inStockOnly) {
+    items = items.filter(p => p.variants.some(v => v.inventory && v.inventory.onHand > v.inventory.reserved));
+  }
+  if (sort === 'price-asc') {
+    items = [...items].sort((a, b) => Math.min(...a.variants.map(v => v.price)) - Math.min(...b.variants.map(v => v.price)));
+  } else if (sort === 'price-desc') {
+    items = [...items].sort((a, b) => Math.min(...b.variants.map(v => v.price)) - Math.min(...a.variants.map(v => v.price)));
+  } else if (sort === 'name-asc') {
+    items = [...items].sort((a, b) => a.name.localeCompare(b.name, 'vi'));
+  }
 
-  const hasFilter = Boolean(q || category || priceRange || isMall || (palette && palette !== 'ALL') || (gsmTier && gsmTier !== 'ALL'));
+  const hasFilter = Boolean(q || category || priceRange || isMall || material || shop || inStockOnly || (palette && palette !== 'ALL') || (gsmTier && gsmTier !== 'ALL'));
 
   if (!items.length) {
     return (
@@ -137,6 +172,11 @@ function SearchResults({ q, category, priceRange, isMall, palette, gsmTier }: { 
                 </div>
               </div>
               <h3>{p.name}</h3>
+              {p.material && (
+                <p style={{ fontSize: 11, color: 'var(--muted)', margin: '-4px 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {p.material}
+                </p>
+              )}
               <p className="price">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(minPrice)}</p>
             </Link>
           );
@@ -153,12 +193,19 @@ function SearchPage() {
   const initialCat = params?.get('category') ?? '';
   const initialPrice = params?.get('price') ?? '';
   const initialMall = params?.get('mall') === 'true';
+  const initialMat = params?.get('material') ?? '';
+  const initialShop = params?.get('shop') ?? '';
+  const initialSort = params?.get('sort') ?? 'newest';
 
   const [input, setInput] = useState(initialQ);
   const [q, setQ] = useState(initialQ);
   const [category, setCategory] = useState(initialCat);
   const [priceRange, setPriceRange] = useState(initialPrice);
   const [mallOnly, setMallOnly] = useState(initialMall);
+  const [material, setMaterial] = useState(initialMat);
+  const [shop, setShop] = useState(initialShop);
+  const [sort, setSort] = useState(initialSort);
+  const [inStockOnly, setInStockOnly] = useState(false);
   const [palette, setPalette] = useState('ALL');
   const [gsmTier, setGsmTier] = useState('ALL');
 
@@ -170,14 +217,20 @@ function SearchPage() {
     setCategory(params?.get('category') ?? '');
     setPriceRange(params?.get('price') ?? '');
     setMallOnly(params?.get('mall') === 'true');
+    setMaterial(params?.get('material') ?? '');
+    setShop(params?.get('shop') ?? '');
+    setSort(params?.get('sort') ?? 'newest');
   }, [params]);
 
-  function applyFilters(newQ: string, newCat: string, newPrice: string, newMall: boolean) {
+  function applyFilters(newQ: string, newCat: string, newPrice: string, newMall: boolean, newMat = material, newSort = sort, newShop = shop) {
     const sp = new URLSearchParams();
     if (newQ.trim()) sp.set('q', newQ.trim());
     if (newCat) sp.set('category', newCat);
     if (newPrice) sp.set('price', newPrice);
     if (newMall) sp.set('mall', 'true');
+    if (newMat) sp.set('material', newMat);
+    if (newShop) sp.set('shop', newShop);
+    if (newSort && newSort !== 'newest') sp.set('sort', newSort);
     const qs = sp.toString();
     router.push(qs ? `/tim-kiem?${qs}` : '/tim-kiem', { scroll: false });
   }
@@ -186,14 +239,14 @@ function SearchPage() {
     e.preventDefault();
     const trimmed = input.trim();
     setQ(trimmed);
-    applyFilters(trimmed, category, priceRange, mallOnly);
+    applyFilters(trimmed, category, priceRange, mallOnly, material, sort, shop);
   }
 
   return (
     <section className="section">
       <p className="eyebrow"><span />TÌM KIẾM SẢN PHẨM</p>
       <h1>Khám phá thiết kế thời trang</h1>
-      <form onSubmit={submit} style={{ display: 'flex', gap: 12, maxWidth: 640, marginBottom: 20 }}>
+      <form onSubmit={submit} style={{ display: 'flex', gap: 12, maxWidth: 640, marginBottom: 12 }}>
         <label style={{ flex: 1, display: 'flex', alignItems: 'center', border: '1px solid var(--line)', background: '#fff', padding: '0 14px', gap: 10 }}>
           <Search size={16} style={{ color: 'var(--muted)', flexShrink: 0 }} />
           <input
@@ -208,10 +261,55 @@ function SearchPage() {
         </button>
       </form>
 
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', marginBottom: 32 }}>
+      {/* Gợi ý tìm nhanh */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', marginBottom: 24 }}>
+        <span style={{ fontSize: 11, color: 'var(--muted)' }}>Gợi ý:</span>
+        {[
+          { label: 'Sơ mi linen', query: 'sơ mi linen' },
+          { label: 'Đầm dạo cuối tuần', query: 'đầm' },
+          { label: 'Áo thun ngày thường', query: 'áo thun' },
+          { label: 'Quần suông', query: 'quần suông' },
+          { label: 'Blazer linen', query: 'blazer' },
+          { label: 'Trench Coat dạ', query: 'trench coat' },
+        ].map((chip) => (
+          <button
+            key={chip.label}
+            type="button"
+            onClick={() => {
+              setInput(chip.query);
+              setQ(chip.query);
+              applyFilters(chip.query, category, priceRange, mallOnly, material, sort);
+            }}
+            style={{
+              fontSize: 11,
+              padding: '3px 10px',
+              borderRadius: 14,
+              background: q === chip.query ? 'var(--gold-dark)' : '#FAF8F5',
+              color: q === chip.query ? '#fff' : '#475569',
+              border: '1px solid var(--line)',
+              cursor: 'pointer',
+            }}
+          >
+            {chip.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', marginBottom: 24 }}>
+        <select
+          value={shop}
+          onChange={e => { setShop(e.target.value); applyFilters(q, category, priceRange, mallOnly, material, sort, e.target.value); }}
+          style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
+          aria-label="Lọc theo xưởng may Atelier"
+        >
+          <option value="">Tất cả xưởng may (All Ateliers)</option>
+          <option value="shop-nep">NÉP Studio Mall (Xưởng thủ công)</option>
+          <option value="shop-moc">Mộc Everyday (Xưởng dệt mộc)</option>
+        </select>
+
         <select
           value={category}
-          onChange={e => { setCategory(e.target.value); applyFilters(q, e.target.value, priceRange, mallOnly); }}
+          onChange={e => { setCategory(e.target.value); applyFilters(q, e.target.value, priceRange, mallOnly, material, sort, shop); }}
           style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
           aria-label="Lọc theo danh mục"
         >
@@ -220,8 +318,21 @@ function SearchPage() {
         </select>
 
         <select
+          value={material}
+          onChange={e => { setMaterial(e.target.value); applyFilters(q, category, priceRange, mallOnly, e.target.value, sort, shop); }}
+          style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
+          aria-label="Lọc theo chất liệu sợi"
+        >
+          <option value="">Tất cả chất liệu dệt</option>
+          <option value="linen">Linen tự nhiên Normandy (Lanh hữu cơ)</option>
+          <option value="silk">Lụa tơ tằm thượng hạng (Mulberry Silk)</option>
+          <option value="wool">Dạ len lông cừu (Wool Super 150s)</option>
+          <option value="cotton">Cotton tự nhiên thoáng mát</option>
+        </select>
+
+        <select
           value={priceRange}
-          onChange={e => { setPriceRange(e.target.value); applyFilters(q, category, e.target.value, mallOnly); }}
+          onChange={e => { setPriceRange(e.target.value); applyFilters(q, category, e.target.value, mallOnly, material, sort, shop); }}
           style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
           aria-label="Lọc theo mức giá"
         >
@@ -231,24 +342,59 @@ function SearchPage() {
           <option value="over-2m">Trên 2.000.000đ</option>
         </select>
 
+        <select
+          value={sort}
+          onChange={e => { setSort(e.target.value); applyFilters(q, category, priceRange, mallOnly, material, e.target.value, shop); }}
+          style={{ padding: '8px 12px', border: '1px solid var(--line)', background: '#fff', fontSize: 13 }}
+          aria-label="Sắp xếp kết quả"
+        >
+          <option value="newest">Mới nhất (Atelier Fresh)</option>
+          <option value="price-asc">Giá tăng dần</option>
+          <option value="price-desc">Giá giảm dần</option>
+          <option value="name-asc">Tên mẫu thiết kế (A – Z)</option>
+          <option value="mall-first">NEXORA Mall ưu tiên</option>
+        </select>
+
         <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '7px 12px', border: '1px solid var(--line)', background: mallOnly ? '#f5eee6' : '#fff', fontSize: 13, userSelect: 'none' }}>
           <input
             type="checkbox"
             checked={mallOnly}
             onChange={e => {
               setMallOnly(e.target.checked);
-              applyFilters(q, category, priceRange, e.target.checked);
+              applyFilters(q, category, priceRange, e.target.checked, material, sort, shop);
             }}
           />
           <strong style={{ color: 'var(--gold-dark)' }}>NEXORA Mall</strong> (Chính hãng 100%)
         </label>
 
-        {(q || category || priceRange || mallOnly || palette !== 'ALL' || gsmTier !== 'ALL') && (
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '7px 12px', border: '1px solid var(--line)', background: inStockOnly ? '#ecfdf5' : '#fff', fontSize: 13, userSelect: 'none' }}>
+          <input
+            type="checkbox"
+            checked={inStockOnly}
+            onChange={e => setInStockOnly(e.target.checked)}
+          />
+          <span style={{ color: inStockOnly ? '#166534' : 'var(--ink)' }}>Chỉ hiển thị còn hàng</span>
+        </label>
+
+        {(q || category || priceRange || mallOnly || material || shop || inStockOnly || palette !== 'ALL' || gsmTier !== 'ALL' || sort !== 'newest') && (
           <button
             type="button"
             className="button secondary"
             style={{ padding: '8px 12px', fontSize: 12 }}
-            onClick={() => { setInput(''); setQ(''); setCategory(''); setPriceRange(''); setMallOnly(false); setPalette('ALL'); setGsmTier('ALL'); router.push('/tim-kiem', { scroll: false }); }}
+            onClick={() => {
+              setInput('');
+              setQ('');
+              setCategory('');
+              setPriceRange('');
+              setMallOnly(false);
+              setMaterial('');
+              setShop('');
+              setSort('newest');
+              setInStockOnly(false);
+              setPalette('ALL');
+              setGsmTier('ALL');
+              router.push('/tim-kiem', { scroll: false });
+            }}
           >
             Đặt lại bộ lọc
           </button>
@@ -367,7 +513,18 @@ function SearchPage() {
       </div>
 
       <Suspense fallback={<Loading />}>
-        <SearchResults q={q} category={category} priceRange={priceRange} isMall={mallOnly} palette={palette} gsmTier={gsmTier} />
+        <SearchResults
+          q={q}
+          category={category}
+          priceRange={priceRange}
+          isMall={mallOnly}
+          palette={palette}
+          gsmTier={gsmTier}
+          material={material}
+          shop={shop}
+          sort={sort}
+          inStockOnly={inStockOnly}
+        />
       </Suspense>
     </section>
   );

@@ -1,0 +1,84 @@
+name: NEXORA Atelier Continuous Integration & Quality Gate
+
+on:
+  push:
+    branches: [main, master, 'feat/**', 'fix/**']
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  verify:
+    name: Typecheck, Build & E2E Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: mac
+          POSTGRES_PASSWORD: mac_local_only
+          POSTGRES_DB: mac_test
+        ports: ['54329:5432']
+        options: >-
+          --health-cmd "pg_isready -U mac -d mac_test"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+
+      redis:
+        image: redis:7-alpine
+        ports: ['63799:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+
+    defaults:
+      run:
+        working-directory: san-quan-ao
+
+    env:
+      DATABASE_URL: postgresql://mac:mac_local_only@127.0.0.1:54329/mac_test?schema=public
+      TEST_DATABASE_URL: postgresql://mac:mac_local_only@127.0.0.1:54329/mac_test?schema=public
+      REDIS_URL: redis://127.0.0.1:63799
+      SHIPPING_PROVIDER: mock
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_ENV: test
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm Package Manager
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: san-quan-ao/pnpm-lock.yaml
+
+      - name: Install Monorepo Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma ORM Client
+        run: pnpm db:generate
+
+      - name: Deploy Database Schema Migrations
+        run: pnpm db:push
+
+      - name: Seed Reference Catalog & Atelier Workshops
+        run: pnpm db:seed
+
+      - name: Monorepo Static Typecheck (tsc --noEmit)
+        run: pnpm typecheck
+
+      - name: Build Contracts, Database, API & Web
+        run: pnpm build
+
+      - name: Run Unit Tests
+        run: pnpm test
+
+      - name: Run Integration Tests
+        run: pnpm test:integration

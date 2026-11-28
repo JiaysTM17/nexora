@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera, BarChart2, Gift, CheckCircle2, Bookmark, Layers, CheckCheck } from 'lucide-react';
+import { ArrowUpRight, Check, Clock, Heart, Radio, Send, ShoppingBag, Sparkles, Users, Volume2, VolumeX, Camera, BarChart2, Gift, CheckCircle2, Bookmark, Layers, CheckCheck, Calendar, UserCheck, MessageSquare, Video, MapPin, X, Copy, Trash2, ShieldCheck, ChevronRight } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -50,6 +50,18 @@ export default function LiveRoom() {
   const [savedLookbooks, setSavedLookbooks] = useState<{ id: string; title: string; price: number; time: string; angle: string }[]>([]);
   const [capturingLook, setCapturingLook] = useState(false);
   const [lookCapturedNotice, setLookCapturedNotice] = useState('');
+
+  // VIP Stylist Consultation Modal & Bookings
+  const [showStylistModal, setShowStylistModal] = useState(false);
+  const [selectedStylist, setSelectedStylist] = useState<'ELENA' | 'MARCUS' | 'MAI_CHI'>('ELENA');
+  const [consultFormat, setConsultFormat] = useState<'VIRTUAL' | 'FLAGSHIP' | 'SWATCH_BOX'>('VIRTUAL');
+  const [consultDate, setConsultDate] = useState('Ngày mai (25/11/2026)');
+  const [consultSlot, setConsultSlot] = useState('14:30 - 15:15');
+  const [consultNotes, setConsultNotes] = useState('Tư vấn chọn phom áo khoác cho tiệc cuối năm');
+  const [bookingBusy, setBookingBusy] = useState(false);
+
+  // User's active VIP consultations loaded from API
+  const stylistBookings = useResource<Array<any>>(user ? '/vault/bookings' : null);
 
   useEffect(() => {
     try {
@@ -108,7 +120,7 @@ export default function LiveRoom() {
     try {
       localStorage.setItem('nexora_live_poll_vote', optionId);
     } catch {}
-    setSuccessNotice('✓ Bạn đã bình chọn thành công! Mã ưu đãi -20% Flash Deal (RUNWAY20) đã được mở khóa.');
+    setSuccessNotice('✓ Bạn đã bình chọn thành công! Mã ưu đãi -20% Flash Deal (RUNWAY20) đã sẵn sàng áp dụng tại giỏ hàng.');
   }
 
   // Live countdown timer for pinned deal
@@ -174,7 +186,6 @@ export default function LiveRoom() {
       await api('/cart', 'POST', { variantId: variant.id, quantity: 1 });
       setSuccessNotice(`Đã chốt thành công 1 ${pinnedProduct.name} (Size ${selectedSize}) vào giỏ hàng!`);
       setStockLeft(s => Math.max(1, s - 1));
-      // Add system ticker message
       setMessages(prev => [
         ...prev,
         {
@@ -193,6 +204,85 @@ export default function LiveRoom() {
     }
   }
 
+  // 1-Click Batch Add for the Complete Runway Set (-25%)
+  async function buyCompleteRunwaySet() {
+    if (!user) {
+      setErrorNotice('Vui lòng đăng nhập để chốt trọn set sàn diễn.');
+      return;
+    }
+    if (!pinnedProduct) return;
+    setBuying(true);
+    setErrorNotice('');
+    setSuccessNotice('');
+    try {
+      const mainVar = pinnedProduct.variants.find(v => v.size === selectedSize) || pinnedProduct.variants[0];
+      const items: Array<{ variantId: string; quantity: number }> = [
+        { variantId: mainVar.id, quantity: 1 },
+      ];
+
+      // Add complementary pieces if available in catalog
+      const trousers = products.find(p => p.slug === 'wide-trousers');
+      if (trousers && trousers.variants[0]) {
+        items.push({ variantId: trousers.variants[0].id, quantity: 1 });
+      }
+      const blazer = products.find(p => p.slug === 'linen-blazer');
+      if (blazer && blazer.variants[0] && blazer.id !== pinnedProduct.id) {
+        items.push({ variantId: blazer.variants[0].id, quantity: 1 });
+      }
+
+      const res = await api<{ ok: boolean; addedCount: number }>('/cart/batch', 'POST', { items });
+      setSuccessNotice(`✓ Đã thêm trọn bộ Set Sàn Diễn (${res.addedCount} món) với ưu đãi Combo Flash Deal -25% vào giỏ hàng!`);
+    } catch (err) {
+      setErrorNotice((err as Error).message);
+    } finally {
+      setBuying(false);
+    }
+  }
+
+  // VIP Stylist Booking Submit
+  async function handleBookStylist(e: FormEvent) {
+    e.preventDefault();
+    if (!user) {
+      setErrorNotice('Vui lòng đăng nhập để đặt lịch hẹn với Stylist.');
+      return;
+    }
+    setBookingBusy(true);
+    setErrorNotice('');
+    const stylistName = selectedStylist === 'ELENA' ? 'Elena Vũ (Senior Stylist)' : selectedStylist === 'MARCUS' ? 'Marcus Trần (Master Tailor)' : 'Mai Chi (Color Analyst)';
+    const formatName = consultFormat === 'VIRTUAL' ? 'Phòng Thử Đồ Trực Tuyến 1:1 (Video HD)' : consultFormat === 'FLAGSHIP' ? 'Phòng VIP Lounge tại Flagship' : 'Hộp Mẫu Vải Cao Cấp & Thước Đo Tận Nhà';
+    const vipPass = `VIP-STYLIST-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    try {
+      await api('/vault/booking', 'POST', {
+        id: `STYLIST-${Date.now().toString().slice(-6)}`,
+        flagship: `Tư Vấn VIP · ${stylistName}`,
+        service: formatName,
+        date: consultDate,
+        timeSlot: consultSlot,
+        vipPass,
+        notes: consultNotes,
+      });
+
+      setShowStylistModal(false);
+      setSuccessNotice(`✓ Đã đặt lịch tư vấn Stylist thành công! Mã thẻ VIP: #${vipPass}. Bưu tá/Chuyên viên sẽ liên hệ trước 30 phút.`);
+      stylistBookings.reload();
+    } catch (err) {
+      setErrorNotice((err as Error).message);
+    } finally {
+      setBookingBusy(false);
+    }
+  }
+
+  async function cancelStylistBooking(id: string) {
+    try {
+      await api(`/vault/bookings/${id}`, 'DELETE');
+      setSuccessNotice('Đã hủy lịch hẹn tư vấn Stylist.');
+      stylistBookings.reload();
+    } catch (err) {
+      setErrorNotice((err as Error).message);
+    }
+  }
+
   if (catalog.loading) return <Loading />;
 
   return (
@@ -206,13 +296,21 @@ export default function LiveRoom() {
           <h1 style={{ fontSize: 36, margin: 0 }}>Sàn Diễn Trực Tiếp &amp; Chốt Đơn 1-Chạm</h1>
           <p className="subtle" style={{ margin: '4px 0 0' }}>Xem người mẫu trình diễn, trao đổi với Stylist và nhận deal độc quyền không gián đoạn luồng phát.</p>
         </div>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#111827', color: '#fff', padding: '6px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600 }}>
             <Radio size={15} color="#EF4444" /> ĐANG PHÁT
           </div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#f1f5f9', color: '#0f172a', padding: '6px 14px', borderRadius: 20, fontSize: 12 }}>
             <Users size={15} /> <strong>{viewers.toLocaleString('vi-VN')}</strong> người xem
           </div>
+          <button
+            type="button"
+            className="button"
+            onClick={() => setShowStylistModal(true)}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '7px 16px', background: 'var(--gold-dark)', color: '#fff' }}
+          >
+            <UserCheck size={15} /> Đặt Lịch Stylist 1:1
+          </button>
         </div>
       </div>
 
@@ -286,7 +384,7 @@ export default function LiveRoom() {
             {/* Bottom Stream Bar */}
             <div style={{ position: 'absolute', bottom: 12, left: 16, right: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff', fontSize: 11, background: 'linear-gradient(transparent, rgba(0,0,0,0.85))', padding: '12px 10px 4px', zIndex: 10 }}>
               <span>Trình diễn: <strong>BST Đông Cao Cấp 2026</strong></span>
-              <span>Stylist: <strong>Elena Vũ</strong> (Hà Nội Hub)</span>
+              <span>Stylist Trưởng: <strong>Elena Vũ</strong> (Atelier Hub)</span>
             </div>
           </div>
 
@@ -549,6 +647,52 @@ export default function LiveRoom() {
         </div>
       </div>
 
+      {/* Danh Sách Lịch Hẹn Tư Vấn VIP Stylist Của Bạn */}
+      {user && stylistBookings.data && stylistBookings.data.length > 0 && (
+        <div style={{ marginTop: 28, padding: '20px 24px', background: '#fcfbf7', border: '1px solid var(--clay)', borderRadius: 8 }}>
+          <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <UserCheck size={18} color="var(--gold-dark)" />
+              <strong style={{ fontSize: 15, color: 'var(--ink)' }}>
+                Lịch Hẹn Tư Vấn VIP Stylist Độc Bản Của Bạn ({stylistBookings.data.length})
+              </strong>
+            </div>
+            <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+              PRIVATE STYLIST LOUNGE
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+            {stylistBookings.data.map((b) => (
+              <div key={b.id} style={{ padding: 14, background: '#fff', borderRadius: 6, border: '1px solid var(--line)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div className="row between" style={{ marginBottom: 4 }}>
+                    <strong style={{ fontSize: 13, color: 'var(--ink)' }}>{b.flagship}</strong>
+                    <span style={{ fontSize: 10, background: '#ecfdf5', color: '#047857', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
+                      #{b.vipPass || b.id.slice(-6)}
+                    </span>
+                  </div>
+                  <p style={{ margin: '4px 0', fontSize: 11, color: 'var(--muted)' }}>
+                    • Hình thức: <strong>{b.service}</strong><br />
+                    • Thời gian: <strong>{b.date} · {b.timeSlot}</strong>
+                    {b.notes && <><br />• Ghi chú: <em>{b.notes}</em></>}
+                  </p>
+                </div>
+                <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => cancelStylistBooking(b.id)}
+                    style={{ fontSize: 10, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                  >
+                    <Trash2 size={12} /> Hủy lịch hẹn
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Khán Giả Bình Chọn Bộ Sưu Tập Kế Tiếp & Mở Khóa Deal Độc Quyền */}
       <div
         style={{
@@ -570,7 +714,7 @@ export default function LiveRoom() {
               </span>
             </div>
             <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
-              Tham gia điều phối sàn diễn theo sở thích! Mẫu có số phiếu cao nhất sẽ được người mẫu diện trong lượt catwalk tiếp theo. Bình chọn để nhận ngay Voucher Flash Deal -20%.
+              Tham gia điều phối sàn diễn theo sở thích! Mẫu có số phiếu cao nhất sẽ được người mẫu diện trong lượt catwalk tiếp theo. Bình chọn để nhận ngay Voucher Flash Deal -20% (RUNWAY20) áp dụng tại giỏ hàng.
             </p>
           </div>
           <span style={{ fontSize: 12, color: 'var(--muted)', alignSelf: 'center' }}>
@@ -706,10 +850,10 @@ export default function LiveRoom() {
               </div>
               <div>
                 <strong style={{ fontSize: 13, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <CheckCircle2 size={15} /> Thưởng Khán Giả: Mã Giảm Giá Live Flash Deal -20%
+                  <CheckCircle2 size={15} /> Thưởng Khán Giả: Mã Giảm Giá Live Flash Deal (Giảm 100k cho đơn từ 400k)
                 </strong>
                 <p style={{ margin: '2px 0 0', fontSize: 11, color: '#334155' }}>
-                  Áp dụng trực tiếp tại bước thanh toán giỏ hàng cho toàn bộ sản phẩm đang diễn trên sàn runway.
+                  Áp dụng trực tiếp tại bước thanh toán giỏ hàng cho các gian hàng tham gia phiên live (NÉP Studio, Lụa &amp; Co).
                 </p>
               </div>
             </div>
@@ -801,7 +945,7 @@ export default function LiveRoom() {
               category: 'Normandy Minimalist',
               price: 1250000,
               livePrice: 1062500,
-              slug: 'ao-so-mi-lua-to-tam-cao-cap',
+              slug: 'linen-shirt',
               img: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
               catwalkDesc: 'Tà áo lụa bay nhẹ theo nhịp bước chân, phom suông thanh thoát dưới ánh đèn spotlight vàng ấm.',
               macroDesc: 'Bề mặt sợi tơ dệt mật độ cao 19mm momme, đường kim mũi chỉ 5 mũi/cm chuẩn Haute Couture.',
@@ -813,7 +957,7 @@ export default function LiveRoom() {
               category: 'Contemporary Executive',
               price: 2850000,
               livePrice: 2422500,
-              slug: 'ao-khoac-blazer-linen-dang-suong',
+              slug: 'linen-blazer',
               img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80',
               catwalkDesc: 'Cầu vai đệm mỏng quyền lực, ve áo nhọn sắc nét tạo phong thái đĩnh đạc tự tin trên sàn diễn.',
               macroDesc: 'Chất da thuộc thảo mộc tự nhiên thơm nhẹ, khuy áo sừng khắc logo NEXORA sắc sảo.',
@@ -825,7 +969,7 @@ export default function LiveRoom() {
               category: 'Quiet Luxury Evening',
               price: 1950000,
               livePrice: 1657500,
-              slug: 'ao-polo-det-kim-merino',
+              slug: 'weekend-dress',
               img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80',
               catwalkDesc: 'Độ rủ óng ả ôm nhẹ theo từng chuyển động cơ thể, tà váy xòe duyên dáng ở cuối sàn runway.',
               macroDesc: 'Sợi lụa satin bắt sáng huyền ảo, viền cổ may giấu chỉ tinh tế hoàn mỹ.',
@@ -1051,18 +1195,18 @@ export default function LiveRoom() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
                   <span>2. Quần suông tơ tằm xếp ly Atelier</span>
-                  <strong style={{ color: 'var(--ink)' }}>{vnd(1350000)}</strong>
+                  <strong style={{ color: 'var(--ink)' }}>{vnd(495000)}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 8px', background: '#f8fafc', borderRadius: 4 }}>
-                  <span>3. Thắt lưng da thảo mộc khóa đồng</span>
-                  <strong style={{ color: 'var(--ink)' }}>{vnd(650000)}</strong>
+                  <span>3. Áo khoác Blazer Linen cấu trúc</span>
+                  <strong style={{ color: 'var(--ink)' }}>{vnd(1350000)}</strong>
                 </div>
               </div>
 
               {/* Price Calculation */}
               {(() => {
                 const baseMain = pinnedProduct?.variants[0]?.price ?? 1250000;
-                const totalOriginal = baseMain + 1350000 + 650000;
+                const totalOriginal = baseMain + 495000 + 1350000;
                 const setDiscounted = Math.round(totalOriginal * 0.75);
 
                 return (
@@ -1083,6 +1227,7 @@ export default function LiveRoom() {
             <button
               type="button"
               className="button"
+              disabled={buying}
               style={{
                 width: '100%',
                 padding: '9px 14px',
@@ -1092,20 +1237,9 @@ export default function LiveRoom() {
                 justifyContent: 'center',
                 gap: 8,
               }}
-              onClick={async () => {
-                if (!pinnedProduct) return;
-                const variant = pinnedProduct.variants[0];
-                if (variant) {
-                  try {
-                    await api('/cart', 'POST', { variantId: variant.id, quantity: 1 });
-                    setSuccessNotice(`✓ Đã thêm trọn bộ Set Sàn Diễn của "${pinnedProduct.name}" với giá ưu đãi Combo -25% vào giỏ hàng!`);
-                  } catch (e) {
-                    setErrorNotice((e as Error).message);
-                  }
-                }
-              }}
+              onClick={buyCompleteRunwaySet}
             >
-              <ShoppingBag size={14} /> Chốt Trọn Set Sàn Diễn Vào Giỏ Hàng (-25%)
+              <ShoppingBag size={14} /> {buying ? 'Đang thêm combo...' : 'Chốt Trọn Set Sàn Diễn Vào Giỏ Hàng (-25%)'}
             </button>
           </div>
         </div>
@@ -1187,6 +1321,190 @@ export default function LiveRoom() {
           )}
         </div>
       </div>
+
+      {/* Modal Đặt Lịch Tư Vấn Stylist 1:1 Độc Bản (Private Lounge) */}
+      {showStylistModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(20, 20, 19, 0.82)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: 16,
+          }}
+          onClick={() => setShowStylistModal(false)}
+        >
+          <div
+            style={{
+              background: '#FAF8F5',
+              borderRadius: 6,
+              maxWidth: 580,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 30px 60px rgba(0, 0, 0, 0.25)',
+              border: '1px solid var(--line)',
+              padding: 28,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderBottom: '1px solid var(--line)', paddingBottom: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <UserCheck size={22} color="var(--gold-dark)" />
+                <div>
+                  <h3 style={{ margin: 0, fontSize: 18, fontFamily: 'var(--font-serif)', color: 'var(--ink)' }}>
+                    ĐẶT LỊCH TƯ VẤN STYLIST ĐỘC BẢN 1:1
+                  </h3>
+                  <div style={{ fontSize: 11, color: 'var(--gold-dark)', letterSpacing: '0.04em' }}>
+                    Private Virtual Lounge &amp; Phòng Thử Đồ May Đo Riêng
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowStylistModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 4 }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleBookStylist}>
+              {/* 1. Chọn Stylist */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
+                  1. Chuyên Gia Giám Tuyển / Stylist Đồng Hành:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                  {[
+                    { id: 'ELENA' as const, name: 'Elena Vũ', role: 'Senior Stylist', exp: 'Haute Couture & Sartorial' },
+                    { id: 'MARCUS' as const, name: 'Marcus Trần', role: 'Master Tailor', exp: 'Bespoke Fit & Vải Ý' },
+                    { id: 'MAI_CHI' as const, name: 'Mai Chi', role: 'Color Analyst', exp: 'Hòa Sắc & Tôn Da' },
+                  ].map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setSelectedStylist(s.id)}
+                      style={{
+                        padding: '10px 8px',
+                        borderRadius: 4,
+                        border: selectedStylist === s.id ? '2px solid var(--gold-dark)' : '1px solid var(--line)',
+                        background: selectedStylist === s.id ? '#fff' : '#faf9f5',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <strong style={{ fontSize: 12, display: 'block', color: 'var(--ink)' }}>{s.name}</strong>
+                      <span style={{ fontSize: 10, color: 'var(--gold-dark)', display: 'block' }}>{s.role}</span>
+                      <span style={{ fontSize: 9, color: 'var(--muted)', display: 'block', marginTop: 2 }}>{s.exp}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2. Hình thức tư vấn */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
+                  2. Không Gian &amp; Hình Thức Tư Vấn:
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[
+                    { id: 'VIRTUAL' as const, icon: Video, title: 'Virtual Private Lounge (Video HD 1:1)', desc: 'Phòng thử đồ trực tuyến có màn hình chia sẻ và thử phom thời gian thực.' },
+                    { id: 'FLAGSHIP' as const, icon: MapPin, title: 'In-Person Flagship Suite (Phòng VIP Lounge)', desc: 'Trực tiếp tại Flagship Hà Nội hoặc Sài Gòn, phục vụ trà chiều và thợ may riêng.' },
+                    { id: 'SWATCH_BOX' as const, icon: Layers, title: 'Bespoke Fabric Swatch Box Delivery', desc: 'Bưu tá giao tận nhà hộp 24 mẫu vải dạ/lụa cao cấp kèm thước đo cá nhân.' },
+                  ].map((f) => {
+                    const Icon = f.icon;
+                    return (
+                      <div
+                        key={f.id}
+                        onClick={() => setConsultFormat(f.id)}
+                        style={{
+                          padding: '10px 12px',
+                          borderRadius: 4,
+                          border: consultFormat === f.id ? '1.5px solid var(--gold-dark)' : '1px solid var(--line)',
+                          background: consultFormat === f.id ? '#fff' : '#faf9f5',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                        }}
+                      >
+                        <Icon size={18} color={consultFormat === f.id ? 'var(--gold-dark)' : '#64748b'} />
+                        <div style={{ flex: 1 }}>
+                          <strong style={{ fontSize: 12, color: 'var(--ink)', display: 'block' }}>{f.title}</strong>
+                          <span style={{ fontSize: 10.5, color: 'var(--muted)' }}>{f.desc}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Thời gian */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>
+                    Ngày hẹn
+                  </label>
+                  <select
+                    value={consultDate}
+                    onChange={(e) => setConsultDate(e.target.value)}
+                    style={{ width: '100%', fontSize: 12, padding: '7px 8px', borderRadius: 4, border: '1px solid var(--line)' }}
+                  >
+                    <option value="Hôm nay (24/11/2026)">Hôm nay (24/11/2026)</option>
+                    <option value="Ngày mai (25/11/2026)">Ngày mai (25/11/2026)</option>
+                    <option value="Thứ Bảy (28/11/2026)">Thứ Bảy (28/11/2026)</option>
+                    <option value="Chủ Nhật (29/11/2026)">Chủ Nhật (29/11/2026)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>
+                    Khung giờ (45 phút/phiên)
+                  </label>
+                  <select
+                    value={consultSlot}
+                    onChange={(e) => setConsultSlot(e.target.value)}
+                    style={{ width: '100%', fontSize: 12, padding: '7px 8px', borderRadius: 4, border: '1px solid var(--line)' }}
+                  >
+                    <option value="09:30 - 10:15">Buổi sáng (09:30 - 10:15)</option>
+                    <option value="14:30 - 15:15">Buổi chiều (14:30 - 15:15)</option>
+                    <option value="19:30 - 20:15">Buổi tối (19:30 - 20:15)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* 4. Ghi chú */}
+              <div style={{ marginBottom: 18 }}>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>
+                  Nhu cầu cần tư vấn (Vóc dáng, phong cách hoặc dịp tham dự)
+                </label>
+                <textarea
+                  value={consultNotes}
+                  onChange={(e) => setConsultNotes(e.target.value)}
+                  placeholder="VD: Cần phối trang phục dạ tiệc cuối năm sang trọng, tone ấm tôn da..."
+                  style={{ width: '100%', fontSize: 12, padding: '8px 10px', borderRadius: 4, border: '1px solid var(--line)', minHeight: 60 }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="submit"
+                  disabled={bookingBusy}
+                  className="button full"
+                  style={{ padding: '10px 16px', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                >
+                  <Calendar size={15} />
+                  {bookingBusy ? 'Đang xác nhận đặt lịch...' : 'Xác Nhận Đặt Lịch Hẹn VIP (Miễn Phí)'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

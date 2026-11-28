@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-export const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+export const API = process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:4000/api/v1';
 export async function api<T = unknown>(path: string, method = 'GET', body?: unknown): Promise<T> {
   const response = await fetch(`${API}${path}`, { method, credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'mac-web' }, ...(body !== undefined ? { body: JSON.stringify(body) } : {}) });
   const result = await response.json();
@@ -31,7 +31,35 @@ export type Voucher = { id: string; code: string; amount: number; minimum: numbe
 export type SellerLedger = { balance: number; available: number; held: number; disputed: number; entries: { id: string; kind: string; amount: number; sourceKey: string; createdAt: string }[] };
 export type AffiliateSummary = { held: number; available: number; cancelled: number; items: { id: string; shopOrderId: string; amount: number; status: string; holdUntil: string; createdAt: string }[] };
 export type ShopOrder = { id: string; status: string; total: number; subtotal: number; discount: number; shipping: number; shop?: { name: string }; items: Item[]; order?: { code: string; address: { recipient: string; line: string; phone: string; province: string } }; shipment?: { tracking: string; provider: string; status: string } };
-export type Order = { id: string; code: string; total: number; createdAt: string; shops: ShopOrder[]; address?: { recipient: string; line: string; phone: string; province: string }; paymentMethod?: string };
+export type Order = {
+  id: string;
+  code: string;
+  total: number;
+  createdAt: string;
+  shops: ShopOrder[];
+  address?: { recipient: string; line: string; phone: string; province: string };
+  paymentMethod?: string;
+  vietQr?: {
+    emvCoPayload: string;
+    crc16: string;
+    quickLink: string;
+    bankBin: string;
+    accountNumber: string;
+    amount: number;
+    orderCode: string;
+    storeName: string;
+  };
+  deliveryEta?: {
+    distanceKm: number;
+    transitHoursMin: number;
+    transitHoursMax: number;
+    deliveryDateFrom: string;
+    deliveryDateTo: string;
+    deliverySlotWindow: string;
+    weatherDelayBufferMinutes: number;
+    logisticsRouteTier: string;
+  };
+};
 export type FeedPost = { id: string; caption: string; author: { id: string; name: string }; media: { url: string; position: number }[]; tags: { id: string; mediaPosition: number; x: number; y: number; available: boolean; product: { id: string; name: string; slug: string; shop: { name: string }; variants: { id: string; price: number; inventory?: { onHand: number; reserved: number } | null }[] } }[]; liked: boolean; savedByMe: boolean; _count: { reactions: number; comments: number }; comments: { id: string; body: string; user: { name: string } }[] };
-export type TradeInRequest = { id: string; brand: string; itemName: string; category: string; conditionNote: string; imageUrl: string; grade: string; estimatedValue: number; finalValue: number | null; voucherCode: string | null; status: string; createdAt: string; user?: { name: string; email: string } };
+export type TradeInRequest = { id: string; brand: string; itemName: string; category: string; conditionNote: string; imageUrl: string; grade: string; estimatedValue: number; finalValue: number | null; voucherCode: string | null; redeemedOrderId?: string | null; status: string; createdAt: string; user?: { name: string; email: string }; timeline?: Array<{ id: string; action: string; createdAt: string; data: any }> };
 export type CareBooking = { id: string; itemName: string; serviceType: string; zipSealCode: string; insuredValue: number; fee: number; status: string; notes: string; createdAt: string; user?: { name: string; email: string } };

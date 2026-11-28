@@ -23,6 +23,7 @@ export default function Community() {
   const [patronAmount, setPatronAmount] = useState(20000);
   const [patronMsg, setPatronMsg] = useState('Bộ phối đồ blazer và lụa quá thanh lịch!');
   const [patronHistory, setPatronHistory] = useState<Array<{ id: string; creator: string; amount: number; msg: string; at: string }>>([]);
+  const [serverSwaps, setServerSwaps] = useState<Array<{ id: string; myItem: string; myVal: number; targetItem: string; targetVal: number; escrowLocked?: boolean; createdAt?: string }>>([]);
 
   useEffect(() => {
     try {
@@ -32,29 +33,37 @@ export default function Community() {
       if (storedJoined) setJoinedChallenge(true);
       const storedRsvp = localStorage.getItem('nexora_workshop_rsvp');
       if (storedRsvp) setWorkshopRsvp(true);
-      const storedSwap = localStorage.getItem('nexora_active_swap_meet');
-      if (storedSwap) {
-        setSwapProposed(true);
-        try {
-          const parsed = JSON.parse(storedSwap);
-          if (parsed?.id) setSwapContractId(parsed.id);
-        } catch {}
-      }
       const savedPatron = localStorage.getItem('nexora_creator_patronage');
       if (savedPatron) setPatronHistory(JSON.parse(savedPatron));
     } catch {}
 
     if (user) {
-      api<{ patronages?: any[] }>('/vault').then(res => {
-        if (res?.patronages && Array.isArray(res.patronages) && res.patronages.length > 0) {
-          setPatronHistory(res.patronages);
+      api<any[]>('/vault/swaps').then(swaps => {
+        if (Array.isArray(swaps) && swaps.length > 0) {
+          setServerSwaps(swaps);
+          setSwapProposed(true);
+          setSwapContractId(swaps[0].id);
+          setMySwapItem(swaps[0].myItem || 'Áo Khoác Blazer Linen Cổ Điển');
+          setMySwapVal(swaps[0].myVal || 650000);
+          setTargetSwapItem(swaps[0].targetItem || 'Sơ Mi Lụa Tơ Tằm Bảo Lộc');
+          setTargetSwapVal(swaps[0].targetVal || 680000);
+        }
+      }).catch(() => {});
+
+      api<any[]>('/vault/patronages').then(res => {
+        if (Array.isArray(res) && res.length > 0) {
+          setPatronHistory(res);
         }
       }).catch(() => {});
     }
   }, [user]);
 
-  function handleSendPatronage(e: FormEvent) {
+  async function handleSendPatronage(e: FormEvent) {
     e.preventDefault();
+    if (!user) {
+      setError('Vui lòng đăng nhập để gửi bảo trợ phong cách.');
+      return;
+    }
     const entry = {
       id: `PATRON-${Date.now().toString().slice(-6)}`,
       creator: selectedCreator,
@@ -62,14 +71,74 @@ export default function Community() {
       msg: patronMsg,
       at: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
     };
-    const updated = [entry, ...patronHistory.slice(0, 5)];
-    setPatronHistory(updated);
     try {
-      localStorage.setItem('nexora_creator_patronage', JSON.stringify(updated));
-    } catch {}
-    void api('/vault/patronage', 'POST', entry).catch(() => {});
-    setNotice(`✓ Bạn đã gửi bảo trợ ${vnd(patronAmount)} đến ${selectedCreator}! Đã cộng +20 Xu Xanh vào tài khoản của bạn.`);
-    setPatronOpen(false);
+      await api('/vault/patronage', 'POST', entry);
+      const updated = [entry, ...patronHistory.slice(0, 5)];
+      setPatronHistory(updated);
+      try {
+        localStorage.setItem('nexora_creator_patronage', JSON.stringify(updated));
+      } catch {}
+      setNotice(`✓ Bạn đã gửi bảo trợ ${vnd(patronAmount)} đến ${selectedCreator}! Đã cộng +20 Xu Xanh vào tài khoản của bạn.`);
+      setPatronOpen(false);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function handleCreateSwap() {
+    if (!user) {
+      setError('Vui lòng đăng nhập để tạo hợp đồng trao đổi đồ P2P.');
+      return;
+    }
+    const contractId = `SWAP-P2P-${Date.now().toString().slice(-6)}`;
+    const newSwap = {
+      id: contractId,
+      myItem: mySwapItem,
+      myVal: mySwapVal,
+      targetItem: targetSwapItem,
+      targetVal: targetSwapVal,
+      escrowLocked: true,
+    };
+    try {
+      await api('/vault/swap', 'POST', newSwap);
+      setSwapContractId(contractId);
+      setSwapProposed(true);
+      setServerSwaps(prev => [newSwap, ...prev]);
+      try {
+        localStorage.setItem('nexora_active_swap_meet', JSON.stringify(newSwap));
+      } catch {}
+      setNotice(`✓ Đã tạo hợp đồng đổi đồ #${contractId}! Escrow trung gian đã kích hoạt.`);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function handleCancelSwap(id: string) {
+    try {
+      await api(`/vault/swaps/${id}`, 'DELETE');
+      setServerSwaps(prev => prev.filter(s => s.id !== id));
+      if (serverSwaps.length <= 1) {
+        setSwapProposed(false);
+        try { localStorage.removeItem('nexora_active_swap_meet'); } catch {}
+      }
+      setNotice(`Đã hủy hợp đồng #${id} và hoàn trả khoản bảo chứng Escrow.`);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  }
+
+  async function handleCompleteSwap(id: string) {
+    try {
+      const res = await api<{ ok: boolean; completed: any }>(`/vault/swaps/${id}/complete`, 'POST');
+      setServerSwaps(prev => prev.filter(s => s.id !== id));
+      if (serverSwaps.length <= 1) {
+        setSwapProposed(false);
+        try { localStorage.removeItem('nexora_active_swap_meet'); } catch {}
+      }
+      setNotice(`✓ Đã hoàn tất trao đổi thành công! +${res.completed.ecoPoints} Điểm Xanh đã được cộng vào tài khoản, tiết kiệm ${res.completed.co2SavedKg}kg CO2e.`);
+    } catch (err) {
+      setError((err as Error).message);
+    }
   }
 
   function voteChallenge(postId: string) {
@@ -94,14 +163,21 @@ export default function Community() {
   async function shopTheLook(post: FeedPost) {
     if (!user) { setError('Vui lòng đăng nhập để thêm set đồ vào giỏ hàng'); return; }
     setBusy(true); setError(''); setNotice('');
-    let added = 0;
     try {
+      const items: Array<{ variantId: string; quantity: number }> = [];
       for (const tag of post.tags) {
         if (!tag.available) continue;
         const v = tag.product.variants.find(x => !x.inventory || x.inventory.onHand > x.inventory.reserved) ?? tag.product.variants[0];
-        if (v?.id) { await api('/cart', 'POST', { variantId: v.id, quantity: 1 }); added++; }
+        if (v?.id) {
+          items.push({ variantId: v.id, quantity: 1 });
+        }
       }
-      setNotice(added > 0 ? `Đã thêm ${added} món từ set đồ vào giỏ hàng!` : 'Set đồ hiện không có sản phẩm còn hàng.');
+      if (items.length === 0) {
+        setNotice('Set đồ hiện không có sản phẩm còn hàng.');
+        return;
+      }
+      const res = await api<{ ok: boolean; addedCount: number }>('/cart/batch', 'POST', { items });
+      setNotice(`✓ Đã thêm toàn bộ ${res.addedCount} món từ set đồ vào giỏ hàng!`);
     } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
   async function publish(e: FormEvent<HTMLFormElement>) {
@@ -312,47 +388,67 @@ export default function Community() {
 
       {/* Swap Status or Form */}
       {swapProposed ? (
-        <div style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--gold-dark)', borderRadius: 2 }}>
-          <div className="row between" style={{ marginBottom: 6 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold-dark)', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <CheckCircle2 size={14} color="var(--gold-dark)" /> Hợp Đồng Trao Đổi Đang Thực Hiện: #{swapContractId}
-            </span>
-            <span style={{ fontSize: 9.5, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
-              ESCROW ĐÃ KHÓA · ĐANG ĐIỀU PHỐI GIAO NHẬN
-            </span>
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--ink)', lineHeight: 1.5, background: '#FAF8F5', padding: '8px 10px', borderRadius: 2, marginBottom: 8, border: '1px solid var(--line)' }}>
-            <div>• <strong>Món của bạn:</strong> {mySwapItem} (Định giá: {vnd(mySwapVal)})</div>
-            <div>• <strong>Đổi lấy:</strong> {targetSwapItem} (Định giá: {vnd(targetSwapVal)})</div>
-            <div>• <strong>Khoản bù trừ chênh lệch:</strong> {vnd(Math.abs(targetSwapVal - mySwapVal))} (Đã khóa tạm giữ vào Escrow)</div>
-            <div>• <strong>Dịch vụ vận chuyển:</strong> Chuyển phát giao nhận đồng kiểm tận tay (Mã: #SWAP-DELIV-992)</div>
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button
-              type="button"
-              onClick={() => {
-                try {
-                  localStorage.removeItem('nexora_active_swap_meet');
-                } catch {}
-                setSwapProposed(false);
-                setNotice('Đã hoàn tất / đóng hợp đồng trao đổi đồ tuần hoàn.');
-              }}
-              style={{
-                fontSize: 11,
-                padding: '4px 10px',
-                background: '#FAF8F5',
-                color: 'var(--muted)',
-                border: '1px solid var(--line)',
-                borderRadius: 2,
-                cursor: 'pointer',
-              }}
-            >
-              Hoàn tất &amp; Đóng hợp đồng
-            </button>
-            <span style={{ fontSize: 10, color: '#0f766e', alignSelf: 'center', fontWeight: 600 }}>
-              ✓ Đã tích lũy +300 Điểm Xanh Tuần Hoàn vào ví NEX-Green
-            </span>
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {(serverSwaps.length > 0 ? serverSwaps : [{
+            id: swapContractId,
+            myItem: mySwapItem,
+            myVal: mySwapVal,
+            targetItem: targetSwapItem,
+            targetVal: targetSwapVal,
+          }]).map((swap) => (
+            <div key={swap.id} style={{ padding: '12px 14px', background: '#fff', border: '1px solid var(--gold-dark)', borderRadius: 2 }}>
+              <div className="row between" style={{ marginBottom: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold-dark)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle2 size={14} color="var(--gold-dark)" /> Hợp Đồng Trao Đổi Đang Thực Hiện: #{swap.id}
+                </span>
+                <span style={{ fontSize: 9.5, background: '#F3EFEA', color: 'var(--gold-dark)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
+                  ESCROW ĐÃ KHÓA · ĐANG ĐIỀU PHỐI GIAO NHẬN
+                </span>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--ink)', lineHeight: 1.5, background: '#FAF8F5', padding: '8px 10px', borderRadius: 2, marginBottom: 8, border: '1px solid var(--line)' }}>
+                <div>• <strong>Món của bạn:</strong> {swap.myItem} (Định giá: {vnd(swap.myVal)})</div>
+                <div>• <strong>Đổi lấy:</strong> {swap.targetItem} (Định giá: {vnd(swap.targetVal)})</div>
+                <div>• <strong>Khoản bù trừ chênh lệch:</strong> {vnd(Math.abs(swap.targetVal - swap.myVal))} (Đã khóa tạm giữ vào Escrow)</div>
+                <div>• <strong>Dịch vụ vận chuyển:</strong> Chuyển phát giao nhận đồng kiểm tận tay (Mã: #SWAP-DELIV-992)</div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleCompleteSwap(swap.id)}
+                  style={{
+                    fontSize: 11,
+                    padding: '5px 12px',
+                    background: '#0d9488',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  ✓ Xác Nhận Đã Nhận &amp; Hoàn Tất (+300 Điểm Xanh)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCancelSwap(swap.id)}
+                  style={{
+                    fontSize: 11,
+                    padding: '5px 10px',
+                    background: '#FAF8F5',
+                    color: 'var(--muted)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Hủy Hợp Đồng &amp; Hoàn Cọc Escrow
+                </button>
+                <span style={{ fontSize: 10, color: '#0f766e', alignSelf: 'center', fontWeight: 600 }}>
+                  Tiết kiệm ~4.8kg CO2e &amp; 3.200L nước sạch
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       ) : swapModalOpen ? (
         <div style={{ padding: '12px 14px', background: '#fff', border: '1px dashed #0d9488', borderRadius: 6 }}>
@@ -404,31 +500,7 @@ export default function Community() {
 
           <button
             type="button"
-            onClick={() => {
-              const contractId = `SWAP-P2P-${Date.now().toString().slice(-6)}`;
-              setSwapContractId(contractId);
-              try {
-                localStorage.setItem('nexora_active_swap_meet', JSON.stringify({
-                  id: contractId,
-                  myItem: mySwapItem,
-                  targetItem: targetSwapItem,
-                  diff: Math.abs(targetSwapVal - mySwapVal),
-                  createdAt: new Date().toISOString(),
-                }));
-                if (user) {
-                  api('/vault/swap', 'POST', {
-                    id: contractId,
-                    myItem: mySwapItem,
-                    myVal: mySwapVal,
-                    targetItem: targetSwapItem,
-                    targetVal: targetSwapVal,
-                    escrowLocked: true,
-                  }).catch(() => {});
-                }
-              } catch {}
-              setSwapProposed(true);
-              setNotice(`✓ Đã tạo hợp đồng đổi đồ #${contractId}! Escrow trung gian đã kích hoạt và thông báo tới chủ nhân món đồ.`);
-            }}
+            onClick={handleCreateSwap}
             style={{
               width: '100%',
               padding: '8px 14px',
@@ -572,7 +644,7 @@ export default function Community() {
             fontWeight: 600,
           }}
         >
-          {patronOpen ? 'Đóng biểu mẫu gửi bảo trợ' : '🌟 Gửi Bảo Trợ Phong Cách →'}
+          {patronOpen ? 'Đóng biểu mẫu gửi bảo trợ' : 'Gửi bảo trợ phong cách →'}
         </button>
       </div>
 
@@ -605,7 +677,7 @@ export default function Community() {
             </div>
             <div style={{ color: '#64748b', fontSize: 10, marginBottom: 2 }}>Danh hiệu: <strong style={{ color: 'var(--gold-dark)' }}>{muse.role}</strong></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
-              <span style={{ color: '#166534', fontWeight: 700 }}>{muse.funded} ({muse.coffees} ☕)</span>
+              <span style={{ color: '#166534', fontWeight: 700 }}>{muse.funded} ({muse.coffees} lượt bảo trợ)</span>
               <button
                 type="button"
                 onClick={() => {
@@ -794,7 +866,7 @@ export default function Community() {
   {fitTab[post.id] === 'fit' && (
     <div style={{ marginBottom: 10, padding: 8, background: '#fdfbf7', border: '1px dashed #d97706', borderRadius: 4 }}>
       <div style={{ fontSize: 10, color: '#92400e', fontWeight: 600, marginBottom: 4 }}>
-        💡 Câu hỏi gợi ý nhanh về số đo cơ thể:
+        Gợi ý câu hỏi nhanh về số đo:
       </div>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {[
@@ -837,7 +909,7 @@ export default function Community() {
       <strong>{c.user.name}</strong>
       {c.user.name === post.author.name && (
         <span style={{ fontSize: 9, background: '#dcfce7', color: '#166534', padding: '1px 5px', borderRadius: 2, marginLeft: 4, marginRight: 6, fontWeight: 700 }}>
-          ✓ KOC Tác giả
+          KOC Tác giả
         </span>
       )}
       {' '}{c.body}

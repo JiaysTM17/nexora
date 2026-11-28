@@ -1,7 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn, Sun, Zap, Thermometer, RotateCcw, Droplets, Wind } from 'lucide-react';
+import { ShieldCheck, Calendar, MapPin, Sparkles, Clock, CheckCircle2, QrCode, Building, Scissors, Sliders, Eye, Layers, Stethoscope, Activity, FileCheck, ArrowRight, Tag, Lock, Search, ZoomIn, Sun, Zap, Thermometer, RotateCcw, Droplets, Wind, Copy, Check } from 'lucide-react';
 import { api, CareBooking, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
@@ -13,11 +13,12 @@ const SERVICE_LABELS: Record<string, string> = {
 };
 
 const CARE_STATUS: Record<string, string> = {
-  BOOKED: 'Đã đặt lịch · Chờ shipper niêm phong',
+  BOOKED: 'Đã đặt lịch · Chờ bưu tá niêm phong',
   SEALED_PICKUP: 'Đã niêm phong Zip-seal & nhận hàng',
   OPTICAL_CHECK: 'Đã chụp biên bản quang học 8 góc',
   IN_CARE: 'Đang xử lý Spa / Phục hồi tại Hub',
   RETURNED: 'Đã hoàn trả tận tay khách hàng',
+  CANCELLED: 'Đã hủy đơn theo yêu cầu',
 };
 
 type AtelierBooking = {
@@ -97,6 +98,26 @@ export default function VasCarePage() {
   const [co2Preset, setCo2Preset] = useState<'CASHMERE' | 'SILK' | 'WOOL_SUIT'>('CASHMERE');
   const [co2Booked, setCo2Booked] = useState(false);
   const [co2Ticket, setCo2Ticket] = useState('');
+  const [copiedSealId, setCopiedSealId] = useState<string | null>(null);
+  const [cancelCareConfirmId, setCancelCareConfirmId] = useState<string | null>(null);
+  const [selectedCareId, setSelectedCareId] = useState<string | null>(null);
+  const selectedBooking = (list.data && list.data.length > 0)
+    ? (list.data.find(b => b.id === selectedCareId) || list.data[0])
+    : null;
+
+  async function handleCancelCare(id: string) {
+    try {
+      setBusy(true);
+      setCancelCareConfirmId(null);
+      await api(`/vas-care/${id}/cancel`, 'POST');
+      setSuccess('Đã hủy lịch chăm sóc đồ hiệu thành công.');
+      list.reload();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   function runGarmentDiagnosis() {
     let grade = 'Cấp II · Tổn thương sắc tố bề mặt sợi (Reversible)';
@@ -749,26 +770,133 @@ export default function VasCarePage() {
 
           <div>
             <article className="panel">
-              <h2>Đơn chăm sóc tận nhà của bạn</h2>
+              <div className="row between" style={{ marginBottom: 10 }}>
+                <h2>Đơn chăm sóc tận nhà của bạn</h2>
+                {list.data && list.data.length > 0 && (
+                  <span className="subtle" style={{ fontSize: 11 }}>
+                    {list.data.length} hồ sơ chăm sóc
+                  </span>
+                )}
+              </div>
               {list.loading ? <Loading /> : !list.data?.length ? (
                 <p className="subtle">Bạn chưa có đơn chăm sóc đồ hiệu nào.</p>
-              ) : list.data.map(b => (
-                <div key={b.id} style={{ padding: '14px 0', borderBottom: '1px solid var(--line)' }}>
-                  <div className="row between">
-                    <strong>{b.itemName}</strong>
-                    <span className="badge">{b.zipSealCode}</span>
+              ) : list.data.map(b => {
+                const isSelected = selectedBooking?.id === b.id;
+                return (
+                  <div
+                    key={b.id}
+                    onClick={() => setSelectedCareId(b.id)}
+                    style={{
+                      padding: '12px 14px',
+                      border: isSelected ? '1.5px solid var(--clay)' : '1px solid var(--line)',
+                      background: isSelected ? '#fbf8f4' : '#fff',
+                      borderRadius: 4,
+                      marginBottom: 8,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <div className="row between" style={{ flexWrap: 'wrap', gap: 6 }}>
+                      <strong style={{ fontSize: 13, color: 'var(--ink)' }}>{b.itemName}</strong>
+                      <span className="badge" style={{ background: isSelected ? 'var(--clay)' : undefined, color: isSelected ? '#fff' : undefined }}>
+                        {b.zipSealCode}
+                      </span>
+                    </div>
+                    <p style={{ margin: '4px 0', fontSize: 11, color: 'var(--muted)' }}>
+                      {SERVICE_LABELS[b.serviceType] ?? b.serviceType}
+                    </p>
+                    <div className="row between" style={{ marginTop: 4, fontSize: 11, flexWrap: 'wrap', gap: 6 }}>
+                      <span>
+                        Trạng thái: <strong style={{ color: b.status === 'CANCELLED' ? '#dc2626' : b.status === 'RETURNED' ? '#16a34a' : 'var(--clay)' }}>{CARE_STATUS[b.status] ?? b.status}</strong>
+                      </span>
+                      <span>
+                        Phí: <strong>{vnd(b.fee)}</strong> · Bảo hiểm: <strong>{vnd(b.insuredValue)}</strong>
+                      </span>
+                    </div>
+
+                    <div className="row between" style={{ marginTop: 8, paddingTop: 6, borderTop: '1px dashed #e2e8f0', fontSize: 10 }}>
+                      <button
+                        type="button"
+                        className="text-button"
+                        style={{ padding: 0, fontSize: 10, display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard?.writeText(b.zipSealCode);
+                          setCopiedSealId(b.id);
+                          setTimeout(() => setCopiedSealId(null), 2500);
+                        }}
+                      >
+                        {copiedSealId === b.id ? (
+                          <>
+                            <Check size={11} style={{ color: '#16a34a' }} />
+                            <span style={{ color: '#16a34a' }}>Đã sao chép mã Zip-seal</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={11} />
+                            <span>Sao chép mã Zip-seal</span>
+                          </>
+                        )}
+                      </button>
+
+                      {b.status === 'BOOKED' && (
+                        cancelCareConfirmId === b.id ? (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 10 }}>
+                            <span style={{ color: '#64748b' }}>Hủy lịch?</span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCancelCare(b.id);
+                              }}
+                              style={{
+                                color: '#dc2626',
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid #f87171',
+                                borderRadius: 3,
+                                padding: '1px 6px',
+                                cursor: 'pointer',
+                                fontSize: 10,
+                              }}
+                            >
+                              Đồng ý
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCancelCareConfirmId(null);
+                              }}
+                              style={{
+                                color: '#64748b',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                padding: '1px 4px',
+                                fontSize: 10,
+                              }}
+                            >
+                              Bỏ qua
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="text-button danger"
+                            style={{ padding: 0, fontSize: 10, color: '#dc2626' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCancelCareConfirmId(b.id);
+                            }}
+                          >
+                            Hủy đặt lịch
+                          </button>
+                        )
+                      )}
+                    </div>
                   </div>
-                  <p style={{ margin: '6px 0', fontSize: 12, color: 'var(--muted)' }}>
-                    {SERVICE_LABELS[b.serviceType] ?? b.serviceType}
-                  </p>
-                  <p style={{ margin: '4px 0', fontSize: 12 }}>
-                    Trạng thái: <strong>{CARE_STATUS[b.status] ?? b.status}</strong>
-                  </p>
-                  <p style={{ margin: 0, fontSize: 12 }}>
-                    Phí dịch vụ: <strong>{vnd(b.fee)}</strong> · Bảo hiểm: <strong>{vnd(b.insuredValue)}</strong>
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </article>
 
             {/* Két Bảo An & Tiến Trình Phục Hồi Vi Điểm */}
@@ -781,48 +909,52 @@ export default function VasCarePage() {
                   </strong>
                 </div>
                 <span style={{ fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
-                  CHỐNG ẨM 45–50% RH · KÉT #VAULT-NEX-882041
+                  CHỐNG ẨM 45–50% RH · KÉT #{selectedBooking ? selectedBooking.zipSealCode : 'VAULT-NEX-882041'}
                 </span>
               </div>
 
               <p style={{ margin: '0 0 12px', fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
-                Trang phục cao cấp của bạn được lưu trữ tại buồng kiểm soát khí hậu 20°C, bảo vệ nghiêm ngặt bằng mã số định danh trước khi chuyển qua 4 chặng phục hồi quang học vi điểm.
+                {selectedBooking ? (
+                  <>Trang phục <strong>{selectedBooking.itemName}</strong> đang được giám sát chặt chẽ theo quy trình White-Glove 4 chặng độc quyền NEXORA.</>
+                ) : (
+                  <>Trang phục cao cấp của bạn được lưu trữ tại buồng kiểm soát khí hậu 20°C, bảo vệ nghiêm ngặt bằng mã số định danh trước khi chuyển qua 4 chặng phục hồi quang học vi điểm.</>
+                )}
               </p>
 
-              {/* 4 Chặng Phục Hồi */}
+              {/* 4 Chặng Phục Hồi Đồng Bộ Theo Hồ Sơ Thực Tế */}
               <div style={{ display: 'grid', gap: 8, marginBottom: 12 }}>
                 {[
                   {
                     step: 1,
-                    title: 'Soi Quang Học 1000 Lux & Bản Đồ Tổn Thương Vi Điểm',
-                    status: 'HOÀN TẤT 100%',
-                    statusColor: '#166534',
-                    statusBg: '#dcfce7',
-                    desc: 'Kính hiển vi kỹ thuật số 50x xác định 2 vị trí biến tính sắc tố sợi lanh và 1 điểm chỉ ve áo cần gia cố.',
+                    title: 'Khởi Tạo Đơn & Cấp Mã Zip-Seal Một Chiều',
+                    status: selectedBooking?.status === 'CANCELLED' ? 'ĐÃ HỦY ĐƠN' : 'HOÀN TẤT 100%',
+                    statusColor: selectedBooking?.status === 'CANCELLED' ? '#dc2626' : '#166534',
+                    statusBg: selectedBooking?.status === 'CANCELLED' ? '#fee2e2' : '#dcfce7',
+                    desc: selectedBooking ? `Đã cấp mã định danh bảo mật ${selectedBooking.zipSealCode} và gói bảo hiểm ${vnd(selectedBooking.insuredValue)}.` : 'Khóa mã niêm phong số hóa, khử khuẩn bằng tia UV-C.',
                   },
                   {
                     step: 2,
-                    title: 'Bể Ngâm Enzyme Sinh Học Cân Bằng pH 6.2',
-                    status: 'HOÀN TẤT 100%',
-                    statusColor: '#166534',
-                    statusBg: '#dcfce7',
-                    desc: 'Bóc tách liên kết lipid mồ hôi tự nhiên và protein hữu cơ mà không gây mòn xơ dệt.',
+                    title: 'Bưu Tá VinFast Green Thu Gom & Quét Barcode Niêm Phong',
+                    status: selectedBooking?.status === 'CANCELLED' ? 'ĐÃ HỦY' : (selectedBooking?.status === 'BOOKED' ? 'ĐANG ĐIỀU PHỐI (SLA 24h)' : 'HOÀN TẤT 100%'),
+                    statusColor: selectedBooking?.status === 'CANCELLED' ? '#dc2626' : (selectedBooking?.status === 'BOOKED' ? '#b45309' : '#166534'),
+                    statusBg: selectedBooking?.status === 'CANCELLED' ? '#fee2e2' : (selectedBooking?.status === 'BOOKED' ? '#fef3c7' : '#dcfce7'),
+                    desc: 'Bưu tá xe điện chuyên biệt nhận túi bảo an tại nhà, đối soát niêm phong vật lý một chiều không thể hoàn tác.',
                   },
                   {
                     step: 3,
-                    title: 'Căn Chỉnh Sợi Laser & Định Hình Ve Áo 3D',
-                    status: 'ĐANG XỬ LÝ (SLA 6h)',
-                    statusColor: '#b45309',
-                    statusBg: '#fef3c7',
-                    desc: 'Buồng ủ hơi nước vi áp suất đưa sợi vải về trạng thái dãn nở tự nhiên, khôi phục độ rủ đạt 98.6%.',
+                    title: 'Soi Quang Học 1000 Lux & Lập Biên Bản Tổn Thương 8 Góc',
+                    status: selectedBooking?.status === 'CANCELLED' ? 'ĐÃ HỦY' : (['OPTICAL_CHECK', 'IN_CARE', 'RETURNED'].includes(selectedBooking?.status || '') ? 'HOÀN TẤT 100%' : 'CHỜ TIẾP NHẬN TẠI HUB'),
+                    statusColor: ['OPTICAL_CHECK', 'IN_CARE', 'RETURNED'].includes(selectedBooking?.status || '') ? '#166534' : '#64748b',
+                    statusBg: ['OPTICAL_CHECK', 'IN_CARE', 'RETURNED'].includes(selectedBooking?.status || '') ? '#dcfce7' : '#f1f5f9',
+                    desc: 'Kính hiển vi kỹ thuật số 50x xác định vi điểm tổn thương sợi, viền ve áo và đo độ co dãn phục hồi.',
                   },
                   {
                     step: 4,
-                    title: 'Niêm Phong Tamper-Evident Zip-Seal & Hộp Haute Couture',
-                    status: 'CHỜ BÀN GIAO',
-                    statusColor: '#475569',
-                    statusBg: '#f1f5f9',
-                    desc: 'Khóa mã niêm phong số hóa, khử khuẩn bằng tia UV-C và điều phối bưu tá xe điện bàn giao.',
+                    title: 'Spa Chuyên Sâu, Phục Hồi Sợi Dệt & Cân Bằng pH 6.2',
+                    status: selectedBooking?.status === 'CANCELLED' ? 'ĐÃ HỦY' : (selectedBooking?.status === 'RETURNED' ? 'HOÀN TẤT 100%' : selectedBooking?.status === 'IN_CARE' ? 'ĐANG XỬ LÝ (SLA 12h)' : 'CHỜ CHUYỂN TIẾP'),
+                    statusColor: selectedBooking?.status === 'RETURNED' ? '#166534' : selectedBooking?.status === 'IN_CARE' ? '#b45309' : '#64748b',
+                    statusBg: selectedBooking?.status === 'RETURNED' ? '#dcfce7' : selectedBooking?.status === 'IN_CARE' ? '#fef3c7' : '#f1f5f9',
+                    desc: 'Bể ngâm enzyme sinh học hữu cơ, căn chỉnh sợi dệt laser hoặc giặt hấp CO2 lỏng tuần hoàn kín bảo vệ tối đa cấu trúc sợi.',
                   },
                 ].map((s) => (
                   <div
@@ -877,7 +1009,7 @@ export default function VasCarePage() {
               {vaultMacroView && (
                 <div style={{ marginTop: 10, padding: 10, background: '#18181b', borderRadius: 4, color: '#fff', fontSize: 11 }}>
                   <div className="row between" style={{ marginBottom: 6 }}>
-                    <span style={{ color: '#38bdf8', fontWeight: 700 }}>🔬 KÍNH HIỂN VI QUANG HỌC 50X · 1000 LUX SENSOR</span>
+                    <span style={{ color: '#38bdf8', fontWeight: 600, fontSize: 11, letterSpacing: '0.04em' }}>Kính hiển vi quang học 50x · Cảm biến 1000 Lux</span>
                     <span style={{ fontSize: 9, background: '#0284c7', color: '#fff', padding: '1px 6px', borderRadius: 2 }}>CALIBRATED</span>
                   </div>
                   <p style={{ margin: 0, fontSize: 10, color: '#94a3b8', lineHeight: 1.4 }}>

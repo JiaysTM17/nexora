@@ -2,7 +2,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot, Scissors, CheckCircle2, Activity } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Heart, Ruler, ShieldCheck, ShoppingBag, Sparkles, Truck, Leaf, Droplets, CheckCircle, Award, BellRing, CheckCheck, Store, Star, Clock3, ShieldAlert, Eye, User, Maximize2, X, Compass, Tag, Percent, Headphones, Volume2, Play, Pause, Timer, Flame, Lock, MessageSquare, Send, Bot, Scissors, CheckCircle2, Activity, Layers, UserCheck } from 'lucide-react';
 import { api, Product, useResource, vnd } from '../../api';
 import { Loading, Notice, useUser } from '../../ui';
 
@@ -26,6 +26,16 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [showStretchRecovery, setShowStretchRecovery] = useState(false);
   const [showDrapeRadar, setShowDrapeRadar] = useState(false);
   const [drapeWaveActive, setDrapeWaveActive] = useState(true);
+  const [showHomeFittingModal, setShowHomeFittingModal] = useState(false);
+  const [homeFittingDate, setHomeFittingDate] = useState('27/11/2026');
+  const [homeFittingTimeSlot, setHomeFittingTimeSlot] = useState<'MORNING_09_11' | 'AFTERNOON_14_16' | 'EVENING_18_20'>('AFTERNOON_14_16');
+  const [homeFittingAddress, setHomeFittingAddress] = useState('Quận 1, TP. Hồ Chí Minh');
+  const [homeFittingPhone, setHomeFittingPhone] = useState('0901234567');
+  const [homeFittingRecipient, setHomeFittingRecipient] = useState('');
+  const [homeFittingSuitcase, setHomeFittingSuitcase] = useState(true);
+  const [homeFittingNotes, setHomeFittingNotes] = useState('');
+  const [homeFittingBusy, setHomeFittingBusy] = useState(false);
+  const [homeFittingSuccess, setHomeFittingSuccess] = useState(false);
   const [passport, setPassport] = useState<{ height?: number; weight?: number; chest?: number; waist?: number; hip?: number; fitPref?: string } | null>(null);
   const [bundleItems, setBundleItems] = useState({ main: true, pants: true, belt: true });
   const [bundleBusy, setBundleBusy] = useState(false);
@@ -48,7 +58,50 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
   const [arMotion, setArMotion] = useState<'STILL' | 'BREEZE'>('BREEZE');
   const [arSnapshotSaved, setArSnapshotSaved] = useState(false);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
+  const [showSwatchModal, setShowSwatchModal] = useState(false);
+  const [swatchRecipient, setSwatchRecipient] = useState('');
+  const [swatchPhone, setSwatchPhone] = useState('0901234567');
+  const [swatchAddress, setSwatchAddress] = useState('Quận 1, TP. Hồ Chí Minh');
+  const [swatchItems, setSwatchItems] = useState<string[]>([
+    'Lanh Normandy Mộc Tự Nhiên',
+    'Lụa Tơ Tằm Bảo Lộc 100% Organza',
+    'Dạ Len Loro Piana Super 150s',
+  ]);
+  const [swatchBusy, setSwatchBusy] = useState(false);
+  const [swatchVoucherCreated, setSwatchVoucherCreated] = useState<string | null>(null);
+  const [swatchCopied, setSwatchCopied] = useState(false);
+  const [showPassportModal, setShowPassportModal] = useState(false);
+  const [materialPassport, setMaterialPassport] = useState<{
+    certificateCode?: string;
+    originLocation?: string;
+    fiberComposition?: string;
+    weaveDensity?: string;
+    yarnLot?: string;
+    certifications?: string[];
+    ecoFootprint?: { carbonSavedKg: number; waterSavedLiters: number; naturalDye: boolean; microplasticFree: boolean };
+    artisans?: Array<{ role: string; name: string; experienceYears: number; handcraftHours: number }>;
+    totalCraftHours?: number;
+    careInstructions?: string[];
+    digitalSignature?: string;
+  } | null>(null);
+  const [passportLoading, setPassportLoading] = useState(false);
+  const [copiedCertCode, setCopiedCertCode] = useState(false);
   const { user } = useUser();
+
+  async function fetchProductPassport() {
+    if (!p) return;
+    setPassportLoading(true);
+    try {
+      const res = await api<{ ok: boolean; passport: any }>(`/products/${p.id}/passport`);
+      if (res.ok && res.passport) {
+        setMaterialPassport(res.passport);
+      }
+    } catch {
+      // Keep fallback
+    } finally {
+      setPassportLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (!p) return;
@@ -129,12 +182,25 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
       const stored = localStorage.getItem('nexora_fashion_passport');
       if (stored) setPassport(JSON.parse(stored));
     } catch {}
-  }, []);
+
+    if (user) {
+      api<{ passport: any }>('/vault/passport', 'GET')
+        .then((res) => {
+          if (res?.passport) {
+            setPassport(res.passport);
+            try {
+              localStorage.setItem('nexora_fashion_passport', JSON.stringify(res.passport));
+            } catch {}
+          }
+        })
+        .catch(() => {});
+    }
+  }, [user]);
 
   const recommendedSize = passport
-    ? (passport.chest && passport.chest >= 95) || (passport.waist && passport.waist >= 75)
+    ? (passport.weight && passport.weight >= 72) || (passport.chest && passport.chest >= 98)
       ? 'L'
-      : (passport.chest && passport.chest <= 86) || (passport.waist && passport.waist <= 66)
+      : (passport.weight && passport.weight <= 55) || (passport.chest && passport.chest <= 86)
       ? 'S'
       : 'M'
     : null;
@@ -238,9 +304,9 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             style={{
               marginTop: 12,
               padding: '8px 14px',
-              background: '#FAF8F5',
+              background: 'var(--paper-subtle)',
               border: '1px solid var(--line)',
-              borderRadius: 2,
+              borderRadius: 3,
               fontSize: 11,
               color: 'var(--muted)',
               display: 'flex',
@@ -248,8 +314,11 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               justifyContent: 'space-between',
             }}
           >
-            <span>📷 Ảnh chụp thực tế sản phẩm (Không dùng AI)</span>
-            <span style={{ fontWeight: 600, color: 'var(--gold-dark)', letterSpacing: '0.04em' }}>✦ NEXORA Verified</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <ShieldCheck size={13} color="var(--gold-dark)" />
+              Hình ảnh chụp thực tế tại Atelier
+            </span>
+            <span style={{ fontWeight: 600, color: 'var(--gold-dark)', letterSpacing: '0.04em' }}>NEXORA Verified</span>
           </div>
         </div>
 
@@ -393,8 +462,9 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               </div>
             </div>
 
-            <p style={{ margin: '6px 0 0', fontSize: 10, color: 'var(--muted)', lineHeight: 1.4 }}>
-              🛡️ Cam kết sàn: Đổi size tận cửa 24-48h · Đồng kiểm ngoại quan khi nhận · Hoàn tiền 200% nếu phát hiện hàng không chính hãng.
+            <p style={{ margin: '6px 0 0', fontSize: 10, color: 'var(--muted)', lineHeight: 1.4, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <ShieldCheck size={12} color="var(--gold-dark)" />
+              Cam kết dịch vụ: Đổi size tận nơi 24-48h · Đồng kiểm ngoại quan khi nhận · Đảm bảo chính hãng 100%.
             </p>
           </div>
 
@@ -484,7 +554,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
           </fieldset>
 
           {/* Nút Kích Hoạt Mô Phỏng Phom Dáng Silhouette 2D */}
-          <div style={{ margin: '10px 0' }}>
+          <div style={{ margin: '12px 0', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => setShowSilhouetteModal(true)}
@@ -492,17 +562,18 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '6px 12px',
-                background: '#f8fafc',
-                border: '1px solid #cbd5e1',
+                padding: '7px 12px',
+                background: 'var(--paper-card)',
+                border: '1px solid var(--line)',
                 borderRadius: 3,
                 fontSize: 11,
-                fontWeight: 600,
-                color: '#1e293b',
+                fontWeight: 500,
+                color: 'var(--ink)',
                 cursor: 'pointer',
               }}
             >
-              <Eye size={13} color="var(--clay)" /> 👗 Mô Phỏng Phom Dáng &amp; Độ Rủ 2D
+              <Eye size={13} color="var(--gold-dark)" />
+              Mô phỏng phom dáng 2D
             </button>
             <button
               type="button"
@@ -511,59 +582,62 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '6px 12px',
-                background: '#f0fdfa',
-                border: '1px solid #99f6e4',
+                padding: '7px 12px',
+                background: 'var(--paper-card)',
+                border: '1px solid var(--line)',
                 borderRadius: 3,
                 fontSize: 11,
-                fontWeight: 600,
-                color: '#0f766e',
+                fontWeight: 500,
+                color: 'var(--ink)',
                 cursor: 'pointer',
               }}
             >
-              <Sparkles size={13} color="#0d9488" /> 🪞 Gương Thử Đồ AR &amp; Độ Rủ
+              <Sparkles size={13} color="var(--gold-dark)" />
+              Gương thử đồ &amp; Ánh sáng thực
             </button>
           </div>
 
-          {/* Bộ Đếm Tồn Kho Thủ Công Thời Gian Thực & Khóa Giữ Hàng 180s (Atelier Stock Reservation 180s) */}
+          {/* Giữ Suất May Đo Giới Hạn Thời Gian Thực (Atelier Stock Reservation) */}
           <div
             style={{
-              margin: '12px 0',
+              margin: '14px 0',
               padding: '12px 14px',
-              background: holdActive ? '#fffbeb' : '#fafafa',
-              border: holdActive ? '1.5px solid #f59e0b' : '1px dashed #d4d4d8',
-              borderRadius: 4,
+              background: holdActive ? 'rgba(158, 126, 82, 0.06)' : 'var(--paper-subtle)',
+              border: holdActive ? '1px solid var(--gold-dark)' : '1px solid var(--line)',
+              borderRadius: 3,
             }}
           >
             <div className="row between" style={{ marginBottom: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Flame size={15} color={holdActive ? '#b45309' : '#dc2626'} />
-                <strong style={{ fontSize: 12, color: holdActive ? '#92400e' : '#991b1b' }}>
-                  {holdActive ? 'Đang Khóa Giữ Hàng Độc Quyền (180s)' : 'Tồn Kho Chế Tác Thủ Công Giới Hạn'}
+                <Clock3 size={14} color={holdActive ? 'var(--gold-dark)' : 'var(--muted)'} />
+                <strong style={{ fontSize: 12, color: 'var(--ink)' }}>
+                  {holdActive ? 'Đang giữ suất chế tác độc quyền (180s)' : 'Tồn kho chế tác giới hạn theo lượt'}
                 </strong>
               </div>
               <span
                 style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  background: holdActive ? '#fef3c7' : '#fee2e2',
-                  color: holdActive ? '#b45309' : '#991b1b',
+                  fontSize: 9.5,
+                  fontWeight: 600,
+                  background: holdActive ? 'var(--gold-dark)' : 'var(--paper)',
+                  color: holdActive ? '#fff' : 'var(--muted)',
+                  border: '1px solid var(--line)',
                   padding: '2px 6px',
                   borderRadius: 2,
+                  letterSpacing: '0.04em',
                 }}
               >
-                {holdActive ? 'D6-03 CART LOCK ACTIVE' : 'ATELIER RESERVED'}
+                {holdActive ? 'SUẤT GIỮ CHỖ ĐỘC QUYỀN' : 'ATELIER RESERVED'}
               </span>
             </div>
 
-            <p style={{ margin: '0 0 8px', fontSize: 11, color: '#52525b', lineHeight: 1.4 }}>
+            <p style={{ margin: '0 0 8px', fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
               {holdActive ? (
                 <>
-                  Redis Lua Script đã khóa tạm thời <strong>{quantity} sản phẩm</strong> size {variant?.size || 'đã chọn'}. Suất của bạn được bảo lưu độc quyền chống oversell trong thời gian hoàn tất đơn.
+                  Hệ thống đang lưu giữ <strong>{quantity} sản phẩm</strong> size {variant?.size || 'đã chọn'}. Suất may đo của bạn được bảo lưu trong thời gian hoàn tất đơn hàng.
                 </>
               ) : (
                 <>
-                  Mẫu thiết kế này được may đo theo lô nhỏ tại xưởng. Có <strong>2 khách hàng khác</strong> đang duyệt trang này. Bạn có thể kích hoạt khóa giữ hàng độc quyền 180s để giữ suất may.
+                  Mẫu thiết kế được may đo thủ công theo lô nhỏ. Bạn có thể giữ trước suất may trong 180 giây để hoàn tất đơn hàng.
                 </>
               )}
             </p>
@@ -571,18 +645,18 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             {holdActive ? (
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: '#b45309' }}>
-                    <Timer size={14} /> Thời gian giữ hàng còn lại:
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, fontWeight: 600, color: 'var(--gold-dark)' }}>
+                    <Timer size={13} /> Thời gian giữ hàng còn lại:
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: '#b45309' }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'monospace', color: 'var(--gold-dark)' }}>
                     {String(Math.floor(holdTimer / 60)).padStart(2, '0')}:{String(holdTimer % 60).padStart(2, '0')}
                   </span>
                 </div>
-                <div style={{ width: '100%', height: 5, background: '#fef3c7', borderRadius: 3, overflow: 'hidden', marginBottom: 8 }}>
+                <div style={{ width: '100%', height: 4, background: 'var(--line)', borderRadius: 2, overflow: 'hidden', marginBottom: 8 }}>
                   <div
                     style={{
                       height: '100%',
-                      background: '#f59e0b',
+                      background: 'var(--gold-dark)',
                       width: `${(holdTimer / 180) * 100}%`,
                       transition: 'width 1s linear',
                     }}
@@ -594,17 +668,17 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     style={{
                       flex: 1,
                       fontSize: 11,
-                      padding: '4px 8px',
-                      background: '#fef3c7',
-                      color: '#92400e',
-                      border: '1px solid #fde68a',
-                      borderRadius: 3,
+                      padding: '5px 8px',
+                      background: 'var(--gold-dark)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 2,
                       cursor: 'pointer',
                       fontWeight: 600,
                     }}
                     onClick={() => {
                       setHoldTimer(180);
-                      setNotice('Đã gia hạn khóa giữ hàng thêm 180 giây thành công!');
+                      setNotice('Đã gia hạn thời gian giữ hàng thêm 180 giây.');
                     }}
                   >
                     Gia hạn +180s
@@ -613,11 +687,11 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     type="button"
                     style={{
                       fontSize: 11,
-                      padding: '4px 8px',
+                      padding: '5px 8px',
                       background: 'transparent',
-                      color: '#71717a',
-                      border: '1px solid #e4e4e7',
-                      borderRadius: 3,
+                      color: 'var(--muted)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 2,
                       cursor: 'pointer',
                     }}
                     onClick={() => {
@@ -635,13 +709,13 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 type="button"
                 style={{
                   width: '100%',
-                  padding: '6px 12px',
+                  padding: '7px 12px',
                   fontSize: 11,
                   fontWeight: 600,
-                  background: '#f4f4f5',
-                  border: '1px solid #e4e4e7',
-                  borderRadius: 3,
-                  color: '#18181b',
+                  background: 'var(--paper-card)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 2,
+                  color: 'var(--ink)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -651,10 +725,10 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 onClick={() => {
                   setHoldActive(true);
                   setHoldTimer(180);
-                  setNotice('Đã kích hoạt khóa giữ hàng 180 giây thành công (Redis Lua D6-03).');
+                  setNotice('Đã kích hoạt giữ suất đặt may 180 giây.');
                 }}
               >
-                <Lock size={12} color="#f59e0b" /> Kích hoạt khóa giữ hàng độc quyền 180s (D6-03)
+                <Lock size={12} color="var(--gold-dark)" /> Giữ suất đặt may 180 giây
               </button>
             )}
           </div>
@@ -746,6 +820,87 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
             >
               <Scissors size={15} color="#b45309" />
               <strong>Đặt Trước May Đo Thủ Công Atelier (Bespoke Pre-Order · Suất #{bespokeQueuePos}/15)</strong>
+            </button>
+          </div>
+
+          {/* Đặt Lịch Thử Đồ Tận Nơi VIP (Home-Fitting Concierge) */}
+          <div style={{ marginTop: 8 }}>
+            <button
+              type="button"
+              className="button secondary full"
+              style={{
+                fontSize: 12,
+                padding: '9px 14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                background: '#f8fafc',
+                borderColor: '#cbd5e1',
+                color: 'var(--ink)',
+                fontWeight: 600,
+              }}
+              onClick={() => {
+                setHomeFittingRecipient(p?.name ? `Khách thử ${p.name}` : '');
+                setShowHomeFittingModal(true);
+              }}
+            >
+              <UserCheck size={15} color="var(--gold-dark)" />
+              Trải Nghiệm Thử Đồ Tại Nhà VIP (Home-Fitting Concierge)
+            </button>
+          </div>
+
+          {/* Yêu Cầu Hộp Mẫu Vải Cầm Tay (Atelier Swatch Sample Kit) */}
+          <div style={{ marginTop: 8 }}>
+            <button
+              type="button"
+              className="button secondary full"
+              style={{
+                fontSize: 12,
+                padding: '9px 14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                background: '#FAF8F5',
+                borderColor: 'var(--gold-dark)',
+                color: 'var(--gold-dark)',
+                fontWeight: 600,
+              }}
+              onClick={() => {
+                setSwatchRecipient(user?.name || (p?.name ? `Khách quan tâm ${p.name}` : ''));
+                setShowSwatchModal(true);
+              }}
+            >
+              <Layers size={15} color="var(--gold-dark)" />
+              Yêu Cầu Hộp Mẫu Vải Cầm Tay (Atelier Swatch Kit · Hoàn Cọc 100%)
+            </button>
+          </div>
+
+          {/* Hộ Chiếu Vật Liệu & Chứng Thư Xuất Xứ (Digital Material Passport · DPP) */}
+          <div style={{ marginTop: 8 }}>
+            <button
+              type="button"
+              className="button secondary full"
+              style={{
+                fontSize: 12,
+                padding: '9px 14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                background: '#f8faf9',
+                borderColor: '#10b981',
+                color: '#065f46',
+                fontWeight: 600,
+              }}
+              onClick={() => {
+                fetchProductPassport();
+                setShowPassportModal(true);
+              }}
+            >
+              <Award size={15} color="#059669" />
+              Hộ Chiếu Vật Liệu & Chứng Thư Xuất Xứ (Digital Product Passport · DPP)
             </button>
           </div>
 
@@ -1168,14 +1323,15 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               </div>
 
               {/* Eco Impact Indicator */}
-              <div style={{ padding: '10px 14px', background: '#f0fdf4', borderRadius: 3, border: '1px solid #bbf7d0', marginBottom: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: '#166534', marginBottom: 4 }}>
-                  <Award size={15} /> Chỉ Số Dấu Chân Bền Vững (Eco-Footprint)
+              <div style={{ padding: '10px 14px', background: 'var(--paper-subtle)', borderRadius: 3, border: '1px solid var(--line)', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>
+                  <Award size={14} color="var(--gold-dark)" />
+                  Chỉ số vòng đời &amp; tác động sinh thái (Eco-Footprint)
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, fontSize: 11, color: '#374151' }}>
-                  <span>💧 Tiết kiệm nước: <strong>-65%</strong></span>
-                  <span>🌿 Phát thải: <strong>1.4 kg CO2e</strong> (-72% so với Polyester)</span>
-                  <span>♻️ Tự phân hủy sinh học: <strong>100% trong 12 tháng</strong></span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6, fontSize: 11, color: 'var(--muted)' }}>
+                  <span>Tiết kiệm nước: <strong style={{ color: 'var(--ink)' }}>-65%</strong></span>
+                  <span>Phát thải: <strong style={{ color: 'var(--ink)' }}>1.4 kg CO2e</strong> (-72% so với Polyester)</span>
+                  <span>Phân hủy tự nhiên: <strong style={{ color: 'var(--ink)' }}>100% trong 12 tháng</strong></span>
                 </div>
               </div>
 
@@ -1189,16 +1345,17 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     alignItems: 'center',
                     gap: 6,
                     padding: '6px 12px',
-                    background: showFabricComparison ? '#fdf8ea' : '#f8fafc',
-                    border: showFabricComparison ? '1px solid var(--clay)' : '1px solid #cbd5e1',
+                    background: 'var(--paper-card)',
+                    border: '1px solid var(--line)',
                     borderRadius: 3,
                     fontSize: 11,
-                    fontWeight: 600,
-                    color: showFabricComparison ? 'var(--clay)' : '#1e293b',
+                    fontWeight: 500,
+                    color: 'var(--ink)',
                     cursor: 'pointer',
                   }}
                 >
-                  <Sparkles size={13} color="var(--clay)" /> 🔬 {showFabricComparison ? 'Đóng bảng so sánh chất liệu' : 'Bảng So Sánh Cảm Giác & Độ Bền Vải'}
+                  <Sparkles size={13} color="var(--gold-dark)" />
+                  {showFabricComparison ? 'Thu gọn so sánh chất liệu' : 'So sánh cảm giác sợi tự nhiên'}
                 </button>
 
                 {showFabricComparison && (
@@ -1248,7 +1405,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 )}
               </div>
 
-              {/* Chỉ Số Độ Bền Sợi Dệt & Kiểm Định Ma Sát Giặt Máy */}
+              {/* Chỉ số độ bền sợi dệt & kiểm định ma sát giặt */}
               <div style={{ marginBottom: 12 }}>
                 <button
                   type="button"
@@ -1267,14 +1424,14 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     cursor: 'pointer',
                   }}
                 >
-                  <Award size={13} color="#059669" /> 🧪 {showDurability ? 'Thu gọn kiểm định độ bền' : 'Chỉ Số Độ Bền Sợi Dệt & Ma Sát Giặt Máy'}
+                  <Award size={13} color="#059669" /> {showDurability ? 'Thu gọn kiểm định độ bền' : 'Kiểm định độ bền sợi & ma sát giặt máy'}
                 </button>
 
                 {showDurability && (
                   <div style={{ marginTop: 10, padding: 12, background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4 }}>
                     <div className="row between" style={{ marginBottom: 8 }}>
                       <strong style={{ fontSize: 12, color: '#0f172a' }}>
-                        Báo Cáo Kiểm Định Độ Bền &amp; Ma Sát Cơ Học (ISO Standards):
+                        Báo cáo kiểm định độ bền &amp; ma sát cơ học (Tiêu chuẩn ISO):
                       </strong>
                       <span style={{ fontSize: 10, background: '#dcfce7', color: '#15803d', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                         HEAVY COMMERCIAL GRADE
@@ -1283,38 +1440,38 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8, marginBottom: 10 }}>
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Thử Nghiệm Ma Sát Martindale</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Thử nghiệm ma sát Martindale</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>35.000 Chu kỳ chà xát</strong>
-                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Không xơ đứt, đạt chuẩn thương mại nặng</div>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Không xơ đứt, đạt chuẩn thương mại bền bỉ</div>
                       </div>
 
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Chống Xù Lông (Pilling)</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Chống xù lông (Pilling)</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>Cấp 4.5 / 5.0 (ISO 12945)</strong>
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Bề mặt sợi mịn màng, chống bết dính</div>
                       </div>
 
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Lực Kéo Đứt Sợi Ướt / Khô</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Lực kéo đứt sợi ướt / khô</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>420N (Bền gấp đôi khi ướt)</strong>
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Cấu trúc xenlulozo tự nhiên bền bỉ</div>
                       </div>
 
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Tuổi Thọ Giặt Máy Ước Tính</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Tuổi thọ giặt máy ước tính</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>&gt;80 Chu kỳ giặt êm</strong>
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Duy trì &ge;95% phom dáng nguyên bản</div>
                       </div>
                     </div>
 
                     <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
-                      💡 <em>Cam kết tặng kèm:</em> Mỗi đơn hàng sản phẩm sợi tự nhiên đều được tặng 01 Túi Giặt Lưới Dệt Mịn Micro-Mesh chuyên dụng cho lụa và lanh, cùng tài liệu cẩm nang dùng nước giặt sinh học lành tính pH 6.2.
+                      <em>Cam kết bảo dưỡng:</em> Mỗi đơn hàng sản phẩm sợi tự nhiên đều được tặng kèm túi giặt lưới dệt mịn micro-mesh chuyên dụng cùng tài liệu cẩm nang dùng nước giặt sinh học lành tính pH 6.2.
                     </p>
                   </div>
                 )}
               </div>
 
-              {/* Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn Tự Nhiên */}
+              {/* Chỉ số phục hồi co giãn & kháng nhăn tự nhiên */}
               <div style={{ marginTop: 12 }}>
                 <button
                   type="button"
@@ -1334,14 +1491,14 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   }}
                 >
                   <Activity size={13} color={showStretchRecovery ? '#16a34a' : 'var(--clay)'} />
-                  {showStretchRecovery ? 'Thu gọn chỉ số phục hồi ▲' : '🌀 Chỉ Số Phục Hồi Co Giãn & Kháng Nhăn ▼'}
+                  {showStretchRecovery ? 'Thu gọn chỉ số phục hồi ▲' : 'Chỉ số phục hồi co giãn & kháng nhăn ▼'}
                 </button>
 
                 {showStretchRecovery && (
                   <div style={{ marginTop: 10, padding: 12, background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4 }}>
                     <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
                       <strong style={{ fontSize: 12, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <Award size={15} color="#059669" /> Kiểm Nghiệm Phục Hồi Sợi &amp; Thoát Ẩm Nhiệt Đới (ISO 2313 &amp; ISO 9237)
+                        <Award size={15} color="#059669" /> Kiểm nghiệm phục hồi sợi &amp; thoát ẩm (ISO 2313 &amp; ISO 9237)
                       </strong>
                       <span style={{ fontSize: 10, background: '#dcfce7', color: '#166534', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                         KHÁNG NHĂN CẤP A (162°)
@@ -1349,42 +1506,42 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                     </div>
 
                     <p style={{ margin: '0 0 10px', fontSize: 11, color: '#334155', lineHeight: 1.4 }}>
-                      Kết quả đo lường độ đàn hồi cơ học và khả năng nhả nếp nhăn tự nhiên của sợi {p.material} qua buồng xông hơi vi mô chuẩn phòng thí nghiệm dệt may quốc tế.
+                      Kết quả đo lường độ đàn hồi cơ học và khả năng nhả nếp nhăn tự nhiên của sợi {p.material} qua buồng kiểm nghiệm nhiệt ẩm chuẩn phòng thí nghiệm dệt may.
                     </p>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 10 }}>
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Góc Hồi Nếp Nhăn (CRA)</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Góc hồi nếp nhăn (CRA)</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>162° (Chuẩn ISO 2313)</strong>
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Nhả nếp gấp tự nhiên sau 15p treo ẩm</div>
                       </div>
 
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hồi Phục Đàn Hồi Co Giãn</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hồi phục đàn hồi co giãn</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>96.5% tại độ giãn 5%</strong>
                         <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Giữ phom ve áo và đường ráp vai sắc nét</div>
                       </div>
 
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Độ Thoát Khí &amp; Giảm Nhiệt</span>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Độ thoát khí &amp; giảm nhiệt</span>
                         <strong style={{ fontSize: 12, color: '#047857' }}>185 mm/s (ISO 9237)</strong>
-                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Thoáng mát, tối ưu độ ẩm nhiệt đới</div>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Thoáng mát, tối ưu vi khí hậu cơ thể</div>
                       </div>
 
                       <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #e2e8f0' }}>
-                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Tự Thẳng Bằng Hơi Nước</span>
-                        <strong style={{ fontSize: 12, color: '#047857' }}>94 / 100 Điểm Hơi Nước</strong>
-                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Không cần ủi nhiệt, tự phẳng khi tắm nước ấm</div>
+                        <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Tự thẳng bằng hơi nước</span>
+                        <strong style={{ fontSize: 12, color: '#047857' }}>94 / 100 Điểm</strong>
+                        <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Nhả phẳng tự nhiên khi treo trong phòng tắm hơi</div>
                       </div>
                     </div>
 
                     <p style={{ margin: 0, fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
-                      🌿 <em>Mẹo bảo quản độc quyền Atelier:</em> Khi đi công tác hoặc du lịch, bạn chỉ cần treo áo trong phòng tắm nước ấm 10-15 phút, sợi vải sẽ tự hấp thụ hơi ẩm và nhả phẳng các nếp gấp vali mà không cần bàn là nóng.
+                      <em>Mẹo bảo quản Atelier:</em> Khi di chuyển công tác, bạn có thể treo áo trong phòng tắm nước ấm 10-15 phút, sợi vải sẽ tự hấp thụ hơi ẩm và nhả phẳng các nếp gấp mà không cần ủi nhiệt.
                     </p>
                   </div>
                 )}
 
-                {/* Radar Đo Lường Độ Rủ Sợi Dệt & Hệ Số Tiêu Âm Tự Nhiên */}
+                {/* Đặc tính rủ vải & Cấu trúc sợi (Cusick Drapemeter) */}
                 <div style={{ marginTop: 8 }}>
                   <button
                     type="button"
@@ -1403,15 +1560,15 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                       cursor: 'pointer',
                     }}
                   >
-                    <Volume2 size={13} color={showDrapeRadar ? '#0d9488' : 'var(--clay)'} />
-                    {showDrapeRadar ? 'Thu gọn radar độ rủ & tiêu âm ▲' : '🌊 Radar Độ Rủ & Hệ Số Tiêu Âm ISO 354 ▼'}
+                    <Layers size={13} color={showDrapeRadar ? '#0d9488' : 'var(--clay)'} />
+                    {showDrapeRadar ? 'Thu gọn thông số độ rủ ▲' : 'Đặc tính rủ vải & Cấu trúc dệt ▼'}
                   </button>
 
                   {showDrapeRadar && (
                     <div style={{ marginTop: 10, padding: 12, background: '#f0fdfa', border: '1px solid #99f6e4', borderRadius: 4 }}>
                       <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
                         <strong style={{ fontSize: 12, color: '#134e4a', display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <Award size={15} color="#0d9488" /> Độ Rủ Sóng Vải &amp; Tiêu Âm Không Gian (Cusick Meter &amp; ISO 354)
+                          <Award size={15} color="#0d9488" /> Độ rủ sóng vải &amp; khối lượng dệt (Cusick Drapemeter &amp; GSM)
                         </strong>
                         <span style={{ fontSize: 10, background: '#ccfbf1', color: '#115e59', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                           DRAPE FLUIDITY: GRADE A (34.2%)
@@ -1419,38 +1576,38 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                       </div>
 
                       <p style={{ margin: '0 0 10px', fontSize: 11, color: '#115e59', lineHeight: 1.4 }}>
-                        Đo lường độ rủ mềm mại tự nhiên và khả năng hấp thụ tạp âm của cấu trúc dệt sợi {p.material}, giúp trang phục chuyển động mềm mại theo từng bước chân và giảm vang âm trong không gian kiến trúc.
+                        Đo lường độ rủ mềm mại tự nhiên và mật độ dệt sợi {p.material}, giúp trang phục chuyển động thanh thoát theo từng bước chân và giữ phom dáng ổn định.
                       </p>
 
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8, marginBottom: 10 }}>
                         <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
-                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ Số Rủ Cusick</span>
-                          <strong style={{ fontSize: 12, color: '#0f766e' }}>34.2% (Grade A Sóng Rủ)</strong>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ số rủ Cusick</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>34.2% (Grade A Sóng rủ)</strong>
                           <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Sóng vải rủ uyển chuyển, tự duỗi nếp gãy</div>
                         </div>
 
                         <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
-                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ Số Tiêu Âm NRC</span>
-                          <strong style={{ fontSize: 12, color: '#0f766e' }}>0.45 NRC (ISO 354)</strong>
-                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Hấp thụ tạp âm văn phòng &amp; phòng họp</div>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Định lượng vải (GSM)</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>185 g/m²</strong>
+                          <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Độ dày chuẩn mực bốn mùa, kín đáo</div>
                         </div>
 
                         <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
-                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ Số Dẫn Nhiệt</span>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Hệ số dẫn nhiệt</span>
                           <strong style={{ fontSize: 12, color: '#0f766e' }}>0.038 W/m·K</strong>
                           <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Cách nhiệt tự nhiên 2 chiều đông - hè</div>
                         </div>
 
                         <div style={{ padding: '8px 10px', background: '#fff', borderRadius: 3, border: '1px solid #ccfbf1' }}>
-                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Độ Rủ Động Học 3D</span>
-                          <strong style={{ fontSize: 12, color: '#0f766e' }}>98 / 100 Điểm Sóng</strong>
+                          <span style={{ fontSize: 10, color: '#64748b', display: 'block' }}>Độ rủ động học</span>
+                          <strong style={{ fontSize: 12, color: '#0f766e' }}>98 / 100 Điểm</strong>
                           <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 1 }}>Phom dáng rủ bồng bềnh theo nhịp bước</div>
                         </div>
                       </div>
 
                       <div style={{ background: '#fff', padding: '8px 12px', borderRadius: 3, border: '1px solid #99f6e4', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
                         <span style={{ fontSize: 11, color: '#134e4a' }}>
-                          🌊 <em>Mô phỏng sóng vải 3D:</em> {drapeWaveActive ? 'Đang kích hoạt nhịp rủ sóng 0.8 Hz theo bước đi' : 'Tĩnh vật lý'}
+                          <em>Mô phỏng động học vải:</em> {drapeWaveActive ? 'Đang kích hoạt nhịp rủ chuyển động theo bước đi' : 'Trạng thái tĩnh chuẩn'}
                         </span>
                         <button
                           type="button"
@@ -1466,7 +1623,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                             fontWeight: 600,
                           }}
                         >
-                          {drapeWaveActive ? 'Tạm dừng mô phỏng sóng' : 'Mô phỏng sóng rủ 3D'}
+                          {drapeWaveActive ? 'Dừng mô phỏng' : 'Xem mô phỏng chuyển động'}
                         </button>
                       </div>
                     </div>
@@ -1476,11 +1633,11 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
               {/* Atelier Care Guide */}
               <div>
-                <strong style={{ display: 'block', marginBottom: 4, color: 'var(--ink)' }}>Chăm sóc chuẩn Atelier (Atelier Care Guide):</strong>
+                <strong style={{ display: 'block', marginBottom: 4, color: 'var(--ink)' }}>Chăm sóc chuẩn Atelier:</strong>
                 <ul style={{ margin: 0, paddingLeft: 18, color: 'var(--muted)', fontSize: 11, lineHeight: 1.6 }}>
-                  <li>Giặt máy chu kỳ nhẹ / lụa hoặc giặt tay với nước mát dưới 30°C.</li>
+                  <li>Giặt máy chu kỳ nhẹ hoặc giặt tay với nước mát dưới 30°C.</li>
                   <li>Không dùng chất tẩy clo mạnh; ưu tiên dung dịch giặt gốc thực vật.</li>
-                  <li>Phơi trong bóng râm thoáng mát, tránh ánh nắng mặt trời gắt làm xơ cứng sợi vải.</li>
+                  <li>Phơi trong bóng râm thoáng mát, tránh ánh nắng mặt trời trực tiếp.</li>
                   <li>Ủi hơi nước mặt trái ở nhiệt độ thấp để duy trì độ rủ và bề mặt óng ả nguyên bản.</li>
                 </ul>
               </div>
@@ -1505,7 +1662,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   }}
                 >
                   <Headphones size={13} color="var(--clay)" />
-                  {showVoiceGuide ? 'Đóng trải nghiệm âm thanh ▲' : '🎧 Cảm Âm Chất Liệu & Cẩm Nang Giọng Nói ▼'}
+                  {showVoiceGuide ? 'Đóng trải nghiệm âm thanh ▲' : 'Thuyết minh chất liệu & cảm âm sợi dệt ▼'}
                 </button>
 
                 {showVoiceGuide && (
@@ -1526,7 +1683,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                           }}
                           onClick={() => setVoiceMode('ATELIER_VOICE')}
                         >
-                          🎙️ Giọng Đọc AI Stylist
+                          Thuyết minh chất liệu
                         </button>
                         <button
                           type="button"
@@ -1542,12 +1699,12 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                           }}
                           onClick={() => setVoiceMode('FABRIC_SCROOP')}
                         >
-                          🔊 Cảm Âm Sợi Dệt (Silk Scroop)
+                          Cảm âm sớ vải (Silk scroop)
                         </button>
                       </div>
 
                       <span style={{ fontSize: 10, color: 'var(--muted)', fontWeight: 600 }}>
-                        {voicePlaying ? '▶ Đang phát (00:24 / 00:58)' : '⏸ Đã tạm dừng'}
+                        {voicePlaying ? 'Đang phát (00:24 / 00:58)' : 'Đã tạm dừng'}
                       </span>
                     </div>
 
@@ -1609,8 +1766,8 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
 
                     <p style={{ margin: 0, fontSize: 11, color: '#444', fontStyle: 'italic', lineHeight: 1.5 }}>
                       {voiceMode === 'ATELIER_VOICE'
-                        ? `“[Giọng đọc Stylist]: Chào bạn, với chất liệu ${p.material || 'sợi tự nhiên'}, hãy giặt tay với nước mát dưới 30°C và phơi râm mát. Nhiệt độ cơ thể bạn sẽ hoàn thiện phom dáng và độ rủ mềm mượt tự nhiên của trang phục.”`
-                        : `“[Cảm âm sớ vải]: Tiếng sột soạt sột soạt thanh mảnh (Silk Scroop) khi miết nhẹ bề mặt vải – minh chứng cho độ thuần khiết của sợi tơ tằm nguyên bản, không pha tạp sợi nhân tạo polyester.”`}
+                        ? `“[Stylist]: Chào bạn, với chất liệu ${p.material || 'sợi tự nhiên'}, hãy giặt tay với nước mát dưới 30°C và phơi râm mát. Nhiệt độ cơ thể bạn sẽ hoàn thiện phom dáng và độ rủ mềm mượt tự nhiên của trang phục.”`
+                        : `“[Cảm âm sớ vải]: Tiếng sột soạt thanh mảnh (Silk Scroop) khi miết nhẹ bề mặt vải – minh chứng cho độ thuần khiết của sợi tơ tằm nguyên bản, không pha tạp sợi nhân tạo.”`}
                     </p>
                   </div>
                 )}
@@ -1622,10 +1779,10 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
           <details open>
             <summary style={{ cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <MessageSquare size={18} color="var(--clay)" /> Hỏi Đáp Phong Cách Cùng AI Stylist
+                <MessageSquare size={18} color="var(--clay)" /> Hỏi đáp phong cách cùng Stylist Atelier
               </span>
               <span style={{ fontSize: 10, background: '#fdf8ea', color: 'var(--clay)', padding: '2px 8px', borderRadius: 2, fontWeight: 700 }}>
-                24/7 INTERACTIVE STYLING
+                ATELIER STYLING
               </span>
             </summary>
 
@@ -1636,7 +1793,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                   EV
                 </div>
                 <div>
-                  <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Elena Vũ · Chuyên Viên Phong Cách Cao Cấp (NEXORA Atelier)</strong>
+                  <strong style={{ fontSize: 13, color: 'var(--ink)' }}>Elena Vũ · Chuyên viên phong cách cao cấp (NEXORA Atelier)</strong>
                   <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--muted)' }}>
                     Tư vấn trực tiếp theo chất liệu <strong>{p.material}</strong> và phom dáng <strong>{p.fit}</strong> của riêng trang phục này.
                   </p>
@@ -1646,14 +1803,14 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               {/* Quick Questions Prompt Chips */}
               <div style={{ marginBottom: 12 }}>
                 <span style={{ fontSize: 11, color: 'var(--muted)', display: 'block', marginBottom: 6, fontWeight: 600 }}>
-                  Gợi ý câu hỏi nhanh cho Stylist:
+                  Gợi ý câu hỏi nhanh:
                 </span>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {[
-                    { label: '✨ Phối đi tiệc tối & Gala', q: `Đi tiệc tối hoặc Gala thì mẫu ${p.name} này nên phối phụ kiện và trang phục nào?` },
-                    { label: '💼 Mặc đi làm công sở', q: `Mặc đi làm văn phòng thì kết hợp cùng quần gì và giày túi nào thanh lịch?` },
-                    { label: '🧺 Vải có nhăn & cách bảo quản', q: `Chất liệu ${p.material} ngồi làm việc có bị nhăn không và cách là ủi thế nào?` },
-                    { label: '📏 Tư vấn size chuẩn', q: `Phom dáng ${p.fit} này chọn size thế nào để vừa vặn và cử động thoải mái nhất?` },
+                    { label: 'Phối đi tiệc tối & Gala', q: `Đi tiệc tối hoặc Gala thì mẫu ${p.name} này nên phối phụ kiện và trang phục nào?` },
+                    { label: 'Mặc đi làm công sở', q: `Mặc đi làm văn phòng thì kết hợp cùng quần gì và giày túi nào thanh lịch?` },
+                    { label: 'Vải & cách bảo quản', q: `Chất liệu ${p.material} ngồi làm việc có bị nhăn không và cách là ủi thế nào?` },
+                    { label: 'Tư vấn phom dáng & size', q: `Phom dáng ${p.fit} này chọn size thế nào để vừa vặn và cử động thoải mái nhất?` },
                   ].map((chip, idx) => (
                     <button
                       key={idx}
@@ -1793,21 +1950,162 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
           </details>
 
           <details open>
-            <summary>Đánh giá từ người mua ({p.reviews?.length ?? 0})</summary>
+            <summary style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Star size={16} fill="var(--gold-dark)" color="var(--gold-dark)" />
+                Đánh giá từ khách hàng ({p.reviews?.length ?? 0})
+              </span>
+              {p.reviews && p.reviews.length > 0 && (
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--gold-dark)' }}>
+                  {(p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length).toFixed(1)} / 5.0 ★
+                </span>
+              )}
+            </summary>
+            
             {p.reviews?.length ? (
-              <div style={{ display: 'grid', gap: 12, marginTop: 12 }}>
-                {p.reviews.map((r) => (
-                  <div key={r.id} style={{ borderBottom: '1px solid var(--line)', paddingBottom: 10 }}>
-                    <div className="row between">
-                      <strong>{r.user.name}</strong>
-                      <span>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+              <div style={{ marginTop: 14 }}>
+                {/* Aggregate Summary Box */}
+                <div
+                  style={{
+                    padding: '14px 18px',
+                    background: '#FAF8F5',
+                    border: '1px solid var(--line)',
+                    borderRadius: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 12,
+                    marginBottom: 16,
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                      <span style={{ fontFamily: 'var(--font-serif)', fontSize: 28, fontWeight: 600, color: 'var(--ink)' }}>
+                        {(p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length).toFixed(1)}
+                      </span>
+                      <span style={{ fontSize: 13, color: 'var(--muted)' }}>/ 5.0</span>
+                      <div style={{ display: 'flex', gap: 2, marginLeft: 6 }}>
+                        {[1, 2, 3, 4, 5].map((st) => (
+                          <Star key={st} size={14} fill="var(--gold-dark)" color="var(--gold-dark)" />
+                        ))}
+                      </div>
                     </div>
-                    <p style={{ margin: '6px 0 0' }}>{r.body}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--muted)' }}>
+                      Dựa trên {p.reviews.length} đánh giá kiểm định sau khi đồng kiểm nhận hàng
+                    </p>
                   </div>
-                ))}
+
+                  <div style={{ display: 'flex', gap: 16, fontSize: 11, color: 'var(--ink)' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <strong style={{ display: 'block', fontSize: 13, color: '#166534' }}>100%</strong>
+                      <span style={{ color: 'var(--muted)', fontSize: 10 }}>Đúng kích cỡ</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <strong style={{ display: 'block', fontSize: 13, color: '#166534' }}>99%</strong>
+                      <span style={{ color: 'var(--muted)', fontSize: 10 }}>Chất vải đúng mô tả</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <strong style={{ display: 'block', fontSize: 13, color: 'var(--gold-dark)' }}>✦ Đồng Kiểm</strong>
+                      <span style={{ color: 'var(--muted)', fontSize: 10 }}>100% Khách Hài Lòng</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Review Cards List */}
+                <div style={{ display: 'grid', gap: 14 }}>
+                  {p.reviews.map((r) => (
+                    <div
+                      key={r.id}
+                      style={{
+                        padding: '14px 16px',
+                        background: '#fff',
+                        border: '1px solid var(--line)',
+                        borderRadius: 3,
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                      }}
+                    >
+                      <div className="row between" style={{ marginBottom: 8, alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: '50%',
+                              background: '#FAF8F5',
+                              border: '1px solid var(--line)',
+                              color: 'var(--ink)',
+                              display: 'grid',
+                              placeItems: 'center',
+                              fontSize: 12,
+                              fontWeight: 600,
+                              fontFamily: 'var(--font-serif)',
+                            }}
+                          >
+                            {r.user?.name ? r.user.name.charAt(0).toUpperCase() : 'N'}
+                          </div>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <strong style={{ fontSize: 12.5, color: 'var(--ink)' }}>{r.user?.name || 'Khách Hàng Atelier'}</strong>
+                              <span
+                                style={{
+                                  fontSize: 9.5,
+                                  background: '#f0fdf4',
+                                  color: '#166534',
+                                  border: '1px solid #bbf7d0',
+                                  padding: '1px 6px',
+                                  borderRadius: 2,
+                                  fontWeight: 600,
+                                }}
+                              >
+                                ✓ Đã Đồng Kiểm &amp; Nhận Hàng
+                              </span>
+                            </div>
+                            <span style={{ fontSize: 10, color: 'var(--muted)' }}>
+                              {new Date(r.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: 2 }}>
+                          {[1, 2, 3, 4, 5].map((st) => (
+                            <Star
+                              key={st}
+                              size={12}
+                              fill={st <= r.rating ? 'var(--gold-dark)' : 'none'}
+                              color={st <= r.rating ? 'var(--gold-dark)' : '#d4d4d8'}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Tags */}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                        <span style={{ fontSize: 10, padding: '2px 8px', background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 2, color: 'var(--muted)' }}>
+                          🌿 Phom Dáng Chuẩn May Đo
+                        </span>
+                        <span style={{ fontSize: 10, padding: '2px 8px', background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 2, color: 'var(--muted)' }}>
+                          ✨ Chất Vải Sợi Thoáng Mát
+                        </span>
+                        <span style={{ fontSize: 10, padding: '2px 8px', background: '#FAF8F5', border: '1px solid var(--line)', borderRadius: 2, color: 'var(--muted)' }}>
+                          💎 Hộp Đóng Gói Atelier
+                        </span>
+                      </div>
+
+                      <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: 'var(--ink)' }}>
+                        &ldquo;{r.body}&rdquo;
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
-              <p>Chưa có đánh giá. Bạn có thể đánh giá sau khi nhận hàng.</p>
+              <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 12 }}>
+                <p style={{ margin: 0 }}>Chưa có đánh giá nào cho thiết kế này.</p>
+                <p style={{ margin: '4px 0 0', fontSize: 11 }}>
+                  Mọi đánh giá tại NEXORA đều được gửi từ khách hàng đã nhận và đồng kiểm trang phục thực tế.
+                </p>
+              </div>
             )}
           </details>
         </div>
@@ -2114,13 +2412,13 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 20 }}>🪡</span>
+                <Scissors size={20} color="#78350f" />
                 <div>
                   <h3 style={{ margin: 0, fontSize: 16, color: '#78350f' }}>
-                    XƯỞNG MAY ĐO THỦ CÔNG NEXORA ATELIER
+                    Xưởng may đo thủ công NEXORA Atelier
                   </h3>
                   <div style={{ fontSize: 11, color: '#92400e' }}>
-                    Chế Tác Thủ Công Độc Bản (Bespoke Pre-Order Queue)
+                    Chế tác thủ công theo yêu cầu (Bespoke Pre-Order)
                   </div>
                 </div>
               </div>
@@ -2219,7 +2517,7 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                 <div style={{ padding: '10px 14px', background: '#fffbeb', borderRadius: 4, border: '1px solid #fde68a', marginBottom: 14 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 12, fontWeight: 700, color: '#92400e' }}>
-                      ⚡ Hàng chờ nghệ nhân xưởng may tuần này:
+                      Hàng chờ nghệ nhân xưởng may tuần này:
                     </span>
                     <span style={{ fontSize: 11, background: '#f59e0b', color: '#fff', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
                       Suất #{bespokeQueuePos} / 15
@@ -2372,6 +2670,14 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
                           api('/vault/bespoke', 'POST', {
                             id: newOrder.id,
                             productName: newOrder.productName,
+                            shopId: p.shop?.id || 'shop-nep',
+                            shopName: p.shop?.name || 'NÉP Studio',
+                            stage: 'PENDING_REVIEW',
+                            deposit: newOrder.deposit,
+                            totalAmount: variant?.price || p.variants[0]?.price || 0,
+                            customerName: user?.name || 'Khách Hàng Atelier',
+                            customerPhone: (user as any)?.phone || '0901234567',
+                            variant: newOrder.variant,
                             monogram: newOrder.monogram,
                             lining: newOrder.lining,
                             notes: newOrder.notes,
@@ -2617,6 +2923,654 @@ export default function Detail({ params }: { params: Promise<{ slug: string }> }
               >
                 <Sparkles size={14} /> Chụp Snapshot Lookbook AR &amp; Lưu Vào Ví Phong Cách
               </button>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Modal Trải Nghiệm Thử Đồ Tại Nhà VIP (Home-Fitting Concierge) */}
+      {showHomeFittingModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.65)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            border: '1px solid var(--line)',
+            borderRadius: 4,
+            maxWidth: 520,
+            width: '100%',
+            padding: '24px 28px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+          }}>
+            <div className="row between" style={{ marginBottom: 14 }}>
+              <div>
+                <span className="eyebrow" style={{ fontSize: 10, marginBottom: 2 }}>DỊCH VỤ VIP CONCIERGE</span>
+                <h3 style={{ margin: 0, fontSize: 18 }}>Trải Nghiệm Thử Đồ Tại Nhà</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowHomeFittingModal(false);
+                  setHomeFittingSuccess(false);
+                }}
+                style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                ×
+              </button>
+            </div>
+
+            {homeFittingSuccess ? (
+              <div style={{ padding: '20px 0', textAlign: 'center' }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#F0FDF4', color: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <CheckCircle2 size={24} />
+                </div>
+                <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>Đã Đặt Lịch Thử Đồ Thành Công!</h4>
+                <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6, maxWidth: 380, margin: '0 auto 16px' }}>
+                  Chuyên viên Styling cao cấp của NEXORA sẽ mang sản phẩm <strong>"{p.name}"</strong> (kèm đủ size S/M/L và Vali mẫu vải) tới tận tư gia phục vụ bạn vào ngày {homeFittingDate}.
+                </p>
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+                  <Link href="/tai-khoan" className="button" style={{ fontSize: 12, padding: '7px 16px' }}>
+                    Xem Lịch Trình Tại Tài Khoản →
+                  </Link>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    style={{ fontSize: 12, padding: '7px 14px' }}
+                    onClick={() => {
+                      setShowHomeFittingModal(false);
+                      setHomeFittingSuccess(false);
+                    }}
+                  >
+                    Đóng
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', padding: '12px 14px', borderRadius: 3, marginBottom: 14, display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <img
+                    src={p.images[0]?.url || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=400&q=80'}
+                    alt={p.name}
+                    style={{ width: 48, height: 58, objectFit: 'cover', borderRadius: 2 }}
+                  />
+                  <div style={{ fontSize: 12 }}>
+                    <strong>{p.name}</strong>
+                    <div style={{ color: 'var(--gold-dark)', fontWeight: 600 }}>{vnd(p.variants[0]?.price || 0)}</div>
+                    <div style={{ color: 'var(--muted)', fontSize: 11 }}>Xưởng: {p.shop?.name || 'NEXORA Atelier'}</div>
+                  </div>
+                </div>
+
+                <form
+                  onSubmit={async e => {
+                    e.preventDefault();
+                    setHomeFittingBusy(true);
+                    try {
+                      await api('/concierge/fitting', 'POST', {
+                        productName: p.name,
+                        shopId: p.shop?.id,
+                        appointmentDate: homeFittingDate,
+                        timeSlot: homeFittingTimeSlot,
+                        address: homeFittingAddress,
+                        phone: homeFittingPhone,
+                        recipientName: homeFittingRecipient || 'Quý Khách Hàng',
+                        fabricSuitcaseRequested: homeFittingSuitcase,
+                        specialNotes: homeFittingNotes,
+                      });
+                      setHomeFittingSuccess(true);
+                    } catch (err: any) {
+                      setNotice(err.message || 'Lỗi đặt lịch hẹn');
+                      setFailed(true);
+                    } finally {
+                      setHomeFittingBusy(false);
+                    }
+                  }}
+                  className="stack"
+                  style={{ gap: 12 }}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                        Tên Người Nhận Thử
+                      </label>
+                      <input
+                        value={homeFittingRecipient}
+                        onChange={e => setHomeFittingRecipient(e.target.value)}
+                        required
+                        minLength={2}
+                        placeholder="Nguyễn Văn A"
+                        style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                        Số Điện Thoại
+                      </label>
+                      <input
+                        value={homeFittingPhone}
+                        onChange={e => setHomeFittingPhone(e.target.value)}
+                        required
+                        pattern="0[0-9]{9}"
+                        placeholder="0901234567"
+                        style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                      Địa Chỉ Tư Gia / Văn Phòng Đón Tiếp
+                    </label>
+                    <input
+                      value={homeFittingAddress}
+                      onChange={e => setHomeFittingAddress(e.target.value)}
+                      required
+                      minLength={5}
+                      placeholder="Số nhà, tên đường, Phường, Quận, Thành phố"
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                        Ngày Hẹn Thử
+                      </label>
+                      <select
+                        value={homeFittingDate}
+                        onChange={e => setHomeFittingDate(e.target.value)}
+                        style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                      >
+                        <option value="27/11/2026">Thứ Sáu, 27/11/2026</option>
+                        <option value="28/11/2026">Thứ Bảy, 28/11/2026</option>
+                        <option value="29/11/2026">Chủ Nhật, 29/11/2026</option>
+                        <option value="30/11/2026">Thứ Hai, 30/11/2026</option>
+                        <option value="01/12/2026">Thứ Ba, 01/12/2026</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                        Khung Giờ Phục Vụ
+                      </label>
+                      <select
+                        value={homeFittingTimeSlot}
+                        onChange={e => setHomeFittingTimeSlot(e.target.value as any)}
+                        style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                      >
+                        <option value="MORNING_09_11">Sáng (09:00 - 11:30)</option>
+                        <option value="AFTERNOON_14_16">Chiều (14:00 - 16:30)</option>
+                        <option value="EVENING_18_20">Tối (18:00 - 20:30)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input
+                      type="checkbox"
+                      id="p-chk-suitcase"
+                      checked={homeFittingSuitcase}
+                      onChange={e => setHomeFittingSuitcase(e.target.checked)}
+                    />
+                    <label htmlFor="p-chk-suitcase" style={{ fontSize: 11.5, cursor: 'pointer' }}>
+                      Mang theo <strong>Vali 40+ mẫu vải len Loro Piana &amp; lụa tơ tằm</strong> để tư vấn chất liệu tại chỗ
+                    </label>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                      Ghi Chú Đón Tiếp (Tùy chọn)
+                    </label>
+                    <textarea
+                      value={homeFittingNotes}
+                      onChange={e => setHomeFittingNotes(e.target.value)}
+                      rows={2}
+                      placeholder="Ví dụ: Mang đủ cả 3 size S, M, L để thử so sánh phom dáng..."
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2, resize: 'vertical' }}
+                    />
+                  </div>
+
+                  <div className="row between" style={{ marginTop: 8 }}>
+                    <button
+                      type="button"
+                      className="button secondary"
+                      onClick={() => setShowHomeFittingModal(false)}
+                    >
+                      Hủy bỏ
+                    </button>
+                    <button
+                      type="submit"
+                      className="button"
+                      disabled={homeFittingBusy}
+                    >
+                      {homeFittingBusy ? 'Đang gửi...' : 'Xác Nhận Đặt Lịch VIP'}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Hộp Thẻ Mẫu Vải Cầm Tay (Atelier Swatch Kit Modal) */}
+      {showSwatchModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.65)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            border: '1px solid var(--line)',
+            borderRadius: 4,
+            maxWidth: 520,
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '24px 28px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+          }}>
+            <div className="row between" style={{ marginBottom: 14 }}>
+              <div>
+                <span className="eyebrow" style={{ fontSize: 10, marginBottom: 2 }}>TRẢI NGHIỆM CHẤT LIỆU TẬN TAY</span>
+                <h3 style={{ margin: 0, fontSize: 18 }}>Hộp Mẫu Vải Thượng Hạng Cầm Tay</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSwatchModal(false);
+                  setSwatchVoucherCreated(null);
+                }}
+                style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                ×
+              </button>
+            </div>
+
+            {swatchVoucherCreated ? (
+              <div style={{ textAlign: 'center', padding: '16px 8px' }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#f0fdf4', color: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <CheckCircle size={24} />
+                </div>
+                <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>Đã Tiếp Nhận Yêu Cầu Hộp Mẫu Vải</h4>
+                <p style={{ margin: '0 0 16px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+                  Atelier sẽ đóng gói phong bì sáp ong chứa các mẫu vải cùng thước dây sartorial và chuyển phát hỏa tốc đến địa chỉ của bạn.
+                </p>
+
+                <div style={{ background: '#FAF8F5', border: '1px dashed var(--gold-dark)', borderRadius: 4, padding: '12px 14px', marginBottom: 18 }}>
+                  <span style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 4 }}>
+                    Voucher Kích Hoạt Hoàn Cọc 100%
+                  </span>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--gold-dark)', fontFamily: 'monospace', letterSpacing: 2 }}>
+                    {swatchVoucherCreated}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#166534', marginTop: 4 }}>
+                    Trị giá 50.000₫ · Tự động giảm trừ khi bạn đặt may hoặc mua trang phục chính thức
+                  </div>
+                </div>
+
+                <div className="row between">
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => {
+                      navigator.clipboard.writeText(swatchVoucherCreated);
+                      setSwatchCopied(true);
+                      setTimeout(() => setSwatchCopied(false), 2000);
+                    }}
+                  >
+                    {swatchCopied ? '✓ Đã sao chép mã' : 'Sao chép mã voucher'}
+                  </button>
+                  <button
+                    type="button"
+                    className="button"
+                    style={{ background: 'var(--ink)' }}
+                    onClick={() => {
+                      setShowSwatchModal(false);
+                      setSwatchVoucherCreated(null);
+                    }}
+                  >
+                    Hoàn tất
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', padding: '10px 14px', borderRadius: 3, marginBottom: 14, fontSize: 12 }}>
+                  <div>Trang phục khảo sát: <strong>{p?.name}</strong></div>
+                  <div>Chất liệu chính: <strong>{p?.material || 'Lanh Normandy dệt thoi mộc'}</strong></div>
+                  <div style={{ marginTop: 4, color: '#166534' }}>
+                    Phí bảo chứng mẫu: <strong>50.000₫</strong> <span style={{ fontSize: 11 }}>(Hoàn 100% qua Voucher mua hàng)</span>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 6 }}>
+                    3 Mẫu Vải Kèm Theo Trong Hộp:
+                  </label>
+                  <div style={{ display: 'grid', gap: 6 }}>
+                    {swatchItems.map((item, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 3, fontSize: 11 }}>
+                        <span style={{ width: 18, height: 18, borderRadius: '50%', background: idx === 0 ? '#1e3a8a' : idx === 1 ? '#fafaf9' : '#78350f', border: '1px solid #cbd5e1', flexShrink: 0 }} />
+                        <span style={{ fontWeight: 600, color: '#334155' }}>{item}</span>
+                        <span style={{ marginLeft: 'auto', fontSize: 10, color: '#64748b' }}>Chuẩn GSM 190</span>
+                      </div>
+                    ))}
+                  </div>
+                  <small style={{ display: 'block', marginTop: 4, fontSize: 10, color: 'var(--muted)' }}>
+                    Kèm theo 01 thước dây may đo sartorial và thẻ QR tra cứu thông tin vùng nguyên liệu dệt.
+                  </small>
+                </div>
+
+                <form
+                  onSubmit={async e => {
+                    e.preventDefault();
+                    setSwatchBusy(true);
+                    try {
+                      const res = await api<{ voucherCode?: string }>('/swatch-orders', 'POST', {
+                        productId: p?.id || p?.slug || 'sample-product',
+                        productName: p?.name || 'Trang phục may đo Atelier',
+                        shopId: p?.shop?.id,
+                        swatches: swatchItems,
+                        recipientName: swatchRecipient.trim(),
+                        phone: swatchPhone.trim(),
+                        address: swatchAddress.trim(),
+                        depositFee: 50000,
+                      });
+                      setSwatchVoucherCreated(res.voucherCode || 'NX-SWATCH-VIP2026');
+                    } catch (err: any) {
+                      setNotice(err.message || 'Không thể tạo đơn mẫu vải');
+                    } finally {
+                      setSwatchBusy(false);
+                    }
+                  }}
+                  className="stack"
+                  style={{ gap: 10 }}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                        Người Nhận Hộp Mẫu
+                      </label>
+                      <input
+                        value={swatchRecipient}
+                        onChange={e => setSwatchRecipient(e.target.value)}
+                        required
+                        minLength={2}
+                        placeholder="Họ và tên quý khách"
+                        style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                        Số Điện Thoại
+                      </label>
+                      <input
+                        value={swatchPhone}
+                        onChange={e => setSwatchPhone(e.target.value)}
+                        required
+                        pattern="0[0-9]{9}"
+                        placeholder="0901234567"
+                        style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                      Địa Chỉ Nhận Hộp Mẫu Vải
+                    </label>
+                    <input
+                      value={swatchAddress}
+                      onChange={e => setSwatchAddress(e.target.value)}
+                      required
+                      minLength={5}
+                      placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện"
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                    />
+                  </div>
+
+                  <div className="row between" style={{ marginTop: 8 }}>
+                    <button
+                      type="button"
+                      className="button secondary"
+                      onClick={() => setShowSwatchModal(false)}
+                    >
+                      Bỏ qua
+                    </button>
+                    <button
+                      type="submit"
+                      className="button"
+                      style={{ background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)' }}
+                      disabled={swatchBusy}
+                    >
+                      {swatchBusy ? 'Đang gửi...' : 'Xác Nhận Đặt Hộp Mẫu Vải (50k)'}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Hộ Chiếu Vật Liệu & Chứng Thư Xuất Xứ (Digital Material Passport · DPP Modal) */}
+      {showPassportModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.7)',
+          backdropFilter: 'blur(5px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: 4,
+            width: '100%',
+            maxWidth: 680,
+            maxHeight: '92vh',
+            overflowY: 'auto',
+            padding: 24,
+            boxShadow: '0 24px 48px rgba(0,0,0,0.18)',
+            border: '1px solid var(--line)',
+          }}>
+            <div className="row between" style={{ alignItems: 'flex-start', borderBottom: '1px solid var(--line)', paddingBottom: 14, marginBottom: 16 }}>
+              <div>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#ecfdf5', color: '#047857', padding: '3px 8px', borderRadius: 2, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em', marginBottom: 6 }}>
+                  <Award size={13} /> DIGITAL PRODUCT PASSPORT (DPP) · BẢO CHỨNG ĐỘC BẢN
+                </div>
+                <h3 style={{ margin: 0, fontSize: 18, fontFamily: 'var(--font-serif)', fontWeight: 600, color: 'var(--ink)' }}>
+                  Hộ Chiếu Vật Liệu & Chứng Thư Xuất Xứ
+                </h3>
+                <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--muted)' }}>
+                  Bảo chứng nguồn gốc sợi, cấu trúc dệt và đội ngũ nghệ nhân thực hiện cho {p?.name}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassportModal(false)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--muted)', padding: 4 }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {passportLoading ? (
+              <div style={{ padding: '40px 0', textAlign: 'center', color: 'var(--muted)' }}>
+                Đang đối soát sổ cái chứng thư nguyên bản...
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {/* Cryptographic Seal Banner */}
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: 3,
+                  padding: '12px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                }}>
+                  <div>
+                    <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', fontWeight: 700 }}>
+                      MÃ BẢO CHỨNG ĐỊNH DANH DUY NHẤT (SHA-256)
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace', color: 'var(--ink)', marginTop: 2 }}>
+                      {materialPassport?.certificateCode || `NX-DPP-${p?.id.slice(0, 8).toUpperCase()}-SHA256`}
+                    </div>
+                    <div style={{ fontSize: 10.5, color: '#059669', display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                      <CheckCircle2 size={12} /> Đã xác thực nguyên bản trên Sổ Cái Hiệp Hội May Đo NEXORA
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    style={{
+                      padding: '6px 12px',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      background: copiedCertCode ? '#059669' : '#fff',
+                      color: copiedCertCode ? '#fff' : 'var(--ink)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      const code = materialPassport?.certificateCode || `NX-DPP-${p?.id.slice(0, 8).toUpperCase()}-SHA256`;
+                      navigator.clipboard.writeText(code);
+                      setCopiedCertCode(true);
+                      setTimeout(() => setCopiedCertCode(false), 2000);
+                    }}
+                  >
+                    {copiedCertCode ? 'Đã sao chép' : 'Sao chép mã'}
+                  </button>
+                </div>
+
+                {/* Section 1: Fiber & Origin */}
+                <div style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '14px 16px', background: '#fff' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: 10 }}>
+                    <Compass size={14} color="var(--gold-dark)" /> Nguồn Gốc Sợi & Canh Vải Thủ Công
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10, fontSize: 11.5 }}>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10.5 }}>Vùng Xuất Xứ Nguyên Liệu</span>
+                      <strong style={{ color: 'var(--ink)' }}>{materialPassport?.originLocation || 'Normandy (Pháp) & Xưởng NÉP Atelier (Hà Nội)'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10.5 }}>Thành Phần Xơ Sợi</span>
+                      <strong style={{ color: 'var(--ink)' }}>{materialPassport?.fiberComposition || '100% Linen hữu cơ dệt mộc tự nhiên'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10.5 }}>Mật Độ Canh Sợi & Định Lượng</span>
+                      <strong style={{ color: 'var(--ink)' }}>{materialPassport?.weaveDensity || '185 GSM · Plain Weave'}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10.5 }}>Mã Lô Sợi & Mẻ Dệt (Yarn Lot)</span>
+                      <strong style={{ color: 'var(--ink)', fontFamily: 'monospace' }}>{materialPassport?.yarnLot || `LOT-NX-${p?.id.slice(0, 6).toUpperCase()}-2026`}</strong>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed var(--line)' }}>
+                    <span style={{ fontSize: 10.5, color: 'var(--muted)', display: 'block', marginBottom: 6 }}>Chứng nhận chất lượng đạt chuẩn:</span>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {(materialPassport?.certifications || ['GOTS Organic', 'OEKO-TEX Standard 100 Class I', 'Vietnam Heritage Craft']).map((c, i) => (
+                        <span key={i} style={{ fontSize: 10.5, padding: '3px 8px', background: '#f1f5f9', color: '#334155', borderRadius: 2, border: '1px solid #e2e8f0', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <CheckCircle2 size={11} color="#059669" /> {c}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Artisan Roster */}
+                <div style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '14px 16px', background: '#fff' }}>
+                  <div className="row between" style={{ marginBottom: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>
+                      <Scissors size={14} color="var(--gold-dark)" /> Đội Ngũ Nghệ Nhân Chế Tác Độc Bản
+                    </div>
+                    <span style={{ fontSize: 10.5, fontWeight: 700, background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: 2 }}>
+                      Tổng: {materialPassport?.totalCraftHours || 34} giờ may đo thủ công
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {(materialPassport?.artisans || [
+                      { role: 'Nghệ nhân rập & cắt vải chính', name: 'Đỗ Văn Thành', experienceYears: 24, handcraftHours: 14 },
+                      { role: 'Thợ may ráp mí cuộn thủ công', name: 'Nguyễn Thị Mai', experienceYears: 18, handcraftHours: 16 },
+                      { role: 'Kiểm định hoàn thiện & ủi hơi nước', name: 'Lê Hoàng Yến', experienceYears: 12, handcraftHours: 4 },
+                    ]).map((a, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: '#fbfbfa', border: '1px solid var(--line)', borderRadius: 2, fontSize: 11 }}>
+                        <div>
+                          <strong style={{ color: 'var(--ink)', display: 'block' }}>{a.name}</strong>
+                          <span style={{ color: 'var(--muted)', fontSize: 10 }}>{a.role} · {a.experienceYears} năm thâm niên</span>
+                        </div>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--gold-dark)', fontFamily: 'monospace' }}>
+                          {a.handcraftHours} giờ chế tác
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Section 3: Eco-Footprint */}
+                <div style={{ border: '1px solid var(--line)', borderRadius: 3, padding: '14px 16px', background: '#fff' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: 10 }}>
+                    <Leaf size={14} color="#059669" /> Dấu Ấn Sinh Thái Bền Vững & Lưu Truyền
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, fontSize: 11.5 }}>
+                    <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: 2, border: '1px solid #bbf7d0' }}>
+                      <span style={{ fontSize: 10, color: '#166534', display: 'block' }}>Giảm Phát Thải CO2</span>
+                      <strong style={{ color: '#14532d', fontSize: 13 }}>-{materialPassport?.ecoFootprint?.carbonSavedKg ?? 4.8} kg CO2e</strong>
+                      <span style={{ fontSize: 9.5, color: '#166534', display: 'block', marginTop: 2 }}>So với may công nghiệp</span>
+                    </div>
+                    <div style={{ background: '#eff6ff', padding: '8px 10px', borderRadius: 2, border: '1px solid #bfdbfe' }}>
+                      <span style={{ fontSize: 10, color: '#1e40af', display: 'block' }}>Tiết Kiệm Nước Ngọt</span>
+                      <strong style={{ color: '#1e3a8a', fontSize: 13 }}>{materialPassport?.ecoFootprint?.waterSavedLiters?.toLocaleString('vi-VN') ?? '1.850'} Lít</strong>
+                      <span style={{ fontSize: 9.5, color: '#1e40af', display: 'block', marginTop: 2 }}>Qua enzyme mộc tự nhiên</span>
+                    </div>
+                    <div style={{ background: '#fafaf9', padding: '8px 10px', borderRadius: 2, border: '1px solid #e7e5e4' }}>
+                      <span style={{ fontSize: 10, color: '#57534e', display: 'block' }}>Không Chứa Vi Nhựa</span>
+                      <strong style={{ color: '#292524', fontSize: 13 }}>100% Phân Hủy Sinh Học</strong>
+                      <span style={{ fontSize: 9.5, color: '#57534e', display: 'block', marginTop: 2 }}>An toàn với hệ sinh thái</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row between" style={{ marginTop: 4 }}>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setShowPassportModal(false)}
+                  >
+                    Đóng
+                  </button>
+                  <Link
+                    href={`/tai-khoan?tab=passports&code=${materialPassport?.certificateCode || `NX-DPP-${p?.id.slice(0, 8).toUpperCase()}-SHA256`}`}
+                    className="button"
+                    style={{ background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)', textDecoration: 'none' }}
+                  >
+                    Lưu Vào Hộ Chiếu VIP Của Bạn →
+                  </Link>
+                </div>
+              </div>
             )}
           </div>
         </div>

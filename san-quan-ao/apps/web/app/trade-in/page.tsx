@@ -1,20 +1,24 @@
 'use client';
 import { useEffect, useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers, Search, Eye, CheckCheck, QrCode, Cpu, ExternalLink, Copy, Key } from 'lucide-react';
+import { CheckCircle2, RefreshCw, RotateCcw, ShieldCheck, Calculator, Sparkles, Leaf, TrendingUp, Check, Truck, Clock, Package, MapPin, Recycle, Droplets, Award, FileText, Share2, Layers, Search, Eye, CheckCheck, QrCode, Cpu, ExternalLink, Copy, Key, ArrowRight, XCircle, AlertCircle } from 'lucide-react';
 import { api, TradeInRequest, useResource, vnd } from '../api';
 import { Loading, Notice, useUser } from '../ui';
 
-const STATUS_LABELS: Record<string, string> = {
-  AI_PRELIMINARY: 'Vòng 1: Đã định giá AI sơ bộ',
-  HUB_INSPECTING: 'Vòng 2: Đang giám định tại Hub',
-  APPROVED: 'Đã duyệt · Đã cấp Voucher',
-  REJECTED: 'Không đạt tiêu chuẩn thu mua',
+const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }> = {
+  AI_PRELIMINARY: { label: 'Vòng 1: Đã định giá AI sơ bộ', color: '#b45309', bg: '#fef3c7' },
+  HUB_INSPECTING: { label: 'Vòng 2: Đang giám định tại Hub 1000 Lux', color: '#0369a1', bg: '#e0f2fe' },
+  APPROVED: { label: 'Đã duyệt · Đã cấp Voucher', color: '#15803d', bg: '#dcfce7' },
+  REJECTED: { label: 'Không đạt tiêu chuẩn thu mua', color: '#b91c1c', bg: '#fee2e2' },
+  CANCELLED: { label: 'Đã hủy yêu cầu', color: '#64748b', bg: '#f1f5f9' },
 };
 
 export default function TradeInPage() {
   const { user } = useUser();
   const list = useResource<TradeInRequest[]>(user ? '/trade-in' : null);
+  const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null);
+  const selectedDetail = useResource<TradeInRequest>(user && selectedTradeId ? `/trade-in/${selectedTradeId}` : null);
+
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [success, setSuccess] = useState('');
   const [simCategory, setSimCategory] = useState<'SHIRT' | 'BLAZER' | 'DRESS' | 'BAG'>('SHIRT');
   const [simGrade, setSimGrade] = useState<'S' | 'A' | 'B' | 'C'>('A');
@@ -24,6 +28,7 @@ export default function TradeInPage() {
   const [pickupAddress, setPickupAddress] = useState('128 Hai Bà Trưng, Phường Bến Nghé, Quận 1, TP. HCM');
   const [lcaFabricType, setLcaFabricType] = useState<'LINEN' | 'SILK' | 'COTTON' | 'WOOL'>('LINEN');
   const [passportGenerated, setPassportGenerated] = useState(false);
+  const [passportCode, setPassportCode] = useState('');
   const [opticalScanTarget, setOpticalScanTarget] = useState<'ZIPPER' | 'WEAVE' | 'LABEL'>('WEAVE');
   const [isScanning, setIsScanning] = useState(false);
   const [scanComplete, setScanComplete] = useState(false);
@@ -35,6 +40,14 @@ export default function TradeInPage() {
   const [nftTokenId, setNftTokenId] = useState('');
   const [nftTxHash, setNftTxHash] = useState('');
   const [copiedHash, setCopiedHash] = useState(false);
+  const [copiedVoucher, setCopiedVoucher] = useState<string | null>(null);
+
+  // Auto-select first item if none selected
+  useEffect(() => {
+    if (list.data && list.data.length > 0 && !selectedTradeId) {
+      setSelectedTradeId(list.data[0].id);
+    }
+  }, [list.data, selectedTradeId]);
 
   useEffect(() => {
     try {
@@ -49,20 +62,33 @@ export default function TradeInPage() {
     } catch {}
   }, []);
 
-  function handleSchedulePickup(e: FormEvent) {
+  async function handleSchedulePickup(e: FormEvent) {
     e.preventDefault();
-    setPickupScheduled(true);
-    const pickupData = {
-      slot: pickupSlot,
-      securityBag,
-      address: pickupAddress,
-      time: new Date().toISOString(),
-    };
+    setBusy(true);
+    setError('');
+    const slotLabel = pickupSlot === 'MORNING' ? 'Buổi sáng (08:00 - 12:00)' : pickupSlot === 'AFTERNOON' ? 'Buổi chiều (13:30 - 17:30)' : 'Buổi tối (18:00 - 21:00)';
     try {
+      if (selectedTradeId) {
+        await api(`/trade-in/${selectedTradeId}/pickup`, 'POST', {
+          slot: pickupSlot,
+          address: pickupAddress,
+          securityBag,
+        });
+        list.reload();
+        selectedDetail.reload();
+      }
+
+      setPickupScheduled(true);
+      const pickupData = {
+        slot: pickupSlot,
+        securityBag,
+        address: pickupAddress,
+        time: new Date().toISOString(),
+      };
       localStorage.setItem('nexora_tradein_pickup', JSON.stringify(pickupData));
+
       if (user) {
-        const slotLabel = pickupSlot === 'MORNING' ? 'Buổi sáng (09:00 - 12:00)' : pickupSlot === 'AFTERNOON' ? 'Buổi chiều (14:00 - 17:00)' : 'Buổi tối (18:00 - 20:00)';
-        api('/vault/booking', 'POST', {
+        await api('/vault/booking', 'POST', {
           id: `PICKUP-${Date.now().toString().slice(-6)}`,
           flagship: 'Bưu tá VinFast Green thu gom tận nơi',
           service: 'Thu cũ đổi mới Trade-In (Túi niêm phong 1 chiều)',
@@ -71,9 +97,32 @@ export default function TradeInPage() {
           vipPass: `TRADEIN-PICKUP-${Math.floor(1000 + Math.random() * 9000)}`,
         }).catch(() => {});
       }
-    } catch {}
-    setSuccess('✓ Đã đặt lịch bưu tá VinFast Green đến nhận đồ cũ niêm phong tận nhà thành công!');
+      setSuccess('✓ Đã đặt lịch bưu tá VinFast Green đến nhận đồ cũ niêm phong tận nhà thành công!');
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
   }
+
+  const [cancelConfirmId, setCancelConfirmId] = useState<string | null>(null);
+
+  async function handleCancelTrade(id: string) {
+    setBusy(true);
+    setError('');
+    setCancelConfirmId(null);
+    try {
+      await api(`/trade-in/${id}/cancel`, 'POST', { reason: 'Khách hàng hủy theo nhu cầu' });
+      setSuccess('Đã hủy yêu cầu Thu cũ Đổi mới thành công.');
+      list.reload();
+      selectedDetail.reload();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const [formFields, setFormFields] = useState({
     brand: '',
     itemName: '',
@@ -98,6 +147,7 @@ export default function TradeInPage() {
       });
       form.reset();
       setSuccess(`Đã tiếp nhận! Định giá AI sơ bộ: Grade ${created.grade} — ${vnd(created.estimatedValue)}.`);
+      setSelectedTradeId(created.id);
       list.reload();
     } catch (err) {
       setError((err as Error).message);
@@ -105,6 +155,8 @@ export default function TradeInPage() {
       setBusy(false);
     }
   }
+
+  const activeItem = selectedDetail.data || list.data?.find((i) => i.id === selectedTradeId);
 
   return (
     <section className="section narrow">
@@ -129,8 +181,8 @@ export default function TradeInPage() {
               BAG: { name: 'Túi Da Thuộc Thảo Mộc / Phụ Kiện', basePrice: 2200000, category: 'Túi xách', defaultBrand: 'NÉP Studio' },
             };
             const gradeRatios = { S: 0.5, A: 0.4, B: 0.3, C: 0.2 };
-            const activeItem = simData[simCategory];
-            const estimatedValue = Math.round(activeItem.basePrice * gradeRatios[simGrade]);
+            const simItem = simData[simCategory];
+            const estimatedValue = Math.round(simItem.basePrice * gradeRatios[simGrade]);
 
             return (
               <div
@@ -253,9 +305,9 @@ export default function TradeInPage() {
                       style={{ fontSize: 11, padding: '6px 10px', marginTop: 10, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                       onClick={() => {
                         setFormFields({
-                          brand: activeItem.defaultBrand,
-                          itemName: activeItem.name,
-                          category: activeItem.category,
+                          brand: simItem.defaultBrand,
+                          itemName: simItem.name,
+                          category: simItem.category,
                           conditionNote: `Tình trạng Grade ${simGrade} (Ước tính voucher: ${vnd(estimatedValue)}). Đã kiểm tra không sờn rách vải.`,
                         });
                       }}
@@ -291,32 +343,336 @@ export default function TradeInPage() {
 
             <div>
               <article className="panel">
-                <h2>Hồ sơ Trade-In của bạn</h2>
+                <div className="row between" style={{ marginBottom: 12 }}>
+                  <h2 style={{ margin: 0 }}>Hồ sơ Trade-In của bạn</h2>
+                  {list.data && list.data.length > 0 && (
+                    <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+                      {list.data.length} hồ sơ
+                    </span>
+                  )}
+                </div>
+
                 {list.loading ? <Loading /> : !list.data?.length ? (
                   <p className="subtle">Bạn chưa có yêu cầu thu cũ đổi mới nào.</p>
-                ) : list.data.map(item => (
-                  <div key={item.id} style={{ padding: '14px 0', borderBottom: '1px solid var(--line)' }}>
-                    <div className="row between">
-                      <strong>{item.brand} · {item.itemName}</strong>
-                      <span className="badge">Grade {item.grade}</span>
-                    </div>
-                    <p style={{ margin: '6px 0', fontSize: 12, color: 'var(--muted)' }}>
-                      {STATUS_LABELS[item.status] ?? item.status}
-                    </p>
-                    <p style={{ margin: 0, fontSize: 13 }}>
-                      Ước tính Vòng 1: <strong>{vnd(item.estimatedValue)}</strong>
-                      {item.finalValue !== null && <> · Chốt Vòng 2: <strong>{vnd(item.finalValue)}</strong></>}
-                    </p>
-                    {item.voucherCode && (
-                      <p style={{ margin: '8px 0 0', padding: '6px 10px', background: 'var(--sage)', fontSize: 12 }}>
-                        Voucher đối ứng: <strong>{item.voucherCode}</strong>
-                      </p>
-                    )}
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {list.data.map(item => {
+                      const isSelected = selectedTradeId === item.id;
+                      const statusInfo = STATUS_LABELS[item.status] || { label: item.status, color: '#334155', bg: '#f1f5f9' };
+
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => setSelectedTradeId(item.id)}
+                          style={{
+                            padding: '12px 14px',
+                            borderRadius: 6,
+                            border: isSelected ? '1.5px solid var(--clay)' : '1px solid var(--line)',
+                            background: isSelected ? '#fbf8f4' : '#fff',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <div className="row between" style={{ marginBottom: 4 }}>
+                            <strong>{item.brand} · {item.itemName}</strong>
+                            <span className="badge" style={{ fontSize: 10 }}>Grade {item.grade}</span>
+                          </div>
+
+                          <div className="row between" style={{ margin: '4px 0', alignItems: 'center' }}>
+                            <span
+                              style={{
+                                fontSize: 10,
+                                background: statusInfo.bg,
+                                color: statusInfo.color,
+                                padding: '2px 8px',
+                                borderRadius: 3,
+                                fontWeight: 700,
+                              }}
+                            >
+                              {statusInfo.label}
+                            </span>
+                            <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+                              {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                            </span>
+                          </div>
+
+                          <p style={{ margin: '6px 0 0', fontSize: 12 }}>
+                            Ước tính Vòng 1: <strong>{vnd(item.estimatedValue)}</strong>
+                            {item.finalValue !== null && <> · Chốt Vòng 2: <strong style={{ color: '#15803d' }}>{vnd(item.finalValue)}</strong></>}
+                          </p>
+
+                          {/* Voucher Code Box */}
+                          {item.voucherCode && (
+                            <div
+                              style={{
+                                margin: '8px 0 4px',
+                                padding: '8px 10px',
+                                background: '#ecfdf5',
+                                border: '1px solid #a7f3d0',
+                                borderRadius: 4,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: 6,
+                              }}
+                            >
+                              <div>
+                                <span style={{ fontSize: 10, color: '#047857', display: 'block', textTransform: 'uppercase', fontWeight: 700 }}>
+                                  Voucher đối ứng (Giảm {vnd(item.finalValue || item.estimatedValue)}):
+                                </span>
+                                <strong style={{ fontSize: 13, color: '#065f46', fontFamily: 'monospace' }}>
+                                  {item.voucherCode}
+                                </strong>
+                              </div>
+                              <div style={{ display: 'flex', gap: 6 }}>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigator.clipboard.writeText(item.voucherCode!);
+                                    setCopiedVoucher(item.voucherCode!);
+                                    setTimeout(() => setCopiedVoucher(null), 2000);
+                                  }}
+                                  style={{
+                                    fontSize: 10,
+                                    padding: '4px 8px',
+                                    background: '#059669',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: 3,
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                  }}
+                                >
+                                  <Copy size={11} />
+                                  {copiedVoucher === item.voucherCode ? 'Đã chép!' : 'Sao chép'}
+                                </button>
+                                <Link
+                                  href={`/tim-kiem?voucher=${item.voucherCode}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  style={{
+                                    fontSize: 10,
+                                    padding: '4px 8px',
+                                    background: '#fff',
+                                    color: '#059669',
+                                    border: '1px solid #059669',
+                                    borderRadius: 3,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    textDecoration: 'none',
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Dùng ngay <ArrowRight size={11} />
+                                </Link>
+                              </div>
+                            </div>
+                          )}
+
+                          {item.redeemedOrderId && (
+                            <div style={{ fontSize: 10, color: '#047857', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <CheckCircle2 size={12} /> Đã áp dụng cho đơn hàng #{item.redeemedOrderId.slice(-8)}
+                            </div>
+                          )}
+
+                          {/* Action Bar for Preliminary Item */}
+                          {['AI_PRELIMINARY', 'HUB_INSPECTING'].includes(item.status) && (
+                            <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
+                              {cancelConfirmId === item.id ? (
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11 }}>
+                                  <span style={{ color: '#64748b' }}>Xác nhận hủy yêu cầu?</span>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleCancelTrade(item.id);
+                                    }}
+                                    style={{
+                                      fontSize: 11,
+                                      color: '#dc2626',
+                                      background: 'rgba(239, 68, 68, 0.1)',
+                                      border: '1px solid #f87171',
+                                      borderRadius: 3,
+                                      padding: '2px 8px',
+                                      cursor: 'pointer',
+                                    }}
+                                  >
+                                    Đồng ý hủy
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setCancelConfirmId(null);
+                                    }}
+                                    style={{
+                                      fontSize: 11,
+                                      color: '#64748b',
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      padding: '2px 6px',
+                                    }}
+                                  >
+                                    Bỏ qua
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCancelConfirmId(item.id);
+                                  }}
+                                  style={{
+                                    fontSize: 10,
+                                    color: '#dc2626',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 4,
+                                    padding: 0,
+                                  }}
+                                >
+                                  <XCircle size={12} /> Hủy yêu cầu này
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                )}
               </article>
             </div>
           </div>
+
+          {/* Chi Tiết Tiến Trình Giám Định & Vòng Đời Tuần Hoàn Cho Hồ Sơ Đang Chọn */}
+          {activeItem && (
+            <div
+              style={{
+                marginTop: 24,
+                padding: '20px 24px',
+                background: '#fcfbf7',
+                border: '1px solid var(--clay)',
+                borderRadius: 8,
+              }}
+            >
+              <div className="row between" style={{ flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Layers size={18} color="var(--gold-dark)" />
+                  <div>
+                    <strong style={{ fontSize: 14, color: 'var(--ink)' }}>
+                      Tiến Trình Giám Định 4 Chặng · {activeItem.brand} - {activeItem.itemName}
+                    </strong>
+                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                      Mã hồ sơ: #{activeItem.id.slice(-8).toUpperCase()} · Cập nhật thời gian thực
+                    </div>
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: 10,
+                    background: STATUS_LABELS[activeItem.status]?.bg || '#f1f5f9',
+                    color: STATUS_LABELS[activeItem.status]?.color || '#334155',
+                    padding: '3px 10px',
+                    borderRadius: 4,
+                    fontWeight: 700,
+                  }}
+                >
+                  {STATUS_LABELS[activeItem.status]?.label || activeItem.status}
+                </span>
+              </div>
+
+              {/* 4 Chặng Trực Quan */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 10 }}>
+                {[
+                  {
+                    step: 1,
+                    title: 'Định Giá AI Vision Sơ Bộ',
+                    status: 'HOÀN TẤT',
+                    desc: `Grade ${activeItem.grade} · Dự kiến: ${vnd(activeItem.estimatedValue)}`,
+                    isDone: true,
+                  },
+                  {
+                    step: 2,
+                    title: 'Thu Gom White-Glove Tận Nhà',
+                    status: ['HUB_INSPECTING', 'APPROVED'].includes(activeItem.status)
+                      ? 'HOÀN TẤT / TẠI HUB'
+                      : activeItem.status === 'CANCELLED'
+                      ? 'ĐÃ HỦY'
+                      : 'CHỜ BƯU TÁ LẤY ĐỒ',
+                    desc: 'Bưu tá VinFast Green giao túi niêm phong 1 chiều Tamper-Evident.',
+                    isDone: ['HUB_INSPECTING', 'APPROVED'].includes(activeItem.status),
+                  },
+                  {
+                    step: 3,
+                    title: 'Giám Định Quang Học 50x',
+                    status: activeItem.status === 'APPROVED'
+                      ? 'CHÍNH HÃNG 100%'
+                      : activeItem.status === 'HUB_INSPECTING'
+                      ? 'ĐANG SOI QUANG HỌC'
+                      : activeItem.status === 'CANCELLED'
+                      ? 'ĐÃ HỦY'
+                      : 'CHỜ TIẾP NHẬN',
+                    desc: 'Soi mật độ sợi dệt vi điểm, viền chỉ may và rãnh khắc CNC phụ kiện kim loại.',
+                    isDone: activeItem.status === 'APPROVED',
+                  },
+                  {
+                    step: 4,
+                    title: 'Cấp Voucher & Hộ Chiếu Số',
+                    status: activeItem.status === 'APPROVED'
+                      ? `ĐÃ CẤP (${vnd(activeItem.finalValue || activeItem.estimatedValue)})`
+                      : activeItem.status === 'CANCELLED'
+                      ? 'ĐÃ HỦY'
+                      : 'CHỜ DUYỆT CHỐT',
+                    desc: activeItem.voucherCode ? `Mã: ${activeItem.voucherCode}` : 'Voucher đối ứng trừ trực tiếp giỏ hàng.',
+                    isDone: activeItem.status === 'APPROVED',
+                  },
+                ].map((s) => (
+                  <div
+                    key={s.step}
+                    style={{
+                      padding: '12px 14px',
+                      background: '#fff',
+                      borderRadius: 6,
+                      border: s.isDone ? '1px solid #86efac' : '1px solid #e2e8f0',
+                      borderLeft: s.isDone ? '3px solid #16a34a' : '3px solid #94a3b8',
+                    }}
+                  >
+                    <div className="row between" style={{ marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>
+                        Chặng {s.step}: {s.title}
+                      </span>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: 9,
+                        background: s.isDone ? '#dcfce7' : '#f1f5f9',
+                        color: s.isDone ? '#15803d' : '#64748b',
+                        padding: '1px 6px',
+                        borderRadius: 2,
+                        fontWeight: 700,
+                        display: 'inline-block',
+                        marginBottom: 4,
+                      }}
+                    >
+                      {s.status}
+                    </span>
+                    <p style={{ margin: 0, fontSize: 10, color: '#64748b', lineHeight: 1.4 }}>
+                      {s.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Hẹn Giờ Bưu Tá Thu Gom Đồ Cũ Tận Nhà & Cấp Túi Niêm Phong */}
           <div
@@ -350,12 +706,13 @@ export default function TradeInPage() {
                 <div className="row between" style={{ flexWrap: 'wrap', gap: 10 }}>
                   <div>
                     <strong style={{ fontSize: 13, color: '#166534', display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <CheckCircle2 size={16} /> Đã Xếp Lịch Thu Gom #NX-PICKUP-889
+                      <CheckCircle2 size={16} /> Đã Xếp Lịch Thu Gom Tận Nhà #NX-PICKUP-889
                     </strong>
                     <p style={{ margin: '4px 0 0', fontSize: 12, color: '#334155', lineHeight: 1.5 }}>
                       • Khung giờ hẹn: <strong>{pickupSlot === 'MORNING' ? 'Buổi sáng (08:00 - 12:00)' : pickupSlot === 'AFTERNOON' ? 'Buổi chiều (13:30 - 17:30)' : 'Buổi tối (18:00 - 21:00)'}</strong><br />
                       • Địa chỉ: {pickupAddress}<br />
                       • Dịch vụ kèm theo: {securityBag ? 'Bưu tá mang sẵn Túi Niêm Phong Quang Học Tamper-Evident & Tem Bảo Mật' : 'Khách hàng tự đóng gói trước'}
+                      {activeItem && <> (Áp dụng cho hồ sơ: {activeItem.brand} - {activeItem.itemName})</>}
                     </p>
                   </div>
                   <button
@@ -416,10 +773,11 @@ export default function TradeInPage() {
                 <div style={{ marginTop: 14 }}>
                   <button
                     type="submit"
+                    disabled={busy}
                     className="button"
                     style={{ fontSize: 12, padding: '6px 18px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
                   >
-                    <Clock size={14} /> Xác Nhận Lịch Hẹn Thu Gom Tận Nhà
+                    <Clock size={14} /> {busy ? 'Đang xác nhận lịch hẹn…' : 'Xác Nhận Lịch Hẹn Thu Gom Tận Nhà'}
                   </button>
                 </div>
               </form>
@@ -561,7 +919,7 @@ export default function TradeInPage() {
           <div style={{ padding: '12px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 6, fontSize: 12 }}>
             <div className="row between" style={{ marginBottom: 4 }}>
               <span style={{ color: '#065f46', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                <Award size={15} /> Đã Cấp Hộ Chiếu Vòng Đời Tuần Hoàn Số: #PASSPORT-LCA-{Date.now().toString().slice(-6)}
+                <Award size={15} /> Đã Cấp Hộ Chiếu Vòng Đời Tuần Hoàn Số: #{passportCode || `PASSPORT-LCA-${Date.now().toString().slice(-6)}`}
               </span>
               <span style={{ fontSize: 10, background: '#059669', color: '#fff', padding: '2px 6px', borderRadius: 2, fontWeight: 700 }}>
                 VERIFIED BY NEXORA ESG
@@ -574,17 +932,32 @@ export default function TradeInPage() {
         ) : (
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
+              const code = `PASSPORT-LCA-${Date.now().toString().slice(-6)}`;
+              setPassportCode(code);
               const passportData = {
                 fabric: lcaFabricType,
-                code: `PASSPORT-LCA-${Date.now().toString().slice(-6)}`,
+                code,
                 time: new Date().toISOString(),
               };
               try {
                 localStorage.setItem('nexora_circular_passport', JSON.stringify(passportData));
               } catch {}
+
+              if (selectedTradeId) {
+                await api(`/trade-in/${selectedTradeId}/passport`, 'POST', {
+                  fabricType: lcaFabricType,
+                  passportCode: code,
+                  waterSaved: '2.700 lít',
+                  co2Reduced: '3.2 kg CO2e',
+                  chemicalSaved: '0.85 kg',
+                }).catch(() => {});
+                selectedDetail.reload();
+              }
+
               void api('/vault/circular-passport', 'POST', passportData).catch(() => {});
               setPassportGenerated(true);
+              setSuccess('✓ Đã xuất và lưu trữ Hộ Chiếu Vòng Đời Tuần Hoàn thành công!');
             }}
             style={{
               width: '100%',
@@ -640,9 +1013,9 @@ export default function TradeInPage() {
         {/* Target Points Selector */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 18, flexWrap: 'wrap' }}>
           {[
-            { id: 'WEAVE' as const, label: '🔬 1. Cấu Trúc Sợi Dệt & Vết Chỉ (ISO 4915)', desc: 'Mật độ 22 sợi/cm, đường vắt sổ đôi song song 1.2mm' },
-            { id: 'ZIPPER' as const, label: '⚙️ 2. Khóa Kéo & Kim Loại Khắc CNC', desc: 'Rãnh khắc sâu 0.15mm chuẩn YKK Excella / Lampo mạ PVD' },
-            { id: 'LABEL' as const, label: '🏷️ 3. Tem Lụa & Sợi Huỳnh Quang UV', desc: 'Chữ vi tính Micro-print 0.3mm & sợi bảo an quang học 3D' },
+            { id: 'WEAVE' as const, label: '1. Cấu trúc sợi dệt & mũi chỉ (ISO 4915)', desc: 'Mật độ 22 sợi/cm, đường vắt sổ đôi song song 1.2mm' },
+            { id: 'ZIPPER' as const, label: '2. Khóa kéo & chi tiết khắc CNC', desc: 'Rãnh khắc sâu 0.15mm chuẩn YKK Excella / Lampo mạ PVD' },
+            { id: 'LABEL' as const, label: '3. Tem lụa & chỉ bảo an quang học', desc: 'Chữ vi tính Micro-print 0.3mm & sợi bảo an quang học 3D' },
           ].map((t) => (
             <button
               key={t.id}
@@ -784,7 +1157,7 @@ export default function TradeInPage() {
               disabled={isScanning}
               onClick={() => {
                 setIsScanning(true);
-                setTimeout(() => {
+                setTimeout(async () => {
                   const generatedCode = `#AUTH-NEXORA-${Date.now().toString().slice(-6)}`;
                   setAuthCode(generatedCode);
                   setScanComplete(true);
@@ -796,6 +1169,17 @@ export default function TradeInPage() {
                       time: new Date().toISOString(),
                     }));
                   } catch {}
+
+                  if (selectedTradeId) {
+                    await api(`/trade-in/${selectedTradeId}/optical-auth`, 'POST', {
+                      target: opticalScanTarget,
+                      code: generatedCode,
+                      matchScore: 99.4,
+                      requestedHologramSeal: sealTagRequested,
+                    }).catch(() => {});
+                    selectedDetail.reload();
+                  }
+
                   setSuccess('✓ Đã hoàn tất thẩm định quang học vi điểm 50x: Xác nhận 99.4% Chính hãng!');
                 }, 1200);
               }}
@@ -1070,7 +1454,7 @@ export default function TradeInPage() {
               disabled={isMintingNft}
               onClick={() => {
                 setIsMintingNft(true);
-                setTimeout(() => {
+                setTimeout(async () => {
                   const tokenId = `#NEX-NFT-AUTH-${Date.now().toString().slice(-5)}`;
                   const txHash = `0x${Array.from({ length: 48 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`;
                   setNftTokenId(tokenId);
@@ -1084,6 +1468,15 @@ export default function TradeInPage() {
                       mintDate: new Date().toISOString(),
                     }));
                   } catch {}
+
+                  if (selectedTradeId) {
+                    await api(`/trade-in/${selectedTradeId}/nft-mint`, 'POST', {
+                      tokenId,
+                      txHash,
+                    }).catch(() => {});
+                    selectedDetail.reload();
+                  }
+
                   setSuccess(`✓ Đúc thành công Hộ Chiếu Sở Hữu Số NFT ${tokenId} trên Nexora Eco-Chain! Cộng +200 Điểm Xanh.`);
                 }, 1400);
               }}

@@ -13,16 +13,16 @@ export default function Home() {
   return <>
     <section className="hero">
       <div className="hero-copy">
-        <div className="eyebrow"><span/> NEXORA ATELIER // SS 2026 RUNWAY &amp; EDITORIAL ARCHIVE</div>
+        <div className="eyebrow"><span/> NEXORA Atelier · Tuyển tập Runway &amp; Editorial Archive</div>
         <h1 style={{ textWrap: 'balance', letterSpacing: '-0.02em', fontSize: 'clamp(28px, 3.2vw, 44px)', fontWeight: 700, lineHeight: 1.25 }}>
-          Nghệ Thuật May Đo.<br/>
-          <span style={{ color: 'var(--gold-dark)' }}>Bản Sắc Đương Đại.</span>
+          Nghệ thuật may đo.<br/>
+          <span style={{ color: 'var(--gold-dark)' }}>Bản sắc đương đại.</span>
         </h1>
         <p>Tuyển tập thiết kế may đo cao cấp từ các nhà mốt độc lập. Chuẩn mực trong từng phom dáng, nguyên bản trong từng thớ sợi tự nhiên.</p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          <a className="button" href="#trang-phuc">Khám Phá Bộ Sưu Tập <ArrowUpRight size={18}/></a>
+          <a className="button" href="#trang-phuc">Khám phá bộ sưu tập <ArrowUpRight size={18}/></a>
           <Link className="button subtle" href="/phoi-do" style={{ background: '#FFFFFF', border: '1px solid var(--line)', color: 'var(--ink)' }}>
-            <Sparkles size={16} /> Studio Phối Đồ AI
+            <Sparkles size={16} /> Studio phối đồ
           </Link>
         </div>
         <div className="hero-proof">
@@ -37,23 +37,23 @@ export default function Home() {
           alt="NEXORA Runway &amp; Editorial Archive"
         />
         <div className="editor-note">
-          <span>EDITORIAL SELECTION // 01</span>
+          <span>EDITORIAL SELECTION · 01</span>
           <strong>Normandy Linen &amp; Sartorial Cut</strong>
           <Link href="/phoi-do">Mở Studio Mix &amp; Match <ArrowUpRight size={16}/></Link>
         </div>
-        <div className="vertical-note">LESS EFFORT. MORE YOU.</div>
+        <div className="vertical-note">Less effort. More you.</div>
       </div>
     </section>
     <div className="values-strip">
-      <span>100% NGUYÊN BẢN CHÍNH HÃNG</span>
-      <i>●</i>
-      <span>ĐỒNG KIỂM TRƯỚC KHI NHẬN HÀNG</span>
-      <i>●</i>
-      <span>PHÒNG THỬ ĐỒ MIX &amp; MATCH AI</span>
-      <i>●</i>
-      <span>ATELIER SPA &amp; CHĂM SÓC ĐỒ HIỆU</span>
-      <i>●</i>
-      <span>THU CŨ ĐỔI MỚI TRADE-IN MINH BẠCH</span>
+      <span>100% Nguyên bản chính hãng</span>
+      <i>·</i>
+      <span>Đồng kiểm ngoại quan khi nhận</span>
+      <i>·</i>
+      <span>Studio phối đồ &amp; gợi ý phom dáng</span>
+      <i>·</i>
+      <span>Dịch vụ Atelier bảo dưỡng trang phục</span>
+      <i>·</i>
+      <span>Chương trình Trade-in tuần hoàn minh bạch</span>
     </div>
 
     {/* Editorial Stories & Atelier Chapters */}

@@ -16,6 +16,36 @@ export default function AccountPage() {
   const careList = useResource<CareBooking[]>(user ? '/vas-care' : null);
   const affiliate = useResource<AffiliateSummary>(user ? '/affiliate/summary' : null);
   const wishlist = useResource<Product[]>(user ? '/wishlist' : null);
+  const fittings = useResource<any[]>(user ? '/concierge/fittings' : null);
+  const swatchOrders = useResource<any[]>(user ? '/swatch-orders' : null);
+  const materialPassports = useResource<{ ok: boolean; passports: any[] }>(user ? '/vault/material-passports' : null);
+  const savedCapsules = useResource<any[]>(user ? '/vault/capsules' : null);
+  const heritageFabrics = useResource<{ ok: boolean; fabrics: any[] }>('/fabrics');
+  const myFabricReserves = useResource<any[]>(user ? '/vault/fabric-reserves' : null);
+  const [reservingFabric, setReservingFabric] = useState<any>(null);
+  const [reserveMeters, setReserveMeters] = useState<number>(2.5);
+  const [reservePurpose, setReservePurpose] = useState<string>('May Đo Áo Blazer Bespoke');
+  const [reserveRecipient, setReserveRecipient] = useState<string>('');
+  const [reservePhone, setReservePhone] = useState<string>('');
+  const [reserveNotes, setReserveNotes] = useState<string>('');
+  const [reserveBusy, setReserveBusy] = useState<boolean>(false);
+  const [reserveSuccessCert, setReserveSuccessCert] = useState<string | null>(null);
+  const [reserveNotice, setReserveNotice] = useState<string | null>(null);
+  const [copiedFabricCert, setCopiedFabricCert] = useState<string | null>(null);
+  const [commissionFabricReserve, setCommissionFabricReserve] = useState<any>(null);
+  const [commissionProductName, setCommissionProductName] = useState('');
+  const [commissionShopId, setCommissionShopId] = useState('shop-nep');
+  const [commissionShopName, setCommissionShopName] = useState('NÉP Studio');
+  const [commissionMonogram, setCommissionMonogram] = useState('');
+  const [commissionLining, setCommissionLining] = useState('Lụa Habotai tự nhiên cùng tông màu');
+  const [commissionNotes, setCommissionNotes] = useState('');
+  const [commissionBusy, setCommissionBusy] = useState(false);
+  const [copiedDppCode, setCopiedDppCode] = useState<string | null>(null);
+  const [capsuleNotice, setCapsuleNotice] = useState<string | null>(null);
+  const [verifyCertCode, setVerifyCertCode] = useState('');
+  const [verifyResult, setVerifyResult] = useState<any>(null);
+  const [verifyBusy, setVerifyBusy] = useState(false);
+  const [verifyError, setVerifyError] = useState('');
   const [adding, setAdding] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -127,6 +157,19 @@ export default function AccountPage() {
   const [activeBespokeStep, setActiveBespokeStep] = useState(3);
   const [liveCameraFeedOpen, setLiveCameraFeedOpen] = useState(false);
   const [homeFittingRequested, setHomeFittingRequested] = useState(false);
+  const [copiedSwatchVoucher, setCopiedSwatchVoucher] = useState<string | null>(null);
+  const [homeFittingModalOpen, setHomeFittingModalOpen] = useState(false);
+  const [fittingTargetOrder, setFittingTargetOrder] = useState<any>(null);
+  const [fittingDate, setFittingDate] = useState('26/11/2026');
+  const [fittingTimeSlot, setFittingTimeSlot] = useState<'MORNING_09_11' | 'AFTERNOON_14_16' | 'EVENING_18_20'>('AFTERNOON_14_16');
+  const [fittingAddress, setFittingAddress] = useState('Quận 1, TP. Hồ Chí Minh');
+  const [fittingPhone, setFittingPhone] = useState('0901234567');
+  const [fittingRecipient, setFittingRecipient] = useState('');
+  const [fittingSuitcase, setFittingSuitcase] = useState(true);
+  const [fittingNotes, setFittingNotes] = useState('');
+  const [toileReviewModal, setToileReviewModal] = useState<any>(null);
+  const [toileClientNote, setToileClientNote] = useState<string>('Vải mộc lên phom chuẩn, đồng ý cho hạ kéo cắt vải chính.');
+  const [toileClientDecisionNotice, setToileClientDecisionNotice] = useState<string>('');
 
   // Creator Affiliate Income Statement & Automated PIT Withholding Compliance
   const [taxReportDownloaded, setTaxReportDownloaded] = useState(false);
@@ -374,6 +417,20 @@ export default function AccountPage() {
                   </div>
                 </div>
 
+                {/* Heritage Fabric Provenance Banner */}
+                {(bo as any).isHeritageFabric && (
+                  <div style={{ margin: '0 0 10px', padding: '8px 12px', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 4, fontSize: 11, color: '#92400e' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                      <span>
+                        Canh vải di sản: <strong>{(bo as any).fabricName}</strong> (Chứng thư: <code style={{ fontFamily: 'monospace' }}>{(bo as any).fabricCertificate || (bo as any).fabricBoltCode}</code>)
+                      </span>
+                      <span style={{ fontWeight: 600, color: '#166534' }}>
+                        Đã khấu trừ cọc vải 30%: {vnd((bo as any).depositCredited || 0)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Escrow and Detail Tag Bar */}
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', margin: '8px 0 14px', padding: '8px 12px', background: '#fafaf9', borderRadius: 4, fontSize: 11 }}>
                   <span>Monogram ve áo: <strong style={{ color: 'var(--gold-dark)', fontFamily: 'var(--font-sans)', letterSpacing: 1.2 }}>{bo.monogram}</strong></span>
@@ -427,6 +484,43 @@ export default function AccountPage() {
                   </div>
                 </div>
 
+                {/* Toile Muslin Co-Creation Badge & Action */}
+                <div style={{ marginTop: 12, padding: '10px 14px', background: (bo as any).toileMilestone?.status === 'CLIENT_APPROVED' ? '#f0fdf4' : (bo as any).toileMilestone?.status === 'REVISION_REQUESTED' ? '#fef2f2' : '#fdf8f0', border: `1px solid ${(bo as any).toileMilestone?.status === 'CLIENT_APPROVED' ? '#86efac' : (bo as any).toileMilestone?.status === 'REVISION_REQUESTED' ? '#fca5a5' : '#fed7aa'}`, borderRadius: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ fontSize: 11 }}>
+                    <div style={{ fontWeight: 700, color: (bo as any).toileMilestone?.status === 'CLIENT_APPROVED' ? '#166534' : (bo as any).toileMilestone?.status === 'REVISION_REQUESTED' ? '#991b1b' : '#92400e', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Scissors size={14} />
+                      {(bo as any).toileMilestone?.status === 'CLIENT_APPROVED'
+                        ? 'Mẫu Vải Mộc (Toile Muslin): Đã duyệt cắt vải chính'
+                        : (bo as any).toileMilestone?.status === 'REVISION_REQUESTED'
+                        ? 'Mẫu Vải Mộc (Toile Muslin): Đang tinh chỉnh rập theo phản hồi'
+                        : 'Mẫu Vải Mộc (Toile Muslin): Cần bạn thẩm định & duyệt hạ kéo'}
+                    </div>
+                    <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>
+                      Thử form 3 góc độ (Mặt trước, Góc nghiêng 45°, Lưng) trước khi xưởng hạ kéo cắt thước vải thật.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    style={{
+                      fontSize: 11,
+                      padding: '5px 12px',
+                      borderColor: (bo as any).toileMilestone?.status === 'CLIENT_APPROVED' ? '#16a34a' : 'var(--gold-dark)',
+                      color: (bo as any).toileMilestone?.status === 'CLIENT_APPROVED' ? '#16a34a' : 'var(--gold-dark)',
+                    }}
+                    onClick={() => {
+                      setToileReviewModal(bo);
+                      if ((bo as any).toileMilestone?.clientNote) {
+                        setToileClientNote((bo as any).toileMilestone.clientNote);
+                      } else {
+                        setToileClientNote('Vải mộc lên phom chuẩn, đường may phẳng mịn. Đồng ý cho hạ kéo cắt vải chính.');
+                      }
+                    }}
+                  >
+                    {(bo as any).toileMilestone?.status === 'CLIENT_APPROVED' ? 'Xem Lại Hồ Sơ Mộc →' : 'Phòng Duyệt Mẫu Vải Mộc →'}
+                  </button>
+                </div>
+
                 {/* Escrow Guarantee & Home Fitting Appointment */}
                 <div className="row between" style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid #f1f5f9', flexWrap: 'wrap', gap: 10, fontSize: 11 }}>
                   <span style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -436,12 +530,15 @@ export default function AccountPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setHomeFittingRequested(true);
-                      setTimeout(() => setHomeFittingRequested(false), 3000);
+                      setFittingTargetOrder(bo);
+                      setFittingRecipient(user?.name || '');
+                      setFittingPhone(addresses.data?.[0]?.phone || '0901234567');
+                      setFittingAddress(addresses.data?.[0] ? `${addresses.data[0].line}, ${addresses.data[0].province}` : 'Quận 1, TP. Hồ Chí Minh');
+                      setHomeFittingModalOpen(true);
                     }}
                     style={{
-                      padding: '5px 12px',
-                      background: homeFittingRequested ? '#166534' : '#78350f',
+                      padding: '6px 14px',
+                      background: 'var(--ink)',
                       color: '#fff',
                       border: 'none',
                       borderRadius: 3,
@@ -450,17 +547,1150 @@ export default function AccountPage() {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 4,
+                      gap: 5,
                     }}
                   >
-                    <UserCheck size={12} />
-                    {homeFittingRequested ? '✓ Đã Ghi Nhận Lịch Hẹn Thử' : 'Đặt Lịch Thử Đồ Tại Nhà (Home Fitting)'}
+                    <UserCheck size={13} />
+                    Đặt Lịch Thử Đồ Tại Nhà (Home Fitting)
                   </button>
                 </div>
               </div>
             ))}
           </div>
         </article>
+      )}
+
+      {/* Lịch Hẹn Thử Đồ Tại Nhà VIP (Home-Fitting Concierge Ledger) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <UserCheck size={18} color="var(--gold-dark)" /> Lịch Hẹn Thử Đồ Tại Nhà VIP (Home-Fitting Concierge)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Theo dõi hành trình chuyên viên styling mang trang phục cùng vali 40+ mẫu vải đến phục vụ riêng tại tư gia.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#FAF8F5', color: 'var(--gold-dark)', border: '1px solid var(--line)', padding: '3px 8px', borderRadius: 2, fontWeight: 600 }}>
+            Valet Stylist Service
+          </span>
+        </div>
+
+        {fittings.loading ? (
+          <Loading />
+        ) : !fittings.data?.length ? (
+          <div style={{ textAlign: 'center', padding: '24px 16px', background: '#FAF8F5', border: '1px dashed var(--line)', borderRadius: 3 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>
+              Bạn chưa có lịch hẹn thử đồ tại nhà nào đang diễn ra.
+            </p>
+            <p style={{ margin: '6px 0 0', fontSize: 11, color: 'var(--gold-dark)' }}>
+              Dịch vụ miễn phí 100% cho mọi đơn may đo Bespoke Atelier hoặc hóa đơn đồ hiệu từ 2.000.000₫.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {fittings.data.map((fit: any) => {
+              const statusLabels: Record<string, { label: string; bg: string; color: string }> = {
+                CONFIRMED: { label: 'Đã Xác Nhận Lịch', bg: '#EFF6FF', color: '#1E40AF' },
+                VALET_ASSIGNED: { label: 'Đã Phân Công Stylist', bg: '#FEF9C3', color: '#854D0E' },
+                EN_ROUTE: { label: 'Chuyên Viên Đang Di Chuyển', bg: '#F3E8FF', color: '#6B21A8' },
+                COMPLETED: { label: 'Đã Hoàn Tất Thử Đồ', bg: '#DCFCE7', color: '#166534' },
+                ORDER_CONVERTED: { label: 'Đã Chốt May Đo / Mua Hàng', bg: '#ECFDF5', color: '#047857' },
+                CANCELLED: { label: 'Đã Hủy Lịch', bg: '#FEE2E2', color: '#991B1B' },
+              };
+              const st = statusLabels[fit.status] || { label: fit.status, bg: '#F1F5F9', color: '#475569' };
+
+              return (
+                <div key={fit.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: '14px 16px', background: '#FFFFFF' }}>
+                  <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                    <div>
+                      <strong style={{ fontSize: 13 }}>{fit.productName}</strong>
+                      <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                        Mã cuộc hẹn: <strong style={{ fontFamily: 'monospace' }}>{fit.id}</strong>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 3, background: st.bg, color: st.color, border: `1px solid ${st.color}30` }}>
+                      {st.label}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 8, fontSize: 11, background: '#FAF8F5', padding: '10px 12px', borderRadius: 3, margin: '8px 0' }}>
+                    <div>
+                      <div>Thời gian hẹn: <strong>{fit.appointmentDate} ({fit.timeSlot})</strong></div>
+                      <div>Địa chỉ: <strong>{fit.address}</strong></div>
+                    </div>
+                    {fit.stylistName && (
+                      <div>
+                        <div>Chuyên viên phục vụ:</div>
+                        <strong>{fit.stylistName} ({fit.stylistPhone})</strong>
+                      </div>
+                    )}
+                  </div>
+
+                  {fit.fabricSuitcaseRequested && (
+                    <div style={{ marginTop: 8, fontSize: 11, color: '#166534', background: '#F0FDF4', padding: '4px 8px', borderRadius: 2, display: 'inline-block' }}>
+                      ✓ Kèm Vali 40+ mẫu vải Len &amp; Lụa tự nhiên phục vụ chọn chất liệu tại chỗ
+                    </div>
+                  )}
+
+                  {fit.valetNotes && (
+                    <div style={{ marginTop: 6, fontSize: 11, fontStyle: 'italic', color: 'var(--muted)' }}>
+                      Ghi chú chuyên viên: "{fit.valetNotes}"
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </article>
+
+      {/* Hộp Thẻ Mẫu Vải Cầm Tay & Voucher Hoàn Cọc (Atelier Fabric Swatch Kits) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Layers size={18} color="var(--gold-dark)" /> Hộp Thẻ Mẫu Vải Cầm Tay &amp; Voucher Bảo Chứng
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Theo dõi bưu phẩm mẫu vải gửi hỏa tốc tận nhà và sử dụng voucher hoàn tiền bảo chứng 100% khi may đo.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#FAF8F5', color: 'var(--gold-dark)', border: '1px solid var(--line)', padding: '3px 8px', borderRadius: 2, fontWeight: 600 }}>
+            Hoàn Cọc 100% Qua Voucher
+          </span>
+        </div>
+
+        {swatchOrders.loading ? (
+          <Loading />
+        ) : !swatchOrders.data?.length ? (
+          <div style={{ textAlign: 'center', padding: '24px 16px', background: '#FAF8F5', border: '1px dashed var(--line)', borderRadius: 3 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>
+              Bạn chưa đặt hộp mẫu vải nào. Khi xem chi tiết sản phẩm, bạn có thể yêu cầu gửi mẫu vải tận tay để cảm nhận độ dày, độ rủ và chạm sớ vải trước khi may đo.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: 12 }}>
+            {swatchOrders.data.map((sw: any) => (
+              <div key={sw.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: '14px 16px', background: '#FFFFFF' }}>
+                <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                  <div>
+                    <strong style={{ fontSize: 13 }}>{sw.productName}</strong>
+                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                      Mã đơn: <strong style={{ fontFamily: 'monospace' }}>{sw.id}</strong> · Ngày đặt: {new Date(sw.createdAt).toLocaleDateString('vi-VN')}
+                    </div>
+                  </div>
+                  <span style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: 3,
+                    background: sw.status === 'DISPATCHED' ? '#dcfce7' : '#fef3c7',
+                    color: sw.status === 'DISPATCHED' ? '#166534' : '#92400e',
+                    border: `1px solid ${sw.status === 'DISPATCHED' ? '#86efac' : '#fde68a'}`,
+                  }}>
+                    {sw.status === 'DISPATCHED' ? '✓ Đã xuất bưu tá hỏa tốc' : '● Chờ bưu tá đóng gói'}
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10, fontSize: 11, background: '#FAF8F5', padding: '10px 12px', borderRadius: 3, margin: '8px 0' }}>
+                  <div>
+                    <div>Người nhận: <strong>{sw.recipientName}</strong> ({sw.phone})</div>
+                    <div>Địa chỉ giao: <strong>{sw.address}</strong></div>
+                    <div style={{ marginTop: 4, color: '#475569' }}>
+                      Vận đơn: <strong>{sw.carrier || 'EMS Hỏa Tốc'}</strong> {sw.trackingNumber ? `(${sw.trackingNumber})` : ''}
+                    </div>
+                  </div>
+
+                  {/* Voucher Card */}
+                  <div style={{ background: '#fff', border: '1px dashed var(--gold-dark)', borderRadius: 3, padding: '8px 12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <span style={{ fontSize: 9.5, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: 0.5, display: 'block' }}>
+                        Mã Voucher Hoàn Cọc 50.000₫
+                      </span>
+                      <strong style={{ fontSize: 13, color: 'var(--gold-dark)', fontFamily: 'monospace' }}>
+                        {sw.voucherCode}
+                      </strong>
+                    </div>
+                    <button
+                      type="button"
+                      className="text-button"
+                      style={{ fontSize: 10.5, padding: 0, marginTop: 4, textAlign: 'left', fontWeight: 600, color: '#166534' }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(sw.voucherCode);
+                        setCopiedSwatchVoucher(sw.voucherCode);
+                        setTimeout(() => setCopiedSwatchVoucher(null), 2000);
+                      }}
+                    >
+                      {copiedSwatchVoucher === sw.voucherCode ? '✓ Đã sao chép mã' : 'Sao chép mã voucher →'}
+                    </button>
+                  </div>
+                </div>
+
+                {Array.isArray(sw.swatches) && (
+                  <div style={{ fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <span>Mẫu vải trong hộp:</span>
+                    {sw.swatches.map((item: string, idx: number) => (
+                      <span key={idx} style={{ background: '#f1f5f9', color: '#334155', padding: '1px 6px', borderRadius: 2, fontSize: 10 }}>
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {/* Bộ Sưu Tập Chứng Thư Vật Liệu & Hộ Chiếu DPP (Digital Product Passport & COA) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Award size={18} color="#059669" /> Hộ Chiếu Vật Liệu &amp; Chứng Thư Xuất Xứ (Digital Product Passport · DPP)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Lưu giữ vĩnh viễn nguồn gốc xơ sợi, lô mẻ dệt mộc và đội ngũ nghệ nhân may đo cho các trang phục bạn sở hữu.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '3px 8px', borderRadius: 2, fontWeight: 600 }}>
+            SHA-256 Cryptographic Sealed
+          </span>
+        </div>
+
+        {/* Live DPP Verification Tool */}
+        <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4, padding: '14px 16px', marginBottom: 16 }}>
+          <strong style={{ fontSize: 12, display: 'block', marginBottom: 6, color: 'var(--ink)' }}>
+            Tra Cứu &amp; Đối Soát Tính Nguyên Bản Mã Chứng Thư DPP
+          </strong>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!verifyCertCode.trim()) return;
+              setVerifyBusy(true);
+              setVerifyError('');
+              setVerifyResult(null);
+              try {
+                const res = await api<{ ok: boolean; valid: boolean; passport?: any; message?: string }>('/passport/verify', 'POST', {
+                  certificateCode: verifyCertCode.trim(),
+                });
+                setVerifyResult(res);
+              } catch (err) {
+                setVerifyError((err as Error).message);
+              } finally {
+                setVerifyBusy(false);
+              }
+            }}
+            style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}
+          >
+            <input
+              type="text"
+              placeholder="Nhập mã chứng thư (vd: NX-DPP-LINEN-SH-SHA256)"
+              value={verifyCertCode}
+              onChange={(e) => setVerifyCertCode(e.target.value)}
+              required
+              style={{ flex: 1, minWidth: 260, padding: '7px 12px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2, fontFamily: 'monospace' }}
+            />
+            <button
+              type="submit"
+              className="button"
+              style={{ background: '#059669', borderColor: '#059669', fontSize: 12 }}
+              disabled={verifyBusy}
+            >
+              {verifyBusy ? 'Đang đối soát...' : 'Xác Thực Ngay →'}
+            </button>
+          </form>
+
+          {verifyError && (
+            <div style={{ marginTop: 8, fontSize: 11.5, color: '#b91c1c' }}>
+              ✕ {verifyError}
+            </div>
+          )}
+
+          {verifyResult && (
+            <div style={{ marginTop: 10, padding: 12, background: verifyResult.valid ? '#f0fdf4' : '#fef2f2', border: `1px solid ${verifyResult.valid ? '#86efac' : '#fca5a5'}`, borderRadius: 3, fontSize: 11.5 }}>
+              {verifyResult.valid ? (
+                <div>
+                  <div style={{ color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <CheckCircle2 size={13} /> CHỨNG THƯ CHÍNH THỨC NGUYÊN BẢN HỢP LỆ
+                  </div>
+                  <div style={{ marginTop: 4, color: 'var(--ink)' }}>
+                    Mã: <code style={{ fontFamily: 'monospace', fontWeight: 600 }}>{verifyResult.certificateCode}</code> · Phát hành bởi: {verifyResult.issuer}
+                  </div>
+                  {verifyResult.passport && (
+                    <div style={{ marginTop: 6, fontSize: 11, color: '#334155' }}>
+                      Sản phẩm: <strong>{verifyResult.passport.productName}</strong> · Nguồn gốc: {verifyResult.passport.originLocation} · Xơ sợi: {verifyResult.passport.fiberComposition} · Thủ công: {verifyResult.passport.totalCraftHours || 34} giờ
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ color: '#991b1b', fontWeight: 600 }}>
+                  ✕ {verifyResult.message || 'Mã chứng thư không tồn tại trên hệ thống sổ cái NEXORA.'}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Buyer Passports List */}
+        {materialPassports.loading ? (
+          <Loading />
+        ) : !materialPassports.data?.passports?.length ? (
+          <div style={{ textAlign: 'center', padding: '24px 16px', background: '#FAF8F5', border: '1px dashed var(--line)', borderRadius: 3 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>
+              Chưa có chứng thư nào trong vault. Khi bạn hoàn tất đơn hàng hoặc may đo bespoke, mỗi trang phục sẽ được phát hành một Hộ Chiếu DPP độc bản lưu giữ tại đây.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: 12 }}>
+            {materialPassports.data.passports.map((p: any, idx: number) => (
+              <div key={idx} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: '14px 16px', background: '#FFFFFF', borderLeft: '3px solid #10b981' }}>
+                <div className="row between" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
+                  <div>
+                    <strong style={{ fontSize: 13 }}>{p.productName}</strong>
+                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                      Atelier chế tác: <strong>{p.shopName}</strong> · Lô sợi: <code style={{ fontFamily: 'monospace' }}>{p.yarnLot}</code>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 700, fontFamily: 'monospace', color: 'var(--ink)' }}>
+                      {p.certificateCode}
+                    </div>
+                    <button
+                      type="button"
+                      className="text-button"
+                      style={{ fontSize: 10.5, padding: 0, marginTop: 2, color: '#059669', fontWeight: 600 }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(p.certificateCode);
+                        setCopiedDppCode(p.certificateCode);
+                        setTimeout(() => setCopiedDppCode(null), 2000);
+                      }}
+                    >
+                      {copiedDppCode === p.certificateCode ? '✓ Đã sao chép' : 'Sao chép mã định danh →'}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, fontSize: 11, background: '#f8fafc', padding: '8px 12px', borderRadius: 2 }}>
+                  <div>
+                    <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Xuất xứ xơ sợi:</span>
+                    <strong>{p.originLocation}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Thành phần chất liệu:</span>
+                    <strong>{p.fiberComposition}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Định lượng dệt mộc:</span>
+                    <strong>{p.weaveDensity}</strong>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--muted)', display: 'block', fontSize: 10 }}>Tổng giờ công nghệ nhân:</span>
+                    <strong style={{ color: 'var(--gold-dark)' }}>{p.totalCraftHours || 34} giờ may đo thủ công</strong>
+                  </div>
+                </div>
+
+                {Array.isArray(p.artisans) && (
+                  <div style={{ marginTop: 8, fontSize: 10.5, color: '#475569', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                    <span>Nghệ nhân thực hiện:</span>
+                    {p.artisans.map((a: any, i: number) => (
+                      <span key={i} style={{ background: '#f1f5f9', color: '#1e293b', padding: '1px 6px', borderRadius: 2, border: '1px solid #e2e8f0' }}>
+                        {a.name} ({a.role} · {a.handcraftHours}h)
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {/* Bộ Sưu Tập Tủ Đồ Nhộng Độc Bản (Curated Capsule Wardrobes · 5x5 Slow Fashion Matrix) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Archive size={18} color="var(--gold-dark)" /> Bộ Sưu Tập Tủ Đồ Nhộng (Capsule Wardrobes)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Các phương án tủ đồ nhộng 5 món đa ứng dụng đã lưu từ Phòng Thử Đồ (Lookbook &amp; Capsule Planner), tối ưu hóa Cost-Per-Wear và giảm phát thải thời trang nhanh.
+            </p>
+          </div>
+          <Link
+            href="/phoi-do"
+            className="text-button"
+            style={{ fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--gold-dark)', fontWeight: 600 }}
+          >
+            <Plus size={14} /> Thiết Kế Tủ Đồ Mới →
+          </Link>
+        </div>
+
+        {capsuleNotice && (
+          <div style={{ marginBottom: 12 }}>
+            <Notice>{capsuleNotice}</Notice>
+          </div>
+        )}
+
+        {savedCapsules.loading ? (
+          <Loading />
+        ) : !savedCapsules.data?.length ? (
+          <div style={{ textAlign: 'center', padding: '24px 16px', background: '#FAF8F5', border: '1px dashed var(--line)', borderRadius: 3 }}>
+            <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>
+              Chưa có tủ đồ nhộng nào trong vault của bạn. Hãy trải nghiệm phối 5 món đồ mộc cao cấp tại Phòng Thử Đồ để tạo nên 12 phong cách sống với ưu đãi đặc quyền -15% và tính toán chi phí trên mỗi lần mặc (Cost-Per-Wear).
+            </p>
+            <Link
+              href="/phoi-do"
+              className="button"
+              style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+            >
+              <Sparkles size={14} /> Khám Phá Capsule Wardrobe Studio →
+            </Link>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: 14 }}>
+            {savedCapsules.data.map((cap: any) => (
+              <div key={cap.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: '16px', background: '#FFFFFF', borderLeft: '3px solid var(--gold-dark)' }}>
+                <div className="row between" style={{ marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
+                  <div>
+                    <strong style={{ fontSize: 14, color: 'var(--ink)' }}>{cap.title || 'Tủ Đồ Nhộng Thu Đông Quiet Luxury'}</strong>
+                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span>Mã: <code style={{ fontFamily: 'monospace' }}>{cap.id}</code></span>
+                      <span>·</span>
+                      <span>Bảng màu: <strong style={{ color: 'var(--ink)' }}>{cap.palette || 'Quiet Luxury'}</strong></span>
+                      <span>·</span>
+                      <span>Lưu ngày: {cap.createdAt ? new Date(cap.createdAt).toLocaleDateString('vi-VN') : 'Gần đây'}</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 11, background: '#eef2ed', color: '#166534', padding: '3px 8px', borderRadius: 2, fontWeight: 600 }}>
+                      ✓ Phối {cap.outfitsCount || 12} Phong Cách
+                    </span>
+                    <button
+                      type="button"
+                      className="text-button"
+                      style={{ fontSize: 11, color: '#dc2626', display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 6px' }}
+                      onClick={async () => {
+                        try {
+                          await api(`/vault/capsules/${cap.id}`, 'DELETE');
+                          setCapsuleNotice('Đã gỡ tủ đồ nhộng khỏi Vault thành công.');
+                          setTimeout(() => setCapsuleNotice(null), 3000);
+                          savedCapsules.reload();
+                        } catch (err) {
+                          setError((err as Error).message);
+                        }
+                      }}
+                    >
+                      <Trash2 size={13} /> Xóa
+                    </button>
+                  </div>
+                </div>
+
+                {/* Investment & CPW Card */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10, background: '#FAF8F5', padding: '12px 14px', borderRadius: 3, marginBottom: 12 }}>
+                  <div>
+                    <span style={{ fontSize: 10.5, color: 'var(--muted)', display: 'block' }}>Tổng mức đầu tư (Đã -15%):</span>
+                    <strong style={{ fontSize: 14, color: 'var(--gold-dark)' }}>{vnd(cap.totalInvestment || 0)}</strong>
+                    {cap.bundleDiscount ? (
+                      <div style={{ fontSize: 10, color: '#166534', marginTop: 1 }}>
+                        Tiết kiệm đặc quyền {vnd(cap.bundleDiscount)}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div>
+                    <span style={{ fontSize: 10.5, color: 'var(--muted)', display: 'block' }}>Chi phí trên lần mặc (CPW):</span>
+                    <strong style={{ fontSize: 14, color: '#166534' }}>
+                      ~{vnd(cap.estimatedCostPerWear || 18100)} / ngày
+                    </strong>
+                    <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 1 }}>
+                      Định mức bền bỉ trên 150 lần mặc
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: 10.5, color: 'var(--muted)', display: 'block' }}>Chứng chỉ sinh thái:</span>
+                    <strong style={{ fontSize: 12, color: 'var(--ink)' }}>100% Sợi mộc tự nhiên</strong>
+                    <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>
+                      GOTS Organic &amp; OEKO-TEX Standard
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pieces list */}
+                {Array.isArray(cap.pieces) && cap.pieces.length > 0 && (
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      5 Mảnh Ghép Trụ Cột Trong Tủ Đồ:
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 6 }}>
+                      {cap.pieces.map((pc: any, pidx: number) => (
+                        <div key={pidx} style={{ fontSize: 11, background: '#FFFFFF', border: '1px solid var(--line)', padding: '6px 10px', borderRadius: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <span style={{ fontWeight: 600, color: 'var(--ink)' }}>{pc.name}</span>
+                            <div style={{ fontSize: 10, color: 'var(--muted)' }}>{pc.material || 'Chất liệu tự nhiên tuyển chọn'}</div>
+                          </div>
+                          <span style={{ fontSize: 11, color: 'var(--gold-dark)', fontWeight: 600 }}>{vnd(pc.price || 0)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', marginTop: 6, paddingTop: 10, borderTop: '1px solid var(--line)' }}>
+                  <button
+                    type="button"
+                    className="button"
+                    style={{ fontSize: 11.5, padding: '7px 14px' }}
+                    onClick={async () => {
+                      setBusy(true);
+                      try {
+                        const items = (cap.pieces || []).map((p: any) => ({
+                          variantId: `${p.id}-0-M`,
+                          quantity: 1,
+                        }));
+                        if (items.length) {
+                          await api('/cart/batch', 'POST', { items });
+                          setCapsuleNotice(`Đã thêm trọn bộ ${items.length} món vào giỏ hàng với ưu đãi Capsule -15%!`);
+                          router.push('/gio-hang');
+                        }
+                      } catch (err) {
+                        setError((err as Error).message);
+                      } finally {
+                        setBusy(false);
+                      }
+                    }}
+                  >
+                    <Package size={14} /> Thêm Trọn Bộ 5 Món Vào Giỏ Hàng (-15%)
+                  </button>
+
+                  <Link
+                    href="/phoi-do"
+                    className="button secondary"
+                    style={{ fontSize: 11.5, padding: '7px 14px' }}
+                  >
+                    <Layers size={14} /> Tái Hiện Trên Ma Trận Phối Đồ →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {/* Kho Sợi & Canh Vải Di Sản (Rare Heritage Fabric Vault · Suất Ký Quỹ Độc Bản) */}
+      <article className="panel">
+        <div className="row between" style={{ marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
+          <div>
+            <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: 0 }}>
+              <Compass size={18} color="var(--gold-dark)" /> Kho Sợi &amp; Canh Vải Di Sản (Rare Heritage Fabric Reserve)
+            </h2>
+            <p className="subtle" style={{ margin: '4px 0 0', fontSize: 12 }}>
+              Khám phá và ký quỹ cắt giữ các cuộn vải mộc dệt tay độc bản số lượng giới hạn từ các làng nghề truyền thống và vùng nguyên liệu quốc tế được bảo tồn.
+            </p>
+          </div>
+          <span style={{ fontSize: 11, background: '#FAF8F5', color: 'var(--gold-dark)', border: '1px solid var(--line)', padding: '3px 8px', borderRadius: 2, fontWeight: 600 }}>
+            Ký Quỹ Escrow 30% · Giữ Mét Vải Độc Bản
+          </span>
+        </div>
+
+        {reserveNotice && (
+          <div style={{ marginBottom: 12 }}>
+            <Notice>{reserveNotice}</Notice>
+          </div>
+        )}
+
+        {/* Client's Active Fabric Reserves */}
+        {Array.isArray(myFabricReserves.data) && myFabricReserves.data.length > 0 && (
+          <div style={{ marginBottom: 16, padding: 14, background: '#fdfbf7', border: '1px solid #fed7aa', borderRadius: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#78350f', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckCircle2 size={14} color="#b45309" /> Chứng Thư Ký Quỹ Vải Quý Đang Nắm Giữ ({myFabricReserves.data.length})
+              </span>
+              <span style={{ fontSize: 10, color: '#92400e', background: '#fef3c7', padding: '2px 6px', borderRadius: 2 }}>
+                Đã Bảo Lưu Trong Kho Atelier
+              </span>
+            </div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              {myFabricReserves.data.map((res: any, rIdx: number) => (
+                <div key={rIdx} style={{ background: '#fff', border: '1px solid #fed7aa', padding: '12px 14px', borderRadius: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <strong style={{ fontSize: 13.5, color: 'var(--ink)' }}>{res.fabricName}</strong>
+                      {res.allocationStatus === 'COMMISSIONED' ? (
+                        <span style={{ fontSize: 9.5, color: '#15803d', background: '#dcfce7', border: '1px solid #bbf7d0', padding: '1px 6px', borderRadius: 2, fontWeight: 700 }}>
+                          ĐÃ CHUYỂN MAY ĐO #{res.allocatedToBespokeId ? res.allocatedToBespokeId.slice(-8).toUpperCase() : ''}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: 9.5, color: '#b45309', background: '#fef3c7', border: '1px solid #fde68a', padding: '1px 6px', borderRadius: 2, fontWeight: 600 }}>
+                          SẴN SÀNG CHỈ ĐỊNH MAY ĐO
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 3 }}>
+                      Mã: <code style={{ fontFamily: 'monospace', fontWeight: 600 }}>{res.certificateCode}</code> · Cắt giữ: <strong style={{ color: '#166534' }}>{res.meters} mét</strong> · Dự kiến: {res.purpose}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                    <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--gold-dark)' }}>{vnd(res.totalAmount)}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="text-button"
+                        style={{ fontSize: 10.5, padding: 0, color: '#059669', fontWeight: 600 }}
+                        onClick={() => {
+                          navigator.clipboard.writeText(res.certificateCode);
+                          setCopiedFabricCert(res.certificateCode);
+                          setTimeout(() => setCopiedFabricCert(null), 2000);
+                        }}
+                      >
+                        {copiedFabricCert === res.certificateCode ? '✓ Đã sao chép' : 'Sao chép mã'}
+                      </button>
+                      {res.allocationStatus !== 'COMMISSIONED' && (
+                        <button
+                          type="button"
+                          className="button"
+                          style={{ fontSize: 10.5, padding: '3px 8px', background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)' }}
+                          onClick={() => {
+                            setCommissionFabricReserve(res);
+                            setCommissionProductName(res.purpose || 'Áo Blazer Bespoke May Đo Từ Vải Quý');
+                            setCommissionShopId('shop-nep');
+                            setCommissionShopName('NÉP Studio');
+                            setCommissionMonogram('');
+                            setCommissionLining('Lụa Habotai tự nhiên cùng tông màu');
+                            setCommissionNotes('');
+                          }}
+                        >
+                          May đo từ súc vải này →
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Fabric Bolts Grid */}
+        {heritageFabrics.loading ? (
+          <Loading />
+        ) : !heritageFabrics.data?.fabrics?.length ? (
+          <Notice>Kho lưu trữ đang cập nhật các lô vải di sản mùa mới.</Notice>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+            {heritageFabrics.data.fabrics.map((f: any) => (
+              <div key={f.id} style={{ border: '1px solid var(--line)', borderRadius: 4, padding: '14px 16px', background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ width: 14, height: 14, borderRadius: '50%', background: f.hexColor, border: '1px solid #cbd5e1', display: 'inline-block' }} />
+                      <span style={{ fontSize: 11, color: 'var(--muted)', fontWeight: 600 }}>{f.colorName}</span>
+                    </div>
+                    <code style={{ fontSize: 10, fontFamily: 'monospace', color: 'var(--muted)' }}>{f.code}</code>
+                  </div>
+
+                  <strong style={{ fontSize: 14, color: 'var(--ink)', display: 'block', marginBottom: 4 }}>
+                    {f.name}
+                  </strong>
+                  <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 8 }}>
+                    Xuất xứ: <strong>{f.origin}</strong>
+                  </div>
+
+                  <p style={{ margin: '0 0 10px', fontSize: 11.5, color: '#475569', lineHeight: 1.45 }}>
+                    {f.description}
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 10.5, background: '#FAF8F5', padding: '8px 10px', borderRadius: 3, marginBottom: 10 }}>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block' }}>Định lượng dệt:</span>
+                      <strong>{f.gsm} GSM</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block' }}>Khổ vải rộng:</span>
+                      <strong>{f.widthCm} cm</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block' }}>Lô dệt mộc:</span>
+                      <strong style={{ fontFamily: 'monospace' }}>{f.yarnLot}</strong>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--muted)', display: 'block' }}>Thu hoạch:</span>
+                      <strong>Năm {f.harvestYear}</strong>
+                    </div>
+                  </div>
+
+                  {/* Meterage availability bar */}
+                  <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+                      <span style={{ color: 'var(--muted)' }}>Tồn khả dụng trong kho:</span>
+                      <strong style={{ color: f.availableMeterage > 10 ? '#166534' : '#dc2626' }}>
+                        {f.availableMeterage}m / {f.totalMeterage}m
+                      </strong>
+                    </div>
+                    <div style={{ width: '100%', height: 5, background: '#e2e8f0', borderRadius: 2.5, overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${Math.round((f.availableMeterage / f.totalMeterage) * 100)}%`,
+                          height: '100%',
+                          background: f.availableMeterage > 10 ? '#10b981' : '#f59e0b',
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="row between" style={{ alignItems: 'baseline', marginBottom: 10, paddingTop: 8, borderTop: '1px solid var(--line)' }}>
+                    <div>
+                      <span style={{ fontSize: 10, color: 'var(--muted)', display: 'block' }}>Giá niêm yết vải quý:</span>
+                      <strong style={{ fontSize: 14, color: 'var(--gold-dark)' }}>{vnd(f.pricePerMeter)}</strong>
+                      <span style={{ fontSize: 11, color: 'var(--muted)' }}> / mét</span>
+                    </div>
+                    <span style={{ fontSize: 10, color: '#166534', fontWeight: 600 }}>Cọc 30% Escrow</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="button full"
+                    style={{ fontSize: 11.5, padding: '8px 12px' }}
+                    onClick={() => {
+                      setReservingFabric(f);
+                      setReserveMeters(2.5);
+                      setReservePurpose('May Đo Áo Blazer Bespoke');
+                      setReserveSuccessCert(null);
+                    }}
+                  >
+                    Ký Quỹ Cắt Giữ Vải Quý →
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {/* Modal Khởi Tạo May Đo Từ Súc Vải Di Sản (Commission Fabric to Bespoke Modal) */}
+      {commissionFabricReserve && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.65)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            border: '1px solid var(--line)',
+            borderRadius: 4,
+            maxWidth: 540,
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '24px 28px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+          }}>
+            <div className="row between" style={{ marginBottom: 14 }}>
+              <div>
+                <span className="eyebrow" style={{ fontSize: 10, marginBottom: 2 }}>MAY ĐO TỪ VẢI DI SẢN</span>
+                <h3 style={{ margin: 0, fontSize: 18 }}>Chỉ Định May Đo Bespoke</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCommissionFabricReserve(null)}
+                style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', padding: '12px 14px', borderRadius: 4, marginBottom: 16, fontSize: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
+                <strong style={{ fontSize: 13, color: 'var(--ink)' }}>{commissionFabricReserve.fabricName}</strong>
+                <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--gold-dark)', fontSize: 11 }}>
+                  {commissionFabricReserve.certificateCode}
+                </span>
+              </div>
+              <div style={{ color: 'var(--muted)', fontSize: 11 }}>
+                Số mét vải bảo lưu: <strong>{commissionFabricReserve.meters} mét</strong> · Xuất xứ: {commissionFabricReserve.origin || 'Làng nghề di sản'}
+              </div>
+              <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px dashed var(--line)', color: '#166534', fontSize: 11 }}>
+                Tiền cọc giữ vải 30% đã thanh toán: <strong>{vnd(commissionFabricReserve.depositAmount || Math.round(commissionFabricReserve.totalAmount * 0.3))}</strong> (Sẽ được tự động khấu trừ 100% vào đơn may đo)
+              </div>
+            </div>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setCommissionBusy(true);
+                try {
+                  const res = await api(`/vault/fabric-reserves/${commissionFabricReserve.id}/commission`, 'POST', {
+                    productName: commissionProductName,
+                    shopId: commissionShopId,
+                    shopName: commissionShopName,
+                    monogram: commissionMonogram,
+                    lining: commissionLining,
+                    notes: commissionNotes,
+                    passport: passport,
+                  }) as { ok?: boolean; bespoke?: any };
+                  if (res?.bespoke) {
+                    setBespokeOrders((prev: any[]) => [res.bespoke, ...prev]);
+                  }
+                  myFabricReserves.reload();
+                  setReserveNotice('Khởi tạo đơn may đo từ súc vải di sản thành công! Xưởng may NÉP Studio đã tiếp nhận hồ sơ.');
+                  setCommissionFabricReserve(null);
+                } catch (err: any) {
+                  setReserveNotice(err.message || 'Không thể khởi tạo may đo');
+                } finally {
+                  setCommissionBusy(false);
+                }
+              }}
+              style={{ display: 'grid', gap: 12 }}
+            >
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                  Xưởng May Đồng Sáng Tạo (Partner Atelier)
+                </label>
+                <select
+                  value={commissionShopId}
+                  onChange={e => {
+                    setCommissionShopId(e.target.value);
+                    setCommissionShopName(e.target.value === 'shop-nep' ? 'NÉP Studio' : 'Mộc Everyday');
+                  }}
+                  style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                >
+                  <option value="shop-nep">NÉP Studio Mall (Xưởng thủ công may đo cao cấp)</option>
+                  <option value="shop-moc">Mộc Everyday (Xưởng dệt may phong cách tự nhiên)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                  Tên Mẫu Trang Phục May Đo
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={commissionProductName}
+                  onChange={e => setCommissionProductName(e.target.value)}
+                  placeholder="Ví dụ: Áo Dài Tơ Tằm Cổ Dáng Suông, Bộ Suit May Đo..."
+                  style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                    Thêu Monogram Ve Áo
+                  </label>
+                  <input
+                    type="text"
+                    value={commissionMonogram}
+                    onChange={e => setCommissionMonogram(e.target.value)}
+                    placeholder="Chữ cái lồng (ví dụ: N.X.T)"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                    Lớp Lót May Đo
+                  </label>
+                  <input
+                    type="text"
+                    value={commissionLining}
+                    onChange={e => setCommissionLining(e.target.value)}
+                    placeholder="Lụa Habotai cùng tông màu..."
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
+                  Ghi Chú Nhân Trắc &amp; Tỷ Lệ Cơ Thể
+                </label>
+                <textarea
+                  rows={2}
+                  value={commissionNotes}
+                  onChange={e => setCommissionNotes(e.target.value)}
+                  placeholder="Ví dụ: Hạ nách 1cm, vạt sau dài hơn 2cm, cổ áo đứng..."
+                  style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                />
+              </div>
+
+              <div className="row between" style={{ marginTop: 8 }}>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => setCommissionFabricReserve(null)}
+                >
+                  Bỏ qua
+                </button>
+                <button
+                  type="submit"
+                  className="button"
+                  disabled={commissionBusy}
+                  style={{ background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)' }}
+                >
+                  {commissionBusy ? 'Đang khởi tạo hồ sơ...' : 'Xác Nhận Chỉ Định May Đo →'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {reservingFabric && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.65)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            border: '1px solid var(--line)',
+            borderRadius: 4,
+            maxWidth: 520,
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '24px 28px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+          }}>
+            <div className="row between" style={{ marginBottom: 14 }}>
+              <div>
+                <span className="eyebrow" style={{ fontSize: 10, marginBottom: 2 }}>KÝ QUỸ CẮT GIỮ VẢI DI SẢN</span>
+                <h3 style={{ margin: 0, fontSize: 18 }}>Hồ Sơ Cắt Giữ Thước Vải Quý</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setReservingFabric(null);
+                  setReserveSuccessCert(null);
+                }}
+                style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                ×
+              </button>
+            </div>
+
+            {reserveSuccessCert ? (
+              <div style={{ textAlign: 'center', padding: '16px 8px' }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#f0fdf4', color: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <CheckCircle2 size={24} />
+                </div>
+                <h4 style={{ margin: '0 0 6px', fontSize: 16 }}>Đã Ký Quỹ Giữ Mét Vải Thành Công!</h4>
+                <p style={{ margin: '0 0 16px', fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
+                  Thước vải đã được niêm phong thẻ bảo chứng tại kho lưu trữ. Bạn có thể mang mã chứng thư này áp dụng cho bất kỳ đơn may đo Bespoke nào tại Atelier.
+                </p>
+
+                <div style={{ background: '#FAF8F5', border: '1px dashed var(--gold-dark)', borderRadius: 4, padding: '12px 14px', marginBottom: 18 }}>
+                  <span style={{ fontSize: 10, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: 1, display: 'block', marginBottom: 4 }}>
+                    MÃ CHỨNG THƯ KÝ QUỸ VẢI (CRYPTOGRAPHIC VAULT TAG)
+                  </span>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--gold-dark)', fontFamily: 'monospace', letterSpacing: 1.5 }}>
+                    {reserveSuccessCert}
+                  </div>
+                  <div style={{ fontSize: 11, color: '#166534', marginTop: 4 }}>
+                    Đã bảo lưu {reserveMeters} mét vải · Bảo chứng ký quỹ Escrow Sàn NEXORA
+                  </div>
+                </div>
+
+                <div className="row between">
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => {
+                      navigator.clipboard.writeText(reserveSuccessCert);
+                      setCopiedFabricCert(reserveSuccessCert);
+                      setTimeout(() => setCopiedFabricCert(null), 2000);
+                    }}
+                  >
+                    {copiedFabricCert === reserveSuccessCert ? '✓ Đã sao chép mã' : 'Sao chép mã chứng thư'}
+                  </button>
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={() => {
+                      setReservingFabric(null);
+                      setReserveSuccessCert(null);
+                    }}
+                  >
+                    Hoàn tất
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!user) {
+                    setError('Vui lòng đăng nhập để thực hiện ký quỹ cắt giữ vải quý.');
+                    return;
+                  }
+                  setReserveBusy(true);
+                  try {
+                    const res = await api<{ ok: boolean; reservation: any; message: string }>(`/fabrics/${reservingFabric.id}/reserve`, 'POST', {
+                      meters: Number(reserveMeters),
+                      purpose: reservePurpose.trim(),
+                      recipientName: reserveRecipient || user?.name || 'Khách Hàng VIP',
+                      phone: reservePhone || '0901234567',
+                      notes: reserveNotes.trim(),
+                    });
+                    setReserveSuccessCert(res.reservation.certificateCode);
+                    setReserveNotice(res.message);
+                    heritageFabrics.reload();
+                    myFabricReserves.reload();
+                  } catch (err) {
+                    setError((err as Error).message);
+                  } finally {
+                    setReserveBusy(false);
+                  }
+                }}
+                className="stack"
+                style={{ gap: 12 }}
+              >
+                <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', padding: '10px 14px', borderRadius: 3, fontSize: 12 }}>
+                  <div>Thước vải chọn: <strong>{reservingFabric.name}</strong></div>
+                  <div>Nguồn gốc: <strong>{reservingFabric.origin}</strong></div>
+                  <div>Định lượng: <strong>{reservingFabric.gsm} GSM</strong> · Khổ: <strong>{reservingFabric.widthCm}cm</strong></div>
+                  <div style={{ marginTop: 4, color: '#166534' }}>
+                    Khả dụng trong kho: <strong>{reservingFabric.availableMeterage} mét</strong>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Chiều Dài Vải Cần Cắt Giữ (Mét):
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <input
+                      type="range"
+                      min={0.5}
+                      max={Math.min(10, reservingFabric.availableMeterage)}
+                      step={0.5}
+                      value={reserveMeters}
+                      onChange={e => setReserveMeters(parseFloat(e.target.value))}
+                      style={{ flex: 1 }}
+                    />
+                    <strong style={{ fontSize: 14, color: 'var(--gold-dark)', minWidth: 60, textAlign: 'right' }}>
+                      {reserveMeters} m
+                    </strong>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+                    {[1.5, 2.5, 3.5, 5.0].map(m => (
+                      <button
+                        key={m}
+                        type="button"
+                        className="text-button"
+                        style={{ fontSize: 10.5, padding: '2px 6px', background: reserveMeters === m ? '#fef3c7' : '#f1f5f9', borderRadius: 2 }}
+                        onClick={() => setReserveMeters(m)}
+                      >
+                        {m}m {m === 1.5 ? '(Sơ mi)' : m === 2.5 ? '(Quần/Váy)' : m === 3.5 ? '(Blazer)' : '(Suit trọn bộ)'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Dự Định May Trang Phục:
+                  </label>
+                  <select
+                    value={reservePurpose}
+                    onChange={e => setReservePurpose(e.target.value)}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  >
+                    <option value="May Đo Áo Blazer Bespoke">Áo Blazer Hai Hàng Khuy Bespoke</option>
+                    <option value="May Đầm Dạ Hội Lụa">Đầm Dạ Hội Lụa Mềm Dáng Rủ</option>
+                    <option value="May Bộ Suit Lanh Mùa Hè">Bộ Suit Lanh Phóng Khoáng</option>
+                    <option value="May Áo Dài Di Sản">Áo Dài Tơ Tằm Truyền Thống</option>
+                    <option value="Lưu Trữ Trong Bộ Sưu Tập Cá Nhân">Lưu Trữ Trong Bộ Sưu Tập Cá Nhân (Collector)</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                      Người Đứng Tên Ký Quỹ
+                    </label>
+                    <input
+                      value={reserveRecipient}
+                      onChange={e => setReserveRecipient(e.target.value)}
+                      placeholder={user?.name || 'Họ và tên quý khách'}
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                      Số Điện Thoại
+                    </label>
+                    <input
+                      value={reservePhone}
+                      onChange={e => setReservePhone(e.target.value)}
+                      placeholder="0901234567"
+                      style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Ghi Chú Hoàn Thiện &amp; Cắt Khổ Vải:
+                  </label>
+                  <input
+                    value={reserveNotes}
+                    onChange={e => setReserveNotes(e.target.value)}
+                    placeholder="VD: Giữ nguyên biên vải mộc dệt con thoi, ủ hơi nước trước khi cắt..."
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  />
+                </div>
+
+                {/* Financial Summary Card */}
+                <div style={{ background: '#FAF8F5', border: '1px dashed var(--gold-dark)', padding: '10px 14px', borderRadius: 4, fontSize: 12 }}>
+                  <div className="row between">
+                    <span>Tổng giá trị {reserveMeters} mét vải:</span>
+                    <strong>{vnd(Math.round(reserveMeters * reservingFabric.pricePerMeter))}</strong>
+                  </div>
+                  <div className="row between" style={{ marginTop: 4, color: 'var(--gold-dark)' }}>
+                    <span>Tiền cọc giữ vải 30% (Escrow Sàn):</span>
+                    <strong style={{ fontSize: 13 }}>{vnd(Math.round(reserveMeters * reservingFabric.pricePerMeter * 0.3))}</strong>
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>
+                    Khoản cọc 30% được bảo lưu bởi Escrow Sàn NEXORA và được khấu trừ 100% khi may đo chính thức.
+                  </div>
+                </div>
+
+                <div className="row between" style={{ marginTop: 8 }}>
+                  <button
+                    type="button"
+                    className="button secondary"
+                    onClick={() => setReservingFabric(null)}
+                  >
+                    Bỏ qua
+                  </button>
+                  <button
+                    type="submit"
+                    className="button"
+                    disabled={reserveBusy}
+                    style={{ background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)' }}
+                  >
+                    {reserveBusy ? 'Đang xác thực sổ cái...' : `Xác Nhận Ký Quỹ (${vnd(Math.round(reserveMeters * reservingFabric.pricePerMeter * 0.3))})`}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Hồ Sơ Số Đo Thời Trang Cá Nhân (NEXORA Fashion Passport) */}
@@ -1614,7 +2844,7 @@ export default function AccountPage() {
                 try {
                   localStorage.setItem('nexora_fashion_events', JSON.stringify(nextEvents));
                 } catch {}
-                setWeatherScheduleNotice(`✓ Đã đưa "${chosen}" vào Lịch Trình Phong Cách Fashion Calendar hôm nay!`);
+                setWeatherScheduleNotice(`Đã đưa "${chosen}" vào Lịch Trình Phong Cách Fashion Calendar hôm nay.`);
               }}
             >
               <Calendar size={13} style={{ marginRight: 4, verticalAlign: -2 }} />
@@ -2278,6 +3508,354 @@ export default function AccountPage() {
           </div>
         ))}
       </article>
+
+      {/* Modal Đặt Lịch Thử Đồ Tại Nhà VIP */}
+      {homeFittingModalOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.65)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            border: '1px solid var(--line)',
+            borderRadius: 4,
+            maxWidth: 520,
+            width: '100%',
+            padding: '24px 28px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+          }}>
+            <div className="row between" style={{ marginBottom: 14 }}>
+              <div>
+                <span className="eyebrow" style={{ fontSize: 10, marginBottom: 2 }}>ĐẶT LỊCH THỬ ĐỒ TẬN NƠI</span>
+                <h3 style={{ margin: 0, fontSize: 18 }}>Valet Home-Fitting Concierge</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHomeFittingModalOpen(false)}
+                style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', padding: '10px 14px', borderRadius: 3, marginBottom: 16, fontSize: 12 }}>
+              <div>Trang phục phục vụ: <strong>{fittingTargetOrder?.productName || fittingTargetOrder?.itemName || 'Trang phục may đo Bespoke Atelier'}</strong></div>
+              <div>Bảo chứng dịch vụ: <strong>200.000₫</strong> <span style={{ color: '#166534', fontSize: 11 }}>(Hoàn 100% khi mua hoặc may đo)</span></div>
+            </div>
+
+            <form
+              onSubmit={async e => {
+                e.preventDefault();
+                setBusy(true);
+                try {
+                  await api('/concierge/fitting', 'POST', {
+                    bespokeId: fittingTargetOrder?.id,
+                    productName: fittingTargetOrder?.productName || fittingTargetOrder?.itemName || 'Trang phục may đo Bespoke',
+                    shopId: fittingTargetOrder?.shopId,
+                    appointmentDate: fittingDate,
+                    timeSlot: fittingTimeSlot,
+                    address: fittingAddress,
+                    phone: fittingPhone,
+                    recipientName: fittingRecipient,
+                    fabricSuitcaseRequested: fittingSuitcase,
+                    specialNotes: fittingNotes,
+                  });
+                  setHomeFittingModalOpen(false);
+                  fittings.reload();
+                } catch (err: any) {
+                  setError(err.message || 'Lỗi khi đặt lịch thử đồ');
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              className="stack"
+              style={{ gap: 10 }}
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Họ Tên Quý Khách
+                  </label>
+                  <input
+                    value={fittingRecipient}
+                    onChange={e => setFittingRecipient(e.target.value)}
+                    required
+                    minLength={2}
+                    placeholder="Nguyễn Văn A"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Số Điện Thoại
+                  </label>
+                  <input
+                    value={fittingPhone}
+                    onChange={e => setFittingPhone(e.target.value)}
+                    required
+                    pattern="0[0-9]{9}"
+                    placeholder="0901234567"
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                  Địa Chỉ Đón Tiếp (Tư gia / Văn phòng)
+                </label>
+                <input
+                  value={fittingAddress}
+                  onChange={e => setFittingAddress(e.target.value)}
+                  required
+                  minLength={5}
+                  placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện"
+                  style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Ngày Hẹn Thử Đồ
+                  </label>
+                  <select
+                    value={fittingDate}
+                    onChange={e => setFittingDate(e.target.value)}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  >
+                    <option value="26/11/2026">Thứ Năm, 26/11/2026</option>
+                    <option value="27/11/2026">Thứ Sáu, 27/11/2026</option>
+                    <option value="28/11/2026">Thứ Bảy, 28/11/2026</option>
+                    <option value="29/11/2026">Chủ Nhật, 29/11/2026</option>
+                    <option value="30/11/2026">Thứ Hai, 30/11/2026</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                    Khung Giờ Phục Vụ
+                  </label>
+                  <select
+                    value={fittingTimeSlot}
+                    onChange={e => setFittingTimeSlot(e.target.value as any)}
+                    style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2 }}
+                  >
+                    <option value="MORNING_09_11">Sáng (09:00 - 11:30)</option>
+                    <option value="AFTERNOON_14_16">Chiều (14:00 - 16:30)</option>
+                    <option value="EVENING_18_20">Tối (18:00 - 20:30)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '4px 0' }}>
+                <input
+                  type="checkbox"
+                  id="chk-suitcase"
+                  checked={fittingSuitcase}
+                  onChange={e => setFittingSuitcase(e.target.checked)}
+                />
+                <label htmlFor="chk-suitcase" style={{ fontSize: 12, cursor: 'pointer' }}>
+                  Mang theo <strong>Vali 40+ mẫu vải len Loro Piana &amp; lụa tơ tằm</strong> để trải nghiệm chất liệu thực tế
+                </label>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                  Ghi Chú Đón Tiếp &amp; Yêu Cầu Riêng (Tùy chọn)
+                </label>
+                <textarea
+                  value={fittingNotes}
+                  onChange={e => setFittingNotes(e.target.value)}
+                  rows={2}
+                  placeholder="Ví dụ: Vui lòng mang thước dây đo lại vòng eo, gọi điện trước khi lên sảnh chung cư..."
+                  style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2, resize: 'vertical' }}
+                />
+              </div>
+
+              <div className="row between" style={{ marginTop: 8 }}>
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => setHomeFittingModalOpen(false)}
+                >
+                  Đóng
+                </button>
+                <button
+                  type="submit"
+                  className="button"
+                  disabled={busy}
+                >
+                  {busy ? 'Đang xác nhận...' : 'Xác Nhận Đặt Lịch VIP'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Phòng Duyệt Mẫu Vải Mộc Kỹ Thuật Số (Toile Muslin Co-Creation Portal) */}
+      {toileReviewModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(20, 20, 19, 0.65)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div style={{
+            background: '#FFFFFF',
+            border: '1px solid var(--line)',
+            borderRadius: 4,
+            maxWidth: 620,
+            width: '100%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            padding: '24px 28px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+          }}>
+            <div className="row between" style={{ marginBottom: 14 }}>
+              <div>
+                <span className="eyebrow" style={{ fontSize: 10, marginBottom: 2 }}>ĐỒNG SÁNG TẠO HAUTE COUTURE · TOILE MUSLIN</span>
+                <h3 style={{ margin: 0, fontSize: 18 }}>Phòng Thẩm Định Mẫu Vải Mộc #{toileReviewModal.id}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setToileReviewModal(null)}
+                style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: 'var(--muted)' }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ background: '#FAF8F5', border: '1px solid var(--line)', padding: '10px 14px', borderRadius: 3, marginBottom: 14, fontSize: 12 }}>
+              <div>Trang phục: <strong>{toileReviewModal.productName}</strong></div>
+              <div>Xưởng may: <strong>{toileReviewModal.shopName || 'NÉP Studio (Atelier May Đo Thủ Công)'}</strong></div>
+              <div style={{ marginTop: 4, fontSize: 11, color: '#166534' }}>
+                Trạng thái: <strong>{toileReviewModal.toileMilestone?.status === 'CLIENT_APPROVED' ? 'Đã duyệt cắt vải chính' : toileReviewModal.toileMilestone?.status === 'REVISION_REQUESTED' ? 'Đang hiệu chỉnh rập theo phản hồi' : 'Atelier đã gửi mẫu mộc · Cần bạn thẩm định'}</strong>
+              </div>
+            </div>
+
+            {/* 3-Angle Visual Inspection cards */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 700, marginBottom: 6, color: '#334155' }}>
+                Mô Phỏng 3 Góc Độ Thử Phom Vải Mộc (3-Angle Muslin Fitting)
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4, padding: '10px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>1. Mặt Trước (Front)</div>
+                  <div style={{ height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e2e8f0', borderRadius: 3, fontSize: 10, color: '#475569' }}>
+                    Ngực +{toileReviewModal.toileMilestone?.easeAllowanceBust || 6}cm
+                  </div>
+                  <div style={{ fontSize: 9, color: '#166534', marginTop: 3 }}>Canh sợi thẳng tắp</div>
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4, padding: '10px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>2. Góc 45° (Side)</div>
+                  <div style={{ height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e2e8f0', borderRadius: 3, fontSize: 10, color: '#475569' }}>
+                    {toileReviewModal.toileMilestone?.shoulderSlope === 'SLOPING' ? 'Vai Xuôi' : toileReviewModal.toileMilestone?.shoulderSlope === 'SQUARE' ? 'Vai Vuông' : 'Vai Chuẩn 22°'}
+                  </div>
+                  <div style={{ fontSize: 9, color: '#166534', marginTop: 3 }}>Eo +{toileReviewModal.toileMilestone?.easeAllowanceWaist || 4}cm</div>
+                </div>
+                <div style={{ background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: 4, padding: '10px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>3. Sống Lưng (Back)</div>
+                  <div style={{ height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e2e8f0', borderRadius: 3, fontSize: 10, color: '#475569' }}>
+                    {toileReviewModal.toileMilestone?.postureBalance === 'ERECT' ? 'Đứng thẳng' : toileReviewModal.toileMilestone?.postureBalance === 'STOOPED' ? 'Hơi gù nhẹ' : 'Cân bằng'}
+                  </div>
+                  <div style={{ fontSize: 9, color: '#166534', marginTop: 3 }}>Không nhăn gợn</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Master Tailor Notes */}
+            <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '10px 12px', borderRadius: 4, fontSize: 11, marginBottom: 14, color: '#065f46' }}>
+              <strong>Ghi chú từ Master Tailor (Hoàng Nam):</strong> "{toileReviewModal.toileMilestone?.masterNotes || 'Mẫu vải mộc đã hoàn thiện canh sợi, đường châm phấn đạt chuẩn theo số đo Fashion Passport của bạn.'}"
+            </div>
+
+            {toileClientDecisionNotice && (
+              <div style={{ marginBottom: 12, padding: '8px 12px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 4, fontSize: 11, color: '#166534' }}>
+                {toileClientDecisionNotice}
+              </div>
+            )}
+
+            <div>
+              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                Ý Kiến Thẩm Định Của Bạn (Phản hồi để xưởng điều chỉnh hoặc duyệt cắt vải)
+              </label>
+              <textarea
+                value={toileClientNote}
+                onChange={e => setToileClientNote(e.target.value)}
+                rows={2}
+                placeholder="Ví dụ: Vải mộc lên phom rất đẹp, đồng ý cho hạ kéo cắt vải chính..."
+                style={{ width: '100%', padding: '7px 10px', fontSize: 12, border: '1px solid var(--line)', borderRadius: 2, resize: 'vertical' }}
+              />
+            </div>
+
+            <div className="row between" style={{ marginTop: 14, flexWrap: 'wrap', gap: 8 }}>
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => setToileReviewModal(null)}
+              >
+                Đóng
+              </button>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  type="button"
+                  className="button secondary"
+                  style={{ fontSize: 11, padding: '6px 12px', borderColor: '#dc2626', color: '#dc2626' }}
+                  onClick={async () => {
+                    try {
+                      await api(`/bespoke/${toileReviewModal.id}/toile-decision`, 'POST', {
+                        decision: 'REQUEST_ADJUSTMENT',
+                        clientNote: toileClientNote.trim(),
+                      });
+                      setToileClientDecisionNotice('Đã gửi yêu cầu tinh chỉnh rập cho xưởng may thành công.');
+                      setBespokeOrders((prev: any[]) => prev.map(o => o.id === toileReviewModal.id ? { ...o, toileMilestone: { ...o.toileMilestone, status: 'REVISION_REQUESTED', clientNote: toileClientNote.trim() } } : o));
+                    } catch (err: any) {
+                      setToileClientDecisionNotice(err.message || 'Có lỗi xảy ra');
+                    }
+                  }}
+                >
+                  Yêu Cầu Tinh Chỉnh Rập
+                </button>
+
+                <button
+                  type="button"
+                  className="button"
+                  style={{ fontSize: 11, padding: '6px 14px', background: 'var(--gold-dark)', borderColor: 'var(--gold-dark)' }}
+                  onClick={async () => {
+                    try {
+                      await api(`/bespoke/${toileReviewModal.id}/toile-decision`, 'POST', {
+                        decision: 'APPROVE',
+                        clientNote: toileClientNote.trim(),
+                      });
+                      setToileClientDecisionNotice('Đã duyệt mẫu mộc thành công. Xưởng may bắt đầu tiến hành cắt vải chính.');
+                      setActiveBespokeStep(2);
+                      setBespokeOrders((prev: any[]) => prev.map(o => o.id === toileReviewModal.id ? { ...o, stage: 'FABRIC_CUTTING', toileMilestone: { ...o.toileMilestone, status: 'CLIENT_APPROVED', clientNote: toileClientNote.trim() } } : o));
+                      setTimeout(() => setToileReviewModal(null), 1800);
+                    } catch (err: any) {
+                      setToileClientDecisionNotice(err.message || 'Có lỗi xảy ra');
+                    }
+                  }}
+                >
+                  Duyệt Cắt Vải Chính →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
